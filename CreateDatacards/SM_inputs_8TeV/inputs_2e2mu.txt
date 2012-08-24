@@ -1,0 +1,75 @@
+############## Inputs for 2e2mu for 8 TeV ##############
+## SM ##
+model SM
+
+## decay chan ##
+decay 2e2mu
+
+## lumi for the cards ##
+lumi 5.261
+
+## sqrtS ##
+sqrts 8
+
+## Channels to include in cards ##
+channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
+
+## rates --- format = chan N lumi ##
+## if lumi is blank, lumi for cards used ##
+rate qqZZ  37.078
+rate ggZZ  2.54558
+rate zjets 2.4
+
+## signal functions --- no spaces! ##
+signalShape n_CB 7.66458+(-0.034638*@0)+(6.55035e-05*@0*@0)+(-4.32166e-08*@0*@0*@0)
+signalShape alpha_CB 1.03108*@0
+signalShape mean_CB 7.81106+(-0.168875*@0)+(0.00139591*@0*@0)+(-5.4292e-06*@0*@0*@0)+(9.73623e-09*@0*@0*@0*@0)+(-6.15693e-12*@0*@0*@0*@0*@0)
+signalShape sigma_CB 0.039036+(0.0242041*@0)+(-5.66694e-05*@0*@0)+(5.73238e-08*@0*@0*@0)+(1.88089e-11*@0*@0*@0*@0)
+
+## signal efficiency ##
+signalEff a1  -4.41975
+signalEff a2  4.61979
+signalEff a3  -65.3235
+signalEff a4  114.737
+signalEff b1  2.14042
+signalEff b2  0.00197707
+signalEff b3  -8.98267e-07
+
+
+### background functions ###
+qqZZshape a0_bkgd  110.102
+qqZZshape a1_bkgd  11.9126
+qqZZshape a2_bkgd  122.463
+qqZZshape a3_bkgd  0.0423086
+qqZZshape a4_bkgd  185.398
+qqZZshape a5_bkgd  9.42212
+qqZZshape a6_bkgd  30.9857
+qqZZshape a7_bkgd  0.0817282
+qqZZshape a8_bkgd  56.0713
+qqZZshape a9_bkgd  0.0941233
+qqZZshape a10_bkgd 85.4206
+qqZZshape a11_bkgd -13.7043
+qqZZshape a12_bkgd 38.3919
+qqZZshape a13_bkgd 0.310622
+
+
+ggZZshape a0_bkgd  143.415
+ggZZshape a1_bkgd  40.7512
+ggZZshape a2_bkgd  130.258
+ggZZshape a3_bkgd  0.0317788
+ggZZshape a4_bkgd  185.996
+ggZZshape a5_bkgd  12.043
+ggZZshape a6_bkgd  37.5639
+ggZZshape a7_bkgd  0.174234
+ggZZshape a8_bkgd  55.4036
+ggZZshape a9_bkgd  0.0660375
+
+zjetsShape mean 142.6
+zjetsShape sigma 19.8
+
+
+### channel dependent systematics ###
+systematic zjetKappaLow   0.3
+systematic zjetKappaHigh  2.0
+
+

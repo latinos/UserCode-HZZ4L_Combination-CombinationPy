@@ -1,0 +1,49 @@
+---------------------------------------------------
+Welcome to the package which takes HZZ4l inputs, creates datacards 
+for the limit calculation, and provides scripts for running the limits 
+both locally and on the grid
+
+by Matt Snowball and Nhan Tran
+---------------------------------------------------
+
+Getting started...
+cvs co -A UserCode/HZZ4L_Combination
+
+Functions:
+0. Take inputs from HZZ4l analysis and convert to datacard inputs
+Documentation: HZZ4L_Combination/analysisInputs/README
+
+1. Create datacards for running with LandS or Combination
+Documentation: HZZ4L_Combination/CreateDatacards/README
+
+2. Run datacards on local cluster (support for UF, JHU, lxplus)
+Documentation: HZZ4L_Combination/LocalLimitsSubmission/README
+
+3. Run datacards on the grid (CRAB)
+Documentation: HZZ4L_Combination/GridScripts/README
+
+#########################################################
+
+1. Create datacards for running with LandS or Combination
+Documentation: HZZ4L_Combination/CreateDatacards/README
+
+### Q U I C K   S T A R T   R E C I P E
+## Getting setup...
+cmsrel CMSSW_4_4_2
+cd CMSSW_4_4_2/src/
+cvs co -A HiggsAnalysis/CombinedLimit
+cmsenv
+scramv1 b -j4
+cd ../..
+## Get setup on the right system
+# change the global variables "awesomePhysicist" and "location" to 
+# the appropriate values
+emacs -nw getDatacards.C
+# then run the script based on your system with the desired lumi
+# this will create all the datacards for both SM and SM4 as well as datacards for the XSxBR plot
+# in the directory inputs_<LUMI>
+bash makeDCsandWSs_<system>.sh <LUMI>
+
+#### ---> Next proceed to ../LocalLimitsSubmission/README to run limits locally
+#### ---> Next proceed to ../GridScripts/README to run limits on the grid 
+
