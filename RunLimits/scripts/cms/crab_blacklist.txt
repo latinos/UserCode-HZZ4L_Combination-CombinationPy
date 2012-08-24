@@ -1,0 +1,35 @@
+# === T1's ===
+cern
+fnal
+cnaf
+# === slow or failing ===
+#  commented out = let's try to recover them
+#ufl.edu
+cream01.iihe.ac.be
+uniandes.edu.co
+ce.polgrid.pl
+grid01.hepy.by
+ihep.su
+kfki.hu
+metu.edu.tr
+ncp.edu.pk
+ncu.edu.tw
+oeaw.ac.at 
+pd.infn.it
+sinica.edu.tw
+sinp.msu.ru
+troitsk.ru
+unl.edu
+sprace.org.br
+ntu.edu.tw
+# === UK T3s ===
+ox.ac.uk
+bris.ac.uk
+qmul.ac.uk
+rhul.ac.uk
+scotgrid.ac.uk
+# === other T3s ===
+ts.infn.it
+olemiss.edu
+# ==== Not today (25 Feb 2012)
+ba.infn.it

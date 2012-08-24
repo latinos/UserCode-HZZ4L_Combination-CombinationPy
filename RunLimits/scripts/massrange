@@ -1,0 +1,4 @@
+#!/bin/bash
+FILE=masses.txt
+[[ "$3" != "" ]] && FILE=$3
+awk "{ if (\$1 >= $1 && \$1 <= $2) print; }" $FILE

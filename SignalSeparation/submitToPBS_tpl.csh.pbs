@@ -1,0 +1,38 @@
+#!/bin/tcsh     
+#### --------------------------------------------------------------
+##PBS SETTINGS
+#PBS -q batch
+#PBS -l walltime=2880:00
+#PBS -l nodes=1
+
+##PBS -N $PBS_JOBNAME
+##PBS -o $InputDir/outfiles/$PBS_JOBNAME.out
+##PBS -e $InputDir/outfiles/$PBS_JOBNAME.err
+#### -------------------------------------------------------------- 
+
+echo inputdir: $InputDir
+
+set cmsswbase=CMSSWBASE
+set workdir=WORKDIR
+source /scratch1/hep/cms/cmsset_default.csh
+
+setenv SCRAM_ARCH slc5_amd64_gcc462
+echo SCRAM_ARCH:$SCRAM_ARCH
+
+#JobName=${PBS_JOBNAME%_${MASS}*}
+
+set path = ( $path $cmsswbase/src/UserCode/mschen/LandS/test ) 
+
+echo "Setting up $cmsswbase"
+cd $cmsswbase/src
+eval `scramv1 runtime -csh`
+#cmsenv
+cd $workdir
+echo "Current Directory is $PWD"
+
+COMMAND
+
+# move output file to right directory
+mv ONAME ODIR/ONAME
+
+###REMOVE###
