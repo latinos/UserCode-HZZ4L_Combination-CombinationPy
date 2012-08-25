@@ -31,9 +31,11 @@ cvs co -r HEAD HiggsAnalysis/CombinedLimit
 cmsenv
 scram b -j12
 cd ../..
-#check inputs ---> SM_inputs_7TeV and SM_inputs_8TeV
+## compile HCSaW
+./buildPackage.sh
+## check inputs ---> SM_inputs_7TeV and SM_inputs_8TeV
 python makeDCsandWSs.py -i <input directory> -a <output name> -b > output.txt
-# output.txt holds all the messages from creating the cards
+## output.txt holds all the messages from creating the cards
 
 #### ---> Next proceed to ../RunLimit/README to run limits
 
