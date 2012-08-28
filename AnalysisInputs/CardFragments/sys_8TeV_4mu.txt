@@ -1,0 +1,5 @@
+### channel dependent systematics ###
+systematic zjetKappaLow   0.4
+systematic zjetKappaHigh  1.8
+
+
