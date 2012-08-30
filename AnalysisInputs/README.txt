@@ -33,7 +33,7 @@ CardFragments/zjetShape_[sqrts]TeV_[fs].txt
 4. 1D SIGNAL SHAPES 
 (come from external code)
 Parameters to be used in the config files are in:
-CardFragments/ZZRates_[sqrts]TeV_[fs].txt
+CardFragments/signalFunctions_[sqrts]TeV_[fs].txt
 
 
 5. 1D BACKGROUND SHAPES
@@ -58,7 +58,7 @@ The full config files are written under
 
 
 7. DATA FILES
-run:
+Run:
 
 root -q -b prepareData.C+
 
@@ -68,7 +68,9 @@ in the final destination directory, i.e.
 
 
 8. SIGNAL AND BACKGROUND 2D TEMPLATES
-(from external code, cf:
-https://twiki.cern.ch/twiki/bin/view/CMS/MELAProject
-http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/JHU/MELA/scripts/)
-The resulting templates are in ../CreateDatacards/templates2D
+Run:
+
+root -q -b generateTemplates.C+
+
+The resulting templates are written into the final destination directory, i.e. 
+../CreateDatacards/templates2D
