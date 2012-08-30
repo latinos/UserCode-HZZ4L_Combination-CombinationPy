@@ -12,24 +12,33 @@ mkdir results
 mkdir plots 
 
 ###Step1###
-#Make combined cards
+#Make combined cards and binary workspaces
 
-for M in $(cat masses.txt); do bash make_combined_cards_hzz4l.sh $M $sqrts; done
+--->./makeCardsWorkspaces.sh <massfile> <sqrts>
+
+where massfile can be masses.txt or the like which contains a list of masses to be processed,
+(Remember it only works if you list masses that you created cards for :-) )
+and sqrts 
+== 7 for 7 TeV only (only cp HCG/$masses for 7 TeV cards)
+== 8 for 8 TeV only (only cp HCG/$masses for 8 TeV cards)
+== 0 for 7+8 TeV (cp -r HCG for the 7 TeV cards and then do 'for i in $(cat <massfile>); do echo $i; cp <path to 8 TeV HCG>/$i/* $i/; done' )
+== -1 for 7+8+2l2tau cards (same idea as for 0)
+
+
+############################# Running in Batch Mode ##################################
+This script uses other scripts to batch to a pbs scheduler, through makeLimits.pbs.sh
+
+--->./make_parallel_limit.sh <type> <massfile> <options>
+
+type = ASCLS, PLP, PLPE, ML
+options = <nothing>-default, -s for strict
 
 
 
-###Step2###
-#Make binary workspaces
+############################# Running in Serial Mode ##################################
 
---->for M in $(cat masses.txt); do bash make_binary_workspaces_hzz4l.sh $M comb_hzz4l.txt; done
-*** for M in $(cat masses.txt); do bash make_binary_workspaces_hzz4l.sh $M SM4_comb_hzz4l.txt; done
-to do SM4
 
-############################# The Good Stuff ##################################
-
-################ Running Profile Likelihood##################
-For the PL we used the following non-default options: --optimizeSim=1 (speeds up calculation of likelihoods for complex models) and --useMinos (bypass ProfileLikelihoodCalculator and use directly MINOS, since in ROOT 5.28 it's more robust)
-
+################ Profile Likelihood ##################
 To produce approximate limits using PL asymptotics 
 
 ---> for M in $(cat masses.txt); do bash make_PLC_hzz4l.sh $M comb_hzz4l.root; done
@@ -42,20 +51,7 @@ don't want to do it for all masses)
 
 --->for M in ...; do bash make_PLC_hzz4l.sh -s $M comb_hzz4l.root; done
 
-To produce _p_-value scans 
-
---->for M in $(cat masses.txt); do bash make_PLC.sh -P $M comb_hzz4l.root; done
-
-expected
---->for M in $(cat masses.txt); do bash make_PLC.sh --PE $M comb_hzz4l.root; done
-
-To get the robust estimate, use -s -P (note that -P -s does not work, the bash script is not smart enough)
-The output files will be called PLP instead of PLC.
-
-You can edit make_PLC.sh to make --PE do expected significance instead of just p-value.
-
-
-################ Running Asymptotic CLS ##################
+################ Asymptotic CLS ##################
 
 ---> for M in $(cat masses.txt); do bash make_ASCLS.sh -l $M comb_hzz4l.root; done
 
@@ -75,7 +71,7 @@ To get the robust estimate, use -s -P (note that -P -s does not work, the bash s
 The output files will be called PLP instead of PLC.
 
 
-################ Running CLs limits on the grid ####################
+################ FREQ CLs limits on the grid ####################
 The procedure is:
 -get an estimate of the limit from ASCLS, harvest, run bands
 -create a grid of test statistic distributions around that value
@@ -92,6 +88,8 @@ The procedure is:
 The first two points are done with the make_grid.sh script; modify it to set the number of points and toys to something reasonable for your case; a ballpark number is 10-20 points and 1k-5k toys per point. You can check how many jobs would be submitted with
 
 --->bash make_grid_new.sh --pri $M comb_hzz4l.root
+
+(--pri only if you have priority user)
 
 and then submit them with
 
@@ -117,23 +115,43 @@ If your observed limit turns out to be far from the expected one, when re-making
 For the second part, there is the make_FREQ.sh script, which works similarly to the make_PLC.sh (but it's much slower, so again we suggest to split the 
 mass.txt in several subfiles and run them in parallel)
 
-
-
-#### Harvesting Results ####
 Check and retreive output
 --->for M in $(cat masses_NUMBER.txt); do bash watch_grid.sh $M; done
-
 
 Run all limits
 --->for M in $(cat masses_NUMBER.txt); do bash make_FREQ.sh $M comb_hzz4l.root; done
 
-Harvest: to harvest the results for method PLC and combined workspace for all masses for which it was run, do
 
---->./harvest.sh PLC hzz4l
---->./harvest.sh PLP hzz4l
---->./harvest.sh PLPE hzz4l
 
-You can replace PLC with PLP, FREQ, SMCLS or BAYES. You can replace comb with hgg, hww, htt, hzz4l, hzz2l2q hzz2l2nu.
+
+
+
+########################### PVALUES ##############################
+To produce p-value scans 
+
+--->for M in $(cat masses.txt); do bash make_PLC.sh -P $M comb_hzz4l.root; done
+
+expected
+
+--->for M in $(cat masses.txt); do bash make_PLC.sh --PE $M comb_hzz4l.root; done
+
+To get the robust estimate, use -s -P (note that -P -s does not work, the bash script is not smart enough)
+The output files will be called PLP instead of PLC.
+
+You can edit make_PLC.sh to make --PE do expected significance instead of just p-value.
+
+
+
+
+
+
+
+######################### HARVESTING RESULTS #########################
+
+--->./harvest.sh <method> hzz4l
+
+where method is either PLP, PLPE, FREQ, SMCLS, BAYES, PLC, ASCLS, ML 
+
 Bands: 
 
 Customise the makeBands.cxx script to read the bands that you want. Pay attention to keep the global variable use_precomputed_quantiles to true for CLS 
@@ -152,27 +170,6 @@ https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsCombinationPreApproval,
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsCombinationInstructions
 for more help
 May you always have high limits and low p-values! :-)
-
-
-
-####################### STREAMLINING #######################
-
---->./makeCardsWorkspaces.sh <massfile> <sqrts>
-
---->./make_parallel_limit.sh <type> <massfile> <options>
-
-type = ASCLS, PLP, PLPE, ML
-options = <nothing>-default, -s for strict
-
-
-######################### PVALUES ###################
-To produce _p_-value scans 
-
---->for M in $(cat masses.txt); do bash make_PLC.sh -P $M comb_hzz4l.root; done
-
-To get the robust estimate, use -s -P (note that -P -s does not work, the bash script is not smart enough)
-The output files will be called PLP instead of PLC.
-
 
 
 ###################### LandS ########################
