@@ -7,6 +7,7 @@ decay 4e
 
 ## lumi ##
 lumi 5.051
+systematic lumiUnc 1.022
 
 ## sqrtS ##
 sqrts 7
@@ -71,5 +72,35 @@ zjetsShape sigma 17.8
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.4
 systematic zjetKappaHigh  1.9
+systematic param CMS_zz4l_mean_e_sig   0.004
+systematic param CMS_zz4l_sigma_e_sig  0.2
+systematic param CMS_zz4l_n_sig	       0.05
 
+## 4e systematics ##
+systematic elec_full 0.11 0.06 150
+systematic elec_trig 0.015
+
+##### Add Systematic to Cards ####
+##### allowed true/false, 1/0 ####
+systematic luminosity True
+systematic pdf_gg True
+systematic pdf_qqbar True
+systematic pdf_hzz4l_accept True
+systematic QCDscale_ggH True
+systematic QCDscale_qqH True
+systematic QCDscale_VH True
+systematic QCDscale_ttH True
+systematic theoryUncXS_HighMH True
+systematic QCDscale_ggVV True
+systematic QCDscale_VV True
+systematic BRhiggs_hzz4l True
+systematic CMS_eff True
+systematic CMS_hzz4l_Zjets True
+systematic CMS_zz4l_bkgMELA True
+systematic CMS_zz4l_sigMELA False
+systematic CMS_zz4l_mean True
+systematic CMS_zz4l_sigma True
+systematic CMS_zz4l_mean True
+systematic CMS_zz4l_sigma True
+systematic CMS_zz4l_n True
 
