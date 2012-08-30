@@ -22,8 +22,6 @@ class datacardClass:
         self.ID_4e  = 2
         self.ID_2e2mu = 3    
         self.isFSR = True
-        self.sigMorph = False
-        self.bkgMorph = True
 
     def loadIncludes(self):
         
@@ -34,7 +32,7 @@ class datacardClass:
         ROOT.gSystem.Load("libRooFit")
         ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit.so")
         ROOT.gSystem.Load("include/HiggsCSandWidth_cc.so")
-        
+        ROOT.gSystem.Load("include/HiggsCSandWidthSM4_cc.so")
 
     # cross section filter for 7 TeV efficiency
     def csFilter(self,hmass):
@@ -104,24 +102,34 @@ class datacardClass:
         self.channel = theInputs['decayChannel']
         self.is2D = theis2D
         self.outputDir = theOutputDir
-        self.ID_4mu = 1
-        self.ID_4e  = 2
-        self.ID_2e2mu = 3    
-        self.isFSR = True
-        self.sigMorph = False
-        self.bkgMorph = True
+        self.sigMorph = theInputs['useCMS_zz4l_sigMELA']
+        self.bkgMorph = theInputs['useCMS_zz4l_bkgMELA']
+        
         FactorizedShapes = False
 
-        ## ---------------- SET PLOTTING STYLE ----------------  ## 
+        self.ggH_chan = theInputs['ggH']
+        self.qqH_chan = theInputs['qqH']
+        self.WH_chan = theInputs['WH']
+        self.ZH_chan = theInputs['ZH']
+        self.ttH_chan = theInputs['ttH']
+        self.qqZZ_chan = theInputs['qqZZ']
+        self.ggZZ_chan = theInputs['ggZZ']
+        self.zjets_chan = theInputs['zjets']
+        self.ttbar_chan = theInputs['ttbar']
+        self.zbb_chan = theInputs['zbb']
+        
+        ## ---------------- SET PLOTTING STYLE ---------------- ## 
         ROOT.setTDRStyle(True)
         ROOT.gStyle.SetPalette(1)
         ROOT.gStyle.SetPadLeftMargin(0.16)        
 
+        ## ---------------- VARIABLES FOR LATER --------------- ##
         self.bUseCBnoConvolution = False
         ForXSxBR = False
 
         myCSW = HiggsCSandWidth()
                 
+        ## ----------------- WIDTH AND RANGES ----------------- ##
         self.widthHVal =  myCSW.HiggsWidth(0,self.mH)
         if(self.widthHVal < 0.12):
             self.bUseCBnoConvolution = True
@@ -145,8 +153,8 @@ class datacardClass:
 	
         ## ------------------------- SYSTEMATICS CLASSES ----------------------------- ##
     
-        systematics = systematicsClass( self.sqrts, self.channel, self.mH, False, self.isFSR, "SM")
-        systematics_forXSxBR = systematicsClass( self.sqrts, self.channel, self.mH, True, self.isFSR, "SM")
+        systematics = systematicsClass( self.mH, False, self.isFSR, theInputs)
+        systematics_forXSxBR = systematicsClass( self.mH, True, self.isFSR,theInputs)
 
         ## -------------------------- SIGNAL SHAPE ----------------------------------- ##
     
@@ -748,7 +756,7 @@ class datacardClass:
         rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
         
         
-        rfvSigRate_VBF = ROOT.RooFormulaVar("VBF_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_VBF.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_VBF.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
+        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_VBF.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_VBF.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
                          
 
         rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_WH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_WH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
@@ -963,16 +971,28 @@ class datacardClass:
         
         ## --------------------------- DATACARDS -------------------------- ##
 
-        rates_Shape = array('d',[sigRate_ggH_Shape,sigRate_VBF_Shape,sigRate_WH_Shape,sigRate_ZH_Shape,sigRate_ttH_Shape,bkgRate_qqzz_Shape,bkgRate_ggzz_Shape,bkgRate_zjets_Shape])
-
         systematics.setSystematics(bkgRate_qqzz_Shape, bkgRate_ggzz_Shape, bkgRate_zjets_Shape)
         systematics_forXSxBR.setSystematics(bkgRate_qqzz_Shape, bkgRate_ggzz_Shape,bkgRate_zjets_Shape)
+
+        ## If the channel is not declared in inputs, set rate = 0
+        if not self.ggH_chan:  sigRate_ggH_Shape = 0
+        if not self.qqH_chan:  sigRate_VBF_Shape = 0
+        if not self.WH_chan:   sigRate_WH_Shape = 0
+        if not self.ZH_chan:   sigRate_ZH_Shape = 0
+        if not self.ttH_chan:  sigRate_ttH_Shape = 0
+
+        if not self.qqZZ_chan:  bkgRate_qqzz_Shape = 0
+        if not self.ggZZ_chan:  bkgRate_ggzz_Shape = 0
+        if not self.zjets_chan: bkgRate_zjets_Shape = 0
+
+        rates_Shape = array('d',[sigRate_ggH_Shape,sigRate_VBF_Shape,sigRate_WH_Shape,sigRate_ZH_Shape,sigRate_ttH_Shape,bkgRate_qqzz_Shape,bkgRate_ggzz_Shape,bkgRate_zjets_Shape])
+
 
         ## Write Datacards
         fo = open( name_Shape, "wb")
         self.WriteDatacard(fo, name_ShapeWS2, rates_Shape, data_obs.numEntries(), self.is2D )
-        systematics.WriteSystematics(fo, self.bkgMorph, self.sigMorph)
-        systematics.WriteShapeSystematics(fo)
+        systematics.WriteSystematics(fo, theInputs)
+        systematics.WriteShapeSystematics(fo,theInputs)
         fo.close()
         
         ## forXSxBR
@@ -981,9 +1001,9 @@ class datacardClass:
             
         fo = open( name_Shape, "wb" )
         self.WriteDatacard(fo, name_ShapeWS2, rates_Shape, data_obs.numEntries(), self.is2D )
-        systematics_forXSxBR.WriteSystematics(fo, self.bkgMorph, self.sigMorph)
-        systematics_forXSxBR.WriteShapeSystematics(fo)
-        fo.close();
+        systematics_forXSxBR.WriteSystematics(fo, theInputs)
+        systematics_forXSxBR.WriteShapeSystematics(fo,theInputs)
+        fo.close()
         
 
 

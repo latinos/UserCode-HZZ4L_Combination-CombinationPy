@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #-----------------------------------------------
-# Latest update: 2012.08.15
+# Latest update: 2012.08.30
 # by Matt Snowball
 #-----------------------------------------------
 import sys, os, pwd, commands

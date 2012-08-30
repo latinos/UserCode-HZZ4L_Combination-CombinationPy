@@ -94,13 +94,60 @@ class inputReader:
         # systematics 
         self.zjetsKappaLow = -999.9
         self.zjetsKappaHigh = -999.9
+        self.lumiUnc = -999.9
+        self.muonFullUnc = -999.9
+        self.muonFullUnc_HM = -999.9
+        self.muonFullCutoff = -999.9
+        self.muonTrigUnc = -999.9
+        self.muonTrigUnc_HM = -999.9
+        self.muonTrigCutoff = -999.9
+        self.elecFullUnc = -999.9
+        self.elecFullUnc_HM = -999.9
+        self.elecFullCutoff = -999.9
+        self.elecTrigUnc = -999.9
+        self.elecTrigUnc_HM = -999.9
+        self.elecTrigCutoff = -999.9
 
+        self.CMS_zz4l_mean_m_sig = -999.9
+        self.CMS_zz4l_sigma_m_sig = -999.9
+        self.CMS_zz4l_mean_e_sig = -999.9
+        self.CMS_zz4l_sigma_e_sig = -999.9
+        self.CMS_zz4l_n_sig = -999.9
+
+        self.useLumiUnc = False
+        self.usePdf_gg = False
+        self.usePdf_qqbar = False
+        self.usePdf_hzz4l_accept = False
+        self.useQCDscale_ggH = False
+        self.useQCDscale_qqH = False
+        self.useQCDscale_VH = False
+        self.useQCDscale_ttH = False
+        self.useTheoryUncXS_HighMH = False
+        self.useQCDscale_ggVV = False
+        self.useQCDscale_VV = False
+        self.useBRhiggs_hzz4l = False
+        self.useCMS_eff = False
+        self.useCMS_hzz4l_Zjets = False 
+        self.useCMS_zz4l_bkgMELA = False
+        self.useCMS_zz4l_sigMELA = False
+        self.useCMS_zz4l_mean = False
+        self.useCMS_zz4l_sigma = False
+        self.useCMS_zz4l_n = False
+
+        
 
     def goodEntry(self,variable):
         if variable == -999.9:
             return False
         else:
             return True
+
+
+    def parseBoolString(self,theString):
+
+        return theString[0].upper()=='T'
+
+
 
     def readInputs(self):
         
@@ -225,7 +272,81 @@ class inputReader:
                     self.zjetsKappaLow = f[2]
                 if f[1].lower().startswith("zjet") and f[1].lower().find("kappahigh") >= 0 :
                     self.zjetsKappaHigh = f[2]
+                if f[1].lower().startswith("lumiunc"):
+                    self.lumiUnc = f[2]
+                if f[1].lower().startswith("muon_full") or f[1].lower().startswith("muonfull"):
+                    self.muonFullUnc = f[2]
+                    if len(f) > 3:
+                        self.muonFullUnc_HM = f[3]
+                        self.muonFullCutoff = f[4]
+                if f[1].lower().startswith("muon_trig") or f[1].lower().startswith("muontrig"):
+                    self.muonTrigUnc = f[2]
+                    if len(f) > 3:
+                        self.muonTrigUnc_HM = f[3]
+                        self.muonTrigCutoff = f[4]
+                if f[1].lower().startswith("elec_full") or f[1].lower().startswith("elecfull"):
+                    self.elecFullUnc = f[2]
+                    if len(f) > 3:
+                        self.elecFullUnc_HM = f[3]
+                        self.elecFullCutoff = f[4]
+                if f[1].lower().startswith("elec_trig") or f[1].lower().startswith("electrig"):
+                    self.elecTrigUnc = f[2]
+                    if len(f) > 3:
+                        self.elecTrigUnc_HM = f[3]
+                        self.elecTrigCutoff = f[4]
 
+                if f[1].lower().startswith("param"):
+                    if f[2].lower().startswith("cms_zz4l_mean_m_sig"):
+                        self.CMS_zz4l_mean_m_sig = f[3]
+                    if f[2].lower().startswith("cms_zz4l_sigma_m_sig"):
+                        self.CMS_zz4l_sigma_m_sig = f[3]
+                    if f[2].lower().startswith("cms_zz4l_mean_e_sig"):
+                        self.CMS_zz4l_mean_e_sig = f[3]
+                    if f[2].lower().startswith("cms_zz4l_sigma_e_sig"):
+                        self.CMS_zz4l_sigma_e_sig = f[3]
+                    if f[2].lower().startswith("cms_zz4l_n_sig"):
+                        self.CMS_zz4l_n_sig = f[3]
+                        
+                if f[1].lower().startswith("luminosity"):
+                    self.useLumiUnc = self.parseBoolString(f[2])
+                if f[1].lower().startswith("pdf_gg"):
+                    self.usePdf_gg = self.parseBoolString(f[2])
+                if f[1].lower().startswith("pdf_qqbar"):
+                    self.usePdf_qqbar = self.parseBoolString(f[2])
+                if f[1].lower().startswith("qcdscale_ggh"):
+                    self.useQCDscale_ggH = self.parseBoolString(f[2])
+                if f[1].lower().startswith("qcdscale_qqh"):
+                    self.useQCDscale_qqH = self.parseBoolString(f[2])
+                if f[1].lower().startswith("qcdscale_vh"):
+                    self.useQCDscale_VH = self.parseBoolString(f[2])
+                if f[1].lower().startswith("qcdscale_tth"):
+                    self.useQCDscale_ttH = self.parseBoolString(f[2])
+                if f[1].lower().startswith("pdf_hzz4l_accept"):
+                    self.usePdf_hzz4l_accept = self.parseBoolString(f[2])
+                if f[1].lower().startswith("theoryuncxs_highmh"):
+                    self.useTheoryUncXS_HighMH = self.parseBoolString(f[2])
+                if f[1].lower().startswith("qcdscale_ggvv"):
+                    self.useQCDscale_ggVV = self.parseBoolString(f[2])
+                if f[1].lower().startswith("qcdscale_vv"):
+                    self.useQCDscale_VV = self.parseBoolString(f[2])
+                if f[1].lower().startswith("brhiggs_hzz4l"):
+                    self.useBRhiggs_hzz4l = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_eff"):
+                    self.useCMS_eff = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_hzz4l_zjets"):
+                    self.useCMS_hzz4l_Zjets = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_bkgmela"):
+                    self.useCMS_zz4l_bkgMELA = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_sigmela"):
+                    self.useCMS_zz4l_sigMELA = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_mean"):
+                    self.useCMS_zz4l_mean = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_sigma"):
+                    self.useCMS_zz4l_sigma = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_n"):
+                    self.useCMS_zz4l_n = self.parseBoolString(f[2])
+                
+                    
             if f[0].lower().startswith("lumi"):
 
                 self.lumi = float(f[1])
@@ -303,13 +424,35 @@ class inputReader:
         if not self.goodEntry(self.zjets_lumi): self.zjets_lumi = self.lumi
         if not self.goodEntry(self.zbb_lumi):   self.zbb_lumi = self.lumi
         if not self.goodEntry(self.ttbar_lumi): self.ttbar_lumi = self.lumi
-        
+
+        if not self.goodEntry(self.lumiUnc) and self.useLumiUnc:
+            raise RuntimeError, "{0} is not set. Check systematic inputs!".format("Lumi Uncertiatiny")
+        if not self.goodEntry(self.muonFullUnc) and self.useCMS_eff and (self.decayChan == 1 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("muon_full")
+        if not self.goodEntry(self.muonTrigUnc) and self.useCMS_eff and (self.decayChan == 1 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("muon_trig")
+        if not self.goodEntry(self.elecFullUnc) and self.useCMS_eff and (self.decayChan == 2 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("elec_full")
+        if not self.goodEntry(self.elecTrigUnc) and self.useCMS_eff and (self.decayChan == 2 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("elec_trig")
+
+        if not self.goodEntry(self.CMS_zz4l_mean_m_sig) and self.useCMS_zz4l_mean and (self.decayChan == 1 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_mean_m_sig")
+        if not self.goodEntry(self.CMS_zz4l_mean_e_sig) and self.useCMS_zz4l_mean and (self.decayChan == 2 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_mean_e_sig")
+        if not self.goodEntry(self.CMS_zz4l_sigma_m_sig) and self.useCMS_zz4l_sigma and (self.decayChan == 1 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_sigma_m_sig")
+        if not self.goodEntry(self.CMS_zz4l_sigma_e_sig) and self.useCMS_zz4l_sigma and (self.decayChan == 2 or self.decayChan == 3):
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_sigma_e_sig")
+        if not self.goodEntry(self.CMS_zz4l_n_sig) and self.useCMS_zz4l_n:
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_n_sig")
+          
         ## Set dictionary entries to be passed to datacard class ##
         
-        dict['decayChannel'] = self.decayChan
-        dict['model'] = self.model
-        dict['lumi'] = self.lumi
-        dict['sqrts'] = self.sqrts
+        dict['decayChannel'] = int(self.decayChan)
+        dict['model'] = str(self.model)
+        dict['lumi'] = float(self.lumi)
+        dict['sqrts'] = float(self.sqrts)
 
         dict['ggH'] = self.ggH_chan
         dict['qqH'] = self.qqH_chan
@@ -323,61 +466,104 @@ class inputReader:
         dict['zbb'] = self.zbb_chan
 
         dict['qqZZ_rate'] = self.qqZZ_rate
-        dict['ggZZ_rate'] = self.ggZZ_rate 
+        dict['ggZZ_rate'] = self.ggZZ_rate
         dict['zjets_rate'] = self.zjets_rate
         dict['ttbar_rate'] = self.ttbar_rate
-        dict['zbb_rate'] = self.zbb_rate 
+        dict['zbb_rate'] = self.zbb_rate
 
-        dict['qqZZ_lumi'] = self.qqZZ_lumi
-        dict['ggZZ_lumi'] = self.ggZZ_lumi 
-        dict['zjets_lumi'] = self.zjets_lumi
-        dict['ttbar_lumi'] = self.ttbar_lumi
-        dict['zbb_lumi'] = self.zbb_lumi
+        dict['qqZZ_lumi'] = float(self.qqZZ_lumi)
+        dict['ggZZ_lumi'] = float(self.ggZZ_lumi) 
+        dict['zjets_lumi'] = float(self.zjets_lumi)
+        dict['ttbar_lumi'] = float(self.ttbar_lumi)
+        dict['zbb_lumi'] = float(self.zbb_lumi)
 
         dict['n_CB_shape'] = self.n_CB_shape
         dict['alpha_CB_shape'] = self.alpha_CB_shape
         dict['mean_CB_shape'] = self.mean_CB_shape
         dict['sigma_CB_shape'] = self.sigma_CB_shape
 
-        dict['sigEff_a1'] = self.sigeff_a1
-        dict['sigEff_a2'] = self.sigeff_a2
-        dict['sigEff_a3'] = self.sigeff_a3
-        dict['sigEff_a4'] = self.sigeff_a4
-        dict['sigEff_b1'] = self.sigeff_b1
-        dict['sigEff_b2'] = self.sigeff_b2
-        dict['sigEff_b3'] = self.sigeff_b3
+        dict['sigEff_a1'] = float(self.sigeff_a1)
+        dict['sigEff_a2'] = float(self.sigeff_a2)
+        dict['sigEff_a3'] = float(self.sigeff_a3)
+        dict['sigEff_a4'] = float(self.sigeff_a4)
+        dict['sigEff_b1'] = float(self.sigeff_b1)
+        dict['sigEff_b2'] = float(self.sigeff_b2)
+        dict['sigEff_b3'] = float(self.sigeff_b3)
 
-        dict['qqZZshape_a0'] = self.qqZZshape_a0
-        dict['qqZZshape_a1'] = self.qqZZshape_a1
-        dict['qqZZshape_a2'] = self.qqZZshape_a2
-        dict['qqZZshape_a3'] = self.qqZZshape_a3
-        dict['qqZZshape_a4'] = self.qqZZshape_a4
-        dict['qqZZshape_a5'] = self.qqZZshape_a5
-        dict['qqZZshape_a6'] = self.qqZZshape_a6
-        dict['qqZZshape_a7'] = self.qqZZshape_a7
-        dict['qqZZshape_a8'] = self.qqZZshape_a8
-        dict['qqZZshape_a9'] = self.qqZZshape_a9
-        dict['qqZZshape_a10'] = self.qqZZshape_a10
-        dict['qqZZshape_a11'] = self.qqZZshape_a11
-        dict['qqZZshape_a12'] = self.qqZZshape_a12
-        dict['qqZZshape_a13'] = self.qqZZshape_a13
+        dict['qqZZshape_a0'] = float(self.qqZZshape_a0)
+        dict['qqZZshape_a1'] = float(self.qqZZshape_a1)
+        dict['qqZZshape_a2'] = float(self.qqZZshape_a2)
+        dict['qqZZshape_a3'] = float(self.qqZZshape_a3)
+        dict['qqZZshape_a4'] = float(self.qqZZshape_a4)
+        dict['qqZZshape_a5'] = float(self.qqZZshape_a5)
+        dict['qqZZshape_a6'] = float(self.qqZZshape_a6)
+        dict['qqZZshape_a7'] = float(self.qqZZshape_a7)
+        dict['qqZZshape_a8'] = float(self.qqZZshape_a8)
+        dict['qqZZshape_a9'] = float(self.qqZZshape_a9)
+        dict['qqZZshape_a10'] = float(self.qqZZshape_a10)
+        dict['qqZZshape_a11'] = float(self.qqZZshape_a11)
+        dict['qqZZshape_a12'] = float(self.qqZZshape_a12)
+        dict['qqZZshape_a13'] = float(self.qqZZshape_a13)
 
-        dict['ggZZshape_a0'] = self.ggZZshape_a0
-        dict['ggZZshape_a1'] = self.ggZZshape_a1
-        dict['ggZZshape_a2'] = self.ggZZshape_a2
-        dict['ggZZshape_a3'] = self.ggZZshape_a3
-        dict['ggZZshape_a4'] = self.ggZZshape_a4
-        dict['ggZZshape_a5'] = self.ggZZshape_a5
-        dict['ggZZshape_a6'] = self.ggZZshape_a6
-        dict['ggZZshape_a7'] = self.ggZZshape_a7
-        dict['ggZZshape_a8'] = self.ggZZshape_a8
-        dict['ggZZshape_a9'] = self.ggZZshape_a9
+        dict['ggZZshape_a0'] = float(self.ggZZshape_a0)
+        dict['ggZZshape_a1'] = float(self.ggZZshape_a1)
+        dict['ggZZshape_a2'] = float(self.ggZZshape_a2)
+        dict['ggZZshape_a3'] = float(self.ggZZshape_a3)
+        dict['ggZZshape_a4'] = float(self.ggZZshape_a4)
+        dict['ggZZshape_a5'] = float(self.ggZZshape_a5)
+        dict['ggZZshape_a6'] = float(self.ggZZshape_a6)
+        dict['ggZZshape_a7'] = float(self.ggZZshape_a7)
+        dict['ggZZshape_a8'] = float(self.ggZZshape_a8)
+        dict['ggZZshape_a9'] = float(self.ggZZshape_a9)
 
-        dict['zjetsShape_mean'] = self.zjetsShape_mean
-        dict['zjetsShape_sigma'] = self.zjetsShape_sigma
+        dict['zjetsShape_mean'] = float(self.zjetsShape_mean)
+        dict['zjetsShape_sigma'] = float(self.zjetsShape_sigma)
 
-        dict['zjetsKappaLow'] = self.zjetsKappaLow
-        dict['zjetsKappaHigh'] = self.zjetsKappaHigh
+        dict['zjetsKappaLow'] = float(self.zjetsKappaLow)
+        dict['zjetsKappaHigh'] = float(self.zjetsKappaHigh)
+        
+
+        dict['lumiUnc'] = self.lumiUnc
+        dict['muonFullUnc'] = float(self.muonFullUnc)
+        dict['muonFullUnc_HM'] = float(self.muonFullUnc_HM) 
+        dict['muonFullCutoff'] = float(self.muonFullCutoff)
+        dict['elecFullUnc'] = float(self.elecFullUnc) 
+        dict['elecFullUnc_HM'] = float(self.elecFullUnc_HM) 
+        dict['elecFullCutoff'] = float(self.elecFullCutoff)
+        
+        dict['muonTrigUnc'] = float(self.muonTrigUnc)
+        dict['muonTrigUnc_HM'] = float(self.muonTrigUnc_HM) 
+        dict['muonTrigCutoff'] = float(self.muonTrigCutoff)
+        dict['elecTrigUnc'] = float(self.elecTrigUnc) 
+        dict['elecTrigUnc_HM'] = float(self.elecTrigUnc_HM)
+        dict['elecTrigCutoff'] = float(self.elecTrigCutoff) 
+
+        dict['useLumiUnc'] = self.useLumiUnc 
+        dict['usePdf_gg'] = self.usePdf_gg
+        dict['usePdf_qqbar'] = self.usePdf_qqbar 
+        dict['usePdf_hzz4l_accept'] = self.usePdf_hzz4l_accept
+        dict['useQCDscale_ggH'] = self.useQCDscale_ggH
+        dict['useQCDscale_qqH'] = self.useQCDscale_qqH 
+        dict['useQCDscale_VH'] = self.useQCDscale_VH
+        dict['useQCDscale_ttH'] = self.useQCDscale_ttH
+        dict['useTheoryUncXS_HighMH'] = self.useTheoryUncXS_HighMH
+        dict['useQCDscale_ggVV'] = self.useQCDscale_ggVV
+        dict['useQCDscale_VV'] = self.useQCDscale_VV
+        dict['useBRhiggs_hzz4l'] = self.useBRhiggs_hzz4l
+        dict['useCMS_eff'] = self.useCMS_eff
+        dict['useCMS_hzz4l_Zjets'] = self.useCMS_hzz4l_Zjets 
+        dict['useCMS_zz4l_bkgMELA'] = self.useCMS_zz4l_bkgMELA 
+        dict['useCMS_zz4l_sigMELA'] = self.useCMS_zz4l_sigMELA
+        dict['useCMS_zz4l_mean'] = self.useCMS_zz4l_mean
+        dict['useCMS_zz4l_sigma'] = self.useCMS_zz4l_sigma 
+        dict['useCMS_zz4l_n'] = self.useCMS_zz4l_n
+
+        dict['CMS_zz4l_mean_m_sig'] = float(self.CMS_zz4l_mean_m_sig) 
+        dict['CMS_zz4l_sigma_m_sig'] = float(self.CMS_zz4l_sigma_m_sig) 
+        dict['CMS_zz4l_mean_e_sig'] = float(self.CMS_zz4l_mean_e_sig) 
+        dict['CMS_zz4l_sigma_e_sig'] = float(self.CMS_zz4l_sigma_e_sig)
+        dict['CMS_zz4l_n_sig'] = float(self.CMS_zz4l_n_sig) 
+
         
         return dict
 
