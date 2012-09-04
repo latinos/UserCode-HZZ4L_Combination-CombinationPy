@@ -9,7 +9,7 @@ MATCH=$2;
 #OPTIONS=" --optimizeSim=1 --minimizerStrategy=2"
 OPTIONS=" --optimizeSim=1 $MINIM "
 if [[ "$STRICT" == 1 ]]; then
-   OPTIONS=" --optimizeSim=1 --minimizerStrategy=2 --minimizerTolerance=0.00001 $MINIM " 
+   OPTIONS=" --optimizeSim=1 --minimizerStrategy=2 --minimizerTolerance=0.00001" 
 fi
 function run {
     WHAT=$1; shift
