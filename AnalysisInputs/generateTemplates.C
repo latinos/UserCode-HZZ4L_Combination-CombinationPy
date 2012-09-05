@@ -24,6 +24,10 @@
 
 bool makePSTemplate = false;
 
+bool extendToHighMass = false; // Include signal samples above 600 GeV
+
+
+
 const int mZZbins=350;
 int lowMzz=100;
 int highMzz=800;
@@ -190,47 +194,145 @@ TH2F* reweightForInterference(TH2F* temp){
 
 }
 
+
+
+void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
+
+  //  TString sample[4]={"H*","ZZTo*","ggZZ*","H*Pse"};
+  //  TString sampleName[4]={"signal","qqZZ","ggZZ","signal_PS"};
+
+  TString chPath = (channel=="2e2mu"?"2mu2e":channel); // Adapt to different naming convention...
+
+  if(sampleIndex==0){
+    //7TeV
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H130.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H140.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H150.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H160.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H170.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H180.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H190.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H200.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H210.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H220.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H250.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H275.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H300.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H325.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H350.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H400.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H425.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H450.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H475.root");
+    //    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H525.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H550.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H575.root");
+
+    if (extendToHighMass) {
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H600.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H650.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H700.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H750.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H800.root");
+      //     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H850.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H900.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H950.root");
+      //     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root");
+    }
+    
+
+    //8TeV
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H115.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H116.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H117.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H118.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H119.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H120.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H121.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H122.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H123.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H124.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H125.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H126.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H127.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H128.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H129.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H130.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H145.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H150.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H180.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H200.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H250.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H300.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H325.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H350.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H400.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H450.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H500.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H550.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H600.root");
+    if (extendToHighMass) {
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H650.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H700.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H750.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H800.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H850.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H900.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H950.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H1000.root");
+    }
+    
+  } else if (sampleIndex==1){
+    //7TeV
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau.root");
+
+    //8TeV
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau.root");
+
+  } else if (sampleIndex==2){
+    //7TeV
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
+
+    //8TeV
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
+
+    
+  } else if(sampleIndex==3){
+    abort(); // Standard location of these files still being arranged.
+    //       sprintf(temp,"CJLSTtree_Jun25_2012/JHUsignal/HZZ%sTree_%s.root",channel,sample[sampleIndex].c_str());
+    //       bkgMC->Add(temp);
+  }
+    
+}
+
+
 //=======================================================================
 
 TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true){
-
-  TString sample[4]={"H*","ZZTo*","ggZZ*","H*Pse"};
-  //  TString sampleName[4]={"signal","qqZZ","ggZZ","signal_PS"};
-  TString chPath = (channel=="2e2mu"?"2mu2e":channel); // Adapt to different naming convention...
-
-
   TChain* bkgMC = new TChain("SelectedTree");
-  //  char temp[100];
 
-  if(isLowMass){
-
-    if(sampleIndex==3){
-      // Standard location of these files still being arranged.
-      abort();
-//       sprintf(temp,"CJLSTtree_Jun25_2012/JHUsignal/HZZ%sTree_%s.root",channel,sample[sampleIndex].c_str());
-//       bkgMC->Add(temp);
-    }else{
-      //      sprintf(temp,"CJLSTtrees_June27_2012/7plus8TeV_FSR/HZZ%sTree_%s.root",channel,sample[sampleIndex].c_str());
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-    }
-  }else{
-    if(sampleIndex==3){
-      // Standard location of these files still being arranged.
-      abort();
-//       sprintf(temp,"CJLSTtree_Jun25_2012/JHUsignal/HZZ*Tree_%s.root",sample[sampleIndex].c_str());
-//       bkgMC->Add(temp);
-    }else{
-      //      sprintf(temp,"CJLSTtrees_June27_2012/7plus8TeV_FSR/HZZ*Tree_%s.root",sample[sampleIndex].c_str());
-      bkgMC->Add(filePath7TeV + "/2mu2e/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-      bkgMC->Add(filePath7TeV + "/4e/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-      bkgMC->Add(filePath7TeV + "/4mu/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-      bkgMC->Add(filePath8TeV + "/2mu2e/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-      bkgMC->Add(filePath8TeV + "/4e/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-      bkgMC->Add(filePath8TeV + "/4mu/HZZ4lTree_" +  sample[sampleIndex] + ".root");
-    }
+  if (isLowMass) {
+    buildChain(bkgMC, channel, sampleIndex);
+  } else {
+    buildChain(bkgMC, "2e2mu", sampleIndex);
+    buildChain(bkgMC, "4e", sampleIndex);
+    buildChain(bkgMC, "4mu", sampleIndex);
   }
-  
+
   cout << "Chain for " << channel << " " << sampleIndex << " " << isLowMass << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
