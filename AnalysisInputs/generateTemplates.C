@@ -26,12 +26,8 @@ bool makePSTemplate = false;
 
 bool extendToHighMass = false; // Include signal samples above 600 GeV
 
-
-
-const int mZZbins=350;
-int lowMzz=100;
-int highMzz=800;
-int lowM2=12;
+float highMzz=(extendToHighMass?1000:800);
+float mBinSize=2.;
 
 
 //=======================================================================
@@ -203,6 +199,8 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
 
   TString chPath = (channel=="2e2mu"?"2mu2e":channel); // Adapt to different naming convention...
 
+  //An error is issued on missing files; if a single file is missing in one set it can be safely ignored.
+
   if(sampleIndex==0){
     //7TeV
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
@@ -218,7 +216,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H210.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H220.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H250.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H275.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H275.root"); // Missing in 240612
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H300.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H325.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H350.root");
@@ -226,10 +224,10 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H425.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H450.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H475.root");
-    //    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H525.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H525.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H550.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H575.root");
-
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H600.root");
     if (extendToHighMass) {
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H600.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H650.root");
@@ -344,9 +342,9 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   
   TH2F* bkgHist;
   if(!isLowMass)
-    bkgHist = new TH2F("bkgHisto","bkgHisto",310,180,800,30,0,1);
+    bkgHist = new TH2F("bkgHisto","bkgHisto",int((highMzz-180.)/mBinSize+0.5),180,highMzz,30,0,1);
   else
-    bkgHist = new TH2F("bkgHisto","bkgHisto",40,100,180,30,0,1);
+    bkgHist = new TH2F("bkgHisto","bkgHisto",int((180-100)/mBinSize+0.5),100,180,30,0,1);
 
   bkgHist->Sumw2();
 
@@ -364,8 +362,8 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 
   }
 
-  int nXbins=(isLowMass)?40:310;
-  int nYbins=30;
+  int nXbins=bkgHist->GetNbinsX();
+  int nYbins=bkgHist->GetNbinsY();
     
   // normalize slices
 
@@ -389,14 +387,14 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 
   if(!isLowMass){
     
-    int binMzz;
     int effectiveArea=1;
     double average=0,binsUsed=0;
 
     for(int i=1; i<=nXbins; i++){
       for(int j=1; j<=nYbins; j++){
 	
-	binMzz=(i-1)*2+181;
+	//	binMzz=(i-1)*2+181;
+	float binMzz = bkgHist->GetBinCenter(i);
 
 	if( binMzz<300 ) continue;
 	if( binMzz>=300 && binMzz<350 ) effectiveArea=1;
@@ -439,20 +437,26 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 //=======================================================================
 
 TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
-  
-  TH2F* h_mzzD = new TH2F("h_mzzD","h_mzzD",350,100,800,30,0,1);
-  
+
+  int nYbins=lowTemp->GetNbinsY();
+  if (highTemp->GetNbinsY()!=nYbins) {
+    cout << "ERROR: mergeTemplates: incorrect binning " << endl;
+    abort();
+  }
+
+  TH2F* h_mzzD = new TH2F("h_mzzD","h_mzzD",int((highMzz-100.)/mBinSize +0.5),100,highMzz,nYbins,0,1);
+
   // copy lowmass into h_mzzD
-  for(int i=1; i<=40; i++){
-    for(int j=1; j<=30; j++){
+  for(int i=1; i<=lowTemp->GetNbinsX(); ++i){
+    for(int j=1; j<=nYbins; ++j){
       h_mzzD->SetBinContent(i,j, lowTemp->GetBinContent(i,j)  );
     }// end loop over D
   }// end loop over mZZ
 
   // copy high mass into h_mzzD
-  for(int i=1; i<=310; i++){
-    for(int j=1; j<=30; j++){
-      h_mzzD->SetBinContent(i+40,j, highTemp->GetBinContent(i,j)  );
+  for(int i=1; i<=highTemp->GetNbinsX(); ++i){
+    for(int j=1; j<=nYbins; ++j){
+      h_mzzD->SetBinContent(i+lowTemp->GetNbinsX(),j, highTemp->GetBinContent(i,j)  );
     }// end loop over D
   }// end loop over mZZ
 
