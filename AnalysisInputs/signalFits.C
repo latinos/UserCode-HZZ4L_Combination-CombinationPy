@@ -86,7 +86,7 @@ void signalFits(int channel, int sqrts)
   }
   else abort();
 
-  filePath.Append(schannel);
+  filePath.Append(schannel=="2e2mu"?"2mu2e":schannel);
 
   //Prepare to store all the shape parameters for the mass points	
   const int arraySize=200;
@@ -129,17 +129,22 @@ void signalFits(int channel, int sqrts)
 
     //Set the observable and get the RooDataSomething
     RooRealVar ZZMass("ZZMass","ZZMass",low_M,high_M);
-    RooDataSet *set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass));
+    RooRealVar MC_weight("MC_weight","MC_weight",0.,10.);
+
+    if(channel == 2) ZZMass.setBins(50);
+    if(channel == 3) ZZMass.setBins(50);
+
+    RooDataSet *set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
     RooDataHist *set = (RooDataHist*)set2->binnedClone("datahist","datahist");
 
     //Theoretical signal model  
     RooRealVar MHStar("MHStar","MHStar",masses[i],0.,2000.);
     MHStar.setConstant(true);
-    RooRealVar Gamma_TOT("Gamma_TOT","Gamma_TOT",valueWidth,0.,500.);
-    Gamma_TOT.setConstant(true);
+    RooRealVar Gamma_TOT("Gamma_TOT","Gamma_TOT",valueWidth,0.,700.);
+    //Gamma_TOT.setConstant(true);
     
-    //RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@1,2)-pow(@0,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
-    RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@1,2)-pow(@0,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    //RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
 
     //Experimental resolution
     RooRealVar meanCB("meanCB","meanCB",0.,-20.,20.);
@@ -161,7 +166,7 @@ void signalFits(int channel, int sqrts)
     sigPDF.setBufferFraction(0.2);
 
     //Fit the shape
-    RooFitResult *fitRes = sigPDF.fitTo(*set,Save(1));
+    RooFitResult *fitRes = sigPDF.fitTo(*set,Save(1), SumW2Error(kTRUE));
 
     a_fitEDM[i] = fitRes->edm();
     a_fitCovQual[i] = fitRes->covQual();
