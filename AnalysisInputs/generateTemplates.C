@@ -52,7 +52,7 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
   const int numPoints=8;
 
   double low[numPoints]   ={100.,        120.,        140.,         160.,     180.  };
-  double high[numPoints]  ={120.,        140.,        160.,         180.,     1000. };
+  double high[numPoints]  ={120.,        140.,        160.,         180.,     1002. };
 
   /* ================ systematics for pseudoMELA ==========================
   double slope[numPoints] ={-3.32705e-01, -1.90814e-01, -9.77189e-01, -3.81680e-01, 0.0 };
@@ -70,7 +70,9 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
 
     // choose correct scale factor
     for(int p=0; p<numPoints; p++){
-      if( (i*2.+101.)>=low[p] && (i*2.+101.)<high[p] ){
+      //float m=(i*2.+101.); // NA: This is the center of bin i+1 and not of bin i... why?
+      float m=temp->GetBinCenter(i+1); 
+      if( m>=low[p] && m<high[p] ){
 	point = p;
       }
     }
