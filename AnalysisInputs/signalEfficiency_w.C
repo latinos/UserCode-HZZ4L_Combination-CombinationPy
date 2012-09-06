@@ -32,19 +32,6 @@ using namespace ROOT::Math;
 //<----------
 
 
-//--------------------
-// The number and values of mass points for which you have the trees, for 7 and 8 TeV
-const int nPoints7TeV = 21;
-int masses7TeV[nPoints7TeV]   = {120,130,140,150,160,170,180,200,210,220,250,300,325,350,400,425,450,475,525,550,575};
-double mHVal7TeV[nPoints7TeV] = {120,130,140,150,160,170,180,200,210,220,250,300,325,350,400,425,450,475,525,550,575};
-
-const int nPoints8TeV = 29;
-int masses8TeV[nPoints8TeV]   = {115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,145,150,180,200,250,300,325,350,400,450,500,550,600};
-double mHVal8TeV[nPoints8TeV] = {115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,145,150,180,200,250,300,325,350,400,450,500,550,600};
-
-//--------------------
-
-
 void signalEfficiency_w(int channel, double sqrts);
 
 
