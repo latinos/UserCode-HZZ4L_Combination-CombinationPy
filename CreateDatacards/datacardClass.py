@@ -145,6 +145,9 @@ class datacardClass:
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
         self.high_M = min( (self.mH + 15.*self.windowVal), 800.0)
+
+        #self.low_M = 100.0
+        #self.high_M = 800.0
        
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
@@ -260,8 +263,8 @@ class datacardClass:
         sig_VBF = ROOT.RooFFTConvPdf("sig_VBF","BW (X) CB",CMS_zz4l_mass,signalBW_VBF,signalCB_VBF, 2)
         
         signalCB_WH = ROOT.RooCBShape("signalCB_WH","signalCB_WH",CMS_zz4l_mass,self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB,self.bUseCBnoConvolution),rfv_sigma_CB,rfv_alpha_CB,rfv_n_CB)
-        signalBW_WH = ROOT.RooRelBWUFParam("signalBW_WH", "signalBW_WH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale);
-        sig_WH = ROOT.RooFFTConvPdf("sig_WH","BW (X) CB",CMS_zz4l_mass,signalBW_WH,signalCB_WH, 2);
+        signalBW_WH = ROOT.RooRelBWUFParam("signalBW_WH", "signalBW_WH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        sig_WH = ROOT.RooFFTConvPdf("sig_WH","BW (X) CB",CMS_zz4l_mass,signalBW_WH,signalCB_WH, 2)
         
         signalCB_ZH = ROOT.RooCBShape("signalCB_ZH","signalCB_ZH",CMS_zz4l_mass,self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB,self.bUseCBnoConvolution),rfv_sigma_CB,rfv_alpha_CB,rfv_n_CB)
         signalBW_ZH = ROOT.RooRelBWUFParam("signalBW_ZH", "signalBW_ZH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
@@ -280,7 +283,7 @@ class datacardClass:
         
         ## --------------------------- MELA 2D PDFS ------------------------- ##
 
-        D = ROOT.RooRealVar("melaLD","melaLD",0,1);
+        D = ROOT.RooRealVar("melaLD","melaLD",0,1)
     
         templateSigName = "templates2D/Dsignal_{0}.root".format(self.appendName)
         
@@ -375,7 +378,7 @@ class datacardClass:
         
         morphVarListSig = ROOT.RooArgList()
     
-        if(self.sigMorph): morphVarListSig.add(alphaMorphSig);  ## just one morphing for all signal processes (fully correlated systematics)
+        if(self.sigMorph): morphVarListSig.add(alphaMorphSig)  ## just one morphing for all signal processes (fully correlated systematics)
         
         TemplateName = "sigTemplateMorphPdf_ggH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         sigTemplateMorphPdf_ggH = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,CMS_zz4l_mass,D,true,funcList_ggH,morphVarListSig,1.0,1)
@@ -488,7 +491,7 @@ class datacardClass:
         CMS_qqzzbkg_a12.setConstant(True)
         CMS_qqzzbkg_a13.setConstant(True)
         
-        bkg_qqzz = ROOT.RooqqZZPdf_v2("bkg_qqzz","bkg_qqzz",CMS_zz4l_mass,CMS_qqzzbkg_a0,CMS_qqzzbkg_a1,CMS_qqzzbkg_a2,CMS_qqzzbkg_a3,CMS_qqzzbkg_a4,CMS_qqzzbkg_a5,CMS_qqzzbkg_a6,CMS_qqzzbkg_a7,CMS_qqzzbkg_a8,CMS_qqzzbkg_a9,CMS_qqzzbkg_a10,CMS_qqzzbkg_a11,CMS_qqzzbkg_a12,CMS_qqzzbkg_a13);
+        bkg_qqzz = ROOT.RooqqZZPdf_v2("bkg_qqzz","bkg_qqzz",CMS_zz4l_mass,CMS_qqzzbkg_a0,CMS_qqzzbkg_a1,CMS_qqzzbkg_a2,CMS_qqzzbkg_a3,CMS_qqzzbkg_a4,CMS_qqzzbkg_a5,CMS_qqzzbkg_a6,CMS_qqzzbkg_a7,CMS_qqzzbkg_a8,CMS_qqzzbkg_a9,CMS_qqzzbkg_a10,CMS_qqzzbkg_a11,CMS_qqzzbkg_a12,CMS_qqzzbkg_a13)
         
         ## ggZZ contribution
         name = "CMS_ggzzbkg_a0_{0:.0f}_{1:.0f}".format( self.channel, self.sqrts ) 
@@ -622,7 +625,7 @@ class datacardClass:
         
         czz = ROOT.TCanvas( "czz", "czz", 750, 700 )
         czz.cd()
-        zzframe_s = CMS_zz4l_mass.frame(45);
+        zzframe_s = CMS_zz4l_mass.frame(45)
         if self.bUseCBnoConvolution: super(ROOT.RooCBShape,signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
         else: super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
         super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
@@ -985,12 +988,23 @@ class datacardClass:
         if not self.ggZZ_chan:  bkgRate_ggzz_Shape = 0
         if not self.zjets_chan: bkgRate_zjets_Shape = 0
 
-        rates_Shape = array('d',[sigRate_ggH_Shape,sigRate_VBF_Shape,sigRate_WH_Shape,sigRate_ZH_Shape,sigRate_ttH_Shape,bkgRate_qqzz_Shape,bkgRate_ggzz_Shape,bkgRate_zjets_Shape])
+        rates = {}
+        rates['ggH'] = sigRate_ggH_Shape
+        rates['qqH'] = sigRate_VBF_Shape
+        rates['WH']  = sigRate_WH_Shape
+        rates['ZH']  = sigRate_ZH_Shape
+        rates['ttH'] = sigRate_ttH_Shape
 
+        rates['qqZZ']  = bkgRate_qqzz_Shape
+        rates['ggZZ']  = bkgRate_ggzz_Shape
+        rates['zjets'] = bkgRate_zjets_Shape
+        rates['ttbar'] = 0
+        rates['zbb']   = 0
+        
 
         ## Write Datacards
         fo = open( name_Shape, "wb")
-        self.WriteDatacard(fo, name_ShapeWS2, rates_Shape, data_obs.numEntries(), self.is2D )
+        self.WriteDatacard(fo,theInputs, name_ShapeWS2, rates, data_obs.numEntries(), self.is2D )
         systematics.WriteSystematics(fo, theInputs)
         systematics.WriteShapeSystematics(fo,theInputs)
         fo.close()
@@ -1000,14 +1014,14 @@ class datacardClass:
         else: name_Shape = "{0}/HCG_XSxBR/{2:.0f}/hzz4l_{1}S_{3:.0f}TeV.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts)
             
         fo = open( name_Shape, "wb" )
-        self.WriteDatacard(fo, name_ShapeWS2, rates_Shape, data_obs.numEntries(), self.is2D )
+        self.WriteDatacard(fo, theInputs,name_ShapeWS2, rates, data_obs.numEntries(), self.is2D )
         systematics_forXSxBR.WriteSystematics(fo, theInputs)
         systematics_forXSxBR.WriteShapeSystematics(fo,theInputs)
         fo.close()
         
 
 
-    def WriteDatacard(self,file,nameWS,rates,obsEvents,is2D):
+    def WriteDatacard(self,file,theInputs,nameWS,theRates,obsEvents,is2D):
 
         file.write("imax 1\n")
         file.write("jmax 7\n")
@@ -1022,25 +1036,77 @@ class datacardClass:
         
         file.write("------------\n")
         file.write("## mass window [{0},{1}] \n".format(self.low_M,self.high_M))
+        file.write("bin ")        
+
+        channelList=['ggH','qqH','WH','ZH','ttH','qqZZ','ggZZ','zjets','ttbar','zbb']
+
+        channelName1D=['ggH','qqH','WH','ZH','ttH','bkg_qqzz','bkg_ggzz','bkg_zjets','bkg_ttbar','bkg_zbb']
+        channelName2D=['ggH','qqH','WH','ZH','ttH','bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets','bkg2d_ttbar','bkg2d_zbb']
         
-        file.write("bin ")
-        for i in range(0,8): file.write("a{0} ".format(self.channel))
+        for chan in channelList:
+            if theInputs[chan]:
+                file.write("a{0} ".format(self.channel))                
         file.write("\n")
-        
+                                        
+        file.write("process ")
+
+        i=0
         if not self.is2D:
-            file.write("process ggH qqH WH ZH ttH bkg_qqzz bkg_ggzz bkg_zjets\n")
+            for chan in channelList:
+                if theInputs[chan]:
+                    file.write("{0} ".format(channelName1D[i]))
+                i+=1
         else:
-            file.write("process ggH qqH WH ZH ttH bkg2d_qqzz bkg2d_ggzz bkg2d_zjets\n")
+            for chan in channelList:
+                if theInputs[chan]:
+                    file.write("{0} ".format(channelName2D[i]))
+                i+=1
+        
+        file.write("\n")
             
-        file.write("process -4 -3 -2 -1 0 1 2 3\n")
+        processLine = "process "
+        numberSig = self.numberOfSigChan(theInputs)
+        numberBg  = self.numberOfBgChan(theInputs)
+
+        for x in range(-numberSig+1,1):
+            processLine += "{0} ".format(x)
+
+        for y in range(1,numberBg+1):
+            processLine += "{0} ".format(y)
+
+        file.write(processLine)
+        file.write("\n")
             
         file.write("rate ")
-        for i in range(0,8): file.write("{0:.4f} ".format(rates[i]))
+        for chan in channelList:
+            if theInputs[chan]:
+                file.write("{0:.4f} ".format(theRates[chan]))
         file.write("\n")
         file.write("------------\n")
 
 
+        
+    def numberOfSigChan(self,inputs):
 
+        counter=0
 
+        if inputs['ggH']: counter+=1
+        if inputs['qqH']: counter+=1
+        if inputs['WH']:  counter+=1
+        if inputs['ZH']:  counter+=1
+        if inputs['ttH']: counter+=1
 
+        return counter
+
+    def numberOfBgChan(self,inputs):
+
+        counter=0
+
+        if inputs['qqZZ']:  counter+=1
+        if inputs['ggZZ']:  counter+=1
+        if inputs['zjets']: counter+=1
+        if inputs['ttbar']: counter+=1
+        if inputs['zbb']:   counter+=1
+        
+        return counter
 
