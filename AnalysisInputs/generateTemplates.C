@@ -231,7 +231,6 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H575.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H600.root");
     if (extendToHighMass) {
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H600.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H650.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H700.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H750.root");
