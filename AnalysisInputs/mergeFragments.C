@@ -49,6 +49,10 @@ void mergeFragments(int channel, int sqrts, double lumi) {
   TString outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "/inputs_" +  schannel + ".txt";
   ofstream of(outfile,ios_base::out);
 
+  float lumiUnc = 0;
+  if      (sqrts==7) lumiUnc = 1.022;
+  else if (sqrts==8) lumiUnc = 1.05;
+    
 
   of << "############## Inputs for " << schannel << " for " << sqrts << " TeV ##############" << endl
      << "## SM ##"                 << endl
@@ -59,6 +63,7 @@ void mergeFragments(int channel, int sqrts, double lumi) {
      <<                               endl
      << "## lumi ##"               << endl
      << "lumi " << lumi            << endl
+     << "systematic lumiUnc " <<  lumiUnc << endl
      <<                               endl
      << "## sqrtS ##"              << endl
      << "sqrts " << sqrts          << endl
