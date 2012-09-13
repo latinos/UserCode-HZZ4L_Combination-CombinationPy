@@ -31,8 +31,6 @@
 #include "RooPlot.h"
 */
 
-#include "HZZ4LRooPdfs.cc"
-
 //----------> SET INPUT VARIABLES in Config.h
 #include "Config.h"
 //<----------
@@ -66,7 +64,7 @@ void signalFits(int channel, int sqrts)
   string schannel;
   if (channel == 1) schannel = "4mu";
   if (channel == 2) schannel = "4e";
-  if (channel == 3) schannel = "2mu2e";
+  if (channel == 3) schannel = "2e2mu";
   cout << "Final state = " << schannel << " and sqrt(s) = " << sqrts << endl;
 
   //Pick the correct mass points and paths
@@ -141,10 +139,10 @@ void signalFits(int channel, int sqrts)
     RooRealVar MHStar("MHStar","MHStar",masses[i],0.,2000.);
     MHStar.setConstant(true);
     RooRealVar Gamma_TOT("Gamma_TOT","Gamma_TOT",valueWidth,0.,700.);
-    //Gamma_TOT.setConstant(true);
+    Gamma_TOT.setConstant(true);
     
-    RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@1,2)-pow(@0,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
-    //RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    //RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@1,2)-pow(@0,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
 
     //Experimental resolution
     RooRealVar meanCB("meanCB","meanCB",0.,-20.,20.);
