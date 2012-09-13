@@ -6,10 +6,14 @@ cvs co HiggsAnalysis/CombinedLimit
 scram b -j4
 cd ../..
 cp -r HCG CMSSW_5_2_5/src
-cp -r RunLimits/scripts/* CMSSW_5_2_4/src/HCG
+cp -r RunLimits/scripts/* CMSSW_5_2_5/src/HCG
 cd CMSSW_5_2_5/src/HCG
 mkdir results
 mkdir plots 
+
+(if running for 7+8TeV cards, you can copy just the 7TeV HCG and then from that HCG dir do,
+for d in $(ls .); do echo $d; cp <path to other HCG>/HCG/$d/* $d; done to cp all the cards into one HCG dir)
+
 
 ###Step1###
 #Make combined cards and binary workspaces
@@ -30,7 +34,7 @@ This script uses other scripts to batch to a pbs scheduler, through makeLimits.p
 
 --->./make_parallel_limit.sh <type> <massfile> <options>
 
-type = ASCLS, PLP, PLPE, ML
+type = ASCLS, PLP, PLPE, PLS, PLSE, ML
 options = <nothing>-default, -s for strict
 
 
