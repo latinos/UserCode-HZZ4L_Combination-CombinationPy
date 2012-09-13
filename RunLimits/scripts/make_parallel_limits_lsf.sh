@@ -29,7 +29,7 @@ fi
 for m in $(cat $MASSFILE); 
   do
 
-  bsub -q 1nh -o ${m}/lsflog.txt makeLimits.lsf.sh ${TYPE} ${m} ${OPTIONS}
+  bsub -q 1nh -o ${m}/lsflog_${TYPE}.txt makeLimits.lsf.sh ${TYPE} ${m} ${OPTIONS}
 
 done
 
