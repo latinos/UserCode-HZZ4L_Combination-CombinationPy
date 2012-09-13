@@ -28,6 +28,7 @@ class inputReader:
         # sqrts
         self.sqrts = -999.9
         # channels
+        self.all_chan = False
         self.ggH_chan = False
         self.qqH_chan = False
         self.WH_chan = False
@@ -133,7 +134,8 @@ class inputReader:
         self.useCMS_zz4l_mean = False
         self.useCMS_zz4l_sigma = False
         self.useCMS_zz4l_n = False
-
+        self.doHypTest = False
+        self.altHypLabel = ""
         
 
     def goodEntry(self,variable):
@@ -162,7 +164,7 @@ class inputReader:
                 if f[1].upper() == "SM": self.model = "SM"
                 elif f[1].upper() == "SM4": self.model = "SM4"
                 elif f[1].upper() == "FF" or f[1].upper() == "FP": self.model = "FF"
-                else : raise RuntimeError, "Unknow model {0}, choices are SM, SM4, or FF".format(f[1].upper()) 
+                else : raise RuntimeError, "Unknow model {0}, choices are SM, SM4, FF".format(f[1].upper()) 
 
             if f[0].lower().startswith("decay"):
 
@@ -185,8 +187,10 @@ class inputReader:
                     elif chan.lower().startswith("zjets"): self.zjets_chan = True
                     elif chan.lower().startswith("ttbar"): self.ttbar_chan = True
                     elif chan.lower().startswith("zbb"):   self.zbb_chan = True
+                    elif chan.lower().startswith("all"):   self.all_chan = True
                     else : raise RuntimeError, "Unknown channel {0}, choices are ggH, qqH, WH, ZH, ttH, qqZZ, ggZZ, zjets".format(chan)
-                    
+          
+            
             if f[0].lower().startswith("rate"):
                 
                 if f[1].lower().startswith("qqzz"):
@@ -348,24 +352,23 @@ class inputReader:
                 
                     
             if f[0].lower().startswith("lumi"):
-
                 self.lumi = float(f[1])
 
             if f[0].lower().startswith("sqrts"):
-
                 self.sqrts = float(f[1])
-
-
-    
-
-
+                
+            if f[0].lower().startswith("doHypTest"):
+                self.doHypTest = self.parseBoolString(f[1])
+            if f[0].lower().startswith("altHypLabel"):
+                self.altHypLabel = f[1]
 
     def getInputs(self):
 
         dict = {}
 
         ## check settings ##
-
+        if self.all_chan and ( self.qqH_chan or self.ggH_chan or self.WH_chan or self.ZH_chan or self.ttH_chan):
+            raise RuntimeError, "You cannot request to execute ALL signal channels and single channels at the same time. Check inputs!"
         if not self.goodEntry(self.sqrts): raise RuntimeError, "{0} is not set.  Check inputs!".format("sqrts")
 
         if self.qqZZ_chan and not self.goodEntry(self.qqZZ_rate): raise RuntimeError, "{0} is not set.  Check inputs!".format("qqZZ_rate")
@@ -446,7 +449,11 @@ class inputReader:
             raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_sigma_e_sig")
         if not self.goodEntry(self.CMS_zz4l_n_sig) and self.useCMS_zz4l_n:
             raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_n_sig")
-          
+
+
+        if self.doHypTest and not self.all_chan:
+            raise RuntimeError,"You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs !"
+        
         ## Set dictionary entries to be passed to datacard class ##
         
         dict['decayChannel'] = int(self.decayChan)
@@ -454,6 +461,7 @@ class inputReader:
         dict['lumi'] = float(self.lumi)
         dict['sqrts'] = float(self.sqrts)
 
+        dict['all'] = self.all_chan
         dict['ggH'] = self.ggH_chan
         dict['qqH'] = self.qqH_chan
         dict['WH'] = self.WH_chan
@@ -464,7 +472,7 @@ class inputReader:
         dict['zjets'] = self.zjets_chan
         dict['ttbar'] = self.ttbar_chan
         dict['zbb'] = self.zbb_chan
-
+       
         dict['qqZZ_rate'] = self.qqZZ_rate
         dict['ggZZ_rate'] = self.ggZZ_rate
         dict['zjets_rate'] = self.zjets_rate
@@ -562,8 +570,10 @@ class inputReader:
         dict['CMS_zz4l_sigma_m_sig'] = float(self.CMS_zz4l_sigma_m_sig) 
         dict['CMS_zz4l_mean_e_sig'] = float(self.CMS_zz4l_mean_e_sig) 
         dict['CMS_zz4l_sigma_e_sig'] = float(self.CMS_zz4l_sigma_e_sig)
-        dict['CMS_zz4l_n_sig'] = float(self.CMS_zz4l_n_sig) 
+        dict['CMS_zz4l_n_sig'] = float(self.CMS_zz4l_n_sig)
 
+        dict['doHypTest'] = self.doHypTest
+        dict['altHypLabel'] = str(self.altHypLabel)
         
         return dict
 

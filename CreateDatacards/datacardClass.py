@@ -48,11 +48,14 @@ class datacardClass:
     def makeXsBrFunction(self,signalProc,rrvMH):
             
         procName = "ggH"
+        if(signalProc == 0): procName = "ggH" #dummy, when you sum up all the 5 chans
         if(signalProc == 1): procName = "ggH"
         if(signalProc == 2): procName = "qqH"
         if(signalProc == 3): procName = "WH"
         if(signalProc == 4): procName = "ZH"
         if(signalProc == 5): procName = "ttH"
+
+        
         
         
         channelName = ""
@@ -60,7 +63,8 @@ class datacardClass:
         elif (self.channel == self.ID_4e): channelName = "4e"
         elif (self.channel == self.ID_2e2mu): channelName = "2e2mu"
         else: print "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)" 
-        
+
+     
         
         myCSWrhf = HiggsCSandWidth()
         
@@ -74,9 +78,17 @@ class datacardClass:
                 BR = myCSWrhf.HiggsBR(13,mHVal)
             else:
                 BR = myCSWrhf.HiggsBR(12,mHVal)
-            histXsBr.SetBinContent(i, myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts) * BR)
 
-            
+            if (signalProc==0):
+                totXs=0
+                for ch in range(1,6):
+                    totXs+=myCSWrhf.HiggsCS(ch, mHVal, self.sqrts)
+                histXsBr.SetBinContent(i, totXs * BR)
+            else:
+                histXsBr.SetBinContent(i, myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts) * BR)
+
+#            print '\nmakeXsBrFunction : procName=',procName,'   signalProc=',signalProc,'  mH (input)=',rrvMH.getVal(),
+#            print '   CS=',myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts),'   BR=',BR
             
         rdhname = "rdhXsBr_{0}_{1}_{2}".format(procName,self.channel,self.sqrts)
         rdhXsBr = RooDataHist(rdhname,rdhname, ROOT.RooArgList(rrvMH), histXsBr)  
@@ -92,7 +104,7 @@ class datacardClass:
             return falseVar
     
     # main datacard and workspace function
-    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs):
+    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D"):
 
         ## --------------- SETTINGS AND DECLARATIONS --------------- ##
         DEBUG = False
@@ -104,9 +116,11 @@ class datacardClass:
         self.outputDir = theOutputDir
         self.sigMorph = theInputs['useCMS_zz4l_sigMELA']
         self.bkgMorph = theInputs['useCMS_zz4l_bkgMELA']
+        self.templateDir = theTemplateDir
         
         FactorizedShapes = False
 
+        self.all_chan = theInputs['all']
         self.ggH_chan = theInputs['ggH']
         self.qqH_chan = theInputs['qqH']
         self.WH_chan = theInputs['WH']
@@ -153,7 +167,23 @@ class datacardClass:
         elif (self.channel == self.ID_4e): self.appendName = '4e'
         elif (self.channel == self.ID_2e2mu): self.appendName = '2e2mu'
         else: print "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)"
-	
+
+        self.isAltSig = False
+        if (theInputs['doHypTest']):
+            self.isAltSig = True
+            
+        if self.isAltSig and not self.all_chan :
+            raise RuntimeError, "You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs ! (it should have already send you this error message, strange that  you are here...)"
+
+        if (not self.is2D and self.isAltSig):
+            raise RunTimeError, "Cannot perform hypothesis testing without a 2D analysis, feature not supported yet. Exiting."
+        
+
+        self.appendHypType = theInputs['altHypLabel']
+        if self.isAltSig and self.appendHypType=="" :
+            self.appendHypType = "_ALT"
+            
+        
         ## ------------------------- SYSTEMATICS CLASSES ----------------------------- ##
     
         systematics = systematicsClass( self.mH, False, self.isFSR, theInputs)
@@ -179,7 +209,10 @@ class datacardClass:
         sigma_CB_d = 0.0
         mean_BW_d = self.mH
         
-        rdhXsBrFuncV_1 = self.makeXsBrFunction(1,self.MH)
+        if(self.all_chan):
+            rdhXsBrFuncV_1 = self.makeXsBrFunction(0,self.MH)
+        else:
+            rdhXsBrFuncV_1 = self.makeXsBrFunction(1,self.MH)
         rhfname = "rhfXsBr_{0}_{1:.0f}_{2:.0f}".format("ggH",self.channel,self.sqrts)
         rhfXsBrFuncV_1 = ROOT.RooHistFunc(rhfname,rhfname, ROOT.RooArgSet(self.MH), rdhXsBrFuncV_1, 1)
         
@@ -283,9 +316,10 @@ class datacardClass:
         
         ## --------------------------- MELA 2D PDFS ------------------------- ##
 
-        D = ROOT.RooRealVar("melaLD","melaLD",0,1)
+        discVarName = "melaLD"
+        D = ROOT.RooRealVar(discVarName,discVarName,0,1)
     
-        templateSigName = "templates2D/Dsignal_{0}.root".format(self.appendName)
+        templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         
         sigTempFile = ROOT.TFile(templateSigName)
         sigTemplate = sigTempFile.Get("h_mzzD")
@@ -298,6 +332,7 @@ class datacardClass:
         sigTempDataHist_Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),sigTemplate_Up)
         TemplateName = "sigTempDataHist_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         sigTempDataHist_Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),sigTemplate_Down)
+
         
         TemplateName = "sigTemplatePdf_ggH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         sigTemplatePdf_ggH = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),sigTempDataHist)
@@ -340,6 +375,31 @@ class datacardClass:
         funcList_ZH  = ROOT.RooArgList()
         funcList_ttH = ROOT.RooArgList()
 
+
+        if(self.isAltSig):
+            #only ggH because if we do hypothesis testing we sum up over the channels in any case
+              templateSigName = "{0}/Dsignal{2}_{1}.root".format(self.templateDir,self.appendName, self.appendHypType)
+        
+              sigTempFile = ROOT.TFile(templateSigName)
+              sigTemplate = sigTempFile.Get("h_mzzD")
+              sigTemplate_Up = sigTempFile.Get("h_mzzD_up")
+              sigTemplate_Down = sigTempFile.Get("h_mzzD_dn")
+              
+              TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
+              sigTempDataHist_ALT = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),sigTemplate)
+              TemplateName = "sigTempDataHist_Up_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
+              sigTempDataHist_ALT_Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),sigTemplate_Up)
+              TemplateName = "sigTempDataHist_Down_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
+              sigTempDataHist_ALT_Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),sigTemplate_Down)
+              TemplateName = "sigTemplatePdf_ggH{2}_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts, self.appendHypType)
+              sigTemplatePdf_ggH_ALT = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),sigTempDataHist)
+              TemplateName = "sigTemplatePdf_ggH{2}_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts, self.appendHypType)
+              sigTemplatePdf_ggH_ALT_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),sigTempDataHist_Up)
+              TemplateName = "sigTemplatePdf_ggH{2}_Down_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
+              sigTemplatePdf_ggH_ALT_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),sigTempDataHist_Down)
+
+        funcList_ggH_ALT = ROOT.RooArgList() 
+
         if(self.sigMorph):
             
             funcList_ggH.add(sigTemplatePdf_ggH)
@@ -361,7 +421,10 @@ class datacardClass:
             funcList_ttH.add(sigTemplatePdf_ttH)
             funcList_ttH.add(sigTemplatePdf_ttH_Up)
             funcList_ttH.add(sigTemplatePdf_ttH_Down)  
-            
+            if(self.isAltSig):
+                funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT)
+                funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT_Up)
+                funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT_Down)
         else:
             
             funcList_ggH.add(sigTemplatePdf_ggH)
@@ -369,7 +432,8 @@ class datacardClass:
             funcList_WH.add(sigTemplatePdf_WH)
             funcList_ZH.add(sigTemplatePdf_ZH)
             funcList_ttH.add(sigTemplatePdf_ttH)
-      
+            if(self.isAltSig):
+                funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT)
     
         morphSigVarName = "CMS_zz4l_sigMELA_{0:.0f}".format(self.channel)
         alphaMorphSig = ROOT.RooRealVar(morphSigVarName,morphSigVarName,0,-20,20)
@@ -394,22 +458,25 @@ class datacardClass:
         
         TemplateName = "sigTemplateMorphPdf_ttH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         sigTemplateMorphPdf_ttH = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,CMS_zz4l_mass,D,true,funcList_ttH,morphVarListSig,1.0,1)
-    
-
+        if(self.isAltSig):
+            TemplateName = "sigTemplateMorphPdf_ggH{2}_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.appendHypType)
+            sigTemplateMorphPdf_ggH_ALT = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,CMS_zz4l_mass,D,true,funcList_ggH_ALT,morphVarListSig,1.0,1)
     
         sig2d_ggH = ROOT.RooProdPdf("sig2d_ggH","sig2d_ggH",ROOT.RooArgSet(sig_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(D)))
         sig2d_VBF = ROOT.RooProdPdf("sig2d_VBF","sig2d_VBF",ROOT.RooArgSet(sig_VBF),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(D)))
         sig2d_WH = ROOT.RooProdPdf("sig2d_WH","sig2d_WH",ROOT.RooArgSet(sig_WH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_WH),ROOT.RooArgSet(D)))
         sig2d_ZH = ROOT.RooProdPdf("sig2d_ZH","sig2d_ZH",ROOT.RooArgSet(sig_ZH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ZH),ROOT.RooArgSet(D)))
         sig2d_ttH = ROOT.RooProdPdf("sig2d_ttH","sig2d_ttH",ROOT.RooArgSet(sig_ttH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ttH),ROOT.RooArgSet(D)))
-        
+                
         sigCB2d_ggH = ROOT.RooProdPdf("sigCB2d_ggH","sigCB2d_ggH",ROOT.RooArgSet(signalCB_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(D)))
         sigCB2d_VBF = ROOT.RooProdPdf("sigCB2d_VBF","sigCB2d_VBF",ROOT.RooArgSet(signalCB_VBF),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(D)))
         sigCB2d_WH = ROOT.RooProdPdf("sigCB2d_WH","sigCB2d_WH",ROOT.RooArgSet(signalCB_WH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_WH),ROOT.RooArgSet(D)))
         sigCB2d_ZH = ROOT.RooProdPdf("sigCB2d_ZH","sigCB2d_ZH",ROOT.RooArgSet(signalCB_ZH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ZH),ROOT.RooArgSet(D)))
         sigCB2d_ttH = ROOT.RooProdPdf("sigCB2d_ttH","sigCB2d_ttH",ROOT.RooArgSet(signalCB_ttH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ttH),ROOT.RooArgSet(D)))
         
-
+        if(self.isAltSig):
+            sig2d_ggH_ALT = ROOT.RooProdPdf("sig2d_ggH{0}".format(self.appendHypType),"sig2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(sig_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(D)))
+            sigCB2d_ggH_ALT = ROOT.RooProdPdf("sigCB2d_ggH{0}".format(self.appendHypType),"sigCB2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(signalCB_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(D)))            
 
         ## -------------------------- BACKGROUND SHAPES ---------------------------------- ##
     
@@ -564,7 +631,7 @@ class datacardClass:
 
         ## ----------------- 2D BACKGROUND SHAPES --------------- ##
         
-        templateBkgName = "templates2D/Dbackground_qqZZ_{0}.root".format(self.appendName)
+        templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         bkgTempFile = ROOT.TFile(templateBkgName)
         bkgTemplate = bkgTempFile.Get("h_mzzD")
         bkgTemplate_Up = bkgTempFile.Get("h_mzzD_up")
@@ -577,7 +644,7 @@ class datacardClass:
         TemplateName = "bkgTempDataHist_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         bkgTempDataHist_Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),bkgTemplate_Down)
         
-        templateggBkgName = "templates2D/Dbackground_ggZZ_{0}.root".format(self.appendName)
+        templateggBkgName = "{0}/Dbackground_ggZZ_{1}.root".format(self.templateDir ,self.appendName)
         ggbkgTempFile = ROOT.TFile(templateggBkgName)
         ggbkgTemplate = ggbkgTempFile.Get("h_mzzD")
         TemplateName = "ggbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
@@ -756,24 +823,28 @@ class datacardClass:
         rrvNormSig = ROOT.RooRealVar(normSigName,normSigName, self.getVariable(signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),self.bUseCBnoConvolution))
         rrvNormSig.setConstant(True)
 
-        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+      #  rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ggH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+
+        print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
         
-        
-        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_VBF.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_VBF.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
+        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_VBF),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
                          
 
-        rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_WH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_WH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
+        rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_WH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
                          
 
-        rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ZH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ZH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
+        rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ZH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
                          
 
-        rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ttH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ttH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_5))
+        rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ttH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_5))
                          
 
 
         print signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),"   ",sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal()
         print signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),"   ",sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal()
+        if (self.all_chan):
+            print "Requested to sum up over the 5 chans: the norm in rfvSigRate_ggH should be the sum of the values of sigRate_XYZ_Shape variables:"
         print " @@@@@@@ norm sig = ",rrvNormSig.getVal()
         print " @@@@@@@ rfvSigRate_ggH = ",rfvSigRate_ggH.getVal()
         print " sigRate_ggH_Shape=",sigRate_ggH_Shape
@@ -785,7 +856,7 @@ class datacardClass:
         print " sigRate_ZH_Shape=",sigRate_ZH_Shape
         print " @@@@@@@ rfvSigRate_ttH = ",rfvSigRate_ttH.getVal()
         print " sigRate_ttH_Shape=",sigRate_ttH_Shape
-        
+        print "Sum of sigRate_XYZ_Shape=",sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
         ## SET RATES TO 1 
         ## DC RATES WILL BE MULTIPLIED
         ## BY RATES IMPORTED TO WS
@@ -924,6 +995,9 @@ class datacardClass:
                 getattr(w,'import')(sigCB2d_WH, ROOT.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(sigCB2d_ZH, ROOT.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(sigCB2d_ttH, ROOT.RooFit.RecycleConflictNodes())
+                if(self.isAltSig):
+                    sigCB2d_ggH_ALT.SetNameTitle("ggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
+                    getattr(w,'import')(sigCB2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
         else:
                 
             if not self.is2D :
@@ -952,7 +1026,10 @@ class datacardClass:
                 getattr(w,'import')(sig2d_ZH,ROOT.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(sig2d_ttH,ROOT.RooFit.RecycleConflictNodes())            
         
-        
+                if(self.isAltSig):
+                    sig2d_ggH_ALT.SetNameTitle("ggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
+                    getattr(w,'import')(sig2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+
         if not self.is2D :
             getattr(w,'import')(bkg_qqzz, ROOT.RooFit.RecycleConflictNodes())
             getattr(w,'import')(bkg_ggzz, ROOT.RooFit.RecycleConflictNodes())
@@ -978,7 +1055,7 @@ class datacardClass:
         systematics_forXSxBR.setSystematics(bkgRate_qqzz_Shape, bkgRate_ggzz_Shape,bkgRate_zjets_Shape)
 
         ## If the channel is not declared in inputs, set rate = 0
-        if not self.ggH_chan:  sigRate_ggH_Shape = 0
+        if not self.ggH_chan and not self.all_chan :  sigRate_ggH_Shape = 0
         if not self.qqH_chan:  sigRate_VBF_Shape = 0
         if not self.WH_chan:   sigRate_WH_Shape = 0
         if not self.ZH_chan:   sigRate_ZH_Shape = 0
@@ -1008,7 +1085,16 @@ class datacardClass:
         systematics.WriteSystematics(fo, theInputs)
         systematics.WriteShapeSystematics(fo,theInputs)
         fo.close()
-        
+
+        if(self.isAltSig):
+            if (endsInP5): name_Shape = "{0}/HCG/{1}/hzz4l_{2}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts,self.appendHypType)
+            else: name_Shape = "{0}/HCG/{1:.0f}/hzz4l_{2}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts,self.appendHypType)
+            fo = open( name_Shape, "wb")
+            self.WriteDatacard(fo,theInputs, name_ShapeWS2, rates, data_obs.numEntries(), self.is2D,True,self.appendHypType )
+            systematics.WriteSystematics(fo, theInputs)
+            systematics.WriteShapeSystematics(fo,theInputs)
+            fo.close()
+
         ## forXSxBR
         if (endsInP5): name_Shape = "{0}/HCG_XSxBR/{2}/hzz4l_{1}S_{3:.0f}TeV.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts)	
         else: name_Shape = "{0}/HCG_XSxBR/{2:.0f}/hzz4l_{1}S_{3:.0f}TeV.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts)
@@ -1018,13 +1104,25 @@ class datacardClass:
         systematics_forXSxBR.WriteSystematics(fo, theInputs)
         systematics_forXSxBR.WriteShapeSystematics(fo,theInputs)
         fo.close()
+
+        if(self.isAltSig):
+            if (endsInP5): name_Shape = "{0}/HCG_XSxBR/{2}/hzz4l_{1}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts,self.appendHypType)	
+            else: name_Shape = "{0}/HCG_XSxBR/{2:.0f}/hzz4l_{1}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts,self.appendHypType)
+            fo = open( name_Shape, "wb")
+            self.WriteDatacard(fo,theInputs,name_ShapeWS2,rates,data_obs.numEntries(),self.is2D,True,self.appendHypType )
+            systematics.WriteSystematics(fo, theInputs)
+            systematics.WriteShapeSystematics(fo,theInputs)
+            fo.close()
         
 
 
-    def WriteDatacard(self,file,theInputs,nameWS,theRates,obsEvents,is2D):
+    def WriteDatacard(self,file,theInputs,nameWS,theRates,obsEvents,is2D,isAltCard=False,AltLabel=""):
+
+        numberSig = self.numberOfSigChan(theInputs)
+        numberBg  = self.numberOfBgChan(theInputs)
 
         file.write("imax 1\n")
-        file.write("jmax 7\n")
+        file.write("jmax {0}\n".format(numberSig+numberBg-1))
         file.write("kmax *\n")
         
         file.write("------------\n")
@@ -1042,10 +1140,22 @@ class datacardClass:
 
         channelName1D=['ggH','qqH','WH','ZH','ttH','bkg_qqzz','bkg_ggzz','bkg_zjets','bkg_ttbar','bkg_zbb']
         channelName2D=['ggH','qqH','WH','ZH','ttH','bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets','bkg2d_ttbar','bkg2d_zbb']
-        
+
+        if isAltCard :
+            channelName2D=['ggH{0}'.format(AltLabel),'bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets','bkg2d_ttbar','bkg2d_zbb']
+#            channelList=['ggH{0}'.format(AltLabel),'qqZZ','ggZZ','zjets','ttbar','zbb']
+
+        if theInputs["all"]:
+            channelList=['ggH','qqZZ','ggZZ','zjets','ttbar','zbb']
+            channelName2D=['ggH','bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets','bkg2d_ttbar','bkg2d_zbb']
+          
+         
         for chan in channelList:
             if theInputs[chan]:
-                file.write("a{0} ".format(self.channel))                
+                file.write("a{0} ".format(self.channel))
+            else:
+                if chan.startswith("ggH") and theInputs["all"] :
+                    file.write("a{0} ".format(self.channel))
         file.write("\n")
                                         
         file.write("process ")
@@ -1058,15 +1168,20 @@ class datacardClass:
                 i+=1
         else:
             for chan in channelList:
+#                print 'checking if ',chan,' is in the list of to-do'
                 if theInputs[chan]:
                     file.write("{0} ".format(channelName2D[i]))
-                i+=1
+#                    print 'writing in card index=',i,'  chan=',chan
+                    i+=1
+                else:
+                    if chan.startswith("ggH") and theInputs["all"] :
+                        file.write("{0} ".format(channelName2D[i]))
+#                        print 'writing in card TOTAL SUM, index=',i,'  chan=',chan,'  ',channelName2D[i]
+                        i+=1
         
         file.write("\n")
             
         processLine = "process "
-        numberSig = self.numberOfSigChan(theInputs)
-        numberBg  = self.numberOfBgChan(theInputs)
 
         for x in range(-numberSig+1,1):
             processLine += "{0} ".format(x)
@@ -1079,7 +1194,7 @@ class datacardClass:
             
         file.write("rate ")
         for chan in channelList:
-            if theInputs[chan]:
+            if theInputs[chan] or (chan.startswith("ggH") and theInputs["all"]):
                 file.write("{0:.4f} ".format(theRates[chan]))
         file.write("\n")
         file.write("------------\n")
@@ -1095,7 +1210,8 @@ class datacardClass:
         if inputs['WH']:  counter+=1
         if inputs['ZH']:  counter+=1
         if inputs['ttH']: counter+=1
-
+        if inputs['all']: counter+=1
+        
         return counter
 
     def numberOfBgChan(self,inputs):

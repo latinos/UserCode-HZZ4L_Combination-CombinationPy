@@ -134,8 +134,11 @@ class systematicsClass:
     def Write_Systematics_Line(self,systLine,theFile,theInputs):
         print "~~~~~~~~~~~~~~~~~"
         channelList=['ggH','qqH','WH','ZH','ttH','qqZZ','ggZZ','zjets','ttbar','zbb']
+        if theInputs["all"]:
+            channelList=['ggH','qqZZ','ggZZ','zjets','ttbar','zbb']
+        
         for chan in channelList:
-            if theInputs[chan]:
+            if theInputs[chan] or (chan.startswith("ggH") and theInputs["all"]):
                 print chan, systLine[chan]
                 theFile.write(systLine[chan])
         theFile.write("\n")
