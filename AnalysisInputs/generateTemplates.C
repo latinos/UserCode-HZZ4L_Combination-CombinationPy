@@ -49,10 +49,17 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
   double newTempValue=0;
   int point=-1;
 
-  const int numPoints=8;
-
+  /* ================ binning for pseudoMELA ==============================
+  const int numPoints=5;
   double low[numPoints]   ={100.,        120.,        140.,         160.,     180.  };
   double high[numPoints]  ={120.,        140.,        160.,         180.,     1002. };
+  =======================================================================*/
+
+  // ================ binning for pseudoMELA ==============================
+  const int numPoints=8;
+  double low[numPoints]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
+  double high[numPoints]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1002.};
+  // ======================================================================
 
   /* ================ systematics for pseudoMELA ==========================
   double slope[numPoints] ={-3.32705e-01, -1.90814e-01, -9.77189e-01, -3.81680e-01, 0.0 };
