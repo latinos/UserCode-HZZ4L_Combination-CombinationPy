@@ -71,13 +71,13 @@ def processCmd(cmd):
 def creationLoop(directory):
     global opt, args
     
-#    startMass=[ 110.0, 140.0, 160.0, 290.0, 350.0, 400.0 ]
-#    stepSizes=[ 0.5, 0.5, 2.0, 5.0, 10.0, 20.0 ]
-#    endVal=[ 60, 40, 65, 12, 5, 11 ]
+    startMass=[ 110.0, 140.0, 160.0, 290.0, 350.0, 400.0 ]
+    stepSizes=[ 0.5, 0.5, 2.0, 5.0, 10.0, 20.0 ]
+    endVal=[ 60, 40, 65, 12, 5, 11 ]
 
-    startMass=[ 125.0 ]
-    stepSizes=[ 0.5 ]
-    endVal=[ 1 ]
+#    startMass=[ 600.0 ]
+#    stepSizes=[ 0.5 ]
+#    endVal=[ 1 ]
 
     myClass = datacardClass()
     myClass.loadIncludes()
@@ -109,9 +109,6 @@ def creationLoop(directory):
             makeDirectory(directory+'/HCG_XSxBR/'+mhs)
 
             print mh
- #           myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4e,opt.isAltSig)
- #           myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4mu,opt.isAltSig)
- #           myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs2e2mu,opt.isAltSig)
             myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4e,opt.templateDir)
             myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4mu,opt.templateDir)
             myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs2e2mu,opt.templateDir)
