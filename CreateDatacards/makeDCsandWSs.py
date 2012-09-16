@@ -24,6 +24,7 @@ def parseOptions():
     parser.add_option('-a', '--append', dest='appendName', type='string', default="",    help='append name for cards dir')
     parser.add_option('-b', action='store_true', dest='noX', default=True ,help='no X11 windows')
     parser.add_option('-t', '--templateDir', type='string', dest='templateDir', default="templates2D" ,help='directory with 2D template histos')
+    parser.add_option('-e', '--massError',   dest='massError',       type='int',    default=0,     help='massError (default:0)')
 
     
     # store options and arguments as global variables
@@ -71,13 +72,13 @@ def processCmd(cmd):
 def creationLoop(directory):
     global opt, args
     
-    startMass=[ 110.0, 140.0, 160.0, 290.0, 350.0, 400.0 ]
-    stepSizes=[ 0.5, 0.5, 2.0, 5.0, 10.0, 20.0 ]
-    endVal=[ 60, 40, 65, 12, 5, 11 ]
+#    startMass=[ 110.0, 140.0, 160.0, 290.0, 350.0, 400.0 ]
+#    stepSizes=[ 0.5, 0.5, 2.0, 5.0, 10.0, 20.0 ]
+#    endVal=[ 60, 40, 65, 12, 5, 11 ]
 
-#    startMass=[ 600.0 ]
-#    stepSizes=[ 0.5 ]
-#    endVal=[ 1 ]
+    startMass=[ 125.0 ]
+    stepSizes=[ 0.5 ]
+    endVal=[ 1 ]
 
     myClass = datacardClass()
     myClass.loadIncludes()
@@ -109,9 +110,9 @@ def creationLoop(directory):
             makeDirectory(directory+'/HCG_XSxBR/'+mhs)
 
             print mh
-            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4e,opt.templateDir)
-            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4mu,opt.templateDir)
-            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs2e2mu,opt.templateDir)
+            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4e,opt.templateDir, opt.massError)
+            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4mu,opt.templateDir,opt.massError)
+            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs2e2mu,opt.templateDir,opt.massError)
                           
             c += 1
             
