@@ -4,7 +4,7 @@
  * -set input paths variables in Config.h
  * -run with:
  * root -q -b generateTemplates.C+
- * 2D templates are written to 
+ * 2D templates are written to "destDir"
  *
  */
 
@@ -23,12 +23,14 @@
 //<----------
 
 bool makePSTemplate = false;
-
+bool makeAltSignal = false;
+const float melaCut=-1.0;
 bool extendToHighMass = false; // Include signal samples above 600 GeV
 
 float highMzz=(extendToHighMass?1000:800);
 float mBinSize=2.;
 
+const TString destDir = "../CreateDatacards/templates2D_AB/";//it must already exist
 
 //=======================================================================
 
@@ -49,27 +51,54 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
   double newTempValue=0;
   int point=-1;
 
-  /* ================ binning for pseudoMELA ==============================
-  const int numPoints=5;
-  double low[numPoints]   ={100.,        120.,        140.,         160.,     180.  };
-  double high[numPoints]  ={120.,        140.,        160.,         180.,     1002. };
-  =======================================================================*/
+
+  //  int numPtmp=0;
+  const int numPtmpPS=5;
+  const int numPtmp=8;
+
+  const int numPoints=makePSTemplate? numPtmpPS : numPtmp;
+  double low[numPoints] ;
+  double high[numPoints] ;
 
   // ================ binning for pseudoMELA ==============================
-  const int numPoints=8;
-  double low[numPoints]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
-  double high[numPoints]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1002.};
+  double lowBinsPS[numPtmpPS]   ={100.,        120.,        140.,         160.,     180.  };
+  double highBinsPS[numPtmpPS]  ={120.,        140.,        160.,         180.,     1002. };
+  // =======================================================================
+
+  // ================ binning for pseudoMELA ==============================
+  double lowBins[numPtmp]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
+  double highBins[numPtmp]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1002.};
   // ======================================================================
 
-  /* ================ systematics for pseudoMELA ==========================
-  double slope[numPoints] ={-3.32705e-01, -1.90814e-01, -9.77189e-01, -3.81680e-01, 0.0 };
-  double yIntr[numPoints] ={ 9.05727e-01, 9.95995e-01,  1.40367e+00,  1.12690,      1.0 }; 
-  ==================================================================*/
+
+  // ================ systematics for pseudoMELA ==========================
+  double slopePS_syst[numPtmpPS] ={-3.32705e-01, -1.90814e-01, -9.77189e-01, -3.81680e-01, 0.0 };
+  double yIntrPS_syst[numPtmpPS] ={ 9.05727e-01, 9.95995e-01,  1.40367e+00,  1.12690,      1.0 }; 
+  //  ==================================================================
 
   // ================ systematics for MELA ==========================
-  double slope[numPoints] ={4.71836e-01, 1.17671e-01, -3.81680e-01, -1.20481, -1.21944, -2.06928, -1.35337, 0.0 };
-  double yIntr[numPoints] ={6.83860e-01, 9.38454e-01, 1.12690,      1.24502,  1.72764,  2.11050,  1.52771,  1.0 }; 
+  double slope_syst[numPtmp] ={4.71836e-01, 1.17671e-01, -3.81680e-01, -1.20481, -1.21944, -2.06928, -1.35337, 0.0 };
+  double yIntr_syst[numPtmp] ={6.83860e-01, 9.38454e-01, 1.12690,      1.24502,  1.72764,  2.11050,  1.52771,  1.0 }; 
   //==================================================================
+
+  double slope[numPoints], yIntr[numPoints];
+
+  if(makePSTemplate){
+    for(int ib=0;ib<numPoints;ib++){
+      low[ib]=lowBinsPS[ib];
+      high[ib]=highBinsPS[ib];
+      slope[ib]=slopePS_syst[ib];
+      yIntr[ib]=yIntrPS_syst[ib];
+    }
+  }
+  else{
+    for(int ib=0;ib<numPoints;ib++){
+      low[ib]=lowBins[ib];
+      high[ib]=highBins[ib];
+      slope[ib]=slope_syst[ib];
+      yIntr[ib]=yIntr_syst[ib];
+    }
+  }
 
 
   for(int i=1; i<=temp->GetNbinsX(); i++){
@@ -128,23 +157,28 @@ TH2F* reweightForInterference(TH2F* temp){
   cout << "reweightForInterference" << endl;
 
   // for interference reweighting of MELA
-  TF1* reweightFunc = new TF1("reweightFunc","gaus",100,1000);
+  TF1* reweightFunc =0;
 
-  reweightFunc->SetParameter(0,0.354258);
-  reweightFunc->SetParameter(1,114.909);
-  reweightFunc->SetParameter(2,17.1512);
-
-  /* ===================================================
+  if(makePSTemplate){// or makeAltSignal
+  // ===================================================
   // for interference reweighting of pseudo-MELA
-  TF1* reweightFunc = new TF1("reweightFunc","([0]+[1]*(x-110) )*0.5*(1 + TMath::Erf([2]*(x -[3]) ))*0.5*(1 + TMath::Erf([4]*([5]-x) ))  ",100,200);
-
-  reweightFunc->SetParameter(0,-5.66409e-01);
-  reweightFunc->SetParameter(1, 1.22591e-02);
-  reweightFunc->SetParameter(2, 1.64942e+00);
-  reweightFunc->SetParameter(3, 1.10080e+02);
-  reweightFunc->SetParameter(4, 2.10905e+00);
-  reweightFunc->SetParameter(5, 1.78529e+02);
-  ==================================================== */
+    reweightFunc = new TF1("reweightFunc","([0]+[1]*(x-110) )*0.5*(1 + TMath::Erf([2]*(x -[3]) ))*0.5*(1 + TMath::Erf([4]*([5]-x) ))  ",100,200);
+    
+    reweightFunc->SetParameter(0,-5.66409e-01);
+    reweightFunc->SetParameter(1, 1.22591e-02);
+    reweightFunc->SetParameter(2, 1.64942e+00);
+    reweightFunc->SetParameter(3, 1.10080e+02);
+    reweightFunc->SetParameter(4, 2.10905e+00);
+    reweightFunc->SetParameter(5, 1.78529e+02);
+    //  ==================================================== 
+  }
+  else{
+    reweightFunc =new TF1("reweightFunc","gaus",100,1000);
+    
+    reweightFunc->SetParameter(0,0.354258);
+    reweightFunc->SetParameter(1,114.909);
+    reweightFunc->SetParameter(2,17.1512);
+  }
 
   TH2F* newTemp = new TH2F(*temp);
   
@@ -162,11 +196,11 @@ TH2F* reweightForInterference(TH2F* temp){
     // choose correct scale factor
 
     // for reweighting MELA
-    if(i<8){
-      slope=.354;
-    }else{
+    if(makePSTemplate || i>8){
       slope=reweightFunc->Eval((double)((i-1)*2+101));
     }
+    else      slope=.354;
+     
 
     /* ==============================================
     // for reweighting pseudo-MELA
@@ -317,7 +351,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
     bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
 
     
-  } else if(sampleIndex==3){
+  } else if(sampleIndex==3){ //this is for alternative signal samples
     abort(); // Standard location of these files still being arranged.
     //       sprintf(temp,"CJLSTtree_Jun25_2012/JHUsignal/HZZ%sTree_%s.root",channel,sample[sampleIndex].c_str());
     //       bkgMC->Add(temp);
@@ -342,10 +376,15 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   cout << "Chain for " << channel << " " << sampleIndex << " " << isLowMass << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
-  float mzz,mela,w;
-  
+  float mzz,mela,LD,w;
+  char yVarName[32];
+  //distinction btw LD and mela needed because we might want 
+  //both psMELA (for 2D template) and MELA (for cut)
+  if(makePSTemplate)sprintf(yVarName,"ZZpseudoLD");
+  else   sprintf(yVarName,"ZZLD");
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("ZZLD",&mela);
+  bkgMC->SetBranchAddress(yVarName,&LD);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
   
   TH2F* bkgHist;
@@ -361,10 +400,10 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   for(int i=0; i<bkgMC->GetEntries(); i++){
 
     bkgMC->GetEntry(i);
-
-    if(w<.0015 /*&& mela>.5 */ ){
+    bool cutPassed= (melaCut>0.0) ? (mela>melaCut) : true;
+    if(w<.0015 && cutPassed ){
       
-      bkgHist->Fill(mzz,mela,w);
+      bkgHist->Fill(mzz,LD,w);
 
     }
 
@@ -475,14 +514,13 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
 //=======================================================================
 
 void makeTemplate(TString channel="4mu"){
-  TString destDir = "../CreateDatacards/templates2D/";
 
   //  sprintf(temp,"../datafiles/Dsignal_%s.root",channel.Data());
   TFile* fsig = new TFile(destDir + "Dsignal_" + channel + ".root","RECREATE");
-  TFile* fpssig = 0;
-  if (makePSTemplate) {
+  TFile* fAltsig = 0;
+  if (makeAltSignal) {
     //    sprintf(temp,"../datafiles/Dsignal_ALT_%s.root",channel.Data());
-    fpssig = new TFile(destDir + "Dsignal_ALT_" + channel + ".root","RECREATE");
+    fAltsig = new TFile(destDir + "Dsignal_ALT_" + channel + ".root","RECREATE");
   }
   //  sprintf(temp,"../datafiles/Dbackground_qqZZ_%s.root",channel.Data());
   TFile* fqqZZ = new TFile(destDir + "Dbackground_qqZZ_" + channel + ".root","RECREATE");
@@ -523,9 +561,9 @@ void makeTemplate(TString channel="4mu"){
   fsig->Close();
 
   // ========================================
-  // pseudo scalar template
+  // alternative signal template
 
-  if (makePSTemplate) {
+  if (makeAltSignal) {
     low = fillTemplate(channel,3,true);
     high = fillTemplate(channel,3,false);
     h_mzzD = mergeTemplates(low,high);
@@ -543,13 +581,13 @@ void makeTemplate(TString channel="4mu"){
 
   // --------------------------------------------------
     
-    fpssig->cd();
+    fAltsig->cd();
     h_mzzD->Write("h_mzzD");
     oldTemp->Write("oldTemp");
     histoPair.first->Write("h_mzzD_up");
     histoPair.second->Write("h_mzzD_dn");
-    fpssig->Close();
-  }
+    fAltsig->Close();
+  }//end if makeAltSignal
   
   // =======================================
   // qqZZ template
