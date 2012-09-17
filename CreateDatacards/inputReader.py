@@ -357,7 +357,7 @@ class inputReader:
             if f[0].lower().startswith("sqrts"):
                 self.sqrts = float(f[1])
                 
-            if f[0].lower().startswith("doHypTest"):
+            if f[0].lower().startswith("dohyptest"):
                 self.doHypTest = self.parseBoolString(f[1])
             if f[0].lower().startswith("altHypLabel"):
                 self.altHypLabel = f[1]
@@ -450,11 +450,12 @@ class inputReader:
         if not self.goodEntry(self.CMS_zz4l_n_sig) and self.useCMS_zz4l_n:
             raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_n_sig")
 
-
+        if self.doHypTest:
+            print "!!! HYPTOTHESIS TESTING !!!"
+  
         if self.doHypTest and not self.all_chan:
             raise RuntimeError,"You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs !"
-        
-        ## Set dictionary entries to be passed to datacard class ##
+      ## Set dictionary entries to be passed to datacard class ##
         
         dict['decayChannel'] = int(self.decayChan)
         dict['model'] = str(self.model)
