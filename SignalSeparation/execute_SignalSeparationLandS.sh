@@ -26,18 +26,11 @@ cp runSignalSeparation.py submitToLXB_tpl.sh submitToPBS_tpl.csh.pbs tdrstyle.cc
 cd $cardDir
 outDir="output_LandS/"
 
-if [ -d $outDir ]
-    then
-    echo "Output directory ${cardDir}/${outDir}/already exisiting. I will not overwrite. Please remove it and try again."
-    exit 2
-fi
-
-mkdir $outDir
 
 
 action=0
-NJOBS=200  # total number of parallel jobs
-NTOYS=20 # toys per parallel job
+NJOBS=40  # total number of parallel jobs
+NTOYS=100 # toys per parallel job
 if [ $# -ge 4 ]
     then
     action=$4
@@ -48,16 +41,36 @@ fi
 if [ $action -eq 0 ]
     then 
     echo "GENERATING TOYS"
+    if [ -d $outDir ]
+	then
+	echo "Output directory ${cardDir}/${outDir}/ already existing. I will not overwrite. Please remove it and try again."
+	exit 2
+    fi
+    
+    mkdir $outDir
+
     python runSignalSeparation.py -b -m -t "lands" --generateToys --nParallelJobs $NJOBS --toysPerJob $NTOYS -o "$outDir" --card1 "$card1" --card2 "$card2" --TeVStat
 #Step 2: fit toys
 elif [ $action -eq 1 ]
     then
     echo "FITTING TOYS"
+
+    if [ ! -d $outDir ]
+	then
+	echo "Output directory ${cardDir}/${outDir}/ DOES NOT  exist. "
+	exit 2
+    fi
+
     python runSignalSeparation.py -b -m -t "lands" --fitToys --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2"
 #Step 3: plot variables
 elif [ $action -eq 2 ]
     then 
     echo "PLOT VARIABLES"
+    if [ ! -d $outDir ]
+	then
+	echo "Output directory ${cardDir}/${outDir}/ DOES NOT  exist. "
+	exit 2
+    fi
     python runSignalSeparation.py -b -m -t "lands" --plotResults -a --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2"
 else
     echo "Requested to perform and unrecognized action: "${action}

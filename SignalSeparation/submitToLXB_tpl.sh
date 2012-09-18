@@ -2,16 +2,31 @@
 
 if [ $# -lt 1 ]
 then
-    echo "submitToLXB wants at least one input argument: name of Input directory. Exiting."
+    echo "submitToLXB wants at least one input argument:  name of output directory. Exiting."
     exit 2
 fi
 
-InputDir=$1
 
-echo inputdir: $InputDir
+OutputDir=$1
 
+#name of Input directory with cards and
+InputDir="./"
+if [ $# -gt 1 ]
+    then
+    InputDir=$2
+fi
+
+#
+
+curdir=$( pwd )
+#cd ${curdir}/$InputDir
+#cardStemDir=$( pwd )
+#cd -
 cmsswbase=CMSSWBASE
 workdir=WORKDIR
+echo inputCardDir: $workdir
+echo outputdir: $OutputDir
+
 #source /scratch1/hep/cms/cmsset_default.csh
 
 export SCRAM_ARCH=slc5_amd64_gcc462
@@ -23,12 +38,47 @@ echo "Setting up $cmsswbase"
 cd $cmsswbase/src
 eval `scramv1 runtime -sh`
 #cmsenv
-cd $workdir
-echo "Current Directory is $PWD"
+#cd $workdir
+#cd $curdir
+cd $TMPDIR
+#cp -r ${cardStemDir} .
+cp -r ${workdir}/$InputDir .
+cp -r $OutputDir .
+#cp -r ${InputDir}/../workspaces/ .
+#mkdir -p ${OutputDir}
+echo "Current Directory is $( pwd )"
+echo "Working dir is $workdir"
+echo
+echo "Files in $PWD :"
+ls -lh
+echo
+echo "Files in ${workdir}/$InputDir :"
+ls -lh ${workdir}/$InputDir
+#echo
 
 COMMAND
 
+
+echo "Finished main body of the program. List of files in $PWD"
+ls -lh
+echo
+echo
+echo
+
 # move output file to right directory
-mv ONAME ODIR/ONAME
+cp ONAME ODIR/ONAME
+cp ONAME ${workdir}/ODIR/ONAME
+
+RESUBMIT_IF_FAILED=true
+
+if [ ! -f ${workdir}/ODIR/ONAME ]
+    then
+    echo "ERROR from submitToLXB !!! Output file (ONAME)is not in ${workdir}/ODIR/ <==="
+    if $RESUBMIT_IF_FAILED 
+	then
+	echo "Rerunning the limit calculation"
+	COMMAND
+    fi
+fi
 
 ###REMOVE###
