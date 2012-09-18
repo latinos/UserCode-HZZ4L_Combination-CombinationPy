@@ -341,7 +341,7 @@ def submitToPBS_lands( cmd, seed, toyN, oname, outputDir ):
             print >> fout,curline
     
     # then submit!
-    print "submitting LandS to PBS ... "    
+    print "submitting LandS to PBS (",toyN,") ... "  
     #    pbsCmd = "qsub -v "+"InputDir="+m_curdir+"/"+outputDir+" "+pbsname
     fout.close()
     pbsCmd = "qsub -v InputDir="+m_curdir+"/"+outputDir+" "+pbsname
@@ -414,7 +414,7 @@ def submitToLXB_lands( cmd, seed, toyN, oname, outputDir ):
             print >> fout,curline
     
     # then submit!
-    print "submitting LandS to LXBatch ... "    
+    print "submitting LandS to LXBatch (",toyN,") ... "
     #    pbsCmd = "qsub -v "+"InputDir="+m_curdir+"/"+outputDir+" "+pbsname
     fout.close()
     os.system( "chmod u+x "+m_curdir+"/"+pbsname )
@@ -687,8 +687,7 @@ if __name__ == '__main__':
 
             else: 
                 print "wrong tool!"
-    
-        else:
+        else:     # you are parallelizing
             
             if options.tool == "combine":
 
@@ -755,10 +754,10 @@ if __name__ == '__main__':
                         makeDCcopy_lands( dc_model21_copy, dc_model2, toys, name1, seed1 )
                         makeDCcopy_lands( dc_model22_copy, dc_model2, toys, name2, seed2 )
                         
-                        fitCmd11 = "lands.exe -d "+dc_model11_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name1+name1+"_"+str(seeda)+"_"+str(jj)+"\""
-                        fitCmd12 = "lands.exe -d "+dc_model12_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name1+name2+"_"+str(seedb)+"_"+str(jj)+"\""
-                        fitCmd21 = "lands.exe -d "+dc_model21_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name2+name1+"_"+str(seedc)+"_"+str(jj)+"\""
-                        fitCmd22 = "lands.exe -d "+dc_model22_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name2+name2+"_"+str(seedd)+"_"+str(jj)+"\""
+                        fitCmd11 = "lands.exe -d "+dc_model11_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile ${name1}_PseudoData_sb_${seed1}.root -n \""+name1+name1+"_"+str(seeda)+"_"+str(jj)+"\""
+                        fitCmd12 = "lands.exe -d "+dc_model12_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile ${name1}_PseudoData_sb_${seed1}.root -n \""+name1+name2+"_"+str(seedb)+"_"+str(jj)+"\""
+                        fitCmd21 = "lands.exe -d "+dc_model21_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile ${name2}_PseudoData_sb_${seed2}.root -n \""+name2+name1+"_"+str(seedc)+"_"+str(jj)+"\""
+                        fitCmd22 = "lands.exe -d "+dc_model22_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile ${name2}_PseudoData_sb_${seed2}.root -n \""+name2+name2+"_"+str(seedd)+"_"+str(jj)+"\""
 
                         list_fitCmd11.append(fitCmd11)
                         list_fitCmd12.append(fitCmd12)
