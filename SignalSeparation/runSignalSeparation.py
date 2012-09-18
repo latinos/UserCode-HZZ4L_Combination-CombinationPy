@@ -71,8 +71,8 @@ parser.add_option('-a', '--addOutput',
 parser.add_option('--TeVStat',
                   action='store_true', dest='useTeVStat',default=False,
                   help='use TeVatron test statistics instead of the default frequentist')
-parser.add_option('--batch', 
-                  action='store', type='string', dest='batchName',default='LXB',
+parser.add_option('--batchType', 
+                  action='store', type='string', dest='batchType',default='LXB',
                   help='Type of batch system to use. Can be either LXB (default) or PBS.')
 
 (options, args) = parser.parse_args()
@@ -473,7 +473,7 @@ if __name__ == '__main__':
     nParallelJobs=options.nParallelJobs
     testStat=" --freq"
     if options.useTeVStat: testStat=" --testStat TEV "
-    batchType=options.batchName
+    batchType=options.batchType
     if ( (not batchType=="LXB") and (not batchType=="PBS") ):
         raise RunTimeError,"Chosen batch system ({0}) is not recognized. Allowed choices are LXB (defualt) and PBS.".format(batchType)
 

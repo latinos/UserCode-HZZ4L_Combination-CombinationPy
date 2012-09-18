@@ -15,7 +15,8 @@ Options:
   --nParallelJobs=NPARALLELJOBS
                         int: number of parallel jobs
   -a, --addOutput       bool: when plotting, hadd up root files
-  --TeVStat		use TeVatron test statistics instead of default frequentist (used for hypothesis separation)
+  --TeVStat		use TeVatron test statistics instead of default frequentist 
+                        (valid only for LandS, used for hypothesis separation)
 
 -------------------------------
 -------------------------------
