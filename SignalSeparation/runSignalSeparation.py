@@ -44,7 +44,6 @@ parser.add_option('-t', '--tool',
                   action='store', type='string', dest='tool',default='combine',
                   help='string: combine or lands')
 
-
 # ----
 # ---- run options
 parser.add_option('-o', '--outputDir',
@@ -69,6 +68,12 @@ parser.add_option('--nParallelJobs',
 parser.add_option('-a', '--addOutput',
                   action='store_true', dest='addOutput',default=False,
                   help='bool: when plotting, hadd up root files')
+parser.add_option('--TeVStat',
+                  action='store_true', dest='useTeVStat',default=False,
+                  help='use TeVatron test statistics instead of the default frequentist')
+parser.add_option('--batch', 
+                  action='store', type='string', dest='batchName',default='LXB',
+                  help='Type of batch system to use. Can be either LXB (default) or PBS.')
 
 (options, args) = parser.parse_args()
 ############################################
@@ -375,7 +380,7 @@ def submitToLXB( cmd, seed, toyN, oname, outputDir ):
     print "submitting to LXBatch ... "    
     fout.close()
     os.system( "chmod u+x "+m_curdir+"/"+pbsname )
-    pbsCmd = "bsub -q 1nh -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
+    pbsCmd = "bsub -q 1nh "+" -G u_zh"+" -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
  #   print "The submission command is "+pbsCmd
     os.system( pbsCmd )
 
@@ -413,7 +418,7 @@ def submitToLXB_lands( cmd, seed, toyN, oname, outputDir ):
     #    pbsCmd = "qsub -v "+"InputDir="+m_curdir+"/"+outputDir+" "+pbsname
     fout.close()
     os.system( "chmod u+x "+m_curdir+"/"+pbsname )
-    pbsCmd = "bsub -q 1nh -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
+    pbsCmd = "bsub -q 1nh "+" -G u_zh"+" -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
 #    print "The submission command is "+pbsCmd
     os.system( pbsCmd )
 
@@ -466,6 +471,12 @@ if __name__ == '__main__':
     name2="_testPS"
     seed=options.seed
     nParallelJobs=options.nParallelJobs
+    testStat=" --freq"
+    if options.useTeVStat: testStat=" --testStat TEV "
+    batchType=options.batchName
+    if ( (not batchType=="LXB") and (not batchType=="PBS") ):
+        raise RunTimeError,"Chosen batch system ({0}) is not recognized. Allowed choices are LXB (defualt) and PBS.".format(batchType)
+
     
     if parallelizeToys: print "Running in parallel mode with",toys,"toys per job for",nParallelJobs,"parallel jobs..."
     else: print "Running in serial mode, it might take a while..."
@@ -525,11 +536,11 @@ if __name__ == '__main__':
                 seed2 = seed+(i*2)
                                 
 #                generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid --freq -m "+str(mass)+" --rMin 0 --rMax 3 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --GenerateToysAtBestFitSB --bWriteToys 1 -n \""+name1+"\" -tH "+str(toys)+" --seed "+str(seed1)
-                generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)
+                generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)+" "+testStat
 
                 print generateCmd1
 #                generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid --freq -m "+str(mass)+" -rMin 0 -rMax 3 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --GenerateToysAtBestFitSB --bWriteToys 1 -n \""+name2+"\" -tH "+str(toys)+" --seed "+str(seed2)
-                generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)
+                generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)+" "+testStat
                 print generateCmd2
 
                 os.system(generateCmd1)
@@ -559,8 +570,13 @@ if __name__ == '__main__':
                     oname2 = "higgsCombine"+name2+".GenerateOnly.mH"+str(mass)+"."+str(seed2)+".root"            
                     
                     print "i: ",i
-                    submitToPBS( generateCmd1, seed1, i, oname1, outputDir )
-                    submitToPBS( generateCmd2, seed2, i, oname2, outputDir )
+                    if batchType=="PBS":
+                        submitToPBS( generateCmd1, seed1, i, oname1, outputDir )
+                        submitToPBS( generateCmd2, seed2, i, oname2, outputDir )
+                    else:
+                        submitToLXB( generateCmd1, seed1, i, oname1, outputDir )
+                        submitToLXB( generateCmd2, seed2, i, oname2, outputDir )
+                        
 
             elif options.tool == "lands":
 
@@ -569,15 +585,19 @@ if __name__ == '__main__':
                     seed1 = seed+((i*2)-1)
                     seed2 = seed+(i*2)
                     
-                    generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)+" -v 2"
-                    generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)+" -v 2"
+                    generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)+" -v 2 "+testStat
+                    generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)+" -v 2 "+testStat
                     
                     oname1 = name1+"_PseudoData_sb_seed"+str(seed1)+".root"
                     oname2 = name2+"_PseudoData_sb_seed"+str(seed2)+".root"            
                     
                     print "i: ",i
-                    submitToPBS( generateCmd1, seed1, i, oname1, outputDir )
-                    submitToPBS( generateCmd2, seed2, i, oname2, outputDir )
+                    if batchType=="PBS":
+                        submitToPBS_lands( generateCmd1, seed1, i, oname1, outputDir )
+                        submitToPBS_lands( generateCmd2, seed2, i, oname2, outputDir )
+                    else:
+                        submitToLXB_lands( generateCmd1, seed1, i, oname1, outputDir )
+                        submitToLXB_lands( generateCmd2, seed2, i, oname2, outputDir )
                     
             else: 
                 print "Wrong tool!"
@@ -693,11 +713,16 @@ if __name__ == '__main__':
                     fitname12 = "higgsCombine"+name1+"_fit"+name2+"_"+str(seedb)+".MaxLikelihoodFit.mH"+str(mass)+"."+str(seedb)+".root"
                     fitname21 = "higgsCombine"+name2+"_fit"+name1+"_"+str(seedc)+".MaxLikelihoodFit.mH"+str(mass)+"."+str(seedc)+".root"
                     fitname22 = "higgsCombine"+name2+"_fit"+name2+"_"+str(seedd)+".MaxLikelihoodFit.mH"+str(mass)+"."+str(seedd)+".root"
-                    
-                    submitToPBS( fitCmd11, seeda, i, fitname11, outputDir )
-                    submitToPBS( fitCmd12, seedb, i, fitname12, outputDir )
-                    submitToPBS( fitCmd21, seedc, i, fitname21, outputDir )
-                    submitToPBS( fitCmd22, seedd, i, fitname22, outputDir )
+                    if batchType=="PBS":
+                        submitToPBS( fitCmd11, seeda, i, fitname11, outputDir )
+                        submitToPBS( fitCmd12, seedb, i, fitname12, outputDir )
+                        submitToPBS( fitCmd21, seedc, i, fitname21, outputDir )
+                        submitToPBS( fitCmd22, seedd, i, fitname22, outputDir )
+                    else:
+                        submitToLXB( fitCmd11, seeda, i, fitname11, outputDir )
+                        submitToLXB( fitCmd12, seedb, i, fitname12, outputDir )
+                        submitToLXB( fitCmd21, seedc, i, fitname21, outputDir )
+                        submitToLXB( fitCmd22, seedd, i, fitname22, outputDir )
 
             elif options.tool == "lands":
 
@@ -744,11 +769,17 @@ if __name__ == '__main__':
                         list_fitname12.append(name1+name2+"_"+str(seedb)+"_"+str(jj)+"_maxllfit.root")
                         list_fitname21.append(name2+name1+"_"+str(seedc)+"_"+str(jj)+"_maxllfit.root")
                         list_fitname22.append(name2+name2+"_"+str(seedd)+"_"+str(jj)+"_maxllfit.root")
-                        
-                    submitToPBS_lands( list_fitCmd11, seeda, i, list_fitname11, outputDir )
-                    submitToPBS_lands( list_fitCmd12, seedb, i, list_fitname12, outputDir )
-                    submitToPBS_lands( list_fitCmd21, seedc, i, list_fitname21, outputDir )
-                    submitToPBS_lands( list_fitCmd22, seedd, i, list_fitname22, outputDir )
+
+                    if batchType=="PBS":
+                        submitToPXB_lands( list_fitCmd11, seeda, i, list_fitname11, outputDir )
+                        submitToPXB_lands( list_fitCmd12, seedb, i, list_fitname12, outputDir )
+                        submitToPXB_lands( list_fitCmd21, seedc, i, list_fitname21, outputDir )
+                        submitToPXB_lands( list_fitCmd22, seedd, i, list_fitname22, outputDir )
+                    else:
+                        submitToLXB_lands( list_fitCmd11, seeda, i, list_fitname11, outputDir )
+                        submitToLXB_lands( list_fitCmd12, seedb, i, list_fitname12, outputDir )
+                        submitToLXB_lands( list_fitCmd21, seedc, i, list_fitname21, outputDir )
+                        submitToLXB_lands( list_fitCmd22, seedd, i, list_fitname22, outputDir )
 
             else: 
                 print "wrong tool!"                
