@@ -122,7 +122,13 @@ void signalFits(int channel, int sqrts)
     double lowside = 100.;
     if(masses[i] > 300) lowside = 200.;
     double low_M = max( (masses[i] - 15.*windowVal), lowside) ;
-    double high_M = min( (masses[i] + 10.*windowVal), 1400.) ;
+    double high_M = min( (masses[i] + 10.*windowVal), 1400.);
+
+    if(masses[i] > 399.){
+      low_M = max( (masses[i] - 2.*windowVal), 250.) ;
+      high_M = min( (masses[i] + 2.*windowVal), 1200.);
+    }
+
     cout << "lowM = " << low_M << ", highM = " << high_M << endl;
 
     //Set the observable and get the RooDataSomething
@@ -139,10 +145,11 @@ void signalFits(int channel, int sqrts)
     RooRealVar MHStar("MHStar","MHStar",masses[i],0.,2000.);
     MHStar.setConstant(true);
     RooRealVar Gamma_TOT("Gamma_TOT","Gamma_TOT",valueWidth,0.,700.);
-    Gamma_TOT.setConstant(true);
+    //Gamma_TOT.setConstant(true);
     
-    //RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@1,2)-pow(@0,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
-    RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    //RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    //RooGenericPdf SignalTheor("SignalTheor","(@0*@0)/( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + pow(@0,2)*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
 
     //Experimental resolution
     RooRealVar meanCB("meanCB","meanCB",0.,-20.,20.);
