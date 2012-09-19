@@ -95,22 +95,22 @@ def haddLands( newfile, listnames, offset ):
 
     print 'Adding this listname: ',listnames
 
-#    for i in range(nParallelJobs):     
-#        seedd = seed+(i*4)   
- #       for jj in range(toys):
-#            curfile = outputDir+"/"+listnames+"_"+str(seedd+offset)+"_"+str(jj)+"_maxllfit.root"
-#    searchPath=glob.glob( os.path.join(outputDir,"/",listnames,"*_maxllfit.root') )
-#    searchPath=glob.glob( os.path.join(outputDir+"/"+listnames+"[0-9]*_maxllfit.root") )
+    for i in range(nParallelJobs):     
+        seedd = seed+(i*4)   
+        for jj in range(toys):
+            curfile = outputDir+"/"+listnames+"_"+str(seedd+offset)+"_"+str(jj)+"_maxllfit.root"
+###            searchPath=glob.glob( os.path.join(outputDir,"/",listnames,"*_maxllfit.root') )
+###            searchPath=glob.glob( os.path.join(outputDir+"/"+listnames+"[0-9]*_maxllfit.root") )
 
-    
-    searchPath=glob.glob( outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root" )
-#    print 'searchPath (1): ',searchPath  #os.path.join(outputDir,"/",listnames, '*_maxllfit.root')
-    cmd = "ls -l "+outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root"
-    for curfile in searchPath:
-#        print "Loading file: ",curfile
-        fcur = ROOT.TFile( curfile )
-        tcur = fcur.Get("T")
-        nentries = int( tcur.GetEntries() )
+###loop over all available files    
+#    searchPath=glob.glob( outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root" )
+###    print 'searchPath (1): ',searchPath  #os.path.join(outputDir,"/",listnames, '*_maxllfit.root')
+#    cmd = "ls -l "+outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root"
+#    for curfile in searchPath:
+###        print "Loading file: ",curfile
+            fcur = ROOT.TFile( curfile )
+            tcur = fcur.Get("T")
+            nentries = int( tcur.GetEntries() )
         for i in range(nentries):
             tcur.GetEntry(i)
             limit_[0] = tcur.limit
@@ -206,7 +206,7 @@ def getSestimator( fit1, fit2, hname ):
     return h
 
 def getSestimatorList( fit1, fit2, hname ):
-        
+  #  print "Starting getSestimatorList"
     list = []
     
     print fit1,",",fit2
@@ -238,8 +238,9 @@ def getSestimatorList( fit1, fit2, hname ):
                 nll2 = t2.limit
             
             Sestimator = -nll1 + nll2
+###            print 'Sestimator = ',Sestimator
             list.append( Sestimator )
-    
+        print "Ending getSestimatorList. Final list has size: ",len(list)    
     return list
 
 ## --------------

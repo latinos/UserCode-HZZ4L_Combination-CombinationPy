@@ -29,7 +29,7 @@ outDir="output_LandS/"
 
 
 action=0
-NJOBS=40  # total number of parallel jobs
+NJOBS=32 #40  # total number of parallel jobs
 NTOYS=100 # toys per parallel job
 if [ $# -ge 4 ]
     then
