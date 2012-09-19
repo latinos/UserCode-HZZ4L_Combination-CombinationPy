@@ -288,6 +288,7 @@ class datacardClass:
         rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig))
         name = "CMS_zz4l_sigma_sig_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
         rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig))
+	print " DEBUG *********  ", theInputs['sigma_CB_shape'] 
 
         CMS_zz4l_mean_sig_NoConv = ROOT.RooFormulaVar("CMS_zz4l_mean_sig_NoConv_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts),"@0+@1", ROOT.RooArgList(rfv_mean_CB, self.MH))
 
@@ -591,7 +592,7 @@ class datacardClass:
         CMS_qqzzbkg_a12.setConstant(True)
         CMS_qqzzbkg_a13.setConstant(True)
         
-        bkg_qqzz = ROOT.RooqqZZPdf_v2("bkg_qqzz","bkg_qqzz",CMS_zz4l_mass,CMS_qqzzbkg_a0,CMS_qqzzbkg_a1,CMS_qqzzbkg_a2,CMS_qqzzbkg_a3,CMS_qqzzbkg_a4,CMS_qqzzbkg_a5,CMS_qqzzbkg_a6,CMS_qqzzbkg_a7,CMS_qqzzbkg_a8,CMS_qqzzbkg_a9,CMS_qqzzbkg_a10,CMS_qqzzbkg_a11,CMS_qqzzbkg_a12,CMS_qqzzbkg_a13)
+        bkg_qqzz = ROOT.RooqqZZPdf_v2("bkg_qqzzTmp","bkg_qqzzTmp",CMS_zz4l_mass,CMS_qqzzbkg_a0,CMS_qqzzbkg_a1,CMS_qqzzbkg_a2,CMS_qqzzbkg_a3,CMS_qqzzbkg_a4,CMS_qqzzbkg_a5,CMS_qqzzbkg_a6,CMS_qqzzbkg_a7,CMS_qqzzbkg_a8,CMS_qqzzbkg_a9,CMS_qqzzbkg_a10,CMS_qqzzbkg_a11,CMS_qqzzbkg_a12,CMS_qqzzbkg_a13)
         
         ## ggZZ contribution
         name = "CMS_ggzzbkg_a0_{0:.0f}_{1:.0f}".format( self.channel, self.sqrts ) 
@@ -650,7 +651,7 @@ class datacardClass:
             print "ggZZshape_a9 = ",theInputs['ggZZshape_a9']
                    
         
-        bkg_ggzz = ROOT.RooggZZPdf_v2("bkg_ggzz","bkg_ggzz",CMS_zz4l_mass,CMS_ggzzbkg_a0,CMS_ggzzbkg_a1,CMS_ggzzbkg_a2,CMS_ggzzbkg_a3,CMS_ggzzbkg_a4,CMS_ggzzbkg_a5,CMS_ggzzbkg_a6,CMS_ggzzbkg_a7,CMS_ggzzbkg_a8,CMS_ggzzbkg_a9)
+        bkg_ggzz = ROOT.RooggZZPdf_v2("bkg_ggzzTmp","bkg_ggzzTmp",CMS_zz4l_mass,CMS_ggzzbkg_a0,CMS_ggzzbkg_a1,CMS_ggzzbkg_a2,CMS_ggzzbkg_a3,CMS_ggzzbkg_a4,CMS_ggzzbkg_a5,CMS_ggzzbkg_a6,CMS_ggzzbkg_a7,CMS_ggzzbkg_a8,CMS_ggzzbkg_a9)
     
         ## Reducible backgrounds
         val_meanL = float(theInputs['zjetsShape_mean'])
@@ -660,7 +661,7 @@ class datacardClass:
         mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
         name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-        bkg_zjets = ROOT.RooLandau("bkg_zjets","bkg_zjets",CMS_zz4l_mass,mlZjet,slZjet) 
+        bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet) 
 
 
  
@@ -1013,17 +1014,30 @@ class datacardClass:
     
         if(self.bUseCBnoConvolution) :
             if not self.is2D :
-                signalCB_ggH.SetNameTitle("ggH","ggH")
-                signalCB_VBF.SetNameTitle("qqH","qqH")
-                signalCB_WH.SetNameTitle("WH","WH")
-                signalCB_ZH.SetNameTitle("ZH","ZH")
-                signalCB_ttH.SetNameTitle("ttH","ttH")
+		if not self.bIncludingError:
+                	signalCB_ggH.SetNameTitle("ggH","ggH")
+                	signalCB_VBF.SetNameTitle("qqH","qqH")
+                	signalCB_WH.SetNameTitle("WH","WH")
+                	signalCB_ZH.SetNameTitle("ZH","ZH")
+                	signalCB_ttH.SetNameTitle("ttH","ttH")
                 
-                getattr(w,'import')(signalCB_ggH, ROOT.RooFit.RecycleConflictNodes())
-                getattr(w,'import')(signalCB_VBF, ROOT.RooFit.RecycleConflictNodes())
-                getattr(w,'import')(signalCB_WH, ROOT.RooFit.RecycleConflictNodes())
-                getattr(w,'import')(signalCB_ZH, ROOT.RooFit.RecycleConflictNodes())
-                getattr(w,'import')(signalCB_ttH, ROOT.RooFit.RecycleConflictNodes())
+                	getattr(w,'import')(signalCB_ggH, ROOT.RooFit.RecycleConflictNodes())
+                	getattr(w,'import')(signalCB_VBF, ROOT.RooFit.RecycleConflictNodes())
+               		getattr(w,'import')(signalCB_WH, ROOT.RooFit.RecycleConflictNodes())
+                	getattr(w,'import')(signalCB_ZH, ROOT.RooFit.RecycleConflictNodes())
+                	getattr(w,'import')(signalCB_ttH, ROOT.RooFit.RecycleConflictNodes())
+		else:
+                	sig_ggHErr.SetNameTitle("ggH","ggH")
+                	sig_VBFErr.SetNameTitle("qqH","qqH")
+                	sig_WHErr.SetNameTitle("WH","WH")
+                	sig_ZHErr.SetNameTitle("ZH","ZH")
+                	sig_ttHErr.SetNameTitle("ttH","ttH")
+                
+                	getattr(w,'import')(sig_ggHErr, ROOT.RooFit.RecycleConflictNodes())
+                	getattr(w,'import')(sig_VBFErr, ROOT.RooFit.RecycleConflictNodes())
+               		getattr(w,'import')(sig_WHErr, ROOT.RooFit.RecycleConflictNodes())
+                	getattr(w,'import')(sig_ZHErr, ROOT.RooFit.RecycleConflictNodes())
+                	getattr(w,'import')(sig_ttHErr, ROOT.RooFit.RecycleConflictNodes())
                 
             else:
                 sigCB2d_ggH.SetNameTitle("ggH","ggH")
@@ -1073,9 +1087,20 @@ class datacardClass:
                     getattr(w,'import')(sig2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
 
         if not self.is2D :
-            getattr(w,'import')(bkg_qqzz, ROOT.RooFit.RecycleConflictNodes())
-            getattr(w,'import')(bkg_ggzz, ROOT.RooFit.RecycleConflictNodes())
-            getattr(w,'import')(bkg_zjets, ROOT.RooFit.RecycleConflictNodes())
+		if not self.bIncludingError:
+			bkg_qqzz.SetNameTitle("bkg_qqzz","bkg_qqzz")
+			bkg_ggzz.SetNameTitle("bkg_ggzz","bkg_ggzz")
+			bkg_zjets.SetNameTitle("bkg_zjets","bkg_zjets")
+            		getattr(w,'import')(bkg_qqzz, ROOT.RooFit.RecycleConflictNodes())
+            		getattr(w,'import')(bkg_ggzz, ROOT.RooFit.RecycleConflictNodes())
+            		getattr(w,'import')(bkg_zjets, ROOT.RooFit.RecycleConflictNodes())
+		else:
+			bkg_qqzzErr.SetNameTitle("bkg_qqzz","bkg_qqzz")
+			bkg_ggzzErr.SetNameTitle("bkg_ggzz","bkg_ggzz")
+			bkg_zjetsErr.SetNameTitle("bkg_zjets","bkg_zjets")
+            		getattr(w,'import')(bkg_qqzzErr, ROOT.RooFit.RecycleConflictNodes())
+            		getattr(w,'import')(bkg_ggzzErr, ROOT.RooFit.RecycleConflictNodes())
+            		getattr(w,'import')(bkg_zjetsErr, ROOT.RooFit.RecycleConflictNodes())
             
         else:
             getattr(w,'import')(bkg2d_qqzz,ROOT.RooFit.RecycleConflictNodes())
