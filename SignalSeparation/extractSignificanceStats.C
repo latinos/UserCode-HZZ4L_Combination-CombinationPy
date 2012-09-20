@@ -19,7 +19,7 @@
 int extractSignificanceStats(){
 
   char fileName[128];
-  sprintf(fileName,"qmu.TOTAL.root");
+  sprintf(fileName,"qmu.root");
   TFile *fq=new TFile(fileName,"READ");
   TTree *t=(TTree*)fq->Get("q");
 

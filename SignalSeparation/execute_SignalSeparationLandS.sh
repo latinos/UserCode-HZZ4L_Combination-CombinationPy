@@ -29,7 +29,7 @@ outDir="output_LandS/"
 
 
 action=0
-NJOBS=32 #40  # total number of parallel jobs
+NJOBS=40  # total number of parallel jobs
 NTOYS=100 # toys per parallel job
 if [ $# -ge 4 ]
     then
@@ -71,10 +71,18 @@ elif [ $action -eq 2 ]
 	echo "Output directory ${cardDir}/${outDir}/ DOES NOT  exist. "
 	exit 2
     fi
+    mkdir figs/
     python runSignalSeparation.py -b -m -t "lands" --plotResults -a --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2"
+elif [ $action -eq -1 ]
+    then 
+    echo "CLEAN directory with cards"
+    rm -f hzz4l_*copy_*txt
+    rm -fr LSF*
+    rm -fr output_LandS/
+    rm -fr figs/
 else
     echo "Requested to perform and unrecognized action: "${action}
-    echo "action can be 0:generate toys  ;   1:fit toys   ;   2:plot variables"
+    echo "action can be 0:generate toys  ;   1:fit toys   ;   2:plot variables  ;  -1:clean up output directory"
     echo "Exiting."
     exit 3
 fi

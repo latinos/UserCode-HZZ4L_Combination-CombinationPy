@@ -1,0 +1,75 @@
+Instructions for running the signal separation with Lands and combine
+using the scripts in UserCode/HZZ4L_Combination/CombinationPy/SignalSeparation/
+
+
+First of all, you must have created 2D templates (AnalysisInputs/generateTemplates.C) 
+and cards specific for the hypothesis testing (see instructions
+in CreateDatacards/README ).
+
+
+---------------------
+--- for LandS -------
+
+1) open the file execute_SignalSeparationLandS.sh and set the variables NJOBS and NTOYS
+
+2) copy here the directoryes with the cards and ws for LandS previously generated
+
+3) merge cards with combineCards.py
+combineCards.py hzz4l_2e2muS_8TeV.txt hzz4l_4eS_8TeV.txt hzz4l_4muS_8TeV.txt > hzz4l_4lS_8TeV.txt
+combineCards.py hzz4l_2e2muS_8TeV_ALT.txt hzz4l_4eS_8TeV_ALT.txt hzz4l_4muS_8TeV_ALT.txt > hzz4l_4lS_8TeV_ALT.txt
+
+4) #Step 1: generate toys
+./execute_SignalSeparationLandS.sh <dir_with_cards>/HCG/<mass>/ hzz4l_4lS_8TeV.txt hzz4l_4lS_8TeV_ALT.txt 0
+
+It will submit NJOBS*2 parallel jobs (one for the SM and the other for the PS hypothesis).
+Wait that the jobs on the queue are finished.
+Note 1:You can set the batch queue inside runSignalSeparation.py
+
+
+5) #Step 2: fit toys
+./execute_SignalSeparationLandS.sh <dir_with_cards>/HCG/<mass>/ hzz4l_4lS_8TeV.txt hzz4l_4lS_8TeV_ALT.txt 1
+
+It will submit NJOBS*4 parallel jobs
+Again, wait for all the jobs to be finished.
+
+6)#Step 3: plot variables
+./execute_SignalSeparationLandS.sh <dir_with_cards>/HCG/<mass>/ hzz4l_4lS_8TeV.txt hzz4l_4lS_8TeV_ALT.txt 2
+
+Note: there are several options for steering the main macro called runSignalSeparation.py
+Refer to the file README in this same directory for more details about them
+
+
+
+-------------------
+--- for combine ---
+
+
+1) open the file execute_SignalSeparationCombine.sh and set the variables NTOYS ;
+
+
+2) copy here the directories with the cards and ws for LandS previously generated
+
+3) merge cards with combineCards.py
+combineCards.py hzz4l_2e2muS_8TeV.txt hzz4l_4eS_8TeV.txt hzz4l_4muS_8TeV.txt > hzz4l_4lS_8TeV.txt
+combineCards.py hzz4l_2e2muS_8TeV_ALT.txt hzz4l_4eS_8TeV_ALT.txt hzz4l_4muS_8TeV_ALT.txt > hzz4l_4lS_8TeV_ALT.txt
+
+4) run the script choosing what type of analysis you want to do (fixed mu, floating mu, 2D scan)
+./execute_SignalSeparationCombine.sh <dir_with_cards>/HCG/<mass>/ hzz4l_4lS_8TeV_ALT.txt <action can be 0 or 1 or 2>
+
+5) when it's done,  the output will be called qmu.root in <dir_with_cards>/HCG/<mass>/
+cp extractSignificanceStats.C <dir_with_cards>/HCG/<mass>/
+cd <dir_with_cards>/HCG/<mass>/
+### you must compile the macro, otherwise it won't make it
+root -b
+.L extractSignificanceStats.C++
+extractSignificanceStats()
+
+
+
+
+============================
+============================
+============================
+============================
+============================
+============================

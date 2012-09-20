@@ -35,13 +35,6 @@ mkdir $outDir
 
 
 
-### FIXED MU: 
-text2workspace.py -m 125 $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs -o fixedMu.root
-### FLOAT MU:
-#text2workspace.py -m 125 $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs  --PO=muFloating -o floatMu.root
-### FOR 2D: 
-#text2workspace.py -m 125 $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs --PO=muAsPOI -o twoD.root
-
 
 action=0
 if [ $# -ge 3 ]
@@ -52,21 +45,28 @@ fi
 
 # Run hypothesis testing, using nominal value of nuisances and mu for generation
 NTOYS=4000 # toys per  job
+
 if [ $action -eq 0 ]
     then 
+### FIXED MU: 
+    text2workspace.py -m 125 $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs -o fixedMu.root
     combine -m 125 -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 fixedMu.root --singlePoint 1 --saveHybridResult --fork 4 -T $NTOYS -i 1 --clsAcc 0 --fullBToys
 #make the tree of the test statistics distribution (the macro is under HiggsAnalysis/CombinedLimit/test/plotting)
     root -q -b higgsCombineTest.HybridNew.mH125.root "${CMSSW_BASE}/src/HiggsAnalysis/CombinedLimit/test/plotting/hypoTestResultTree.cxx(\"qmu.root\",125,1,\"x\")"
 elif [ $action -eq 1 ]
     then
-#Run 1D scan:
+### Run 1D scan:
+### FLOAT MU:
+    text2workspace.py -m 125 $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs  --PO=muFloating -o floatMu.root
     combine -M MultiDimFit floatMu.root --algo=grid --points 100  -m 125 -v 2 -n 1D
 #draw the output
 ###      limit->Draw("2*deltaNLL:x", "deltaNLL > 0","PL")
 elif [ $action -eq 2 ]
     then
 #Run 2D scan (without profiling nuisances)
-      combine -M MultiDimFit twoD.root --algo=grid --points 10000 --fastScan  -m 125 -v 2
+### FOR 2D: 
+    text2workspace.py -m 125 $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs --PO=muAsPOI -o twoD.root
+    combine -M MultiDimFit twoD.root --algo=grid --points 10000 --fastScan  -m 125 -v 2
 ###after this open root file qmu.root and do
 ###     limit->Draw("2*deltaNLL:r:x>>h2d(100,0,1,100,0,4)","deltaNLL >0","PROF COLZ");
 ###     h2d->SetContour(100);

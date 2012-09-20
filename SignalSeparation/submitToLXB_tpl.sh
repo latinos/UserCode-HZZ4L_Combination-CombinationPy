@@ -24,9 +24,14 @@ curdir=$( pwd )
 #cd -
 cmsswbase=CMSSWBASE
 workdir=WORKDIR
-echo inputCardDir: $workdir
+TOYFILE
+TOYCARD
+echo inputCardDir: $workdir/$InputDir
 echo outputdir: $OutputDir
-
+echo
+echo File with toy: $toyFile
+echo Dummy card: $copyCard
+echo
 #source /scratch1/hep/cms/cmsset_default.csh
 
 export SCRAM_ARCH=slc5_amd64_gcc462
@@ -37,15 +42,19 @@ export PATH="$PATH:${cmsswbase}/src/HiggsAnalysis/LandS/test"
 echo "Setting up $cmsswbase"
 cd $cmsswbase/src
 eval `scramv1 runtime -sh`
+
 #cmsenv
 #cd $workdir
 #cd $curdir
+echo "Moving to $TMPDIR"
 cd $TMPDIR
+
 #cp -r ${cardStemDir} .
 cp -r ${workdir}/$InputDir .
 cp -r $OutputDir .
 #cp -r ${InputDir}/../workspaces/ .
 #mkdir -p ${OutputDir}
+
 echo "Current Directory is $( pwd )"
 echo "Working dir is $workdir"
 echo
@@ -55,6 +64,7 @@ echo
 echo "Files in ${workdir}/$InputDir :"
 ls -lh ${workdir}/$InputDir
 #echo
+
 
 COMMAND
 
