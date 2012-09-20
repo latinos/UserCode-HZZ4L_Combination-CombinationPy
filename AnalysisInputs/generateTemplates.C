@@ -30,7 +30,7 @@ bool extendToHighMass = false; // Include signal samples above 600 GeV
 float highMzz=(extendToHighMass?1000:800);
 float mBinSize=2.;
 
-const TString destDir = "../CreateDatacards/templates2D_AB/";//it must already exist
+const TString destDir = "../CreateDatacards/templates2D/";
 
 //=======================================================================
 
