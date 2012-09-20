@@ -24,8 +24,13 @@ curdir=$( pwd )
 #cd -
 cmsswbase=CMSSWBASE
 workdir=WORKDIR
+
 TOYFILE
 TOYCARD
+MYSEED
+MYSTEM
+MYNTOYS
+
 echo inputCardDir: $workdir/$InputDir
 echo outputdir: $OutputDir
 echo
@@ -76,6 +81,9 @@ echo
 echo
 
 # move output file to right directory
+
+python haddLands.py --seed ${SEED} --toysPerJob ${NTOYS} --stem ${STEM}
+
 cp ONAME ODIR/ONAME
 cp ONAME ${workdir}/ODIR/ONAME
 

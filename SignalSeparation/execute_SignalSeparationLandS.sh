@@ -21,7 +21,7 @@ cardDir=$1
 card1=$2
 card2=$3
 
-cp runSignalSeparation.py submitToLXB_tpl.sh submitToPBS_tpl.csh.pbs tdrstyle.cc $cardDir/
+cp runSignalSeparation.py submitToLXB_tpl.sh submitToPBS_tpl.csh.pbs tdrstyle.cc haddLands.py $cardDir/
 
 cd $cardDir
 outDir="output_LandS/"
@@ -51,7 +51,7 @@ if [ $action -eq 0 ]
     
     mkdir $outDir
 
-    python runSignalSeparation.py -b -m -t "lands" --generateToys --nParallelJobs $NJOBS --toysPerJob $NTOYS -o "$outDir" --card1 "$card1" --card2 "$card2" --TeVStat --mass $MH
+    python runSignalSeparation.py -b -m -t "lands" --generateToys --nParallelJobs $NJOBS --toysPerJob $NTOYS -o "$outDir" --card1 "$card1" --card2 "$card2" --TeVStat --mH $MH
 #Step 2: fit toys
 elif [ $action -eq 1 ]
     then
@@ -63,7 +63,7 @@ elif [ $action -eq 1 ]
 	exit 2
     fi
 
-    python runSignalSeparation.py -b -m -t "lands" --fitToys --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2" --mass $MH
+    python runSignalSeparation.py -b -m -t "lands" --fitToys --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2" --mH $MH
 #Step 3: plot variables
 elif [ $action -eq 2 ]
     then 

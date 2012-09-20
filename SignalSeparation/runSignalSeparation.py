@@ -113,7 +113,7 @@ def haddLands( newfile, listnames, offset ):
             #        print "Loading file: ",curfile
 
 ###list of files to exclude:
-            if (seedtot==12370 or seedtot==12371 or seedtot==12372 or seedtot==12373): continue
+###            if (seedtot==12370 or seedtot==12371 or seedtot==12372 or seedtot==12373): continue
             fcur = ROOT.TFile( curfile )
             tcur = fcur.Get("T")
             nentries = int( tcur.GetEntries() )
@@ -180,7 +180,7 @@ def getSeparationStats( l1, l2 ):
 
 def getSestimator( fit1, fit2, hname ):
 
-    h = ROOT.TH1F( hname,";S = ln(L1/L2); count",2000,-20,20 )
+    h = ROOT.TH1F( hname,";S = -2 #times ln(L1/L2); count",8000,-40,40 )
     
     print fit1,",",fit2
     f1 = ROOT.TFile(fit1)
@@ -210,7 +210,7 @@ def getSestimator( fit1, fit2, hname ):
                 nll1 = t1.limit
                 nll2 = t2.limit
         
-            Sestimator = -nll1 + nll2
+            Sestimator = 2.0*(-nll1 + nll2)
             h.Fill( Sestimator )
 
        
@@ -248,7 +248,7 @@ def getSestimatorList( fit1, fit2, hname ):
                 nll1 = t1.limit
                 nll2 = t2.limit
             
-            Sestimator = -nll1 + nll2
+            Sestimator = 2.0*(-nll1 + nll2)
 ###            print 'Sestimator = ',Sestimator
             list.append( Sestimator )
         print "Ending getSestimatorList. Final list has size: ",len(list)    
@@ -460,7 +460,19 @@ def submitToLXB_TPL_fit( cmd, seed, toyN, oname, outputDir ):
     prefix="fit"
     pbsname = outputDir+"/"+prefix+"_submitToLXB_"+str(seed)+"_"+str(toyN)+".sh"
     fout = open(pbsname,'w')
-    
+
+    myname1="testWW"
+    myname2="testZZ"
+    cmd0 = cmd[0].split()
+    indexEnd=len(cmd0)-1
+    listcard=cmd0[indexEnd].strip().split("_")
+    myname1=str(listcard[1])
+    myname2=str(listcard[2])
+    myseed=str(listcard[3])
+    mystem="_"+str(myname1)+"_"+str(myname2)
+    myntoys=len(cmd)
+    if(myseed!=str(seed)): print "Seed mismatch ? "+myseed+"  vs  "+str(seed)
+
     # replace the tpl file with the right command, directories
     for line in file:
         
@@ -470,22 +482,25 @@ def submitToLXB_TPL_fit( cmd, seed, toyN, oname, outputDir ):
                 cardName=acmd[2].strip()
                 
                 listcard=cardName.split("_")
-                print "Components: ",str(listcard[0])," ",str(listcard[1])," ",str(listcard[2])," ",str(listcard[3])," ",str(listcard[4])," ",str(listcard[5])," ",str(listcard[6])," "
+#                print "Components: ",str(listcard[0])," ",str(listcard[1])," ",str(listcard[2])," ",str(listcard[3])," ",str(listcard[4])," ",str(listcard[5])," ",str(listcard[6])," "
                 if cardName.find("ALT")>0:
                     tplcardName=str(listcard[0])+"_"+str(listcard[1])+"_"+str(listcard[2])+"_"+str(listcard[3])+"_"+str(listcard[4])+"_"+str(listcard[5])+"_"+str(listcard[6])+"_TPL.txt"
                 else:
                     tplcardName=str(listcard[0])+"_"+str(listcard[1])+"_"+str(listcard[2])+"_"+str(listcard[3])+"_"+str(listcard[4])+"_"+str(listcard[5])+"_TPL.txt"
-                print "TPLcardName: ",tplcardName
+#                print "TPLcardName: ",tplcardName
                 print >> fout, "sed \"s/<TOYINDEX>/"+str(kk)+"/\" "+tplcardName+" >"+cardName
                 print >> fout, cmd[kk].strip()
         elif line.find("cp ONAME ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "cp "+oname[kk]+" "+outputDir+"/."
-        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
-        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
+###            for kk in range(len(cmd)):
+            print >> fout, "cp *"+mystem+"_"+myseed+"_maxllfit.root "+outputDir+"/."
         elif line.find("cp ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "cp "+oname[kk]+" ${workdir}/"+outputDir+"/."
+###            for kk in range(len(cmd)): print >> fout, "cp "+oname[kk]+" ${workdir}/"+outputDir+"/."
+###            for kk in range(len(cmd)):
+            print >> fout, "cp *"+mystem+"_"+myseed+"_maxllfit.root "+"${workdir}/"+outputDir+"/."
+        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
+            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
+        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
+            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
         elif line.find("TOYFILE") >= 0:
             for kk in range(len(cmd)):
                 toyName=cmd[kk].split() 
@@ -494,9 +509,13 @@ def submitToLXB_TPL_fit( cmd, seed, toyN, oname, outputDir ):
             for kk in range(len(cmd)):
                 cardName=cmd[kk].split() 
                 if(kk==0):print >> fout, "copyCard="+cardName[2].strip()
+        elif line.find("MYSTEM") >= 0: print >> fout, "STEM="+mystem
+        elif line.find("MYSEED") >= 0: print >> fout, "SEED="+myseed
+        elif line.find("MYNTOYS") >= 0: print >> fout, "NTOYS="+str(myntoys)
+        
         elif line.find("if [ ! -f ${workdir}/ODIR/ONAME ]") >=0 :
        #     for kk in range(len(cmd)):
-             print >> fout, "if [ ! -f ${workdir}/"+outputDir+"/"+oname[kk]+" ]"
+             print >> fout, "if [ ! -f ${workdir}/"+outputDir+"/*"+mystem+"_*"+myseed+"_maxllfit.root ]"
         elif line.find("###REMOVE###") >= 0:
             for kk in range(len(cmd)): 
                 acmd = cmd[kk].split()
@@ -985,8 +1004,8 @@ if __name__ == '__main__':
         leg = ROOT.TLegend(0.25,0.7,0.45,0.9)
         leg.SetFillColor(0)
         leg.SetBorderSize(0)
-        leg.AddEntry(h1,"SM, 0+","l")
-        leg.AddEntry(h2,"PS, 0-","l")
+        leg.AddEntry(h2,"SM, 0+","l")
+        leg.AddEntry(h1,"PS, 0-","l")
 
         arrow = ROOT.TArrow( 0.02, 50, 0.02, 0 )
         arrow.SetLineWidth( 2 )
