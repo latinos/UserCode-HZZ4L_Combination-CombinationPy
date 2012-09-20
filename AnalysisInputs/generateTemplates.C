@@ -247,7 +247,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
   if(sampleIndex==0){
     //7TeV
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root");
+    //    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root"); // Skip: Special sample with a different composition
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H130.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H140.root");
     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H150.root");
@@ -275,11 +275,11 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H650.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H700.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H750.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H800.root");
-      //     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H850.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H800.root");  // Sample to be debugged, unexpected efficiency in 2e2mu
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H850.root");  // Missing in 310812
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H900.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H950.root");
-      //     bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root"); // Missing in 310812
     }
     
 
@@ -422,8 +422,10 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
     tempProj = (TH1F*) bkgHist->ProjectionY("tempProj",i,i);
     norm=tempProj->Integral();
 
-    for(int j=1; j<=nYbins; j++){
-      bkgHist->SetBinContent(i,j, bkgHist->GetBinContent(i,j)/norm   );
+    if (norm>0) { // Avoid introducing NaNs in the histogram
+      for(int j=1; j<=nYbins; j++){
+	bkgHist->SetBinContent(i,j, bkgHist->GetBinContent(i,j)/norm   );
+      }
     }
 
   }
