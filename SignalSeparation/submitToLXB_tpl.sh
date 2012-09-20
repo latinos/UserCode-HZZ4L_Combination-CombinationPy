@@ -96,6 +96,9 @@ if [ ! -f ${workdir}/ODIR/ONAME ]
 	then
 	echo "Rerunning the limit calculation"
 	COMMAND
+	python haddLands.py --seed ${SEED} --toysPerJob ${NTOYS} --stem ${STEM}
+	cp ONAME ${workdir}/ODIR/ONAME
+
     fi
 fi
 
