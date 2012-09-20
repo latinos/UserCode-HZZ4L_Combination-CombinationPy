@@ -3,7 +3,7 @@
  * usage: 
  * -set all input variables in Config.h
  * -run with:
- * root -q -b signalEfficiency_w.C
+ * root -q -b signalEfficiency_w.C+
  * This runs on the 3 final states for 7 and 8 TeV and writes the output in a file (see stdout).
  *
  */
@@ -22,8 +22,13 @@
 #include "TH2.h"
 #include "TPad.h"
 #include "TF1.h"
+#include "TSystem.h"
 
-using namespace RooFit;
+
+#include "../CreateDatacards/include/tdrstyle.cc"
+
+
+//using namespace RooFit;
 using namespace std;
 using namespace ROOT::Math;
 
@@ -66,7 +71,6 @@ void signalEfficiency_w(int channel, double sqrts)
   ofstream of(outfile,ios_base::out);
 
   gSystem->AddIncludePath("-I$ROOFITSYS/include");
-  gROOT->ProcessLine(".L ../CreateDatacards/include/tdrstyle.cc");
   setTDRStyle(false);
   gStyle->SetStatX(-0.5);
 
@@ -89,18 +93,23 @@ void signalEfficiency_w(int channel, double sqrts)
   }
   
 
+  float xMax = masses[nPoints-1];
+
+  cout << "xmax: " << xMax << endl;
+
+
   const int arraySize=200;
   assert (arraySize>=nPoints);
   double efficiencyVal[arraySize];
   // R e a d   w o r k s p a c e   f r o m   f i l e
   // -----------------------------------------------
 	
-  double a_meanBW[arraySize];
-  double a_gammaBW[arraySize];
-  double a_meanCB[arraySize];
-  double a_sigmaCB[arraySize];
-  double a_alphaCB[arraySize];
-  double a_nCB[arraySize];
+//   double a_meanBW[arraySize];
+//   double a_gammaBW[arraySize];
+//   double a_meanCB[arraySize];
+//   double a_sigmaCB[arraySize];
+//   double a_alphaCB[arraySize];
+//   double a_nCB[arraySize];
 
   //  HiggsCSandWidth *myCSW = new HiggsCSandWidth();
 	
@@ -127,34 +136,24 @@ void signalEfficiency_w(int channel, double sqrts)
   TGraph* grEff = new TGraph( nPoints, mHVal, efficiencyVal );
   grEff->SetMarkerStyle(20);
 	
-  TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)", 110., 600.);
+  TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)", 110., xMax);
   polyFunc->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07);
 
   polyFunc->SetLineColor(4);      
-  TCanvas *c = new TCanvas("c","c",700,700);
+  TCanvas *c = new TCanvas("c","c");
   c->SetGrid();
 
   TString outname = "sigFigs" + ssqrts +"/eff_" + schannel;
 
-  TPad *pad1 = new TPad("pad1", "foo", 0, 0, 1, 1);
-  pad1->Draw();
-  pad1->SetGrid();
-
-  pad1->cd();
-  TH1F *hr = pad1->DrawFrame(110.,-0.1,610.,1.);
   grEff->Fit(polyFunc,"Rt");
-  char xaxisText[192];  
-  sprintf(xaxisText,"mass (%s)", schannel.Data());
-  hr->GetXaxis()->SetTitle(xaxisText);
-  char yaxisText[192];
-  sprintf(yaxisText, "efficiency, %s", schannel.Data());
-  hr->GetYaxis()->SetTitle(yaxisText);
-  grEff->Draw("P");
+  TString xaxisText = "m_{" + schannel + "}";
+  grEff->GetXaxis()->SetTitle(xaxisText);
+  TString yaxisText = "efficiency, " + schannel;
+  grEff->GetYaxis()->SetTitle(yaxisText);
+  grEff->Draw("AP");
   polyFunc->Draw("sames");
-  hr->Draw("AXIGSAME");
-  //  c->SaveAs(outname);
   c->Print(outname+".eps");
-  c->Print(outname+".png");
+  c->Print(outname+".png"); // Does not work in batch?
 
   cout << endl;
   cout << "------- Parameters for " << schannel << " sqrts=" << sqrts << endl;
