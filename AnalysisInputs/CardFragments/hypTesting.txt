@@ -1,0 +1,3 @@
+### for hypothesis testing ###
+doHypTest False
+#altHypLabel _ALT
