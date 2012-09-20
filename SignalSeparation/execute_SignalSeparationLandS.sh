@@ -31,6 +31,8 @@ outDir="output_LandS/"
 action=0
 NJOBS=40  # total number of parallel jobs
 NTOYS=100 # toys per parallel job
+MH=125
+
 if [ $# -ge 4 ]
     then
     action=$4
@@ -49,7 +51,7 @@ if [ $action -eq 0 ]
     
     mkdir $outDir
 
-    python runSignalSeparation.py -b -m -t "lands" --generateToys --nParallelJobs $NJOBS --toysPerJob $NTOYS -o "$outDir" --card1 "$card1" --card2 "$card2" --TeVStat
+    python runSignalSeparation.py -b -m -t "lands" --generateToys --nParallelJobs $NJOBS --toysPerJob $NTOYS -o "$outDir" --card1 "$card1" --card2 "$card2" --TeVStat --mass $MH
 #Step 2: fit toys
 elif [ $action -eq 1 ]
     then
@@ -61,7 +63,7 @@ elif [ $action -eq 1 ]
 	exit 2
     fi
 
-    python runSignalSeparation.py -b -m -t "lands" --fitToys --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2"
+    python runSignalSeparation.py -b -m -t "lands" --fitToys --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2" --mass $MH
 #Step 3: plot variables
 elif [ $action -eq 2 ]
     then 

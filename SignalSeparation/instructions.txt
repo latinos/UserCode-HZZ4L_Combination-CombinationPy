@@ -10,7 +10,7 @@ in CreateDatacards/README ).
 ---------------------
 --- for LandS -------
 
-1) open the file execute_SignalSeparationLandS.sh and set the variables NJOBS and NTOYS
+1) open the file execute_SignalSeparationLandS.sh and set the variables MH, NJOBS and NTOYS
 
 2) copy here the directoryes with the cards and ws for LandS previously generated
 
@@ -44,7 +44,7 @@ Refer to the file README in this same directory for more details about them
 --- for combine ---
 
 
-1) open the file execute_SignalSeparationCombine.sh and set the variables NTOYS ;
+1) open the file execute_SignalSeparationCombine.sh and set the variables MH and NTOYS ;
 
 
 2) copy here the directories with the cards and ws for LandS previously generated

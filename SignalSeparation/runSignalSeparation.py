@@ -74,6 +74,9 @@ parser.add_option('--TeVStat',
 parser.add_option('--batchType', 
                   action='store', type='string', dest='batchType',default='LXB',
                   help='Type of batch system to use. Can be either LXB (default) or PBS.')
+parser.add_option('--mH',
+                  action='store', type='float', dest='mH',default='125',
+                  help='float: mass of the Higgs hypothesis')
 
 (options, args) = parser.parse_args()
 ############################################
@@ -581,8 +584,8 @@ if __name__ == '__main__':
 #    dc_model2="SignalSeparation_PS_7p8TeV/datacards/hzz4l_4lS.126.0_7p8TeV.txt"
     dc_model1=options.card1
     dc_model2=options.card2
-    mass=126
     toys=options.toysPerJob
+    mass=options.mH
     name1="_testSM"
     name2="_testPS"
     seed=options.seed
