@@ -9,7 +9,7 @@ All common configurable parameters are specified in the file Config.h.
 1. SIGNAL EFFICIENCIES
 Run:
 
-root -q -b signalEfficiency_w.C
+root -q -b signalEfficiency_w.C+
 
 Output parameters are written in:
 CardFragments/signalEfficiency_[sqrts]TeV_[fs].txt
