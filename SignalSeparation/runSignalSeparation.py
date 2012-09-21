@@ -100,32 +100,32 @@ def haddLands( newfile, listnames, offset ):
 
     for i in range(nParallelJobs):     
         seedd = seed+(i*4)   
-        for jj in range(toys):
-            seedtot=seedd+offset
+###        for jj in range(toys):
+        seedtot=seedd+offset
         #    if(jj==1): print seedtot,"  ",
-            curfile = outputDir+"/"+listnames+"_"+str(seedtot)+"_"+str(jj)+"_maxllfit.root"
+        curfile = outputDir+"/"+listnames+"_"+str(seedtot)+"_maxllfit.root"
     
 ###loop over all available files    
-            #    searchPath=glob.glob( outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root" )
-            #    #    print 'searchPath (1): ',searchPath  #os.path.join(outputDir,"/",listnames, '*_maxllfit.root')
-            #    cmd = "ls -l "+outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root"
-            #    for curfile in searchPath:
-            #        print "Loading file: ",curfile
-
+###    searchPath=glob.glob( outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root" )
+###    #    print 'searchPath (1): ',searchPath  #os.path.join(outputDir,"/",listnames, '*_maxllfit.root')
+###    cmd = "ls -l "+outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root"
+###    for curfile in searchPath:
+###        print "Loading file: ",curfile
+        
 ###list of files to exclude:
 ###            if (seedtot==12370 or seedtot==12371 or seedtot==12372 or seedtot==12373): continue
-            fcur = ROOT.TFile( curfile )
-            tcur = fcur.Get("T")
-            nentries = int( tcur.GetEntries() )
-            if(nentries==0): print "File with seed=",seedtot," has 0 entries"
-            for ientry in range(nentries):
-                tcur.GetEntry(ientry)
-                limit_[0] = tcur.limit
-                rmean_[0] = tcur.rmean
+        fcur = ROOT.TFile( curfile )
+        tcur = fcur.Get("T")
+        nentries = int( tcur.GetEntries() )
+        if(nentries==0): print "File with seed=",seedtot," has 0 entries"
+        for ientry in range(nentries):
+            tcur.GetEntry(ientry)
+            limit_[0] = tcur.limit
+            rmean_[0] = tcur.rmean
             #print "Limit and rmean: ",limit_[0],"  ",rmean_[0]
             to.Fill()
-            fcur.Close()
-            #end loop on i
+            #end loop on iemtry
+        fcur.Close()
         #end loop on jj
 
     print "haddLands: final tree has ",to.GetEntries()," entries"    
