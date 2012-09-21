@@ -27,7 +27,6 @@ class datacardClass:
         
         ROOT.gSystem.AddIncludePath("-I$ROOFITSYS/include/")
         ROOT.gSystem.AddIncludePath("-Iinclude/")
-        #ROOT.gSystem.AddIncludePath("-Iinclude/FSR/")
         ROOT.gROOT.ProcessLine(".L include/tdrstyle.cc")
         ROOT.gSystem.Load("libRooFit")
         ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit.so")
@@ -68,9 +67,9 @@ class datacardClass:
         
         myCSWrhf = HiggsCSandWidth()
         
-        histXsBr = ROOT.TH1F("hsmxsbr_{0}_{1}".format(procName,channelName),"", 981, 109.75, 600.25)
+        histXsBr = ROOT.TH1F("hsmxsbr_{0}_{1}".format(procName,channelName),"", 1780, 109.75, 999.75)
         
-        for i in range(1,982):
+        for i in range(1,1781):
             
             mHVal = histXsBr.GetBinCenter(i)
             BR = 0.0 
@@ -87,8 +86,8 @@ class datacardClass:
             else:
                 histXsBr.SetBinContent(i, myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts) * BR)
 
-            print '\nmakeXsBrFunction : procName=',procName,'   signalProc=',signalProc,'  mH (input)=',rrvMH.getVal(),
-            print '   CS=',myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts),'   BR=',BR
+            #print '\nmakeXsBrFunction : procName=',procName,'   signalProc=',signalProc,'  mH (input)=',rrvMH.getVal(),
+            #print '   CS=',myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts),'   BR=',BR
             
         rdhname = "rdhXsBr_{0}_{1}_{2}".format(procName,self.channel,self.sqrts)
         rdhXsBr = RooDataHist(rdhname,rdhname, ROOT.RooArgList(rrvMH), histXsBr)  
@@ -159,7 +158,7 @@ class datacardClass:
             lowside = 100.0
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-        self.high_M = min( (self.mH + 15.*self.windowVal), 800.0)
+        self.high_M = min( (self.mH + 15.*self.windowVal), 999.5)
 
         #self.low_M = 100.0
         #self.high_M = 800.0
@@ -278,6 +277,20 @@ class datacardClass:
         CMS_zz4l_mean_BW.setConstant(True)
         CMS_zz4l_gamma_BW.setConstant(True)
 
+        print "HEEERRRRRRRRRRRRRRRRREEEEEEE"
+
+        print "mean_BW ", CMS_zz4l_mean_BW.getVal()
+        print "gamma_BW ", CMS_zz4l_gamma_BW.getVal()
+        print "mean_e_sig ", CMS_zz4l_mean_e_sig.getVal()
+        print "sigma_e ", CMS_zz4l_sigma_e_sig.getVal()
+        print "mean_m_sig ",CMS_zz4l_mean_m_sig.getVal()
+        print "sigma_m ", CMS_zz4l_sigma_m_sig.getVal()
+        print "alpha ", CMS_zz4l_alpha.getVal()
+        print "n ", CMS_zz4l_n.getVal()
+
+                                                                
+
+
         ## -------------------- RooFormulaVar's -------------------- ##
         
         name = "CMS_zz4l_n_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
@@ -288,10 +301,19 @@ class datacardClass:
         rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig))
         name = "CMS_zz4l_sigma_sig_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
         rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig))
-	print " DEBUG *********  ", theInputs['sigma_CB_shape'] 
+        if (DEBUG): print " DEBUG *********  ", theInputs['sigma_CB_shape'] 
 
+        print "n_CB ", rfv_n_CB.getVal()
+        print "alpha_CB ", rfv_alpha_CB.getVal()
+        print "mean_CB ", rfv_mean_CB.getVal()
+        print "sigma_CB ", rfv_sigma_CB.getVal()
+        
+
+        
         CMS_zz4l_mean_sig_NoConv = ROOT.RooFormulaVar("CMS_zz4l_mean_sig_NoConv_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts),"@0+@1", ROOT.RooArgList(rfv_mean_CB, self.MH))
 
+        print "mean_sig_NoConv ", CMS_zz4l_mean_sig_NoConv.getVal()
+        
         ## --------------------- SHAPE FUNCTIONS ---------------------- ##
     
         signalCB_ggH = ROOT.RooCBShape("signalCB_ggH","signalCB_ggH",CMS_zz4l_mass, self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB, self.bUseCBnoConvolution) , self.getVariable(CMS_zz4l_massErr,rfv_sigma_CB, self.bIncludingError),rfv_alpha_CB,rfv_n_CB)
@@ -754,11 +776,15 @@ class datacardClass:
         fr_low_M = self.low_M
         fr_high_M = self.high_M        
         if (self.mH >= 450): 
-            fr_low_M = 100.
-            fr_high_M = 1000.
+            fr_low_M = 100
+            fr_high_M = 1000
+        if (self.mH >= 700):
+            fr_low_M = 100
+            fr_high_M = 1500
+            
 
         CMS_zz4l_mass.setRange("fullrangesignal",fr_low_M,fr_high_M)
-        CMS_zz4l_mass.setRange("fullrange",100.,1000.)
+        CMS_zz4l_mass.setRange("fullrange",100.,1500.)
         
         rfvCsFilter = RooFormulaVar()
         filterName = "cmshzz4l_csFilter_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
