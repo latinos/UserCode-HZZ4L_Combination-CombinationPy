@@ -1,9 +1,13 @@
 /* 
  * Create 2D (mass, LD) templates. Script imported from: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/JHU/MELA/scripts/generateTemplates.C?revision=1.1.2.1&view=markup&pathrev=post_unblinding
  * usage: 
+ * -
  * -set input paths variables in Config.h
  * -run with:
- * root -q -b generateTemplates.C+
+ * root -q -b 
+ * gSystem->Load("$CMSSW_BASE/lib/slc5_amd64_gcc462/libZZMatrixElementMELA.so");
+ * gROOT->LoadMacro("$CMSSW_BASE/src/ZZMatrixElement/MELA/interface/Mela.h+");
+ * .x generateTEmplates()
  * 2D templates are written to "destDir"
  *
  */
@@ -17,11 +21,14 @@
 #include <sstream>
 #include <vector>
 
-
 //----------> SET INPUT VARIABLES in Config.h
 #include "Config.h"
 //<----------
 
+bool recompute_ = false;
+bool withPt_ = false;
+bool withY_  = false; 
+int sqrts    = 8;
 bool makePSTemplate = false;
 bool makeAltSignal = false;
 const float melaCut=-1.0;
@@ -377,6 +384,10 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   bkgMC->ls();
 
   float mzz,mela,LD,w;
+  float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
+  float pt4l, Y4l;
+  float psig, pbkg;
+  
   char yVarName[32];
   //distinction btw LD and mela needed because we might want 
   //both psMELA (for 2D template) and MELA (for cut)
@@ -386,6 +397,18 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   bkgMC->SetBranchAddress("ZZLD",&mela);
   bkgMC->SetBranchAddress(yVarName,&LD);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
+
+  bkgMC->SetBranchAddress("Z1Mass",&m1);
+  bkgMC->SetBranchAddress("Z2Mass",&m2);
+  bkgMC->SetBranchAddress("helcosthetaZ1",&costheta1);
+  bkgMC->SetBranchAddress("helcosthetaZ2",&costheta2);
+  bkgMC->SetBranchAddress("costhetastar",&costhetastar);
+  bkgMC->SetBranchAddress("helphi",&phi);
+  bkgMC->SetBranchAddress("phistarZ1",&phi1);
+  
+  bkgMC->SetBranchAddress("ZZPt",&pt4l);
+  bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
+  
   
   TH2F* bkgHist;
   if(!isLowMass)
@@ -397,12 +420,50 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 
   // fill histogram
 
+  if(recompute_)
+    Mela myMELA;
+	
   for(int i=0; i<bkgMC->GetEntries(); i++){
 
     bkgMC->GetEntry(i);
+
+    if(i%100000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
+
     bool cutPassed= (melaCut>0.0) ? (mela>melaCut) : true;
-    if(w<.0015 && cutPassed ){
+    if(w<.0015 && cutPassed){
       
+
+      if(recompute_){
+
+	/*
+	cout << "===========================" << endl;
+	cout << "mzz: " << mzz << endl;
+	cout << "m1: " << m1 << endl;
+	cout << "m2: " << m2 << endl;
+	cout << "costheta1: " << costheta1 << endl;
+	cout << "costheta2: " << costheta2 << endl;
+	cout << "costhetastar: " << costhetastar << endl;
+	cout << "phi: " << phi << endl;
+	cout << "phi1: " << phi1 << endl;
+	cout << "pt4l: " << pt4l << endl;
+	cout << "Y4l: " << Y4l << endl;
+	*/
+
+	myMELA.computeKD(mzz,m1,m2,
+			 costhetastar,
+			 costheta1,
+			 costheta2,
+			 phi,
+			 phi1,
+			 LD,psig,pbkg,
+			 withPt_,pt4l,
+			 withY_, Y4l,
+			 sqrts);
+	
+	//cout << "LD: " << LD << endl;
+	
+      }
+
       bkgHist->Fill(mzz,LD,w);
 
     }
@@ -655,5 +716,6 @@ void storeLDDistribution(){
 
 
 void generateTemplates() {
+
   storeLDDistribution();
 }
