@@ -1,13 +1,10 @@
 /* 
  * Create 2D (mass, LD) templates. Script imported from: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/JHU/MELA/scripts/generateTemplates.C?revision=1.1.2.1&view=markup&pathrev=post_unblinding
+ * Requires ZZMatrixElement/MELA to have been checked out and compiled.
  * usage: 
- * -
  * -set input paths variables in Config.h
  * -run with:
- * root -q -b 
- * gSystem->Load("$CMSSW_BASE/lib/slc5_amd64_gcc462/libZZMatrixElementMELA.so");
- * gROOT->LoadMacro("$CMSSW_BASE/src/ZZMatrixElement/MELA/interface/Mela.h+");
- * .x generateTEmplates()
+ * root -q -b loadMELA.C generateTemplates.C+
  * 2D templates are written to "destDir"
  *
  */
@@ -21,14 +18,25 @@
 #include <sstream>
 #include <vector>
 
+#if !defined(__CINT__) || defined(__MAKECINT__)
+#include <TSystem.h>
+#include <TROOT.h>
+#include "ZZMatrixElement/MELA/interface/Mela.h"
+#endif
+
+
 //----------> SET INPUT VARIABLES in Config.h
 #include "Config.h"
 //<----------
 
-bool recompute_ = false;
-bool withPt_ = false;
-bool withY_  = false; 
-int sqrts    = 8;
+//--- Flags to control re-computation of KD
+bool recompute_ = false;       // Recompute KD (instead of taking it from the tree); when true, the following flags apply:
+bool usePowhegTemplate=false;  // false use analytic bg
+bool withPt_ = false;          // Include pT in KD
+bool withY_  = false;          //    "    Y  "  "
+int sqrts    = 8;              // sqrts, used only for withPt_/withY_
+
+//---
 bool makePSTemplate = false;
 bool makeAltSignal = false;
 const float melaCut=-1.0;
@@ -36,6 +44,8 @@ bool extendToHighMass = false; // Include signal samples above 600 GeV
 
 float highMzz=(extendToHighMass?1000:800);
 float mBinSize=2.;
+
+Mela* myMELA;
 
 const TString destDir = "../CreateDatacards/templates2D/";
 
@@ -419,9 +429,6 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   bkgHist->Sumw2();
 
   // fill histogram
-
-  if(recompute_)
-    Mela myMELA;
 	
   for(int i=0; i<bkgMC->GetEntries(); i++){
 
@@ -449,7 +456,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 	cout << "Y4l: " << Y4l << endl;
 	*/
 
-	myMELA.computeKD(mzz,m1,m2,
+	myMELA->computeKD(mzz,m1,m2,
 			 costhetastar,
 			 costheta1,
 			 costheta2,
@@ -716,6 +723,8 @@ void storeLDDistribution(){
 
 
 void generateTemplates() {
-
+  
+  myMELA=0;
+  if (recompute_) myMELA = new Mela(usePowhegTemplate); // this is safely leaked
   storeLDDistribution();
 }
