@@ -15,6 +15,7 @@
 #include "TH2F.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include "TString.h"
 #include <sstream>
 #include <vector>
 
@@ -38,7 +39,7 @@ int sqrts    = 8;              // sqrts, used only for withPt_/withY_
 
 //---
 int useSqrts=0;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-char *melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
+TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
 
 bool makePSTemplate = false;
 bool makeAltSignal = false;
@@ -418,7 +419,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   if(makePSTemplate)sprintf(yVarName,"ZZpseudoLD");
   else   sprintf(yVarName,"ZZLD");
   bkgMC->SetBranchAddress("ZZMass",&mzz);
-  bkgMC->SetBranchAddress(melaName,&mela);
+  bkgMC->SetBranchAddress(melaName.Data(),&mela);
   bkgMC->SetBranchAddress(yVarName,&LD);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
 
@@ -478,8 +479,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 			 phi1,
 			 LD,psig,pbkg,
 			 withPt_,pt4l,
-			  withY_, Y4l,
-			  sqrts);
+			  withY_, Y4l);
 	
 	//cout << "LD: " << LD << endl;
 	
@@ -739,6 +739,6 @@ void storeLDDistribution(){
 void generateTemplates() {
   
   myMELA=0;
-  if (recompute_) myMELA = new Mela(usePowhegTemplate); // this is safely leaked
+  if (recompute_) myMELA = new Mela(usePowhegTemplate, sqrts); // this is safely leaked
   storeLDDistribution();
 }
