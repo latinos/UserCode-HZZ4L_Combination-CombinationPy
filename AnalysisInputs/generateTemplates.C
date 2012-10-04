@@ -35,7 +35,7 @@ bool recompute_ = false;       // Recompute KD (instead of taking it from the tr
 bool usePowhegTemplate=false;  // false use analytic bg
 bool withPt_ = false;          // Include pT in KD
 bool withY_  = false;          //    "    Y  "  "
-int sqrts    = 8;              // sqrts, used only for withPt_/withY_
+int sqrts    = 7;              // sqrts, used only for withPt_/withY_
 
 //---
 int useSqrts=0;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
@@ -417,7 +417,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   //distinction btw LD and mela needed because we might want 
   //both psMELA (for 2D template) and MELA (for cut)
   if(makePSTemplate)sprintf(yVarName,"ZZpseudoLD");
-  else   sprintf(yVarName,"ZZLD");
+  else   sprintf(yVarName,melaName.Data());
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress(melaName.Data(),&mela);
   bkgMC->SetBranchAddress(yVarName,&LD);
