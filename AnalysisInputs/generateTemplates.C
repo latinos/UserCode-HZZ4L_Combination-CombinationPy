@@ -408,32 +408,40 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   cout << "Chain for " << channel << " " << sampleIndex << " " << isLowMass << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
-  float mzz,mela,LD,w;
-  float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
-  float pt4l, Y4l;
-  float psig, pbkg;
+  float mzz,KD,KD_cut,w;
+  float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
+  float pt4l=0, Y4l=0;
+  float psig=0, pbkg=0;
   
-  char yVarName[32];
+  
   //distinction btw LD and mela needed because we might want 
   //both psMELA (for 2D template) and MELA (for cut)
-  if(makePSTemplate)sprintf(yVarName,"ZZpseudoLD");
-  else   sprintf(yVarName,melaName.Data());
-  bkgMC->SetBranchAddress("ZZMass",&mzz);
-  bkgMC->SetBranchAddress(melaName.Data(),&mela);
-  bkgMC->SetBranchAddress(yVarName,&LD);
-  bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
 
-  bkgMC->SetBranchAddress("Z1Mass",&m1);
-  bkgMC->SetBranchAddress("Z2Mass",&m2);
-  bkgMC->SetBranchAddress("helcosthetaZ1",&costheta1);
-  bkgMC->SetBranchAddress("helcosthetaZ2",&costheta2);
-  bkgMC->SetBranchAddress("costhetastar",&costhetastar);
-  bkgMC->SetBranchAddress("helphi",&phi);
-  bkgMC->SetBranchAddress("phistarZ1",&phi1);
+  TString melaCutName = melaName;  
+  if(makePSTemplate) {
+    melaName = "ZZpseudoLD";
+  }
   
-  bkgMC->SetBranchAddress("ZZPt",&pt4l);
-  bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
+  bkgMC->SetBranchAddress(melaName.Data(),&KD);
+  if (melaName!=melaCutName) {
+    bkgMC->SetBranchAddress(melaCutName.Data(),&KD_cut);
+  } else {
+    KD_cut=KD;
+  }
   
+  bkgMC->SetBranchAddress("ZZMass",&mzz);
+  bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
+  if (recompute_) {
+    bkgMC->SetBranchAddress("Z1Mass",&m1);
+    bkgMC->SetBranchAddress("Z2Mass",&m2);
+    bkgMC->SetBranchAddress("helcosthetaZ1",&costheta1);
+    bkgMC->SetBranchAddress("helcosthetaZ2",&costheta2);
+    bkgMC->SetBranchAddress("costhetastar",&costhetastar);
+    bkgMC->SetBranchAddress("helphi",&phi);
+    bkgMC->SetBranchAddress("phistarZ1",&phi1);
+    bkgMC->SetBranchAddress("ZZPt",&pt4l);
+    bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
+  }
   
   TH2F* bkgHist;
   if(!isLowMass)
@@ -449,9 +457,9 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 
     bkgMC->GetEntry(i);
 
-    if(i%100000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
+    if(i%1000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
 
-    bool cutPassed= (melaCut>0.0) ? (mela>melaCut) : true;
+    bool cutPassed= (melaCut>0.0) ? (KD_cut>melaCut) : true;
     if(w<.0015 && cutPassed){
       
 
@@ -472,20 +480,20 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 	*/
 
 	myMELA->computeKD(mzz,m1,m2,
-			 costhetastar,
-			 costheta1,
-			 costheta2,
-			 phi,
-			 phi1,
-			 LD,psig,pbkg,
-			 withPt_,pt4l,
+			  costhetastar,
+			  costheta1,
+			  costheta2,
+			  phi,
+			  phi1,
+			  KD,psig,pbkg,
+			  withPt_,pt4l,
 			  withY_, Y4l);
 	
 	//cout << "LD: " << LD << endl;
 	
       }
 
-      bkgHist->Fill(mzz,LD,w);
+      bkgHist->Fill(mzz,KD,w);
 
     }
 
