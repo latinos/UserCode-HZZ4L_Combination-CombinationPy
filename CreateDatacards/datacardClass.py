@@ -175,7 +175,7 @@ class datacardClass:
         if self.isAltSig and not self.all_chan :
             raise RuntimeError, "You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs ! (it should have already send you this error message, strange that  you are here...)"
 
-        if (not self.is2D and self.isAltSig):
+        if (self.isAltSig and not (self.is2D==1)):
             raise RunTimeError, "Cannot perform hypothesis testing without a 2D analysis, feature not supported yet. Exiting."
         
 
@@ -534,6 +534,38 @@ class datacardClass:
             sig2d_ggH_ALT = ROOT.RooProdPdf("sig2d_ggH{0}".format(self.appendHypType),"sig2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(sig_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(D)))
             sigCB2d_ggH_ALT = ROOT.RooProdPdf("sigCB2d_ggH{0}".format(self.appendHypType),"sigCB2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(signalCB_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(D)))            
 
+
+
+        ## --------------------------- superMELA 1D PDFS ------------------------- ##
+
+        superDiscVarName = "supermelaLD"
+        SD = ROOT.RooRealVar(superDiscVarName,superDiscVarName,0,1)
+    
+        templateSDSigName = "{0}/Dsignal_superMELA_{1}.root".format(self.templateDir ,self.appendName)
+        sigTempSDFile = ROOT.TFile(templateSDSigName)
+        sigTemplateSD = sigTempSDFile.Get("hSuperD_sig") 
+        
+        TemplateSDName = "sigTempSDDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        sigTempSDDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(SD),sigTemplateSD)
+        
+        TemplateSDName = "sigTemplateSDPdf_ggH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        sigTemplateSDPdf_ggH = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,ROOT.RooArgSet(SD),sigTempSDDataHist)
+        
+        TemplateSDName = "sigTemplateSDPdf_VBF_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        sigTemplateSDPdf_VBF = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,RooArgSet(SD),sigTempSDDataHist)
+        
+        TemplateSDName = "sigTemplateSDPdf_WH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        sigTemplateSDPdf_WH = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,ROOT.RooArgSet(SD),sigTempSDDataHist)
+        
+        TemplateSDName = "sigTemplateSDPdf_ZH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        sigTemplateSDPdf_ZH = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,ROOT.RooArgSet(SD),sigTempSDDataHist)
+        
+        TemplateSDName = "sigTemplateSDPdf_ZH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        sigTemplateSDPdf_ttH = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,ROOT.RooArgSet(SD),sigTempSDDataHist)
+        print sigTemplateSDPdf_ttH
+
+        ##--------------##
+
         ## -------------------------- BACKGROUND SHAPES ---------------------------------- ##
     
         ## qqZZ contribution
@@ -691,7 +723,7 @@ class datacardClass:
 	bkg_ggzzErr = ROOT.RooProdPdf("bkg_ggzzErr","bkg_ggzzErr", ROOT.RooArgSet(bkg_ggzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
 	bkg_zjetsErr = ROOT.RooProdPdf("bkg_zjetsErr","bkg_zjetsErr", ROOT.RooArgSet(bkg_zjets), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
 
-        ## ----------------- 2D BACKGROUND SHAPES --------------- ##
+      ## ----------------- 2D BACKGROUND SHAPES --------------- ##
         
         templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         bkgTempFile = ROOT.TFile(templateBkgName)
@@ -749,7 +781,25 @@ class datacardClass:
         bkg2d_qqzz = ROOT.RooProdPdf("bkg2d_qqzz","bkg2d_qqzz",ROOT.RooArgSet(self.getVariable(bkg_qqzzErr,bkg_qqzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_qqzz),ROOT.RooArgSet(D)))
         bkg2d_ggzz = ROOT.RooProdPdf("bkg2d_ggzz","bkg2d_ggzz",ROOT.RooArgSet(self.getVariable(bkg_ggzzErr,bkg_ggzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_ggzz),ROOT.RooArgSet(D)))
         bkg2d_zjets = ROOT.RooProdPdf("bkg2d_zjets","bkg2d_zjets",ROOT.RooArgSet(self.getVariable(bkg_zjetsErr,bkg_zjets,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_zjets),ROOT.RooArgSet(D)))
-      
+
+        ## ----------------- SUPERMELA BACKGROUND SHAPES --------------- ##
+        
+        templateSDBkgName = "{0}/Dbackground_qqZZ_superMELA_{1}.root".format(self.templateDir ,self.appendName) 
+        bkgTempSDFile = ROOT.TFile(templateSDBkgName)
+        bkgTemplateSD = bkgTempSDFile.Get("hSuperD_bkg") 
+        
+        TemplateSDName = "bkgTempSDDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
+        bkgTempSDDataHist = ROOT.RooDataHist(TemplateSDName,TemplateSDName,ROOT.RooArgList(SD),bkgTemplateSD)
+        
+        TemplateSDName = "bkgTemplateSDPdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
+        bkgTemplateSDPdf_qqzz = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,ROOT.RooArgSet(SD),bkgTempSDDataHist)
+
+        TemplateSDName = "bkgTemplateSDPdf_ggzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
+        bkgTemplateSDPdf_ggzz = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,ROOT.RooArgSet(SD),bkgTempSDDataHist)
+        TemplateSDName = "bkgTemplateSDPdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
+        bkgTemplateSDPdf_zjets = ROOT.RooHistPdf(TemplateSDName,TemplateSDName,ROOT.RooArgSet(SD),bkgTempSDDataHist)
+        
+
         ## ----------------------- PLOTS FOR SANITY CHECKS -------------------------- ##
         
         czz = ROOT.TCanvas( "czz", "czz", 750, 700 )
@@ -981,14 +1031,16 @@ class datacardClass:
         data_obs = ROOT.RooDataSet()
         datasetName = "data_obs_{0}".format(self.appendName)
         
-        if not self.is2D:
+        if (self.is2D == 0):
             if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass, CMS_zz4l_massErr))
             else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass))
 		
-        else:
+        if (self.is2D == 1):
             if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D, CMS_zz4l_massErr))
             else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D))
-            
+
+        if (self.is2D == 2):
+            data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(SD))
             
         ## --------------------------- WORKSPACE -------------------------- ##
 
@@ -1039,7 +1091,7 @@ class datacardClass:
         getattr(w,'import')(data_obs,ROOT.RooFit.Rename("data_obs")) ### Should this be renamed?
     
         if(self.bUseCBnoConvolution) :
-            if not self.is2D :
+            if (self.is2D == 0):
 		if not self.bIncludingError:
                 	signalCB_ggH.SetNameTitle("ggH","ggH")
                 	signalCB_VBF.SetNameTitle("qqH","qqH")
@@ -1065,7 +1117,7 @@ class datacardClass:
                 	getattr(w,'import')(sig_ZHErr, ROOT.RooFit.RecycleConflictNodes())
                 	getattr(w,'import')(sig_ttHErr, ROOT.RooFit.RecycleConflictNodes())
                 
-            else:
+            if (self.is2D == 1):
                 sigCB2d_ggH.SetNameTitle("ggH","ggH")
                 sigCB2d_VBF.SetNameTitle("qqH","qqH")
                 sigCB2d_WH.SetNameTitle("WH","WH")
@@ -1080,9 +1132,23 @@ class datacardClass:
                 if(self.isAltSig):
                     sigCB2d_ggH_ALT.SetNameTitle("ggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
                     getattr(w,'import')(sigCB2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+
+            if (self.is2D == 2):
+                sigTemplateSDPdf_ggH.SetNameTitle("ggH","ggH")
+                sigTemplateSDPdf_VBF.SetNameTitle("qqH","qqH")
+                sigTemplateSDPdf_WH.SetNameTitle("WH","WH")
+                sigTemplateSDPdf_ZH.SetNameTitle("ZH","ZH")
+                sigTemplateSDPdf_ttH.SetNameTitle("ttH","ttH")
+                
+                getattr(w,'import')(sigTemplateSDPdf_ggH, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_VBF, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_WH, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_ZH, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_ttH, ROOT.RooFit.RecycleConflictNodes())
+
         else:
                 
-            if not self.is2D :
+            if (self.is2D == 0):
                 sig_ggH.SetNameTitle("ggH","ggH")
                 sig_VBF.SetNameTitle("qqH","qqH")
                 sig_WH.SetNameTitle("WH","WH")
@@ -1095,7 +1161,7 @@ class datacardClass:
                 getattr(w,'import')(sig_ZH, ROOT.RooFit.RecycleConflictNodes())
                 getattr(w,'import')(sig_ttH, ROOT.RooFit.RecycleConflictNodes())
                     
-            else:
+            if (self.is2D == 1):
                 sig2d_ggH.SetNameTitle("ggH","ggH")
                 sig2d_VBF.SetNameTitle("qqH","qqH")
                 sig2d_WH.SetNameTitle("WH","WH")
@@ -1112,7 +1178,21 @@ class datacardClass:
                     sig2d_ggH_ALT.SetNameTitle("ggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
                     getattr(w,'import')(sig2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
 
-        if not self.is2D :
+            if (self.is2D == 2): 
+                sigTemplateSDPdf_ggH.SetNameTitle("ggH","ggH")
+                sigTemplateSDPdf_VBF.SetNameTitle("qqH","qqH")
+                sigTemplateSDPdf_WH.SetNameTitle("WH","WH")
+                sigTemplateSDPdf_ZH.SetNameTitle("ZH","ZH")
+                sigTemplateSDPdf_ttH.SetNameTitle("ttH","ttH")
+                
+                getattr(w,'import')(sigTemplateSDPdf_ggH, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_VBF, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_WH, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_ZH, ROOT.RooFit.RecycleConflictNodes())
+                getattr(w,'import')(sigTemplateSDPdf_ttH, ROOT.RooFit.RecycleConflictNodes())
+
+ 
+        if (self.is2D == 0):
 		if not self.bIncludingError:
 			bkg_qqzz.SetNameTitle("bkg_qqzz","bkg_qqzz")
 			bkg_ggzz.SetNameTitle("bkg_ggzz","bkg_ggzz")
@@ -1128,10 +1208,19 @@ class datacardClass:
             		getattr(w,'import')(bkg_ggzzErr, ROOT.RooFit.RecycleConflictNodes())
             		getattr(w,'import')(bkg_zjetsErr, ROOT.RooFit.RecycleConflictNodes())
             
-        else:
+        if (self.is2D == 1):
             getattr(w,'import')(bkg2d_qqzz,ROOT.RooFit.RecycleConflictNodes())
             getattr(w,'import')(bkg2d_ggzz,ROOT.RooFit.RecycleConflictNodes())
             getattr(w,'import')(bkg2d_zjets,ROOT.RooFit.RecycleConflictNodes())
+
+        if (self.is2D == 2): 
+            bkgTemplateSDPdf_qqzz.SetNameTitle("bkg_qqzz","bkg_qqzz")
+            bkgTemplateSDPdf_ggzz.SetNameTitle("bkg_ggzz","bkg_ggzz")
+            bkgTemplateSDPdf_zjets.SetNameTitle("bkg_zjets","bkg_zjets")
+            getattr(w,'import')(bkgTemplateSDPdf_ggzz, ROOT.RooFit.RecycleConflictNodes())
+            getattr(w,'import')(bkgTemplateSDPdf_qqzz, ROOT.RooFit.RecycleConflictNodes())
+            getattr(w,'import')(bkgTemplateSDPdf_zjets, ROOT.RooFit.RecycleConflictNodes())
+
         
         getattr(w,'import')(rfvSigRate_ggH, ROOT.RooFit.RecycleConflictNodes())
         getattr(w,'import')(rfvSigRate_VBF, ROOT.RooFit.RecycleConflictNodes())
@@ -1259,7 +1348,7 @@ class datacardClass:
         file.write("process ")
 
         i=0
-        if not self.is2D:
+        if not (self.is2D == 1):
             for chan in channelList:
                 if theInputs[chan]:
                     file.write("{0} ".format(channelName1D[i]))
