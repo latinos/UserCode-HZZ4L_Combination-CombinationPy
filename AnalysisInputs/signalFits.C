@@ -94,6 +94,7 @@ void signalFits(int channel, int sqrts)
   Double_t a_sigmaCB[arraySize]; Double_t a_sigmaCB_err[arraySize];
   Double_t a_alphaCB[arraySize]; Double_t a_alphaCB_err[arraySize];
   Double_t a_nCB[arraySize];     Double_t a_nCB_err[arraySize];
+  Double_t a_Gamma[arraySize];   Double_t a_Gamma_err[arraySize];
 
   Double_t a_fitCovQual[arraySize];
   Double_t a_fitEDM[arraySize];
@@ -126,7 +127,7 @@ void signalFits(int channel, int sqrts)
 
     if(masses[i] > 399.){
       low_M = max( (masses[i] - 2.*windowVal), 250.) ;
-      high_M = min( (masses[i] + 2.*windowVal), 1200.);
+      high_M = min( (masses[i] + 2.*windowVal), 1600.);
     }
 
     cout << "lowM = " << low_M << ", highM = " << high_M << endl;
@@ -145,15 +146,13 @@ void signalFits(int channel, int sqrts)
     RooRealVar MHStar("MHStar","MHStar",masses[i],0.,2000.);
     MHStar.setConstant(true);
     RooRealVar Gamma_TOT("Gamma_TOT","Gamma_TOT",valueWidth,0.,700.);
-    //Gamma_TOT.setConstant(true);
+    if(masses[i] < 399.) Gamma_TOT.setConstant(true);
     
-    //RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
-    //RooGenericPdf SignalTheor("SignalTheor","(@0*@0)/( pow(pow(@0,2)-pow(@1,2),2) + (pow(@0,4)/pow(@1,2))*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
-    RooGenericPdf SignalTheor("SignalTheor","1./( pow(pow(@0,2)-pow(@1,2),2) + pow(@0,2)*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    RooGenericPdf SignalTheor("SignalTheor","(@0)/( pow(pow(@0,2)-pow(@1,2),2) + pow(@0,2)*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
 
     //Experimental resolution
     RooRealVar meanCB("meanCB","meanCB",0.,-20.,20.);
-    RooRealVar sigmaCB("sigmaCB","sigmaCB",1.,0.01,30.);
+    RooRealVar sigmaCB("sigmaCB","sigmaCB",1.,0.01,100.);
     RooRealVar alphaCB("alphaCB","alphaCB",3.,-10.,10.);
     RooRealVar nCB("nCB","nCB",2.,-10.,10.);
 
@@ -181,11 +180,14 @@ void signalFits(int channel, int sqrts)
     a_sigmaCB[i] = sigmaCB.getVal();
     a_alphaCB[i]  = alphaCB.getVal();
     a_nCB[i]     = nCB.getVal();
+    a_Gamma[i] = Gamma_TOT.getVal();
 
     a_meanCB_err[i]  = meanCB.getError();
     a_sigmaCB_err[i] = sigmaCB.getError();
     a_alphaCB_err[i]  = alphaCB.getError();
     a_nCB_err[i]     = nCB.getError();
+    if(masses[i] > 399.) a_Gamma_err[i] = Gamma_TOT.getError();
+    else a_Gamma_err[i] = 0.;
 
     //Plot in the figures directory
     RooPlot *xplot = ZZMass.frame();
@@ -204,43 +206,54 @@ void signalFits(int channel, int sqrts)
     string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel + ".gif";
 
     canv.SaveAs(plotFileTitle.c_str());
-
   }
 
   Double_t x_err[arraySize];
 
-  TGraphErrors* gr_meanCB  = new TGraphErrors(nPoints, masses, a_meanCB, x_err, a_meanCB_err);
-  TGraphErrors* gr_sigmaCB = new TGraphErrors(nPoints, masses, a_sigmaCB, x_err, a_sigmaCB_err);
-  TGraphErrors* gr_alphaCB = new TGraphErrors(nPoints, masses, a_alphaCB, x_err, a_alphaCB_err);
-  TGraphErrors* gr_nCB     = new TGraphErrors(nPoints, masses, a_nCB, x_err, a_nCB_err);
+//   TGraphErrors* gr_meanCB  = new TGraphErrors(nPoints, masses, a_meanCB, x_err, a_meanCB_err);
+//   TGraphErrors* gr_sigmaCB = new TGraphErrors(nPoints, masses, a_sigmaCB, x_err, a_sigmaCB_err);
+//   TGraphErrors* gr_alphaCB = new TGraphErrors(nPoints, masses, a_alphaCB, x_err, a_alphaCB_err);
+//   TGraphErrors* gr_nCB     = new TGraphErrors(nPoints, masses, a_nCB, x_err, a_nCB_err);
+//   TGraphErrors* gr_Gamma   = new TGraphErrors(nPoints, masses, a_Gamma, x_err, a_Gamma_err);
 
-  gr_meanCB->Fit("pol4");
-  gr_sigmaCB->Fit("pol4");
-  gr_alphaCB->Fit("pol4");
-  gr_nCB->Fit("pol4");
+  TGraph* gr_meanCB  = new TGraph(nPoints, masses, a_meanCB);
+  TGraph* gr_sigmaCB = new TGraph(nPoints, masses, a_sigmaCB);
+  TGraph* gr_alphaCB = new TGraph(nPoints, masses, a_alphaCB);
+  TGraph* gr_nCB     = new TGraph(nPoints, masses, a_nCB);
+  TGraph* gr_Gamma   = new TGraph(nPoints, masses, a_Gamma);
+
+  gr_meanCB->Fit("pol3");
+  gr_sigmaCB->Fit("pol3");
+  gr_alphaCB->Fit("pol3");
+  gr_nCB->Fit("pol3");
+  gr_Gamma->Fit("pol3");
 
   TF1 *fit_meanCB  = gr_meanCB->GetListOfFunctions()->First();
   TF1 *fit_sigmaCB = gr_sigmaCB->GetListOfFunctions()->First();
   TF1 *fit_alphaCB = gr_alphaCB->GetListOfFunctions()->First();
   TF1 *fit_nCB     = gr_nCB->GetListOfFunctions()->First();
+  TF1 *fit_Gamma   = gr_Gamma->GetListOfFunctions()->First();
 
   gr_meanCB->GetXaxis()->SetTitle("Mean value of the CB function");
   gr_sigmaCB->GetXaxis()->SetTitle("Sigma of the CB function");
   gr_alphaCB->GetXaxis()->SetTitle("Alpha parameter of the CB function");
   gr_nCB->GetXaxis()->SetTitle("n parameter of the CB function");
+  gr_Gamma->GetXaxis()->SetTitle("#Gamma of the BW function");
 
   gr_meanCB->SetTitle("");
   gr_sigmaCB->SetTitle("");
   gr_alphaCB->SetTitle("");
   gr_nCB->SetTitle("");
+  gr_Gamma->SetTitle("");
 
   TCanvas canv2;
-  canv2.Divide(2,2);
+  canv2.Divide(3,2);
 
   canv2.cd(1); gr_meanCB->Draw("A*");  fit_meanCB->Draw("SAME");
   canv2.cd(2); gr_sigmaCB->Draw("A*"); fit_sigmaCB->Draw("SAME");
   canv2.cd(3); gr_alphaCB->Draw("A*"); fit_alphaCB->Draw("SAME");
   canv2.cd(4); gr_nCB->Draw("A*");     fit_nCB->Draw("SAME");
+  canv2.cd(5); gr_Gamma->Draw("A*");   fit_Gamma->Draw("SAME");
 
   string tmp_paramPlotFileTitle;
   tmp_paramPlotFileTitle.insert(0,outfile);
@@ -256,10 +269,11 @@ void signalFits(int channel, int sqrts)
   string outCardName = tmp_outCardName + schannel + ".txt";
   ofstream ofsCard(outCardName.c_str(),fstream::out);
   ofsCard << "## signal functions --- no spaces! ##" << endl;
-  ofsCard << "signalShape n_CB " << fit_nCB->GetParameter(0) << "+(" << fit_nCB->GetParameter(1) << "*@0)+(" << fit_nCB->GetParameter(2) << "*@0*@0)+(" << fit_nCB->GetParameter(3) << "*@0*@0*@0)+(" << fit_nCB->GetParameter(4) << "*@0*@0*@0*@0)" << endl;
-  ofsCard << "signalShape alpha_CB " << fit_alphaCB->GetParameter(0) << "+(" << fit_alphaCB->GetParameter(1) << "*@0)+(" << fit_alphaCB->GetParameter(2) << "*@0*@0)+(" << fit_alphaCB->GetParameter(3) << "*@0*@0*@0)+(" << fit_alphaCB->GetParameter(4) << "*@0*@0*@0*@0)" <<endl;
-  ofsCard << "signalShape mean_CB " << fit_meanCB->GetParameter(0) << "+(" << fit_meanCB->GetParameter(1) << "*@0)+(" << fit_meanCB->GetParameter(2) << "*@0*@0)+(" << fit_meanCB->GetParameter(3) << "*@0*@0*@0)+(" <<  fit_meanCB->GetParameter(4) << "*@0*@0*@0*@0)" <<endl;
-  ofsCard << "signalShape sigma_CB " << fit_sigmaCB->GetParameter(0) << "+(" << fit_sigmaCB->GetParameter(1) << "*@0)+(" << fit_sigmaCB->GetParameter(2) << "*@0*@0)+(" << fit_sigmaCB->GetParameter(3) << "*@0*@0*@0)+(" <<  fit_sigmaCB->GetParameter(4) << "*@0*@0*@0*@0)" <<endl;
+  ofsCard << "signalShape n_CB " << fit_nCB->GetParameter(0) << "+(" << fit_nCB->GetParameter(1) << "*@0)+(" << fit_nCB->GetParameter(2) << "*@0*@0)+(" << fit_nCB->GetParameter(3) << "*@0*@0*@0)" << endl;
+  ofsCard << "signalShape alpha_CB " << fit_alphaCB->GetParameter(0) << "+(" << fit_alphaCB->GetParameter(1) << "*@0)+(" << fit_alphaCB->GetParameter(2) << "*@0*@0)+(" << fit_alphaCB->GetParameter(3) << "*@0*@0*@0)" << endl;
+  ofsCard << "signalShape mean_CB " << fit_meanCB->GetParameter(0) << "+(" << fit_meanCB->GetParameter(1) << "*@0)+(" << fit_meanCB->GetParameter(2) << "*@0*@0)+(" << fit_meanCB->GetParameter(3) << "*@0*@0*@0)" << endl;
+  ofsCard << "signalShape sigma_CB " << fit_sigmaCB->GetParameter(0) << "+(" << fit_sigmaCB->GetParameter(1) << "*@0)+(" << fit_sigmaCB->GetParameter(2) << "*@0*@0)+(" << fit_sigmaCB->GetParameter(3) << "*@0*@0*@0)" << endl;
+  ofsCard << "signalShape gamma_BW " << fit_Gamma->GetParameter(0) << "+(" << fit_Gamma->GetParameter(1) << "*@0)+(" << fit_Gamma->GetParameter(2) << "*@0*@0)+(" << fit_Gamma->GetParameter(3) << "*@0*@0*@0)" << endl;
   ofsCard << endl;
   return;
 }
