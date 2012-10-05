@@ -53,7 +53,7 @@ class HiggsCSandWidth
 
  public:
 
-  HiggsCSandWidth();
+  HiggsCSandWidth(std::string fileLoc);
   ~HiggsCSandWidth();
 
   double HiggsCS(int ID, double mH, double sqrts);
@@ -65,39 +65,48 @@ class HiggsCSandWidth
   double HiggsCSpdfErrMinus(int ID, double mH, double sqrts);
   double HiggsWidth(int ID,double mH);
   double HiggsBR(int ID,double mH);
+  double getInterpXS(int sqrts, int ID, double mH, int maxI, double mhArray[][6], double varArray[][6]);
 
  private:
 
+  std::string fileName;
+  
   double scratchMass;
   double mass_BR[217];
-  double mass_XS[197];
   double BR[26][217];
-  double CS[6][197];
-  double CSerrPlus[6][197];
-  double CSerrMinus[6][197];
-  double CSscaleErrPlus[6][197];
-  double CSscaleErrMinus[6][197];
-  double CSpdfErrPlus[6][197];
-  double CSpdfErrMinus[6][197];
 
+  double mass_XS_7tev[197][6];
+  double CS_7tev[197][6];
+  double CSerrPlus_7tev[197][6];
+  double CSerrMinus_7tev[197][6];
+  double CSscaleErrPlus_7tev[197][6];
+  double CSscaleErrMinus_7tev[197][6];
+  double CSpdfErrPlus_7tev[197][6];
+  double CSpdfErrMinus_7tev[197][6];
 
-  double mass_XS_8tev[6][223];
-  double CS_8tev[6][223];
-  double CSerrPlus_8tev[6][223];
-  double CSerrMinus_8tev[6][223];
-  double CSscaleErrPlus_8tev[6][223];
-  double CSscaleErrMinus_8tev[6][223];
-  double CSpdfErrPlus_8tev[6][223];
-  double CSpdfErrMinus_8tev[6][223];
+  double mass_XS_8tev[223][6];
+  double CS_8tev[223][6];
+  double CSerrPlus_8tev[223][6];
+  double CSerrMinus_8tev[223][6];
+  double CSscaleErrPlus_8tev[223][6];
+  double CSscaleErrMinus_8tev[223][6];
+  double CSpdfErrPlus_8tev[223][6];
+  double CSpdfErrMinus_8tev[223][6];
+
+  double mass_XS_14tev[223][6];
+  double CS_14tev[223][6];
+  double CSerrPlus_14tev[223][6];
+  double CSerrMinus_14tev[223][6];
+  double CSscaleErrPlus_14tev[223][6];
+  double CSscaleErrMinus_14tev[223][6];
+  double CSpdfErrPlus_14tev[223][6];
+  double CSpdfErrMinus_14tev[223][6];
 
   int N_BR;
-  int N_CS;
-  int N_CSggToH_8tev;  
-  int N_CSvbf_8tev;
-  int N_CSWH_8tev;
-  int N_CSZH_8tev;
-  int N_CSttH_8tev;
-  std::string FileLoc;
+  int N_CS_7tev[6];  
+  int N_CS_8tev[6];  
+  int N_CS_14tev[6];  
+
 
 
 };
