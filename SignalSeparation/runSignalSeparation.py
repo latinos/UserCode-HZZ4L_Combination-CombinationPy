@@ -44,6 +44,7 @@ parser.add_option('-t', '--tool',
                   action='store', type='string', dest='tool',default='combine',
                   help='string: combine or lands')
 
+
 # ----
 # ---- run options
 parser.add_option('-o', '--outputDir',
@@ -68,15 +69,6 @@ parser.add_option('--nParallelJobs',
 parser.add_option('-a', '--addOutput',
                   action='store_true', dest='addOutput',default=False,
                   help='bool: when plotting, hadd up root files')
-parser.add_option('--TeVStat',
-                  action='store_true', dest='useTeVStat',default=False,
-                  help='use TeVatron test statistics instead of the default frequentist')
-parser.add_option('--batchType', 
-                  action='store', type='string', dest='batchType',default='LXB',
-                  help='Type of batch system to use. Can be either LXB (default) or PBS.')
-parser.add_option('--mH',
-                  action='store', type='float', dest='mH',default='125',
-                  help='float: mass of the Higgs hypothesis')
 
 (options, args) = parser.parse_args()
 ############################################
@@ -88,7 +80,6 @@ parser.add_option('--mH',
 
 def haddLands( newfile, listnames, offset ):
 
-    print 'Adding files for LandS'
     fo = ROOT.TFile( newfile, "recreate" )
     to = ROOT.TTree("T", "T")    
     limit_ = array( 'f', [ 0. ] )
@@ -96,39 +87,27 @@ def haddLands( newfile, listnames, offset ):
     to.Branch("limit", limit_ , "limit/F")
     to.Branch("rmean", rmean_ , "rmean/F")
 
-    print 'Adding this listname: ',listnames
+    print listnames, ","
 
-    for i in range(nParallelJobs):     
-        seedd = seed+(i*4)   
-###        for jj in range(toys):
-        seedtot=seedd+offset
-        #    if(jj==1): print seedtot,"  ",
-        curfile = outputDir+"/"+listnames+"_"+str(seedtot)+"_maxllfit.root"
-    
-###loop over all available files    
-###    searchPath=glob.glob( outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root" )
-###    #    print 'searchPath (1): ',searchPath  #os.path.join(outputDir,"/",listnames, '*_maxllfit.root')
-###    cmd = "ls -l "+outputDir+"/"+listnames+"*_[0-9]*_maxllfit.root"
-###    for curfile in searchPath:
-###        print "Loading file: ",curfile
+    for i in range(nParallelJobs):
         
-###list of files to exclude:
-###            if (seedtot==12370 or seedtot==12371 or seedtot==12372 or seedtot==12373): continue
-        fcur = ROOT.TFile( curfile )
-        tcur = fcur.Get("T")
-        nentries = int( tcur.GetEntries() )
-        if(nentries==0): print "File with seed=",seedtot," has 0 entries"
-        for ientry in range(nentries):
-            tcur.GetEntry(ientry)
-            limit_[0] = tcur.limit
-            rmean_[0] = tcur.rmean
-            #print "Limit and rmean: ",limit_[0],"  ",rmean_[0]
-            to.Fill()
-            #end loop on iemtry
-        fcur.Close()
-        #end loop on jj
+        seedd = seed+(i*4)   
+        
+        for jj in range(toys):
 
-    print "haddLands: final tree has ",to.GetEntries()," entries"    
+            curfile = outputDir+"/"+listnames+"_"+str(seedd+offset)+"_"+str(jj)+"_maxllfit.root"
+            print curfile
+            fcur = ROOT.TFile( curfile )
+            tcur = fcur.Get("T")
+            nentries = int( tcur.GetEntries() )
+            for i in range(nentries):
+                tcur.GetEntry(i)
+                limit_[0] = tcur.limit
+                rmean_[0] = tcur.rmean
+                print limit_[0],rmean_[0]
+                to.Fill()
+            fcur.Close()
+    
     fo.cd()
     to.Write()
     fo.Close()
@@ -180,7 +159,7 @@ def getSeparationStats( l1, l2 ):
 
 def getSestimator( fit1, fit2, hname ):
 
-    h = ROOT.TH1F( hname,";S = -2 #times ln(L1/L2); count",8000,-40,40 )
+    h = ROOT.TH1F( hname,";S = ln(L1/L2); count",2000,-20,20 )
     
     print fit1,",",fit2
     f1 = ROOT.TFile(fit1)
@@ -195,7 +174,7 @@ def getSestimator( fit1, fit2, hname ):
     nt2 = t2.GetEntries()
 
     if nt1 != nt2: 
-        print "getSestimator: mismatch in number of entries! ",nt1,"  vs  ",nt2
+        print "mismatch in number of entries!"
         return
     else:
         for i in range(nt1):
@@ -210,14 +189,13 @@ def getSestimator( fit1, fit2, hname ):
                 nll1 = t1.limit
                 nll2 = t2.limit
         
-            Sestimator = 2.0*(-nll1 + nll2)
+            Sestimator = -nll1 + nll2
             h.Fill( Sestimator )
 
-       
     return h
 
 def getSestimatorList( fit1, fit2, hname ):
-  #  print "Starting getSestimatorList"
+        
     list = []
     
     print fit1,",",fit2
@@ -233,7 +211,7 @@ def getSestimatorList( fit1, fit2, hname ):
     nt2 = t2.GetEntries()
     
     if nt1 != nt2: 
-        print "getSestimatorList: mismatch in number of entries!",nt1,"  vs  ",nt2
+        print "mismatch in number of entries!"
         return
     else:
         for i in range(nt1):
@@ -248,10 +226,9 @@ def getSestimatorList( fit1, fit2, hname ):
                 nll1 = t1.limit
                 nll2 = t2.limit
             
-            Sestimator = 2.0*(-nll1 + nll2)
-###            print 'Sestimator = ',Sestimator
+            Sestimator = -nll1 + nll2
             list.append( Sestimator )
-        print "Ending getSestimatorList. Final list has size: ",len(list)    
+    
     return list
 
 ## --------------
@@ -359,7 +336,7 @@ def submitToPBS_lands( cmd, seed, toyN, oname, outputDir ):
             print >> fout,curline
     
     # then submit!
-    print "submitting LandS to PBS (",toyN,") ... "  
+    print "submitting LandS to PBS ... "    
     #    pbsCmd = "qsub -v "+"InputDir="+m_curdir+"/"+outputDir+" "+pbsname
     fout.close()
     pbsCmd = "qsub -v InputDir="+m_curdir+"/"+outputDir+" "+pbsname
@@ -371,6 +348,7 @@ def submitToPBS_lands( cmd, seed, toyN, oname, outputDir ):
 def submitToLXB( cmd, seed, toyN, oname, outputDir ):
     
     file = open("submitToLXB_tpl.sh")
+
     prefix="q"
     if cmd.find("saveToys") >= 0 or cmd.find("bWriteToys") >= 0: prefix = "gen"
     if cmd.find("toysFile") >= 0: prefix = "fit"
@@ -390,7 +368,7 @@ def submitToLXB( cmd, seed, toyN, oname, outputDir ):
         curline4 = curline3.replace("ONAME",oname).strip()        
         curline5 = curline4.replace("ODIR",outputDir).strip()   
         curline = curline5
-        if options.tool == "lands" and doRemove: curline = curline5.replace("###REMOVE###","rm -fr "+acmd[2])
+        if options.tool == "lands" and doRemove: curline = curline5.replace("###REMOVE###","rm "+acmd[2])
         print >> fout,curline
 
     # then submit!
@@ -398,13 +376,12 @@ def submitToLXB( cmd, seed, toyN, oname, outputDir ):
     fout.close()
     os.system( "chmod u+x "+m_curdir+"/"+pbsname )
     pbsCmd = "bsub -q 1nh -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
-   # print "The submission command is "+pbsCmd
+ #   print "The submission command is "+pbsCmd
     os.system( pbsCmd )
 
 ## --------------
 
-
-def submitToLXB_fit( cmd, seed, toyN, oname, outputDir ):
+def submitToLXB_lands( cmd, seed, toyN, oname, outputDir ):
     
     file = open("submitToLXB_tpl.sh")
     
@@ -416,126 +393,28 @@ def submitToLXB_fit( cmd, seed, toyN, oname, outputDir ):
     for line in file:
         
         if line.find("COMMAND") >= 0:
-            for kk in range(len(cmd)):
-                print >> fout, cmd[kk].strip()
-        elif line.find("cp ONAME ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "cp "+oname[kk]+" "+outputDir+"/."
-        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
-        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
-        elif line.find("cp ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "cp "+oname[kk]+" ${workdir}/"+outputDir+"/."
-        elif line.find("if [ ! -f ${workdir}/ODIR/ONAME ]") >=0 :
-       #     for kk in range(len(cmd)):
-             print >> fout, "if [ ! -f ${workdir}/"+outputDir+"/"+oname[kk]+" ]"
+            for kk in range(len(cmd)): print >> fout, cmd[kk].strip()
+        elif line.find("mv ONAME ODIR/ONAME") >= 0:
+            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" "+outputDir+"/."
         elif line.find("###REMOVE###") >= 0:
             for kk in range(len(cmd)): 
                 acmd = cmd[kk].split()
                 print acmd[2]
-                print >> fout, "rm -fr "+acmd[2].strip()
+                print >> fout, "rm "+acmd[2].strip()
         else:
             curline0 = line
             curline1 = curline0.replace("CMSSWBASE",m_cmssw_base)
             curline2 = curline1.replace("WORKDIR",m_curdir).strip()
             curline = curline2
             print >> fout,curline
-
+    
     # then submit!
-    print "submitting fit of toys #",toyN," to LXBatch (LandS) ... "    
+    print "submitting LandS to LXBatch ... "    
     #    pbsCmd = "qsub -v "+"InputDir="+m_curdir+"/"+outputDir+" "+pbsname
     fout.close()
     os.system( "chmod u+x "+m_curdir+"/"+pbsname )
-    #+" -G u_zh"
-    pbsCmd = "bsub -q 8nh "+" -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
-    #print "The submission command is "+pbsCmd
-#    os.system( pbsCmd )
-
-
-## --------------
-def submitToLXB_TPL_fit( cmd, seed, toyN, oname, outputDir ):
-    
-    file = open("submitToLXB_tpl.sh")
-    
-    prefix="fit"
-    pbsname = outputDir+"/"+prefix+"_submitToLXB_"+str(seed)+"_"+str(toyN)+".sh"
-    fout = open(pbsname,'w')
-
-    myname1="testWW"
-    myname2="testZZ"
-    cmd0 = cmd[0].split()
-    indexEnd=len(cmd0)-1
-    listcard=cmd0[indexEnd].strip().split("_")
-    myname1=str(listcard[1])
-    myname2=str(listcard[2])
-    myseed=str(listcard[3])
-    mystem="_"+str(myname1)+"_"+str(myname2)
-    myntoys=len(cmd)
-    if(myseed!=str(seed)): print "Seed mismatch ? "+myseed+"  vs  "+str(seed)
-
-    # replace the tpl file with the right command, directories
-    for line in file:
-        
-        if line.find("COMMAND") >= 0:
-            for kk in range(len(cmd)):
-                acmd = cmd[kk].split()
-                cardName=acmd[2].strip()
-                
-                listcard=cardName.split("_")
-#                print "Components: ",str(listcard[0])," ",str(listcard[1])," ",str(listcard[2])," ",str(listcard[3])," ",str(listcard[4])," ",str(listcard[5])," ",str(listcard[6])," "
-                if cardName.find("ALT")>0:
-                    tplcardName=str(listcard[0])+"_"+str(listcard[1])+"_"+str(listcard[2])+"_"+str(listcard[3])+"_"+str(listcard[4])+"_"+str(listcard[5])+"_"+str(listcard[6])+"_TPL.txt"
-                else:
-                    tplcardName=str(listcard[0])+"_"+str(listcard[1])+"_"+str(listcard[2])+"_"+str(listcard[3])+"_"+str(listcard[4])+"_"+str(listcard[5])+"_TPL.txt"
-#                print "TPLcardName: ",tplcardName
-                print >> fout, "sed \"s/<TOYINDEX>/"+str(kk)+"/\" "+tplcardName+" >"+cardName
-                print >> fout, cmd[kk].strip()
-        elif line.find("cp ONAME ODIR/ONAME") >= 0:
-###            for kk in range(len(cmd)):
-            print >> fout, "cp *"+mystem+"_"+myseed+"_maxllfit.root "+outputDir+"/."
-        elif line.find("cp ONAME ${workdir}/ODIR/ONAME") >= 0:
-###            for kk in range(len(cmd)): print >> fout, "cp "+oname[kk]+" ${workdir}/"+outputDir+"/."
-###            for kk in range(len(cmd)):
-            print >> fout, "cp *"+mystem+"_"+myseed+"_maxllfit.root "+"${workdir}/"+outputDir+"/."
-        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
-        elif line.find("mv ONAME ${workdir}/ODIR/ONAME") >= 0:
-            for kk in range(len(cmd)): print >> fout, "mv "+oname[kk]+" ${workdir}/"+outputDir+"/."
-        elif line.find("TOYFILE") >= 0:
-            for kk in range(len(cmd)):
-                toyName=cmd[kk].split() 
-                if(kk==0):print >> fout, "toyFile="+toyName[21].strip()
-        elif line.find("TOYCARD") >= 0:
-            for kk in range(len(cmd)):
-                cardName=cmd[kk].split() 
-                if(kk==0):print >> fout, "copyCard="+cardName[2].strip()
-        elif line.find("MYSTEM") >= 0: print >> fout, "STEM="+mystem
-        elif line.find("MYSEED") >= 0: print >> fout, "SEED="+myseed
-        elif line.find("MYNTOYS") >= 0: print >> fout, "NTOYS="+str(myntoys)
-        
-        elif line.find("if [ ! -f ${workdir}/ODIR/ONAME ]") >=0 :
-       #     for kk in range(len(cmd)):
-             print >> fout, "if [ ! -f ${workdir}/"+outputDir+"/*"+mystem+"_*"+myseed+"_maxllfit.root ]"
-        elif line.find("###REMOVE###") >= 0:
-            for kk in range(len(cmd)): 
-                acmd = cmd[kk].split()
-                print acmd[2]
-                print >> fout, "rm -fr "+acmd[2].strip()
-        else:
-            curline0 = line
-            curline1 = curline0.replace("CMSSWBASE",m_cmssw_base)
-            curline2 = curline1.replace("WORKDIR",m_curdir).strip()
-            curline = curline2
-            print >> fout,curline
-
-    # then submit!
-    print "submitting fit of toys #",toyN," to LXBatch (LandS) ... "    
-    #    pbsCmd = "qsub -v "+"InputDir="+m_curdir+"/"+outputDir+" "+pbsname
-    fout.close()
-    os.system( "chmod u+x "+m_curdir+"/"+pbsname )
-    #+" -G u_zh"
-    pbsCmd = "bsub -q 8nh "+" -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
-    #print "The submission command is "+pbsCmd
+    pbsCmd = "bsub -q 1nh -J "+ str(seed)+"_"+str(toyN) +" "+ m_curdir+"/"+pbsname +" "+m_curdir+"/"+outputDir
+#    print "The submission command is "+pbsCmd
     os.system( pbsCmd )
 
 
@@ -547,29 +426,7 @@ def makeDCcopy_lands(dc_model1_copy, dc_model1, toys, name1, seed1):
     previousline = ""
     for line in file:
         if previousline.find("--------") >= 0 and line.find("shapes") >= 0:
-            print >> filenew, "shapes data_obs * "+outputDir+"/"+name1+"_PseudoData_sb_seed"+str(seed1)+".root w:$CHANNEL_sbData_"+str(jj)    
-            print >> filenew, line.strip()
-        elif line.find("observation") >= 0:
-            splitline = line.split()
-            newline = "observation"
-            for kk in range(len(splitline)-1): newline = newline + " -1.0"
-#            print newline
-            print >> filenew, newline
-        else:
-            print >> filenew, line.strip()
-        
-        previousline = line    
-    file.close()
-    filenew.close()
-
-def makeDCcopyTPL_lands(dc_model1_copy, dc_model1, toys, name1, seed1):
-    file = open( dc_model1 )
-    filenew = open( dc_model1_copy, 'w' )
-    previousline = ""
-    for line in file:
-        if previousline.find("--------") >= 0 and line.find("shapes") >= 0:
-    #        print >> filenew, "shapes data_obs * "+outputDir+"/"+name1+"_PseudoData_sb_seed"+str(seed1)+".root w:$CHANNEL_sbData_"+str(jj)
-            print >> filenew, "shapes data_obs * "+outputDir+"/"+name1+"_PseudoData_sb_seed"+str(seed1)+".root w:$CHANNEL_sbData_<TOYINDEX>"
+            print >> filenew, "shapes data_obs * "+outputDir+"/"+name1+"_PseudoData_sb_seed"+str(seed1)+".root w:$CHANNEL_sbData_"+str(jj)
             print >> filenew, line.strip()
         elif line.find("observation") >= 0:
             splitline = line.split()
@@ -603,18 +460,12 @@ if __name__ == '__main__':
 #    dc_model2="SignalSeparation_PS_7p8TeV/datacards/hzz4l_4lS.126.0_7p8TeV.txt"
     dc_model1=options.card1
     dc_model2=options.card2
+    mass=126
     toys=options.toysPerJob
-    mass=options.mH
     name1="_testSM"
     name2="_testPS"
     seed=options.seed
     nParallelJobs=options.nParallelJobs
-    testStat=" --freq"
-    if options.useTeVStat: testStat=" --testStat TEV "
-    batchType=options.batchType
-    if ( (not batchType=="LXB") and (not batchType=="PBS") ):
-        raise RunTimeError,"Chosen batch system ({0}) is not recognized. Allowed choices are LXB (defualt) and PBS.".format(batchType)
-
     
     if parallelizeToys: print "Running in parallel mode with",toys,"toys per job for",nParallelJobs,"parallel jobs..."
     else: print "Running in serial mode, it might take a while..."
@@ -674,11 +525,11 @@ if __name__ == '__main__':
                 seed2 = seed+(i*2)
                                 
 #                generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid --freq -m "+str(mass)+" --rMin 0 --rMax 3 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --GenerateToysAtBestFitSB --bWriteToys 1 -n \""+name1+"\" -tH "+str(toys)+" --seed "+str(seed1)
-                generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)+" "+testStat
+                generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)
 
                 print generateCmd1
 #                generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid --freq -m "+str(mass)+" -rMin 0 -rMax 3 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --GenerateToysAtBestFitSB --bWriteToys 1 -n \""+name2+"\" -tH "+str(toys)+" --seed "+str(seed2)
-                generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)+" "+testStat
+                generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)
                 print generateCmd2
 
                 os.system(generateCmd1)
@@ -708,13 +559,8 @@ if __name__ == '__main__':
                     oname2 = "higgsCombine"+name2+".GenerateOnly.mH"+str(mass)+"."+str(seed2)+".root"            
                     
                     print "i: ",i
-                    if batchType=="PBS":
-                        submitToPBS( generateCmd1, seed1, i, oname1, outputDir )
-                        submitToPBS( generateCmd2, seed2, i, oname2, outputDir )
-                    else:
-                        submitToLXB( generateCmd1, seed1, i, oname1, outputDir )
-                        submitToLXB( generateCmd2, seed2, i, oname2, outputDir )
-                        
+                    submitToPBS( generateCmd1, seed1, i, oname1, outputDir )
+                    submitToPBS( generateCmd2, seed2, i, oname2, outputDir )
 
             elif options.tool == "lands":
 
@@ -723,23 +569,15 @@ if __name__ == '__main__':
                     seed1 = seed+((i*2)-1)
                     seed2 = seed+(i*2)
                     
-                    generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)+" -v 2 "+testStat
-                    generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)+" -v 2 "+testStat
+                    generateCmd1 = "lands.exe -d "+dc_model1+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name1+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed1)+" -v 2"
+                    generateCmd2 = "lands.exe -d "+dc_model2+" -M Hybrid --freq -m "+str(mass)+" --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --bWriteToys 1 -n \""+name2+"\" --nToysForCLsb "+str(toys)+" --nToysForCLb 1 --singlePoint 1 --seed "+str(seed2)+" -v 2"
                     
                     oname1 = name1+"_PseudoData_sb_seed"+str(seed1)+".root"
                     oname2 = name2+"_PseudoData_sb_seed"+str(seed2)+".root"            
                     
                     print "i: ",i
-                    if batchType=="PBS":
-                        submitToPBS_lands( generateCmd1, seed1, i, oname1, outputDir )
-                        submitToPBS_lands( generateCmd2, seed2, i, oname2, outputDir )
-                    else:
-#                        print "Command: ",generateCmd1
-                  #      print "OutName: ",oname1
-                  ### despite of the name, submitToLXB works also for LandS, 
-                  ### you can leave it as it is
-                        submitToLXB( generateCmd1, seed1, i, oname1, outputDir )
-                        submitToLXB( generateCmd2, seed2, i, oname2, outputDir )
+                    submitToPBS( generateCmd1, seed1, i, oname1, outputDir )
+                    submitToPBS( generateCmd2, seed2, i, oname2, outputDir )
                     
             else: 
                 print "Wrong tool!"
@@ -795,38 +633,25 @@ if __name__ == '__main__':
                 seed1 = seed+((i*2)-1)
                 seed2 = seed+(i*2)
                 
- 
-                    
-                dc_model11_copy = dc_model1+".copy_"+name1+"_"+str(seed1)+"_TPL.txt"
-                dc_model12_copy = dc_model1+".copy_"+name2+"_"+str(seed2)+"_TPL.txt"
-                dc_model21_copy = dc_model2+".copy_"+name1+"_"+str(seed1)+"_TPL.txt"
-                dc_model22_copy = dc_model2+".copy_"+name2+"_"+str(seed2)+"_TPL.txt"
-                
-                #                os.system("cp "+dc_model1+" "+dc_model1_copy)
-                
-                makeDCcopyTPL_lands( dc_model11_copy, dc_model1, toys, name1, seed1 )
-                makeDCcopyTPL_lands( dc_model12_copy, dc_model1, toys, name2, seed2 )
-                makeDCcopyTPL_lands( dc_model21_copy, dc_model2, toys, name1, seed1 )
-                makeDCcopyTPL_lands( dc_model22_copy, dc_model2, toys, name2, seed2 )
-
                 for jj in range(toys):
-
+                    
                     dc_model11_copy = dc_model1+".copy_"+name1+"_"+str(seed1)+"_"+str(jj)+".txt"
                     dc_model12_copy = dc_model1+".copy_"+name2+"_"+str(seed2)+"_"+str(jj)+".txt"
                     dc_model21_copy = dc_model2+".copy_"+name1+"_"+str(seed1)+"_"+str(jj)+".txt"
                     dc_model22_copy = dc_model2+".copy_"+name2+"_"+str(seed2)+"_"+str(jj)+".txt"
                     
-                    #     #                os.system("cp "+dc_model1+" "+dc_model1_copy)
-                    #                     makeDCcopy_lands( dc_model11_copy, dc_model1, toys, name1, seed1 )
-                    #                     makeDCcopy_lands( dc_model12_copy, dc_model1, toys, name2, seed2 )
-                    #                     makeDCcopy_lands( dc_model21_copy, dc_model2, toys, name1, seed1 )
-                    #                     makeDCcopy_lands( dc_model22_copy, dc_model2, toys, name2, seed2 )
+    #                os.system("cp "+dc_model1+" "+dc_model1_copy)
+            
+                    makeDCcopy_lands( dc_model11_copy, dc_model1, toys, name1, seed1 )
+                    makeDCcopy_lands( dc_model12_copy, dc_model1, toys, name2, seed2 )
+                    makeDCcopy_lands( dc_model21_copy, dc_model2, toys, name1, seed1 )
+                    makeDCcopy_lands( dc_model22_copy, dc_model2, toys, name2, seed2 )
                     
                     fitCmd11 = "lands.exe -d "+dc_model11_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name1+name1+"_"+str(seeda)+"_"+str(jj)+"\""
                     fitCmd12 = "lands.exe -d "+dc_model12_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name1+name2+"_"+str(seedb)+"_"+str(jj)+"\""
                     fitCmd21 = "lands.exe -d "+dc_model21_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name2+name1+"_"+str(seedc)+"_"+str(jj)+"\""
                     fitCmd22 = "lands.exe -d "+dc_model22_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name2+name2+"_"+str(seedd)+"_"+str(jj)+"\""
-                    
+
                     print fitCmd11
                     
                     os.system( fitCmd11 )                    
@@ -842,7 +667,8 @@ if __name__ == '__main__':
 
             else: 
                 print "wrong tool!"
-        else:     # we are parallelizing
+    
+        else:
             
             if options.tool == "combine":
 
@@ -867,18 +693,11 @@ if __name__ == '__main__':
                     fitname12 = "higgsCombine"+name1+"_fit"+name2+"_"+str(seedb)+".MaxLikelihoodFit.mH"+str(mass)+"."+str(seedb)+".root"
                     fitname21 = "higgsCombine"+name2+"_fit"+name1+"_"+str(seedc)+".MaxLikelihoodFit.mH"+str(mass)+"."+str(seedc)+".root"
                     fitname22 = "higgsCombine"+name2+"_fit"+name2+"_"+str(seedd)+".MaxLikelihoodFit.mH"+str(mass)+"."+str(seedd)+".root"
-                    if batchType=="PBS":
-                        submitToPBS( fitCmd11, seeda, i, fitname11, outputDir )
-                        submitToPBS( fitCmd12, seedb, i, fitname12, outputDir )
-                        submitToPBS( fitCmd21, seedc, i, fitname21, outputDir )
-                        submitToPBS( fitCmd22, seedd, i, fitname22, outputDir )
-                    else:
-                        ### despite of the name, submitToLXB works also for LandS, 
-                        ### you can leave it as it is                        
-                        submitToLXB( fitCmd11, seeda, i, fitname11, outputDir )
-                        submitToLXB( fitCmd12, seedb, i, fitname12, outputDir )
-                        submitToLXB( fitCmd21, seedc, i, fitname21, outputDir )
-                        submitToLXB( fitCmd22, seedd, i, fitname22, outputDir )
+                    
+                    submitToPBS( fitCmd11, seeda, i, fitname11, outputDir )
+                    submitToPBS( fitCmd12, seedb, i, fitname12, outputDir )
+                    submitToPBS( fitCmd21, seedc, i, fitname21, outputDir )
+                    submitToPBS( fitCmd22, seedd, i, fitname22, outputDir )
 
             elif options.tool == "lands":
 
@@ -896,17 +715,7 @@ if __name__ == '__main__':
                     list_fitCmd21 = []; list_fitname21 = [];
                     list_fitCmd22 = []; list_fitname22 = [];
                     list_seeda = []; list_seedb = []; list_seedc = []; list_seedd = [];
-                                           
-                    dc_model11_copyTPL = dc_model1+".copy_"+name1+"_"+str(seed1)+"_TPL.txt"
-                    dc_model12_copyTPL = dc_model1+".copy_"+name2+"_"+str(seed2)+"_TPL.txt"
-                    dc_model21_copyTPL = dc_model2+".copy_"+name1+"_"+str(seed1)+"_TPL.txt"
-                    dc_model22_copyTPL = dc_model2+".copy_"+name2+"_"+str(seed2)+"_TPL.txt"                        
-                    makeDCcopyTPL_lands( dc_model11_copyTPL, dc_model1, toys, name1, seed1 )
-                    makeDCcopyTPL_lands( dc_model12_copyTPL, dc_model1, toys, name2, seed2 )
-                    makeDCcopyTPL_lands( dc_model21_copyTPL, dc_model2, toys, name1, seed1 )
-                    makeDCcopyTPL_lands( dc_model22_copyTPL, dc_model2, toys, name2, seed2 )
-
-
+                    
                     for jj in range(toys):
                         
                         dc_model11_copy = dc_model1+".copy_"+name1+"_"+str(seed1)+"_"+str(jj)+".txt"
@@ -916,15 +725,15 @@ if __name__ == '__main__':
                         
                         #                os.system("cp "+dc_model1+" "+dc_model1_copy)
                         
-#                         makeDCcopy_lands( dc_model11_copy, dc_model1, toys, name1, seed1 )
-#                         makeDCcopy_lands( dc_model12_copy, dc_model1, toys, name2, seed2 )
-#                         makeDCcopy_lands( dc_model21_copy, dc_model2, toys, name1, seed1 )
-#                         makeDCcopy_lands( dc_model22_copy, dc_model2, toys, name2, seed2 )
+                        makeDCcopy_lands( dc_model11_copy, dc_model1, toys, name1, seed1 )
+                        makeDCcopy_lands( dc_model12_copy, dc_model1, toys, name2, seed2 )
+                        makeDCcopy_lands( dc_model21_copy, dc_model2, toys, name1, seed1 )
+                        makeDCcopy_lands( dc_model22_copy, dc_model2, toys, name2, seed2 )
                         
-                        fitCmd11 = "lands.exe -d "+dc_model11_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile "+outputDir+"/"+name1+"_PseudoData_sb_seed"+str(seed1)+".root -n \""+name1+name1+"_"+str(seeda)+"_"+str(jj)+"\""
-                        fitCmd12 = "lands.exe -d "+dc_model12_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile "+outputDir+"/"+name1+"_PseudoData_sb_seed"+str(seed1)+".root -n \""+name1+name2+"_"+str(seedb)+"_"+str(jj)+"\""
-                        fitCmd21 = "lands.exe -d "+dc_model21_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile "+outputDir+"/"+name2+"_PseudoData_sb_seed"+str(seed2)+".root -n \""+name2+name1+"_"+str(seedc)+"_"+str(jj)+"\""
-                        fitCmd22 = "lands.exe -d "+dc_model22_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 10  --NoErrorEstimate --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so --doExpectation 1 --loadToysFromFile "+outputDir+"/"+name2+"_PseudoData_sb_seed"+str(seed2)+".root -n \""+name2+name2+"_"+str(seedd)+"_"+str(jj)+"\""
+                        fitCmd11 = "lands.exe -d "+dc_model11_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name1+name1+"_"+str(seeda)+"_"+str(jj)+"\""
+                        fitCmd12 = "lands.exe -d "+dc_model12_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name1+name2+"_"+str(seedb)+"_"+str(jj)+"\""
+                        fitCmd21 = "lands.exe -d "+dc_model21_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name2+name1+"_"+str(seedc)+"_"+str(jj)+"\""
+                        fitCmd22 = "lands.exe -d "+dc_model22_copy+" -M MaxLikelihoodFit -m "+str(mass)+" --NoErrorEstimate --rMin 0 --rMax 5 --minuitSTRATEGY 0 --bMultiSigProcShareSamePDF -L $CMSSW_BASE/lib/*/libHiggsAnalysisCombinedLimit.so -n \""+name2+name2+"_"+str(seedd)+"_"+str(jj)+"\""
 
                         list_fitCmd11.append(fitCmd11)
                         list_fitCmd12.append(fitCmd12)
@@ -935,17 +744,11 @@ if __name__ == '__main__':
                         list_fitname12.append(name1+name2+"_"+str(seedb)+"_"+str(jj)+"_maxllfit.root")
                         list_fitname21.append(name2+name1+"_"+str(seedc)+"_"+str(jj)+"_maxllfit.root")
                         list_fitname22.append(name2+name2+"_"+str(seedd)+"_"+str(jj)+"_maxllfit.root")
-
-                    if batchType=="PBS":
-                        submitToPXB_lands( list_fitCmd11, seeda, i, list_fitname11, outputDir )
-                        submitToPXB_lands( list_fitCmd12, seedb, i, list_fitname12, outputDir )
-                        submitToPXB_lands( list_fitCmd21, seedc, i, list_fitname21, outputDir )
-                        submitToPXB_lands( list_fitCmd22, seedd, i, list_fitname22, outputDir )
-                    else:
-                        submitToLXB_TPL_fit( list_fitCmd11, seeda, i, list_fitname11, outputDir )
-                        submitToLXB_TPL_fit( list_fitCmd12, seedb, i, list_fitname12, outputDir )
-                        submitToLXB_TPL_fit( list_fitCmd21, seedc, i, list_fitname21, outputDir )
-                        submitToLXB_TPL_fit( list_fitCmd22, seedd, i, list_fitname22, outputDir )
+                        
+                    submitToPBS_lands( list_fitCmd11, seeda, i, list_fitname11, outputDir )
+                    submitToPBS_lands( list_fitCmd12, seedb, i, list_fitname12, outputDir )
+                    submitToPBS_lands( list_fitCmd21, seedc, i, list_fitname21, outputDir )
+                    submitToPBS_lands( list_fitCmd22, seedd, i, list_fitname22, outputDir )
 
             else: 
                 print "wrong tool!"                
@@ -955,9 +758,8 @@ if __name__ == '__main__':
     ## do plots
     
     if doPlots:
-        print 'Inside doPlots'
+
         if addFiles:
-            print 'Adding files'
             hcmd11 = ""; hcmd12 = ""; hcmd21 = ""; hcmd22 = "";
             if options.tool == "combine":
                 hcmd11 = "hadd -f "+outputDir+"/"+"mlfit"+name1+"_fit"+name1+".root "+outputDir+"/"+"mlfit"+name1+"_fit"+name1+"_[0-9]*.root"
@@ -1004,8 +806,8 @@ if __name__ == '__main__':
         leg = ROOT.TLegend(0.25,0.7,0.45,0.9)
         leg.SetFillColor(0)
         leg.SetBorderSize(0)
-        leg.AddEntry(h2,"SM, 0+","l")
-        leg.AddEntry(h1,"PS, 0-","l")
+        leg.AddEntry(h1,"SM, 0+","l")
+        leg.AddEntry(h2,"PS, 0-","l")
 
         arrow = ROOT.TArrow( 0.02, 50, 0.02, 0 )
         arrow.SetLineWidth( 2 )

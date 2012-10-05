@@ -37,14 +37,6 @@ elif [[ "$TYPE" == "PLPE" ]]; then
     
     bash make_PLC.sh $OPTIONS --PE $MASS comb_hzz4l.root
 
-elif [[ "$TYPE" == "PLS" ]]; then
-    
-    bash make_PLC.sh $OPTIONS -S $MASS comb_hzz4l.root
-
-elif [[ "$TYPE" == "PLSE" ]]; then
-    
-    bash make_PLC.sh $OPTIONS --SE $MASS comb_hzz4l.root
-
 elif [[ "$TYPE" == "ML" ]]; then
     
     bash make_ML.sh $OPTIONS $MASS comb_hzz4l.root

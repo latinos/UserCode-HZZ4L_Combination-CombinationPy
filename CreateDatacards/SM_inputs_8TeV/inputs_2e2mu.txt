@@ -1,5 +1,5 @@
 ############## Inputs for 2e2mu for 8 TeV ##############
-## SM  ##
+## SM ##
 model SM
 
 ## decay chan ##
@@ -14,7 +14,6 @@ sqrts 8
 
 ## Channels to include in cards ##
 channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
-#channels all qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
@@ -115,8 +114,3 @@ systematic CMS_zz4l_sigma True
 systematic CMS_zz4l_mean True
 systematic CMS_zz4l_sigma True
 systematic CMS_zz4l_n True
-
-
-### for hypothesis testing ###
-doHypTest False
-#altHypLabel _ALT

@@ -14,10 +14,10 @@ TYPE=$1
 MASSFILE=$2
 OPTIONS=$3
 
-if [[ "$TYPE" != "ASCLS" && "$TYPE" != "PLP" && "$TYPE" != "PLPE" && "$TYPE" != "ML"  && "$TYPE" != "PLS"  && "$TYPE" != "PLSE" ]]; then
+if [[ "$TYPE" != "ASCLS" && "$TYPE" != "PLP" && "$TYPE" != "PLPE" && "$TYPE" != "ML" ]]; then
     
     echo "Unkown Type: $TYPE"
-    echo "Options: ASCLS, PLP, PLPE, PLS, ML"
+    echo "Options: ASCLS, PLP, PLPE, ML"
     exit;
 
 fi

@@ -5,7 +5,6 @@ WHAT="PLC"
 if [[ "$1" == "-S" ]]; then WHAT="PLS"; shift; fi;
 if [[ "$1" == "-P" ]]; then WHAT="PLP"; shift; fi;
 if [[ "$1" == "--PE" ]]; then WHAT="PLPE"; shift; fi;
-if [[ "$1" == "--SE" ]]; then WHAT="PLSE"; shift; fi;
 if test -d $1; then MASS=$1; else echo "Usage: $0 mass [what ]"; exit 1; fi; 
 cd $MASS; shift
 MATCH=$1;
@@ -17,8 +16,6 @@ fi;
 
 if [[ "$WHAT" == "PLS" ]]; then
     OPTIONS="$OPTIONS --signif"
-elif [[ "$WHAT" == "PLSE" ]]; then
-    OPTIONS="$OPTIONS --signif --expectSignal=1 -t -1 --toysFreq"
 elif [[ "$WHAT" == "PLP" ]]; then
     OPTIONS="$OPTIONS --signif --pvalue"
 elif [[ "$WHAT" == "PLPE" ]]; then
