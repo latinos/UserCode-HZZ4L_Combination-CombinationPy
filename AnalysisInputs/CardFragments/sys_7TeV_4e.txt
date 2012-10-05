@@ -4,6 +4,7 @@ systematic zjetKappaHigh  1.9
 systematic param CMS_zz4l_mean_e_sig   0.004
 systematic param CMS_zz4l_sigma_e_sig  0.2
 systematic param CMS_zz4l_n_sig	       0.05
+systematic param CMS_zz4l_gamma_sig    0.05
 
 ## 4e systematics ##
 systematic elec_full 0.11 0.06 150
@@ -32,4 +33,5 @@ systematic CMS_zz4l_sigma True
 systematic CMS_zz4l_mean True
 systematic CMS_zz4l_sigma True
 systematic CMS_zz4l_n True
+systematic CMS_zz4l_gamma True
 
