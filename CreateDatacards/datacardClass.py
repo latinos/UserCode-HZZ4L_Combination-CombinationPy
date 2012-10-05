@@ -213,6 +213,7 @@ class datacardClass:
         mean_CB_d = 0.0
         sigma_CB_d = 0.0
         mean_BW_d = self.mH
+        gamma_BW_d = 0.0
         
         if(self.all_chan):
             rdhXsBrFuncV_1 = self.makeXsBrFunction(0,self.MH)
@@ -256,15 +257,15 @@ class datacardClass:
         CMS_zz4l_n = ROOT.RooRealVar(name,"CMS_zz4l_n",2.,-10.,10.)
         name = "CMS_zz4l_mean_BW_{0}_{1:.0f}".format(self.channel,self.sqrts)
         CMS_zz4l_mean_BW = ROOT.RooRealVar(name,"CMS_zz4l_mean_BW",self.mH,self.low_M,self.high_M)
-        name = "CMS_zz4l_gamma_BW_{0}_{1:.0f}".format(self.channel,self.sqrts)
-        CMS_zz4l_gamma_BW = ROOT.RooRealVar(name,"CMS_zz4l_gamma_BW",self.widthHVal)
+        name = "CMS_zz4l_gamma_sig_{0}_{1:.0f}".format(self.channel,self.sqrts)
+        CMS_zz4l_gamma = ROOT.RooRealVar(name,"CMS_zz4l_gamma",10.,0.001,1000.)
         name = "CMS_zz4l_widthScale_{0}_{1:.0f}".format(self.channel,self.sqrts)
         CMS_zz4l_widthScale = ROOT.RooRealVar(name,"CMS_zz4l_widthScale",1.0)
         one = ROOT.RooRealVar("one","one",1.0)
         one.setConstant(True)
     
         CMS_zz4l_mean_BW.setVal( mean_BW_d )
-        CMS_zz4l_gamma_BW.setVal( self.widthHVal )
+        CMS_zz4l_gamma.setVal(0)
         CMS_zz4l_mean_e_sig.setVal(0)
         CMS_zz4l_sigma_e_sig.setVal(0)
         CMS_zz4l_mean_m_sig.setVal(0)
@@ -275,12 +276,12 @@ class datacardClass:
         CMS_zz4l_widthScale.setConstant(True)
         CMS_zz4l_alpha.setConstant(True)
         CMS_zz4l_mean_BW.setConstant(True)
-        CMS_zz4l_gamma_BW.setConstant(True)
+        #CMS_zz4l_gamma_BW.setConstant(True)
 
         print "HEEERRRRRRRRRRRRRRRRREEEEEEE"
 
         print "mean_BW ", CMS_zz4l_mean_BW.getVal()
-        print "gamma_BW ", CMS_zz4l_gamma_BW.getVal()
+        print "gamma_BW ", CMS_zz4l_gamma.getVal()
         print "mean_e_sig ", CMS_zz4l_mean_e_sig.getVal()
         print "sigma_e ", CMS_zz4l_sigma_e_sig.getVal()
         print "mean_m_sig ",CMS_zz4l_mean_m_sig.getVal()
@@ -301,13 +302,17 @@ class datacardClass:
         rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig))
         name = "CMS_zz4l_sigma_sig_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
         rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig))
+
+        name = "CMS_zz4l_gamma_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+        rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape']+")"+"*(1+@1)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
+
         if (DEBUG): print " DEBUG *********  ", theInputs['sigma_CB_shape'] 
 
         print "n_CB ", rfv_n_CB.getVal()
         print "alpha_CB ", rfv_alpha_CB.getVal()
         print "mean_CB ", rfv_mean_CB.getVal()
         print "sigma_CB ", rfv_sigma_CB.getVal()
-        
+        print "gamma_BW ", rfv_gamma_BW.getVal()    
 
         
         CMS_zz4l_mean_sig_NoConv = ROOT.RooFormulaVar("CMS_zz4l_mean_sig_NoConv_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts),"@0+@1", ROOT.RooArgList(rfv_mean_CB, self.MH))
@@ -317,23 +322,28 @@ class datacardClass:
         ## --------------------- SHAPE FUNCTIONS ---------------------- ##
     
         signalCB_ggH = ROOT.RooCBShape("signalCB_ggH","signalCB_ggH",CMS_zz4l_mass, self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB, self.bUseCBnoConvolution) , self.getVariable(CMS_zz4l_massErr,rfv_sigma_CB, self.bIncludingError),rfv_alpha_CB,rfv_n_CB)
-        signalBW_ggH = ROOT.RooRelBWUFParam("signalBW_ggH", "signalBW_ggH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        #signalBW_ggH = ROOT.RooRelBWUFParam("signalBW_ggH", "signalBW_ggH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        signalBW_ggH = ROOT.RooRelBWHighMass("signalBW_ggH", "signalBW_ggH",CMS_zz4l_mass,CMS_zz4l_mean_BW,rfv_gamma_BW)
         sig_ggH =  ROOT.RooFFTConvPdf("sig_ggH","BW (X) CB",CMS_zz4l_mass,signalBW_ggH,signalCB_ggH, 2)
         
         signalCB_VBF = ROOT.RooCBShape("signalCB_VBF","signalCB_VBF",CMS_zz4l_mass,self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB,self.bUseCBnoConvolution),self.getVariable(CMS_zz4l_massErr,rfv_sigma_CB, self.bIncludingError),rfv_alpha_CB,rfv_n_CB)
-        signalBW_VBF = ROOT.RooRelBWUFParam("signalBW_VBF", "signalBW_VBF",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        #signalBW_VBF = ROOT.RooRelBWUFParam("signalBW_VBF", "signalBW_VBF",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        signalBW_VBF = ROOT.RooRelBWHighMass("signalBW_VBF", "signalBW_VBF",CMS_zz4l_mass,CMS_zz4l_mean_BW,rfv_gamma_BW)
         sig_VBF = ROOT.RooFFTConvPdf("sig_VBF","BW (X) CB",CMS_zz4l_mass,signalBW_VBF,signalCB_VBF, 2)
         
         signalCB_WH = ROOT.RooCBShape("signalCB_WH","signalCB_WH",CMS_zz4l_mass,self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB,self.bUseCBnoConvolution),self.getVariable(CMS_zz4l_massErr,rfv_sigma_CB, self.bIncludingError),rfv_alpha_CB,rfv_n_CB)
-        signalBW_WH = ROOT.RooRelBWUFParam("signalBW_WH", "signalBW_WH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        #signalBW_WH = ROOT.RooRelBWUFParam("signalBW_WH", "signalBW_WH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        signalBW_WH = ROOT.RooRelBWHighMass("signalBW_WH", "signalBW_WH",CMS_zz4l_mass,CMS_zz4l_mean_BW,rfv_gamma_BW)
         sig_WH = ROOT.RooFFTConvPdf("sig_WH","BW (X) CB",CMS_zz4l_mass,signalBW_WH,signalCB_WH, 2)
         
         signalCB_ZH = ROOT.RooCBShape("signalCB_ZH","signalCB_ZH",CMS_zz4l_mass,self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB,self.bUseCBnoConvolution),self.getVariable(CMS_zz4l_massErr,rfv_sigma_CB, self.bIncludingError),rfv_alpha_CB,rfv_n_CB)
-        signalBW_ZH = ROOT.RooRelBWUFParam("signalBW_ZH", "signalBW_ZH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        #signalBW_ZH = ROOT.RooRelBWUFParam("signalBW_ZH", "signalBW_ZH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        signalBW_ZH = ROOT.RooRelBWHighMass("signalBW_ZH", "signalBW_ZH",CMS_zz4l_mass,CMS_zz4l_mean_BW,rfv_gamma_BW)
         sig_ZH = ROOT.RooFFTConvPdf("sig_ZH","BW (X) CB",CMS_zz4l_mass,signalBW_ZH,signalCB_ZH, 2)
         
         signalCB_ttH = ROOT.RooCBShape("signalCB_ttH","signalCB_ttH",CMS_zz4l_mass,self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB,self.bUseCBnoConvolution),self.getVariable(CMS_zz4l_massErr,rfv_sigma_CB, self.bIncludingError),rfv_alpha_CB,rfv_n_CB)
-        signalBW_ttH = ROOT.RooRelBWUFParam("signalBW_ttH", "signalBW_ttH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        #signalBW_ttH = ROOT.RooRelBWUFParam("signalBW_ttH", "signalBW_ttH",CMS_zz4l_mass,CMS_zz4l_mean_BW,CMS_zz4l_widthScale)
+        signalBW_ttH = ROOT.RooRelBWHighMass("signalBW_ttH", "signalBW_ttH",CMS_zz4l_mass,CMS_zz4l_mean_BW,rfv_gamma_BW)
         sig_ttH = ROOT.RooFFTConvPdf("sig_ttH","BW (X) CB",CMS_zz4l_mass,signalBW_ttH,signalCB_ttH, 2) 
         
         ## Buffer fraction for cyclical behavior

@@ -55,6 +55,7 @@ class inputReader:
         self.alpha_CB_shape = -999.9
         self.mean_CB_shape = -999.9
         self.sigma_CB_shape = -999.9
+        self.gamma_BW_shape = -999.9
         # signal efficiency params
         self.sigeff_a1 = -999.9
         self.sigeff_a2 = -999.9
@@ -114,6 +115,7 @@ class inputReader:
         self.CMS_zz4l_mean_e_sig = -999.9
         self.CMS_zz4l_sigma_e_sig = -999.9
         self.CMS_zz4l_n_sig = -999.9
+        self.CMSSW_zz4l_gamma_sig = -999.9
 
         self.useLumiUnc = False
         self.usePdf_gg = False
@@ -223,6 +225,9 @@ class inputReader:
                 if f[1].lower().startswith("sigma_cb"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.sigma_CB_shape = f[2]
+                if f[1].lower().startswith("gamma_bw"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.gamma_BW_shape = f[2]
                     
             if f[0].lower().startswith("signaleff"):
 
@@ -310,6 +315,8 @@ class inputReader:
                         self.CMS_zz4l_sigma_e_sig = f[3]
                     if f[2].lower().startswith("cms_zz4l_n_sig"):
                         self.CMS_zz4l_n_sig = f[3]
+                    if f[2].lower().startswith("cms_zz4l_gamma_sig"):
+                        self.CMS_zz4l_gamma_sig = f[3]
                         
                 if f[1].lower().startswith("luminosity"):
                     self.useLumiUnc = self.parseBoolString(f[2])
@@ -349,6 +356,8 @@ class inputReader:
                     self.useCMS_zz4l_sigma = self.parseBoolString(f[2])
                 if f[1].lower().startswith("cms_zz4l_n"):
                     self.useCMS_zz4l_n = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_gamma"):
+                    self.useCMS_zz4l_gamma = self.parseBoolString(f[2])
                 
                     
             if f[0].lower().startswith("lumi"):
@@ -381,6 +390,7 @@ class inputReader:
         if not self.goodEntry(self.alpha_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("alpha_CB_shape")
         if not self.goodEntry(self.mean_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("mean_CB_shape")
         if not self.goodEntry(self.sigma_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigma_CB_shape")
+        if not self.goodEntry(self.gamma_BW_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("gamma_BW_shape")
 
         if not self.goodEntry(self.sigeff_a1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_a1")
         if not self.goodEntry(self.sigeff_a2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_a2")
@@ -449,6 +459,8 @@ class inputReader:
             raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_sigma_e_sig")
         if not self.goodEntry(self.CMS_zz4l_n_sig) and self.useCMS_zz4l_n:
             raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_n_sig")
+        if not self.goodEntry(self.CMS_zz4l_gamma_sig) and self.useCMS_zz4l_gamma:
+            raise RuntimeError,"{0} is not set. Check systematic inputs!".format("CMS_zz4l_gamma_sig")
 
         if self.doHypTest:
             print "!!! HYPTOTHESIS TESTING !!!"
@@ -490,6 +502,7 @@ class inputReader:
         dict['alpha_CB_shape'] = self.alpha_CB_shape
         dict['mean_CB_shape'] = self.mean_CB_shape
         dict['sigma_CB_shape'] = self.sigma_CB_shape
+        dict['gamma_BW_shape'] = self.gamma_BW_shape
 
         dict['sigEff_a1'] = float(self.sigeff_a1)
         dict['sigEff_a2'] = float(self.sigeff_a2)
@@ -572,9 +585,9 @@ class inputReader:
         dict['CMS_zz4l_mean_e_sig'] = float(self.CMS_zz4l_mean_e_sig) 
         dict['CMS_zz4l_sigma_e_sig'] = float(self.CMS_zz4l_sigma_e_sig)
         dict['CMS_zz4l_n_sig'] = float(self.CMS_zz4l_n_sig)
+        dict['CMS_zz4l_gamma_sig'] = float(self.CMS_zz4l_gamma_sig)
 
         dict['doHypTest'] = self.doHypTest
         dict['altHypLabel'] = str(self.altHypLabel)
         
         return dict
-
