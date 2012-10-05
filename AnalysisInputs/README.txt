@@ -73,7 +73,7 @@ in the final destination directory, i.e.
 8. SIGNAL AND BACKGROUND 2D TEMPLATES
 Run:
 
-root -q -b generateTemplates.C+
+root -q -b loadMELA.C generateTemplates.C+
 
 The resulting templates are written into the final destination directory, i.e. 
 ../CreateDatacards/templates2D
