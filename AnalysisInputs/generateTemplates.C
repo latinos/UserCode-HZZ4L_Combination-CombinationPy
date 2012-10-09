@@ -457,7 +457,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 
     bkgMC->GetEntry(i);
 
-    if(i%1000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
+    if(i%100000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
 
     bool cutPassed= (melaCut>0.0) ? (KD_cut>melaCut) : true;
     if(w<.0015 && cutPassed){
@@ -539,7 +539,9 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 	if( binMzz>=300 && binMzz<350 ) effectiveArea=1;
 	if( binMzz>=350 && binMzz<500 ) effectiveArea=3;
 	if( binMzz>=500 && binMzz<600 ) effectiveArea=5;
-	if( binMzz>=600 ) effectiveArea=7;
+	if( binMzz>=600 && binMzz<800 ) effectiveArea=7;
+	if( binMzz>=800 && binMzz<1200) effectiveArea=9;
+	if( binMzz>=1200 ) effectiveArea=15;
 	
 	for(int a=-effectiveArea; a<=effectiveArea; a++){
 	  if(a+i<1 || a+i>nXbins || j>nYbins || j<1) continue;
