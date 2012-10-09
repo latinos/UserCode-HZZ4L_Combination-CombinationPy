@@ -31,6 +31,7 @@
 #include "RooPlot.h"
 */
 
+
 //----------> SET INPUT VARIABLES in Config.h
 #include "Config.h"
 //<----------
@@ -46,6 +47,8 @@ void signalFits()
 {
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
+
+  gSystem->Load("../CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
 
   signalFits(1,7);
   signalFits(2,7);
@@ -147,8 +150,11 @@ void signalFits(int channel, int sqrts)
     MHStar.setConstant(true);
     RooRealVar Gamma_TOT("Gamma_TOT","Gamma_TOT",valueWidth,0.,700.);
     if(masses[i] < 399.) Gamma_TOT.setConstant(true);
-    
+    RooRealVar one("one","one",1.0);
+    one.setConstant(kTRUE);
+
     RooGenericPdf SignalTheor("SignalTheor","(@0)/( pow(pow(@0,2)-pow(@1,2),2) + pow(@0,2)*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
+    RooRelBWUFParam SignalTheorLM("signalTheorLM","signalTheorLM",ZZMass,MHStar,one);
 
     //Experimental resolution
     RooRealVar meanCB("meanCB","meanCB",0.,-20.,20.);
@@ -166,11 +172,13 @@ void signalFits(int channel, int sqrts)
     RooCBShape massRes("massRes","crystal ball",ZZMass,meanCB,sigmaCB,alphaCB,nCB);
 
     //Convolute theoretical shape and resolution
-    RooFFTConvPdf sigPDF("sigPDF","sigPDF",ZZMass, SignalTheor,massRes);
-    sigPDF.setBufferFraction(0.2);
+    RooFFTConvPdf *sigPDF;
+    if(masses[i] < 399.) sigPDF = new RooFFTConvPdf("sigPDF","sigPDF",ZZMass, SignalTheorLM,massRes);
+    else sigPDF = new RooFFTConvPdf("sigPDF","sigPDF",ZZMass, SignalTheor,massRes);
+    sigPDF->setBufferFraction(0.2);
 
     //Fit the shape
-    RooFitResult *fitRes = sigPDF.fitTo(*set,Save(1), SumW2Error(kTRUE));
+    RooFitResult *fitRes = sigPDF->fitTo(*set,Save(1), SumW2Error(kTRUE));
 
     a_fitEDM[i] = fitRes->edm();
     a_fitCovQual[i] = fitRes->covQual();
@@ -192,7 +200,7 @@ void signalFits(int channel, int sqrts)
     //Plot in the figures directory
     RooPlot *xplot = ZZMass.frame();
     set->plotOn(xplot);
-    sigPDF.plotOn(xplot);
+    sigPDF->plotOn(xplot);
 
     TCanvas canv;
     canv.cd();
