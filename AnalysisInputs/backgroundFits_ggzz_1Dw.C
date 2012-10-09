@@ -198,6 +198,7 @@ void backgroundFits_ggzz_1Dw(int channel, int sqrts)
   frameM4l->GetXaxis()->SetTitle("m_{4l} [GeV]");
   frameM4l->GetYaxis()->SetTitle("a.u.");
   frameM4l->GetYaxis()->SetRangeUser(0,0.04);
+  if(channel == 3)frameM4l->GetYaxis()->SetRangeUser(0,0.06);
   frameM4l->GetXaxis()->SetRangeUser(100,600);
   TCanvas *c = new TCanvas("c","c",800,600);
   c->cd();
@@ -211,6 +212,7 @@ void backgroundFits_ggzz_1Dw(int channel, int sqrts)
   outputName =  outputPath + "bkgggzz_" + schannel;
   c->SaveAs(outputName + ".eps");
   c->SaveAs(outputName + ".png");
+  c->SaveAs(outputName + ".root");
   delete c;
 } 
 
