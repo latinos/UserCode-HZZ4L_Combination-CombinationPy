@@ -55,7 +55,12 @@ class inputReader:
         self.alpha_CB_shape = -999.9
         self.mean_CB_shape = -999.9
         self.sigma_CB_shape = -999.9
-        self.gamma_BW_shape = -999.9
+        self.gamma_BW_shape_HM = -999.9
+        self.n_CB_shape_HM = -999.9
+        self.alpha_CB_shape_HM = -999.9
+        self.mean_CB_shape_HM = -999.9
+        self.sigma_CB_shape_HM = -999.9
+        self.gamma_BW_shape_HM = -999.9
         # signal efficiency params
         self.sigeff_a1 = -999.9
         self.sigeff_a2 = -999.9
@@ -225,9 +230,24 @@ class inputReader:
                 if f[1].lower().startswith("sigma_cb"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.sigma_CB_shape = f[2]
+
+            if f[0].lower().startswith("highmasssignalshape") or f[0].lower().startswith("hmsignalshape"):
+
+                if f[1].lower().startswith("n_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.n_CB_shape_HM = f[2]
+                if f[1].lower().startswith("alpha_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.alpha_CB_shape_HM = f[2]
+                if f[1].lower().startswith("mean_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mean_CB_shape_HM = f[2]
+                if f[1].lower().startswith("sigma_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.sigma_CB_shape_HM = f[2]
                 if f[1].lower().startswith("gamma_bw"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
-                    else: self.gamma_BW_shape = f[2]
+                    else: self.gamma_BW_shape_HM = f[2]
                     
             if f[0].lower().startswith("signaleff"):
 
@@ -390,7 +410,21 @@ class inputReader:
         if not self.goodEntry(self.alpha_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("alpha_CB_shape")
         if not self.goodEntry(self.mean_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("mean_CB_shape")
         if not self.goodEntry(self.sigma_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigma_CB_shape")
-        if not self.goodEntry(self.gamma_BW_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("gamma_BW_shape")
+
+        if not self.goodEntry(self.n_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("n_CB_shape_HM","n_CB_shape")
+            self.n_CB_shape_HM = self.n_CB_shape
+        if not self.goodEntry(self.alpha_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("alpha_CB_shape_HM","alpha_CB_shape")
+            self.alpha_CB_shape_HM = self.alpha_CB_shape
+        if not self.goodEntry(self.mean_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("mean_CB_shape_HM","mean_CB_shape")
+            self.mean_CB_shape_HM = self.mean_CB_shape
+        if not self.goodEntry(self.sigma_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("sigma_CB_shape_HM","sigma_CB_shape")
+            self.sigma_CB_shape_HM = self.sigma_CB_shape
+                        
+        if not self.goodEntry(self.gamma_BW_shape_HM): raise RuntimeError, "{0} is not set.  Check inputs!".format("gamma_BW_shape_HM")
 
         if not self.goodEntry(self.sigeff_a1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_a1")
         if not self.goodEntry(self.sigeff_a2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_a2")
@@ -502,7 +536,12 @@ class inputReader:
         dict['alpha_CB_shape'] = self.alpha_CB_shape
         dict['mean_CB_shape'] = self.mean_CB_shape
         dict['sigma_CB_shape'] = self.sigma_CB_shape
-        dict['gamma_BW_shape'] = self.gamma_BW_shape
+
+        dict['n_CB_shape_HM'] = self.n_CB_shape_HM
+        dict['alpha_CB_shape_HM'] = self.alpha_CB_shape_HM
+        dict['mean_CB_shape_HM'] = self.mean_CB_shape_HM
+        dict['sigma_CB_shape_HM'] = self.sigma_CB_shape_HM
+        dict['gamma_BW_shape_HM'] = self.gamma_BW_shape_HM
 
         dict['sigEff_a1'] = float(self.sigeff_a1)
         dict['sigEff_a2'] = float(self.sigeff_a2)
