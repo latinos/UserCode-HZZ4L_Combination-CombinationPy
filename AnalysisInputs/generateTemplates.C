@@ -39,14 +39,14 @@ int sqrts    = 7;              // sqrts, used only for withPt_/withY_
 
 //---
 int useSqrts=0;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
+TString melaName = "ZZLD_postICHEP"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
 
 bool makePSTemplate = false;
 bool makeAltSignal = false;
 const float melaCut=-1.0;
-bool extendToHighMass = false; // Include signal samples above 600 GeV
+bool extendToHighMass = true; // Include signal samples above 600 GeV
 
-float highMzz=(extendToHighMass?1000:800);
+float highMzz=(extendToHighMass?1600:800);
 float mBinSize=2.;
 
 Mela* myMELA;
@@ -86,9 +86,9 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
   double highBinsPS[numPtmpPS]  ={120.,        140.,        160.,         180.,     1002. };
   // =======================================================================
 
-  // ================ binning for pseudoMELA ==============================
+  // ================ binning for MELA ====================================
   double lowBins[numPtmp]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
-  double highBins[numPtmp]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1002.};
+  double highBins[numPtmp]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1602.};
   // ======================================================================
 
 
@@ -194,7 +194,7 @@ TH2F* reweightForInterference(TH2F* temp){
     //  ==================================================== 
   }
   else{
-    reweightFunc =new TF1("reweightFunc","gaus",100,1000);
+    reweightFunc =new TF1("reweightFunc","gaus",100,1600);
     
     reweightFunc->SetParameter(0,0.354258);
     reweightFunc->SetParameter(1,114.909);
@@ -303,10 +303,10 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H700.root");
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H750.root");
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H800.root");  // Sample to be debugged, unexpected efficiency in 2e2mu
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H850.root");  // Missing in 310812
+	//	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H850.root");  // Missing in 310812
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H900.root");
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H950.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root"); // Missing in 310812
+	//	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root"); // Missing in 310812
       }
     }
     if(useSqrts%2==0){
