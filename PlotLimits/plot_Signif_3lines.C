@@ -64,67 +64,71 @@ void plot_Signif_3lines()
   gStyle->SetPadLeftMargin(0.16);
   gStyle->SetPadTopMargin(0.05);
 
-  TFile *inFile = new TFile(inputFile,"READ");
+  TFile *inFile;
+  if(addObs) inFile = new TFile(inputFile,"READ");
   TFile *inFileExp;
   if(addExpected)inFileExp = new TFile(inputFileExp,"READ");
 
-  if(!inFile){ cout << "Cannot find file " << inputFile << end; return;}
+  if(!inFile && addObs){ cout << "Cannot find file " << inputFile << end; return;}
   if(addExpected && !inFileExp){cout << "Cannot find file " << inputFileExp << end; return;}
 
 
-  TFile *inFile_1 = new TFile(inputFile_1,"READ");
+  TFile *inFile_1;
+  if(addObs_1) inFile_1 = new TFile(inputFile_1,"READ");
   TFile *inFileExp_1;
   if(addExpected_1)inFileExp_1 = new TFile(inputFileExp_1,"READ");
 
-  if(!inFile_1){ cout << "Cannot find file " << inputFile_1 << end;return;}
+  if(!inFile_1 && addObs_1){ cout << "Cannot find file " << inputFile_1 << end;return;}
   if(addExpected_1 && !inFileExp_1){cout <<"Cannot find file " << inputFileExp_1 << end; return;}
 
 
-  TFile *inFile_2 = new TFile(inputFile_2,"READ");
+  TFile *inFile_2;
+  if(addObs_2) inFile_2 = new TFile(inputFile_2,"READ");
   TFile *inFileExp_2;
   if(addExpected_2)inFileExp_2 = new TFile(inputFileExp_2,"READ");
   
-  if(!inFile_2){ cout << "Cannot find file " << inputFile_2 << end;return;}
+  if(!inFile_2 && addObs_2){ cout << "Cannot find file " << inputFile_2 << end;return;}
   if(addExpected_2 && !inFileExp_2){cout <<"Cannot find file " << inputFileExp_2 << end; return;}
-
-
+  
+  
   // ------------------- Get Values -------------------- //
-
+  
   vector<double> mH, Val_obs;
-  getPvals(inFile,mH,Val_obs);
   vector<double> v_masses, v_obs;
-
-  for(unsigned int i = 0; i < mH.size(); i++)
-    {
-      v_masses.push_back( mH[i] );
-      v_obs.push_back(Val_obs[i]);
-      cout << "obs " <<  mH[i] << "  " << Val_obs[i] << endl;
-    }
-
-
+  if(addObs){  
+    getPvals(inFile,mH,Val_obs);
+    for(unsigned int i = 0; i < mH.size(); i++)
+      {
+	v_masses.push_back( mH[i] );
+	v_obs.push_back(Val_obs[i]);
+	cout << "obs " <<  mH[i] << "  " << Val_obs[i] << endl;
+      }
+  }
+  
+  
   vector<double> mH_1, Val_obs_1;
-  getPvals(inFile_1,mH_1,Val_obs_1);
   vector<double> v_masses_1, v_obs_1;
-
-  for(unsigned int i = 0; i < mH_1.size(); i++)
-    {
-      v_masses_1.push_back( mH_1[i] );
-      v_obs_1.push_back(Val_obs_1[i]);
-      cout << "obs_1 " <<  mH_1[i] << "  " << Val_obs_1[i] << endl;
-    }
-
-
+  if(addObs_1){
+    getPvals(inFile_1,mH_1,Val_obs_1);    
+    for(unsigned int i = 0; i < mH_1.size(); i++)
+      {
+	v_masses_1.push_back( mH_1[i] );
+	v_obs_1.push_back(Val_obs_1[i]);
+	cout << "obs_1 " <<  mH_1[i] << "  " << Val_obs_1[i] << endl;
+      }
+  }
   vector<double> mH_2, Val_obs_2;
-  getPvals(inFile_2,mH_2,Val_obs_2);
   vector<double> v_masses_2, v_obs_2;
-
-  for(unsigned int i = 0; i < mH_2.size(); i++)
-    {
-      v_masses_2.push_back( mH_2[i] );
-      v_obs_2.push_back(Val_obs_2[i]);
-      cout << "obs_2 " << mH_2[i] << "  " << Val_obs_2[i] << endl;
-    }
-
+  if(addObs_2){
+    getPvals(inFile_2,mH_2,Val_obs_2);
+    
+    for(unsigned int i = 0; i < mH_2.size(); i++)
+      {
+	v_masses_2.push_back( mH_2[i] );
+	v_obs_2.push_back(Val_obs_2[i]);
+	cout << "obs_2 " << mH_2[i] << "  " << Val_obs_2[i] << endl;
+      }
+  }
 
   // ------------------ Get Expected -------------------- //
   vector<double> mH_exp, Val_exp;  
@@ -262,33 +266,38 @@ void plot_Signif_3lines()
   // ------------------- Draw  -------------------- //
 
   TCanvas *c = new TCanvas("c","c",canvasX,canvasY);
-  TGraph *grObs = new TGraph(nMassEff, a_masses, a_obs);
-  grObs->SetLineWidth(2);
-  grObs->SetLineColor(kRed);
-  grObs->SetMarkerStyle(20);
-  grObs->SetMarkerSize(1);
-  grObs->SetMarkerColor(kRed);
-
-  TGraph *grObs_1 = new TGraph(nMassEff_1, a_masses_1, a_obs_1);
-  grObs_1->SetLineWidth(2);
-  grObs_1->SetLineColor(kBlue);
-  grObs_1->SetMarkerStyle(20);
-  grObs_1->SetMarkerSize(1);
-  grObs_1->SetMarkerColor(kBlue);
-
-  TGraph *grObs_2 = new TGraph(nMassEff_2, a_masses_2, a_obs_2);
-  grObs_2->SetLineWidth(3);
-  grObs_2->SetLineColor(kBlack);
-  grObs_2->SetMarkerStyle(20);
-  grObs_2->SetMarkerSize(1.2);
-  grObs_2->SetMarkerColor(kBlack);
-
+  if(addObs){
+    TGraph *grObs = new TGraph(nMassEff, a_masses, a_obs);
+    grObs->SetLineWidth(2);
+    grObs->SetLineColor(kRed);
+    grObs->SetMarkerStyle(20);
+    grObs->SetMarkerSize(1);
+    grObs->SetMarkerColor(kRed);
+  }
+  if(addObs_1){
+    TGraph *grObs_1 = new TGraph(nMassEff_1, a_masses_1, a_obs_1);
+    grObs_1->SetLineWidth(2);
+    grObs_1->SetLineColor(kBlue);
+    grObs_1->SetMarkerStyle(20);
+    grObs_1->SetMarkerSize(1);
+    grObs_1->SetMarkerColor(kBlue);
+  }
+  if(addObs_2){
+    TGraph *grObs_2 = new TGraph(nMassEff_2, a_masses_2, a_obs_2);
+    grObs_2->SetLineWidth(3);
+    grObs_2->SetLineColor(kBlack);
+    grObs_2->SetMarkerStyle(20);
+    grObs_2->SetMarkerSize(1.2);
+    grObs_2->SetMarkerColor(kBlack);
+  }
   if(addExpected)
     {
       TGraph *grExp = new TGraph(nMassEffExp, a_masses_exp, a_exp);
       grExp->SetLineWidth(2);
       grExp->SetLineColor(kRed);
       grExp->SetLineStyle(2);
+      grExp->SetName("Expected");
+      grExp->SetTitle("Expected");
     }
   if(addExpected_1)
     {
@@ -296,6 +305,8 @@ void plot_Signif_3lines()
       grExp_1->SetLineWidth(2);
       grExp_1->SetLineColor(kBlue);
       grExp_1->SetLineStyle(2);
+      grExp_1->SetName("Expected1");
+      grExp_1->SetTitle("Expected1");
     }
   if(addExpected_2)
     {
@@ -303,6 +314,8 @@ void plot_Signif_3lines()
       grExp_2->SetLineWidth(2);
       grExp_2->SetLineColor(kBlack);
       grExp_2->SetLineStyle(2);
+      grExp_2->SetName("Expected2");
+      grExp_2->SetTitle("Expected2");
     }
 
   char outfileName[192];
@@ -399,11 +412,11 @@ void plot_Signif_3lines()
   l4->DrawLine(105.0,ROOT::Math::normal_cdf_c(4, 1.0),180.0,ROOT::Math::normal_cdf_c(4, 1.0));
 
 
-  grObs->Sort();
+  if(addObs)grObs->Sort();
   if(addExpected)grExp->Sort();
-  grObs_1->Sort();
+  if(addObs_1)grObs_1->Sort();
   if(addExpected_1)grExp_1->Sort();
-  grObs_2->Sort();
+  if(addObs_2)grObs_2->Sort();
   if(addExpected_2)grExp_2->Sort();
   if(addObs)
     {
@@ -451,7 +464,8 @@ void plot_Signif_3lines()
   c->SaveAs(outfileName);
   sprintf( outfileName,"%s/Pvals_%s_lowMass_%s_7p8sep.png",plotDir.c_str(),method.c_str(),dimension.c_str() );
   c->SaveAs(outfileName);
-
+  sprintf( outfileName,"%s/Pvals_%s_lowMass_%s_7p8sep.root",plotDir.c_str(),method.c_str(),dimension.c_str() );
+  c->SaveAs(outfileName);
 
 
   // --------------- Full Mass Range ---------------- //
@@ -538,7 +552,8 @@ void plot_Signif_3lines()
   cl->SaveAs(outfileName);
   sprintf( outfileName,"%s/Pvals_%s_wholeMass_%s_7p8sep.png",plotDir.c_str(),method.c_str(),dimension.c_str() );
   cl->SaveAs(outfileName);
-
+  sprintf( outfileName,"%s/Pvals_%s_wholeMass_%s_7p8sep.root",plotDir.c_str(),method.c_str(),dimension.c_str() );
+  cl->SaveAs(outfileName);
 
 	
 }
