@@ -53,7 +53,7 @@ class HiggsCSandWidth
 
  public:
 
-  HiggsCSandWidth(std::string fileLoc);
+  HiggsCSandWidth(std::string fileLoc = "include/txtFiles");
   ~HiggsCSandWidth();
 
   double HiggsCS(int ID, double mH, double sqrts);

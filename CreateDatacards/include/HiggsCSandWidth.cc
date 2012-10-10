@@ -19,7 +19,7 @@
 
 using namespace std;
 
-HiggsCSandWidth::HiggsCSandWidth(std::string fileLoc = "include/txtFiles")
+HiggsCSandWidth::HiggsCSandWidth(std::string fileLoc)
 {
 
   N_BR = 217;
@@ -44,7 +44,7 @@ HiggsCSandWidth::HiggsCSandWidth(std::string fileLoc = "include/txtFiles")
 
   ifstream file;
   // ---------------- Read BR into memory ------------------ //         
-  fileName = fileLoc+"/HiggsBR_Official.txt";
+  fileName = fileLoc+"/HiggsBR_7TeV_Official.txt";
   file.open(fileName.c_str());
   for(int k = 0; k < N_BR; k++){
 
