@@ -51,7 +51,7 @@ class inputReader:
         self.ttbar_lumi = -999.9
         self.zbb_lumi = -999.9
         # signal shapes
-        self.useHighMassReweightedShapes = False
+        self.useHighMassReweightedShapes = True
         self.n_CB_shape = -999.9
         self.alpha_CB_shape = -999.9
         self.mean_CB_shape = -999.9
@@ -141,6 +141,7 @@ class inputReader:
         self.useCMS_zz4l_mean = False
         self.useCMS_zz4l_sigma = False
         self.useCMS_zz4l_n = False
+        self.useCMS_zz4l_gamma = False
         self.doHypTest = False
         self.altHypLabel = ""
         
@@ -623,6 +624,7 @@ class inputReader:
         dict['useCMS_zz4l_mean'] = self.useCMS_zz4l_mean
         dict['useCMS_zz4l_sigma'] = self.useCMS_zz4l_sigma 
         dict['useCMS_zz4l_n'] = self.useCMS_zz4l_n
+        dict['useCMS_zz4l_gamma'] = self.useCMS_zz4l_gamma
 
         dict['CMS_zz4l_mean_m_sig'] = float(self.CMS_zz4l_mean_m_sig) 
         dict['CMS_zz4l_sigma_m_sig'] = float(self.CMS_zz4l_sigma_m_sig) 
