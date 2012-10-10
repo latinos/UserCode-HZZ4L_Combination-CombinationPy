@@ -276,12 +276,14 @@ void signalFits(int channel, int sqrts)
   sprintf(tmp_outCardName,"CardFragments/signalFunctions_%iTeV_",sqrts);
   string outCardName = tmp_outCardName + schannel + ".txt";
   ofstream ofsCard(outCardName.c_str(),fstream::out);
+  ofsCard << "usehighmassreweightedshapes" << endl;
   ofsCard << "## signal functions --- no spaces! ##" << endl;
   ofsCard << "signalShape n_CB " << fit_nCB->GetParameter(0) << "+(" << fit_nCB->GetParameter(1) << "*@0)+(" << fit_nCB->GetParameter(2) << "*@0*@0)+(" << fit_nCB->GetParameter(3) << "*@0*@0*@0)" << endl;
   ofsCard << "signalShape alpha_CB " << fit_alphaCB->GetParameter(0) << "+(" << fit_alphaCB->GetParameter(1) << "*@0)+(" << fit_alphaCB->GetParameter(2) << "*@0*@0)+(" << fit_alphaCB->GetParameter(3) << "*@0*@0*@0)" << endl;
   ofsCard << "signalShape mean_CB " << fit_meanCB->GetParameter(0) << "+(" << fit_meanCB->GetParameter(1) << "*@0)+(" << fit_meanCB->GetParameter(2) << "*@0*@0)+(" << fit_meanCB->GetParameter(3) << "*@0*@0*@0)" << endl;
   ofsCard << "signalShape sigma_CB " << fit_sigmaCB->GetParameter(0) << "+(" << fit_sigmaCB->GetParameter(1) << "*@0)+(" << fit_sigmaCB->GetParameter(2) << "*@0*@0)+(" << fit_sigmaCB->GetParameter(3) << "*@0*@0*@0)" << endl;
   ofsCard << "signalShape gamma_BW " << fit_Gamma->GetParameter(0) << "+(" << fit_Gamma->GetParameter(1) << "*@0)+(" << fit_Gamma->GetParameter(2) << "*@0*@0)+(" << fit_Gamma->GetParameter(3) << "*@0*@0*@0)" << endl;
+  ofsCard << "HighMasssignalShape gamma_BW " << fit_Gamma->GetParameter(0) << "+(" << fit_Gamma->GetParameter(1) << "*@0)+(" << fit_Gamma->GetParameter(2) << "*@0*@0)+(" << fit_Gamma->GetParameter(3) << "*@0*@0*@0)" << endl;
   ofsCard << endl;
   return;
 }
