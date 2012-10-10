@@ -51,11 +51,11 @@ class inputReader:
         self.ttbar_lumi = -999.9
         self.zbb_lumi = -999.9
         # signal shapes
+        self.useHighMassReweightedShapes = False
         self.n_CB_shape = -999.9
         self.alpha_CB_shape = -999.9
         self.mean_CB_shape = -999.9
         self.sigma_CB_shape = -999.9
-        self.gamma_BW_shape_HM = -999.9
         self.n_CB_shape_HM = -999.9
         self.alpha_CB_shape_HM = -999.9
         self.mean_CB_shape_HM = -999.9
@@ -215,6 +215,9 @@ class inputReader:
                 if f[1].lower().startswith("zbb"):
                     self.zbb_rate = float(f[2])
                     if len(f) == 4: self.zbb_lumi = float(f[3])
+
+            if f[0].lower().startswith("usehighmassreweightedshapes"):
+                self.useHighMassReweightedShapes = True
                     
             if f[0].lower().startswith("signalshape"):
 
@@ -411,6 +414,7 @@ class inputReader:
         if not self.goodEntry(self.mean_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("mean_CB_shape")
         if not self.goodEntry(self.sigma_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigma_CB_shape")
 
+        
         if not self.goodEntry(self.n_CB_shape_HM):
             print "{0} is not set. Using {1} for {0}.".format("n_CB_shape_HM","n_CB_shape")
             self.n_CB_shape_HM = self.n_CB_shape
@@ -537,6 +541,7 @@ class inputReader:
         dict['mean_CB_shape'] = self.mean_CB_shape
         dict['sigma_CB_shape'] = self.sigma_CB_shape
 
+        dict['useHighMassReweightedShapes'] = self.useHighMassReweightedShapes
         dict['n_CB_shape_HM'] = self.n_CB_shape_HM
         dict['alpha_CB_shape_HM'] = self.alpha_CB_shape_HM
         dict['mean_CB_shape_HM'] = self.mean_CB_shape_HM

@@ -148,8 +148,11 @@ class datacardClass:
         if(self.widthHVal < 0.12):
             self.bUseCBnoConvolution = True
         self.isHighMass = False
-        if(self.mH >= 400):
-            self.isHighMass = True
+        if self.mH >= 400:
+            if theInputs['useHighMassReweightedShapes']:
+                self.isHighMass = True
+            else: print "useHighMassReweightedShapes set to FALSE, using non-reweighted shapes!"
+
             
         if(DEBUG): print "width: ",self.widthHVal
         
@@ -318,7 +321,7 @@ class datacardClass:
         else : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig))
         
         name = "CMS_zz4l_gamma_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-        rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape']+")"+"*(1+@1)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
+        rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape_HM']+")"+"*(1+@1)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
 
         if (DEBUG): print " DEBUG *********  ", theInputs['sigma_CB_shape'] 
 
