@@ -540,8 +540,9 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 	if( binMzz>=350 && binMzz<500 ) effectiveArea=3;
 	if( binMzz>=500 && binMzz<600 ) effectiveArea=5;
 	if( binMzz>=600 && binMzz<800 ) effectiveArea=7;
-	if( binMzz>=800 && binMzz<1200) effectiveArea=9;
-	if( binMzz>=1200 ) effectiveArea=15;
+	if( binMzz>=800 && binMzz<1000) effectiveArea=11;
+	if( binMzz>=1000 && binMzz<1200)effectiveArea=15;
+	if( binMzz>=1200 ) effectiveArea=25;
 	
 	for(int a=-effectiveArea; a<=effectiveArea; a++){
 	  if(a+i<1 || a+i>nXbins || j>nYbins || j<1) continue;
