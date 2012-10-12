@@ -18,6 +18,9 @@
 
 int extractSignificanceStats(){
 
+  const float lumi7TeV=5.051;
+  const float lumi8TeV=5.261;
+
   char fileName[128];
   sprintf(fileName,"qmu.root");
   TFile *fq=new TFile(fileName,"READ");
@@ -41,13 +44,13 @@ int extractSignificanceStats(){
     t->GetEntry(i);
     if(i==0)cout<<"MASS in the TREE = "<<m<<endl<<endl;
 
-    if(type>0){ //SM hypothesis
-      hSM->Fill(q);
-      v_SM.push_back(q);
+    if(type<0){ //SM hypothesis 
+      hSM->Fill(-q);
+      v_SM.push_back(-q);
     }
-    else if(type<0){//ALT hypothesis (-> PS)
-      hPS->Fill(q);
-      v_PS.push_back(q);
+    else if(type>0){//ALT hypothesis
+      hPS->Fill(-q);
+      v_PS.push_back(-q);
     }
     else{
       hObs->Fill(q);
@@ -150,6 +153,16 @@ cout<<"Cutting at "<<cut<<endl;
   c1->cd();
   hSM->Rebin(50);
   hPS->Rebin(50);
+  float maxhSM=hSM->GetBinContent(hSM->GetMaximumBin());
+  float maxhPS=hPS->GetBinContent(hPS->GetMaximumBin());
+  if(maxhPS>maxhSM){
+    hSM->SetMaximum(maxhPS*1.15);
+    hPS->SetMaximum(maxhPS*1.15);
+  }
+  else{
+    hSM->SetMaximum(maxhSM*1.15);
+    hPS->SetMaximum(maxhSM*1.15);
+  }
   hSM->SetXTitle("S = -2 #times ln(L_{1}/L_{2})");
   hSM->SetYTitle("Generated experiments");
   hPS->SetXTitle("S = -2 #times ln(L_{1}/L_{2})");
@@ -182,7 +195,7 @@ cout<<"Cutting at "<<cut<<endl;
   pt.SetBorderSize(0);
   TPaveText pt2(0.55,0.95,0.99,0.99,"NDC");
   pt2.SetFillColor(0);
-  pt2.AddText(" #sqrt{s} = 7 TeV, L = 5.051 fb^{-1}; #sqrt{s} = 8 TeV, L = 30.0 fb^{-1}");
+  pt2.AddText(Form(" #sqrt{s} = 7 TeV, L = %.3f fb^{-1}; #sqrt{s} = 8 TeV, L = %.3f fb^{-1}",lumi7TeV,lumi8TeV));
   pt2.SetBorderSize(0);
   pt.Draw();
   pt2.Draw();

@@ -28,7 +28,7 @@ outDir="output_LandS/"
 
 
 
-action=0
+action=1
 NJOBS=40  # total number of parallel jobs
 NTOYS=100 # toys per parallel job
 MH=125
@@ -40,7 +40,7 @@ fi
 
 #Step 1: generate toys
 
-if [ $action -eq 0 ]
+if [ $action -eq 1 ]
     then 
     echo "GENERATING TOYS"
     if [ -d $outDir ]
@@ -51,9 +51,11 @@ if [ $action -eq 0 ]
     
     mkdir $outDir
 
-    python runSignalSeparation.py -b -m -t "lands" --generateToys --nParallelJobs $NJOBS --toysPerJob $NTOYS -o "$outDir" --card1 "$card1" --card2 "$card2" --TeVStat --mH $MH
+    python runSignalSeparation.py -b -m -t "lands" --generateToys --nParallelJobs $NJOBS --toysPerJob $NTOYS -o "$outDir" --card1 "$card1" --card2 "$card2"  --mH $MH 
+#--TeVStat not commissioned yet
+
 #Step 2: fit toys
-elif [ $action -eq 1 ]
+elif [ $action -eq 2 ]
     then
     echo "FITTING TOYS"
 
@@ -64,8 +66,9 @@ elif [ $action -eq 1 ]
     fi
 
     python runSignalSeparation.py -b -m -t "lands" --fitToys --nParallelJobs $NJOBS  --toysPerJob $NTOYS  -o "$outDir" --card1 "$card1" --card2 "$card2" --mH $MH
+
 #Step 3: plot variables
-elif [ $action -eq 2 ]
+elif [ $action -eq 3 ]
     then 
     echo "PLOT VARIABLES"
     if [ ! -d $outDir ]
@@ -84,7 +87,7 @@ elif [ $action -eq -1 ]
     rm -fr figs/
 else
     echo "Requested to perform and unrecognized action: "${action}
-    echo "action can be 0:generate toys  ;   1:fit toys   ;   2:plot variables  ;  -1:clean up output directory"
+    echo "action can be 1:generate toys  ;   2:fit toys   ;   3:plot variables  ;  -1:clean up output directory"
     echo "Exiting."
     exit 3
 fi

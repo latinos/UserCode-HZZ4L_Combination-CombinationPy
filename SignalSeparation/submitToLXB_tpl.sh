@@ -66,8 +66,8 @@ echo
 echo "Files in $PWD :"
 ls -lh
 echo
-echo "Files in ${workdir}/$InputDir :"
-ls -lh ${workdir}/$InputDir
+#echo "Files in ${workdir}/$InputDir :"
+#ls -lh ${workdir}/$InputDir
 #echo
 
 
@@ -87,7 +87,7 @@ python haddLands.py --seed ${SEED} --toysPerJob ${NTOYS} --stem ${STEM}
 cp ONAME ODIR/ONAME
 cp ONAME ${workdir}/ODIR/ONAME
 
-RESUBMIT_IF_FAILED=true
+RESUBMIT_IF_FAILED=false
 
 if [ ! -f ${workdir}/ODIR/ONAME ]
     then

@@ -113,7 +113,7 @@ def haddLands( newfile, listnames, offset ):
 ###        print "Loading file: ",curfile
         
 ###list of files to exclude:
-###            if (seedtot==12370 or seedtot==12371 or seedtot==12372 or seedtot==12373): continue
+###        if (seedtot==12430 or seedtot==12431 or seedtot==12432 or seedtot==12433 or seedtot==99999): continue
         fcur = ROOT.TFile( curfile )
         tcur = fcur.Get("T")
         nentries = int( tcur.GetEntries() )
