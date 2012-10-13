@@ -87,8 +87,8 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
   // =======================================================================
 
   // ================ binning for MELA ====================================
-  double lowBins[numPtmp]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
-  double highBins[numPtmp]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1602.};
+  double lowBins[numPtmp]={100.,120.,140.,160.,180.,220.,26.0,300.};
+  double highBins[numPtmp]={120.,140.,160.,180.,220.,260.,300.,1602.};
   // ======================================================================
 
 
@@ -98,8 +98,8 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
   //  ==================================================================
 
   // ================ systematics for MELA ==========================
-  double slope_syst[numPtmp] ={4.71836e-01, 1.17671e-01, -3.81680e-01, -1.20481, -1.21944, -2.06928, -1.35337, 0.0 };
-  double yIntr_syst[numPtmp] ={6.83860e-01, 9.38454e-01, 1.12690,      1.24502,  1.72764,  2.11050,  1.52771,  1.0 }; 
+  double slope_syst[numPtmp]={0.507154,1.13711,0.771557,-1.87945,-3.35464,-1.54489,-1.17508,0.0};
+  double yIntr_syst[numPtmp]={0.712435,0.654165,0.791353,1.45909,2.83655,1.42336,1.1215,1.0};
   //==================================================================
 
   double slope[numPoints], yIntr[numPoints];
@@ -196,9 +196,9 @@ TH2F* reweightForInterference(TH2F* temp){
   else{
     reweightFunc =new TF1("reweightFunc","gaus",100,1600);
     
-    reweightFunc->SetParameter(0,0.354258);
-    reweightFunc->SetParameter(1,114.909);
-    reweightFunc->SetParameter(2,17.1512);
+    reweightFunc->SetParameter(0,0.4053);
+    reweightFunc->SetParameter(1,110.6);
+    reweightFunc->SetParameter(2,22.57);
   }
 
   TH2F* newTemp = new TH2F(*temp);
@@ -217,11 +217,7 @@ TH2F* reweightForInterference(TH2F* temp){
     // choose correct scale factor
 
     // for reweighting MELA
-    if(makePSTemplate || i>8){
-      slope=reweightFunc->Eval((double)((i-1)*2+101));
-    }
-    else      slope=.354;
-     
+    slope=reweightFunc->Eval((double)((i-1)*2+101));
 
     /* ==============================================
     // for reweighting pseudo-MELA
