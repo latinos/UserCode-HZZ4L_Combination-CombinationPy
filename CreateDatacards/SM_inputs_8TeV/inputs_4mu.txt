@@ -6,7 +6,7 @@ model SM
 decay 4mu
 
 ## lumi ##
-lumi 12.100
+lumi 12.1
 systematic lumiUnc 1.05
 
 ## sqrtS ##
@@ -17,9 +17,9 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  25.0744
-rate ggZZ  1.36245
-rate zjets 1.2
+rate qqZZ  56.5391
+rate ggZZ  7.55201
+rate zjets 3.7
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -32,46 +32,45 @@ highmasssignalShape alpha_CB 1.12471+(0.00130717*@0)+(6.08949e-06*@0*@0)+(-4.725
 highmasssignalShape mean_CB 0.708138+(-0.00959003*@0)+(2.85815e-05*@0*@0)+(-1.50699e-08*@0*@0*@0)
 highmasssignalShape sigma_CB -25.2862+(0.290658*@0)+(-0.000751577*@0*@0)+(5.66554e-07*@0*@0*@0)
 highmasssignalShape gamma_BW 41.826+(-0.50628*@0)+(0.00150891*@0*@0)+(-7.91204e-07*@0*@0*@0)
-highmasssignalShape gamma_BW 41.826+(-0.50628*@0)+(0.00150891*@0*@0)+(-7.91204e-07*@0*@0*@0)
+
 
 ## signal efficiency ##
-signalEff a1  -4.41237
-signalEff a2  4.62778
-signalEff a3  -55.9051
-signalEff a4  106.169
-signalEff b1  2.66347
-signalEff b2  0.00110148
-signalEff b3  2.10398e-07
+signalEff a1  -4.41506
+signalEff a2  4.62519
+signalEff a3  -46.046
+signalEff a4  99.0342
+signalEff b1  2.4117
+signalEff b2  0.00257509
+signalEff b3  -1.25994e-06
 
 
 ### background functions ###
-qqZZshape a0_bkgd   104.863
-qqZZshape a1_bkgd   14.3937
-qqZZshape a2_bkgd   121.381
-qqZZshape a3_bkgd   0.044811
-qqZZshape a4_bkgd   185.357
-qqZZshape a5_bkgd   9.30535
-qqZZshape a6_bkgd   39.4977
-qqZZshape a7_bkgd   0.0993022
-qqZZshape a8_bkgd   52.8093
-qqZZshape a9_bkgd   0.0398371
-qqZZshape a10_bkgd  99.0345
-qqZZshape a11_bkgd  -7.40394
-qqZZshape a12_bkgd  7.97366
-qqZZshape a13_bkgd  0.0815312
+qqZZshape a0_bkgd   104.225
+qqZZshape a1_bkgd   12.6607
+qqZZshape a2_bkgd   119.478
+qqZZshape a3_bkgd   0.0447438
+qqZZshape a4_bkgd   185.275
+qqZZshape a5_bkgd   8.54954
+qqZZshape a6_bkgd   40.414
+qqZZshape a7_bkgd   0.0991834
+qqZZshape a8_bkgd   50.8175
+qqZZshape a9_bkgd   0.0401449
+qqZZshape a10_bkgd  98.7645
+qqZZshape a11_bkgd  -7.05628
+qqZZshape a12_bkgd  10.8437
+qqZZshape a13_bkgd  0.0803183
 
 
-ggZZshape a0_bkgd  106.381
-ggZZshape a1_bkgd  22.4911
-ggZZshape a2_bkgd  154.451
-ggZZshape a3_bkgd  0.0289434
-ggZZshape a4_bkgd  184.839
-ggZZshape a5_bkgd  9.68348
-ggZZshape a6_bkgd  43.0695
-ggZZshape a7_bkgd  0.181502
-ggZZshape a8_bkgd  59.4447
-ggZZshape a9_bkgd  0.0821043
-
+ggZZshape a0_bkgd  109.035
+ggZZshape a1_bkgd  77.359
+ggZZshape a2_bkgd  154.213
+ggZZshape a3_bkgd  0.0278734
+ggZZshape a4_bkgd  186.213
+ggZZshape a5_bkgd  10.5433
+ggZZshape a6_bkgd  40.1774
+ggZZshape a7_bkgd  0.177951
+ggZZshape a8_bkgd  60.598
+ggZZshape a9_bkgd  0.0792009
 
 zjetsShape mean 138.4
 zjetsShape sigma 20.8
@@ -100,7 +99,7 @@ systematic QCDscale_ggH True
 systematic QCDscale_qqH True
 systematic QCDscale_VH True
 systematic QCDscale_ttH True
-systematic theoryUncXS_HighMH False
+systematic theoryUncXS_HighMH True
 systematic QCDscale_ggVV True
 systematic QCDscale_VV True
 systematic BRhiggs_hzz4l True
@@ -114,8 +113,6 @@ systematic CMS_zz4l_mean True
 systematic CMS_zz4l_sigma True
 systematic CMS_zz4l_n True
 systematic CMS_zz4l_gamma True
-
-
 ### for hypothesis testing ###
 doHypTest False
 #altHypLabel _ALT
