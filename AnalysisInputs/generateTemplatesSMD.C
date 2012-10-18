@@ -43,8 +43,8 @@ Mela* myMELA; //used if recompute is true
 //--- Really important params --- //
 const int mH=125;
 const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
-const TString destDir = "../CreateDatacards/templates2D_smd_8TeV_withSyst/"; //it must already exist !
+TString melaName = "pseudoLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
+const TString destDir = "../CreateDatacards/templates2D_smd_8TeV_17102012/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -54,9 +54,6 @@ const float melaCut=-1.0; //if negative, it is deactivated
 bool extendToHighMass = false; // Include signal samples above 600 GeV
 float highMzz=(extendToHighMass?1000:800);
 float mBinSize=2.;
-
-
-
 
 
 
@@ -349,50 +346,50 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
 
   if(sampleIndex==0){
     //7TeV
-    if(useSqrts==1)bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H"+strM+"_withSMD.root");
-    else     bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H"+strM+"_withSMD.root");
+    if(useSqrts==1)bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H"+strM+"_withSMDv2.root");
+    else     bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H"+strM+"_withSMDv2.root");
     
 
   } else if (sampleIndex==1){
      if(useSqrts==1){
       cout<<"Readign in 7 TeV for bkgd"<<endl;
     //7TeV
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau_withSMD.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu_withSMDv2.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau_withSMDv2.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau_withSMDv2.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e_withSMDv2.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu_withSMDv2.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau_withSMDv2.root");
     }
     else{
       //8TeV
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu_withSMD.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau_withSMD.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau_withSMD.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e_withSMD.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu_withSMD.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau_withSMD.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu_withSMDv2.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau_withSMDv2.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau_withSMDv2.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e_withSMDv2.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu_withSMDv2.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau_withSMDv2.root");
     }
 
   } else if (sampleIndex==2){
      if(useSqrts==1){
     //7TeV
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l_withSMD.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l_withSMDv2.root");
+    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l_withSMDv2.root");
     }
     else{    //8TeV
-    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l_withSMD.root");
-    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l_withSMD.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l_withSMDv2.root");
+    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l_withSMDv2.root");
     }
     
   } else if(sampleIndex==3){ //this is for alternative signal samples
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal"<<endl;
-      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuPseH"+strM+"_withSMD.root");
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuPseH"+strM+"_withSMDv2.root");
     }
     else{   //8TeV
-      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuPseH"+strM+"_withSMD.root");
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuPseH"+strM+"_withSMDv2.root");
     }
   }
     
@@ -426,11 +423,15 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     melaName = "pseudoLD";
   }
   
+  bool cutSameVar=false;
   bkgMC->SetBranchAddress(melaName.Data(),&KD);
   if (melaName!=melaCutName) {
     bkgMC->SetBranchAddress(melaCutName.Data(),&KD_cut);
-  } else {
-    KD_cut=KD;
+  }
+ else {
+   //    KD_cut=KD;
+   cutSameVar=true;
+   // bkgMC->SetBranchAddress(melaName.Data(),&KD_cut);
   }
   
 
@@ -462,6 +463,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     bkgMC->GetEntry(i);
 
     // if(i%5000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
+    if(cutSameVar)KD_cut=KD;
 
     bool cutPassed= (melaCut>0.0) ? (KD_cut>melaCut) : true;
     if(w<.0015 && cutPassed){
@@ -596,7 +598,7 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh){
   float mzz=-1.0,mela=-444.0,w=0;
   double LD=-999.;
   char yVarName[32];
-  if(makePSTemplate)sprintf(yVarName,"pseudoLD");
+  if(makePSTemplate)sprintf(yVarName,"ZZpseudoLD");
   else   sprintf(yVarName,"ZZLD");
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("ZZLD",&mela);
@@ -642,7 +644,7 @@ void makeTemplate(TString channel){
   pair<TH2F*,TH2F*> histoPair;
 
   TH2F* low,*high,*h_mzzD;
-  TH2F* h_mzzD_syst1Up,h_mzzD_syst1Down,h_mzzD_syst2Up,h_mzzD_syst2Down;
+  TH2F *h_mzzD_syst1Up,*h_mzzD_syst1Down,*h_mzzD_syst2Up,*h_mzzD_syst2Down;
   TH1F *h_D;
   
   // ========================================
@@ -677,9 +679,9 @@ void makeTemplate(TString channel){
   oldTemp->Write("oldTemp");
   h_D->Write("h_superD");
   //---- systematics for default signal
-  h_mzzD_syst1Up=fillTemplate(channel,0,"superLD_syst1Up","bkgHisto_syst1Up");
-  h_mzzD_syst1Down=fillTemplate(channel,0,"superLD_syst1Down","bkgHisto_syst1Down");
-  h_mzzD_syst2Up=fillTemplate(channel,0,"superLD_syst2Up","bkgHisto_syst2Up");
+  h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,0,"superLD_syst1Up","bkgHisto_syst1Up");
+  h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,0,"superLD_syst1Down","bkgHisto_syst1Down");
+  h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,0,"superLD_syst2Up","bkgHisto_syst2Up");
   h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
   h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
   h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
@@ -716,9 +718,9 @@ void makeTemplate(TString channel){
     h_D->Write("h_superD");
     
     //---- systematics for alternative signal
-    h_mzzD_syst1Up=fillTemplate(channel,3,"superLD_syst1Up","bkgHisto_syst1Up");
-    h_mzzD_syst1Down=fillTemplate(channel,3,"superLD_syst1Down","bkgHisto_syst1Down");
-    h_mzzD_syst2Up=fillTemplate(channel,3,"superLD_syst2Up","bkgHisto_syst2Up");
+    h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,3,"superLD_syst1Up","bkgHisto_syst1Up");
+    h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,3,"superLD_syst1Down","bkgHisto_syst1Down");
+    h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,3,"superLD_syst2Up","bkgHisto_syst2Up");
     h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
     h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
     h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
@@ -830,17 +832,17 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex) {
   //  TString sampleName[4]={"signal","qqZZ","ggZZ","signal_PS"};
 
   TString chPath = (channel=="2e2mu"?"2mu2e":channel); // Adapt to different naming convention...
+  int mySqrts=useSqrts;
 
-  //An error is issued on missing files; if a single file is missing in one set it can be safely ignored.
   if(recompute_ && (withPt_||withY_) &&useSqrts==0){
     cout<<"ERROR: use either 7 or 8 TeV to run Pt/Y templates"<<endl;
-    if(sqrts==7)useSqrts=1;
-    else useSqrts=2;
+    if(sqrts==7)mySqrts=1;
+    else mySqrts=2;
     cout<<"Setting data sets to "<<sqrts<<"TeV. Please check this is correct!"<<endl;
   }
   if(sampleIndex==0){
     //7TeV
-    if(useSqrts<2){
+    if(mySqrts<2){
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
       //    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root"); // Skip: Special sample with a different composition
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H130.root");
@@ -877,7 +879,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex) {
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root"); // Missing in 310812
       }
     }
-    if(useSqrts%2==0){
+    if(mySqrts%2==0){
       //8TeV
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H115.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H116.root");
@@ -922,7 +924,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex) {
     
   } else if (sampleIndex==1){
     //7TeV
-    if(useSqrts<2){
+    if(mySqrts<2){
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau.root");
@@ -931,7 +933,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex) {
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau.root");
     }
     //8TeV
-    if(useSqrts%2==0){
+    if(mySqrts%2==0){
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau.root");
@@ -946,7 +948,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex) {
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
     }
     //8TeV
-    if(useSqrts%2==0){
+    if(mySqrts%2==0){
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
     }
