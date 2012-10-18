@@ -54,10 +54,14 @@ class inputReader:
         self.useHighMassReweightedShapes = True
         self.n_CB_shape = -999.9
         self.alpha_CB_shape = -999.9
+        self.n2_CB_shape = -999.9
+        self.alpha2_CB_shape = -999.9
         self.mean_CB_shape = -999.9
         self.sigma_CB_shape = -999.9
         self.n_CB_shape_HM = -999.9
         self.alpha_CB_shape_HM = -999.9
+        self.n2_CB_shape_HM = -999.9
+        self.alpha2_CB_shape_HM = -999.9
         self.mean_CB_shape_HM = -999.9
         self.sigma_CB_shape_HM = -999.9
         self.gamma_BW_shape_HM = -999.9
@@ -145,6 +149,18 @@ class inputReader:
         self.doHypTest = False
         self.altHypLabel = ""
         
+	# ---  mekd stuffs
+	self.mekd_sig_a0_shape = -999.
+	self.mekd_sig_a1_shape = -999.
+	self.mekd_sig_a2_shape = -999.
+	self.mekd_sig_a3_shape = -999.
+	self.mekd_sig_a4_shape = -999.
+	self.mekd_qqZZ_a0_shape = -999.
+	self.mekd_qqZZ_a1_shape = -999.
+	self.mekd_qqZZ_a2_shape = -999.
+	self.mekd_qqZZ_a3_shape = -999.
+	self.mekd_qqZZ_a4_shape = -999.
+	# --- end mekd
 
     def goodEntry(self,variable):
         if variable == -999.9:
@@ -228,12 +244,33 @@ class inputReader:
                 if f[1].lower().startswith("alpha_cb"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.alpha_CB_shape = f[2]
+                if f[1].lower().startswith("n2_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.n2_CB_shape = f[2]
+                if f[1].lower().startswith("alpha2_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.alpha2_CB_shape = f[2]
                 if f[1].lower().startswith("mean_cb"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.mean_CB_shape = f[2]
                 if f[1].lower().startswith("sigma_cb"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.sigma_CB_shape = f[2]
+                if f[1].lower().startswith("mekd_sig_a0"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_sig_a0_shape = f[2]
+                if f[1].lower().startswith("mekd_sig_a1"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_sig_a1_shape = f[2]
+                if f[1].lower().startswith("mekd_sig_a2"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_sig_a2_shape = f[2]
+                if f[1].lower().startswith("mekd_sig_a3"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_sig_a3_shape = f[2]
+                if f[1].lower().startswith("mekd_sig_a4"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_sig_a4_shape = f[2]
 
             if f[0].lower().startswith("highmasssignalshape") or f[0].lower().startswith("hmsignalshape"):
 
@@ -243,6 +280,12 @@ class inputReader:
                 if f[1].lower().startswith("alpha_cb"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.alpha_CB_shape_HM = f[2]
+                if f[1].lower().startswith("n2_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.n2_CB_shape_HM = f[2]
+                if f[1].lower().startswith("alpha2_cb"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.alpha2_CB_shape_HM = f[2]
                 if f[1].lower().startswith("mean_cb"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.mean_CB_shape_HM = f[2]
@@ -280,6 +323,22 @@ class inputReader:
                 if f[1].lower().startswith("a12"): self.qqZZshape_a12 = float(f[2])
                 if f[1].lower().startswith("a13"): self.qqZZshape_a13 = float(f[2])
                 
+                if f[1].lower().startswith("mekd_qqzz_a0"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_qqZZ_a0_shape = f[2]; print f[2]; print self.mekd_qqZZ_a0_shape
+                if f[1].lower().startswith("mekd_qqzz_a1"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_qqZZ_a1_shape = f[2]
+                if f[1].lower().startswith("mekd_qqzz_a2"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_qqZZ_a2_shape = f[2]
+                if f[1].lower().startswith("mekd_qqzz_a3"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_qqZZ_a3_shape = f[2]
+                if f[1].lower().startswith("mekd_qqzz_a4"): 
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
+                    else: self.mekd_qqZZ_a4_shape = f[2]
+
             if f[0].lower().startswith("ggzzshape"):
 
                 if f[1].lower().startswith("a0"): self.ggZZshape_a0 = float(f[2])
@@ -412,10 +471,24 @@ class inputReader:
 
         if not self.goodEntry(self.n_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("n_CB_shape")
         if not self.goodEntry(self.alpha_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("alpha_CB_shape")
+        if not self.goodEntry(self.n2_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("n2_CB_shape")
+        if not self.goodEntry(self.alpha2_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("alpha2_CB_shape")
         if not self.goodEntry(self.mean_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("mean_CB_shape")
         if not self.goodEntry(self.sigma_CB_shape): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigma_CB_shape")
 
         
+        if not self.goodEntry(self.n_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("n_CB_shape_HM","n_CB_shape")
+            self.n_CB_shape_HM = self.n_CB_shape
+        if not self.goodEntry(self.alpha_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("alpha_CB_shape_HM","alpha_CB_shape")
+            self.alpha_CB_shape_HM = self.alpha_CB_shape
+        if not self.goodEntry(self.n2_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("n2_CB_shape_HM","n2_CB_shape")
+            self.n2_CB_shape_HM = self.n2_CB_shape
+        if not self.goodEntry(self.alpha2_CB_shape_HM):
+            print "{0} is not set. Using {1} for {0}.".format("alpha2_CB_shape_HM","alpha2_CB_shape")
+            self.alpha2_CB_shape_HM = self.alpha2_CB_shape
         if not self.goodEntry(self.n_CB_shape_HM):
             print "{0} is not set. Using {1} for {0}.".format("n_CB_shape_HM","n_CB_shape")
             self.n_CB_shape_HM = self.n_CB_shape
@@ -539,12 +612,16 @@ class inputReader:
 
         dict['n_CB_shape'] = self.n_CB_shape
         dict['alpha_CB_shape'] = self.alpha_CB_shape
+        dict['n2_CB_shape'] = self.n2_CB_shape
+        dict['alpha2_CB_shape'] = self.alpha2_CB_shape
         dict['mean_CB_shape'] = self.mean_CB_shape
         dict['sigma_CB_shape'] = self.sigma_CB_shape
 
         dict['useHighMassReweightedShapes'] = self.useHighMassReweightedShapes
         dict['n_CB_shape_HM'] = self.n_CB_shape_HM
         dict['alpha_CB_shape_HM'] = self.alpha_CB_shape_HM
+        dict['n2_CB_shape_HM'] = self.n2_CB_shape_HM
+        dict['alpha2_CB_shape_HM'] = self.alpha2_CB_shape_HM
         dict['mean_CB_shape_HM'] = self.mean_CB_shape_HM
         dict['sigma_CB_shape_HM'] = self.sigma_CB_shape_HM
         dict['gamma_BW_shape_HM'] = self.gamma_BW_shape_HM
@@ -636,4 +713,14 @@ class inputReader:
         dict['doHypTest'] = self.doHypTest
         dict['altHypLabel'] = str(self.altHypLabel)
         
+	dict['mekd_sig_a0_shape'] = self.mekd_sig_a0_shape
+	dict['mekd_sig_a1_shape'] = self.mekd_sig_a1_shape
+	dict['mekd_sig_a2_shape'] = self.mekd_sig_a2_shape
+	dict['mekd_sig_a3_shape'] = self.mekd_sig_a3_shape
+	dict['mekd_sig_a4_shape'] = self.mekd_sig_a4_shape
+	dict['mekd_qqZZ_a0_shape'] = self.mekd_qqZZ_a0_shape
+	dict['mekd_qqZZ_a1_shape'] = self.mekd_qqZZ_a1_shape
+	dict['mekd_qqZZ_a2_shape'] = self.mekd_qqZZ_a2_shape
+	dict['mekd_qqZZ_a3_shape'] = self.mekd_qqZZ_a3_shape
+	dict['mekd_qqZZ_a4_shape'] = self.mekd_qqZZ_a4_shape
         return dict
