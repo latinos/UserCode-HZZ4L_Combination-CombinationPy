@@ -16,25 +16,25 @@
 void getPvals(TFile *f, std::vector<double> &v_mh, std::vector<double> &v_obs);
 
 // --------- Inputs ------- //
-TString inputFile = "results_2D_7TeV_CorScale/higgsCombineHZZ4L_PLP.root";
-TString inputFile_1 = "results_1D_Combined_CorScale/higgsCombineHZZ4L_PLP.root";
-TString inputFile_2 = "results_2D_Combined_CorScale/higgsCombineHZZ4L_PLP.root";
-TString inputFileExp ="results_2D_7TeV_CorScale/higgsCombineHZZ4L_PLPE.root";
-TString inputFileExp_1 = "results_1D_Combined_CorScale/higgsCombineHZZ4L_PLPE.root";
-TString inputFileExp_2 = "results_2D_Combined_CorScale/higgsCombineHZZ4L_PLPE.root";
+TString inputFile = "results/higgsCombineHZZ4L_PLP.root";
+TString inputFile_1 = "results/higgsCombineHZZ4L_PLP.root";
+TString inputFile_2 = "results/higgsCombineHZZ4L_PLP.root";
+TString inputFileExp ="results/higgsCombineHZZ4L_PLPE.root";
+TString inputFileExp_1 = "results/higgsCombineHZZ4L_PLPE.root";
+TString inputFileExp_2 = "results/higgsCombineHZZ4L_PLPE.root";
 TString Graph1 = "2D Fit 7TeV";
 TString Graph2 = "1D Fit 7+8TeV";
 TString Graph3 = "2D Fit 7+8TeV";
 const bool addObs = false;
-const bool addObs_1 = true;
-const bool addObs_2 = true;
+const bool addObs_1 = false;
+const bool addObs_2 = false;
 const bool addExpected = false;
 const bool addExpected_1 = true;
 const bool addExpected_2 = true;
 string method = "PLP";
 Double_t xLow = 99.9;
-Double_t xHigh = 601.0;
-Double_t yLow = 1e-5;
+Double_t xHigh = 1001.0;
+Double_t yLow = 1e-8;
 Double_t yHigh = 1.0;
 TString xTitle = "m_{H} [GeV]";
 TString yTitle = "local p-value";
@@ -43,14 +43,14 @@ const bool logx = true;
 const bool grid = false;
 const bool gridOnTop = false;
 const bool points = false;
-const bool points_1 = true;
+const bool points_1 = false;
 const bool points_2 = true;
 const bool isTiny = false;
 int canvasX = 900;
 int canvasY = 700;
 Double_t lumi = 5.051;
 const bool _DEBUG_ = false;
-string plotDir = "plots_final";
+string plotDir = "plots";
 string dimension = "1D2D_no2l2tau";
 // ----------------------- //
 
@@ -101,7 +101,7 @@ void plot_Signif_3lines()
       {
 	v_masses.push_back( mH[i] );
 	v_obs.push_back(Val_obs[i]);
-	cout << "obs " <<  mH[i] << "  " << Val_obs[i] << endl;
+	cout << "obs " <<  mH[i] << "  " << Val_obs[i] << "  ( "<< ROOT::Math::gaussian_quantile_c(Val_obs[i],1) << ")" << endl;
       }
   }
   
@@ -114,7 +114,7 @@ void plot_Signif_3lines()
       {
 	v_masses_1.push_back( mH_1[i] );
 	v_obs_1.push_back(Val_obs_1[i]);
-	cout << "obs_1 " <<  mH_1[i] << "  " << Val_obs_1[i] << endl;
+	cout << "obs_1 " <<  mH_1[i] << "  " << Val_obs_1[i] << "  ( "<< ROOT::Math::gaussian_quantile_c(Val_obs_1[i],1) << ")" << endl;
       }
   }
   vector<double> mH_2, Val_obs_2;
@@ -126,7 +126,7 @@ void plot_Signif_3lines()
       {
 	v_masses_2.push_back( mH_2[i] );
 	v_obs_2.push_back(Val_obs_2[i]);
-	cout << "obs_2 " << mH_2[i] << "  " << Val_obs_2[i] << endl;
+	cout << "obs_2 " << mH_2[i] << "  " << Val_obs_2[i] << "  ( "<< ROOT::Math::gaussian_quantile_c(Val_obs_2[i],1) << ")" << endl;
       }
   }
 
@@ -140,7 +140,7 @@ void plot_Signif_3lines()
       	{
 	  v_masses_exp.push_back( mH_exp[i] );
 	  v_exp.push_back(Val_exp[i]);
-	  cout << "exp " << mH_exp[i] << "  " << Val_exp[i] << endl;
+	  cout << "exp " << mH_exp[i] << "  " << Val_exp[i] << "  ( "<< ROOT::Math::gaussian_quantile_c(Val_exp[i],1) << ")" << endl;
 	}
     }
 
@@ -156,7 +156,7 @@ void plot_Signif_3lines()
       	{
 	  v_masses_exp_1.push_back( mH_exp_1[i] );
 	  v_exp_1.push_back(Val_exp_1[i]);
-	  cout << "exp_1 " <<  mH_exp_1[i] << "  " << Val_exp_1[i] << endl;
+	  cout << "exp_1 " <<  mH_exp_1[i] << "  " << Val_exp_1[i] << "  ( "<< ROOT::Math::gaussian_quantile_c(Val_exp_1[i],1) << ")" << endl;
 	}
     }
   
@@ -170,7 +170,7 @@ void plot_Signif_3lines()
       	{
 	  v_masses_exp_2.push_back( mH_exp_2[i] );
 	  v_exp_2.push_back(Val_exp_2[i]);
-	  cout << "exp_2 " <<  mH_exp_2[i] << "  " << Val_exp_2[i] << endl;
+	  cout << "exp_2 " <<  mH_exp_2[i] << "  " << Val_exp_2[i] << "  ( "<< ROOT::Math::gaussian_quantile_c(Val_exp_2[i],1) << ")" << endl;
 	}
     }
 
@@ -346,33 +346,44 @@ void plot_Signif_3lines()
   pt3->SetFillColor(0);
   pt3->SetTextFont(42);
   char lum2[192];
-  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",5.261);
+  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.1);
   pt3->AddText(lum2); 
 
 
-  TPaveText *oneSig = new TPaveText(0.97,0.8,1,0.84,"NDC");
+  //TPaveText *oneSig = new TPaveText(0.94,0.85,0.97,0.89,"NDC");
+  TPaveText *oneSig = new TPaveText(0.97,0.85,1,0.89,"NDC");
   oneSig->SetFillColor(0);
   oneSig->SetTextFont(42);
   oneSig->SetTextColor(kRed);
   oneSig->AddText("1#sigma"); 
 
-  TPaveText *twoSig = new TPaveText(0.97,0.66,1,0.7,"NDC");
+  //TPaveText *twoSig = new TPaveText(0.94,0.76,0.97,0.8,"NDC");
+  TPaveText *twoSig = new TPaveText(0.97,0.765,1,0.805,"NDC");
   twoSig->SetFillColor(0);
   twoSig->SetTextFont(42);
   twoSig->SetTextColor(kRed);
   twoSig->AddText("2#sigma"); 
 
-  TPaveText *threeSig = new TPaveText(0.97,0.46,1,0.5,"NDC");
+  //TPaveText *threeSig = new TPaveText(0.94,0.63,0.97,0.67,"NDC");
+  TPaveText *threeSig = new TPaveText(0.97,0.64,1,0.68,"NDC");
   threeSig->SetFillColor(0);
   threeSig->SetTextFont(42);
   threeSig->SetTextColor(kRed);
   threeSig->AddText("3#sigma"); 
 
-  TPaveText *fourSig = new TPaveText(0.97,0.19,1,0.23,"NDC");
+  //TPaveText *fourSig = new TPaveText(0.94,0.455,0.97,0.495,"NDC");
+  TPaveText *fourSig = new TPaveText(0.97,0.475,1,0.515,"NDC");
   fourSig->SetFillColor(0);
   fourSig->SetTextFont(42);
   fourSig->SetTextColor(kRed);
   fourSig->AddText("4#sigma"); 
+
+  //TPaveText *fiveSig = new TPaveText(0.94,0.24,0.97,0.28,"NDC");
+  TPaveText *fiveSig = new TPaveText(0.97,0.26,1,0.3,"NDC");
+  fiveSig->SetFillColor(0);
+  fiveSig->SetTextFont(42);
+  fiveSig->SetTextColor(kRed);
+  fiveSig->AddText("5#sigma");
 
   TLegend * box2 = new TLegend(0.51,0.38,0.71,0.5);
   box2->SetFillColor(0);
@@ -410,6 +421,11 @@ void plot_Signif_3lines()
   l4->SetLineWidth(1);
   l4->SetLineColor(kRed);
   l4->DrawLine(105.0,ROOT::Math::normal_cdf_c(4, 1.0),180.0,ROOT::Math::normal_cdf_c(4, 1.0));
+  TLine *l5=new TLine();
+  l5->SetLineStyle(1);
+  l5->SetLineWidth(1);
+  l5->SetLineColor(kRed);
+  l5->DrawLine(105.0,ROOT::Math::normal_cdf_c(5, 1.0),180.0,ROOT::Math::normal_cdf_c(5, 1.0));
 
 
   if(addObs)grObs->Sort();
@@ -458,7 +474,8 @@ void plot_Signif_3lines()
   twoSig->Draw("SAME");
   threeSig->Draw("SAME");
   fourSig->Draw("SAME");
- 
+  fiveSig->Draw("SAME");
+
   box2->Draw();
   sprintf( outfileName,"%s/Pvals_%s_lowMass_%s_7p8sep.eps",plotDir.c_str(),method.c_str(),dimension.c_str() );
   c->SaveAs(outfileName);
@@ -488,6 +505,7 @@ void plot_Signif_3lines()
   l2->DrawLine(xLow,ROOT::Math::normal_cdf_c(2, 1.0),xHigh,ROOT::Math::normal_cdf_c(2, 1.0));
   l3->DrawLine(xLow,ROOT::Math::normal_cdf_c(3, 1.0),xHigh,ROOT::Math::normal_cdf_c(3, 1.0));
   l4->DrawLine(xLow,ROOT::Math::normal_cdf_c(4, 1.0),xHigh,ROOT::Math::normal_cdf_c(4, 1.0));
+  l5->DrawLine(xLow,ROOT::Math::normal_cdf_c(5, 1.0),xHigh,ROOT::Math::normal_cdf_c(5, 1.0));
 
   if(addObs)
     {
@@ -530,7 +548,7 @@ void plot_Signif_3lines()
       if (gPad->GetLogy() && log(yHigh/yLow) > log(1e6)) { dyh *= 2; dyl *= 2; }
       if (gPad->GetLogy() == 0) { dyh = dyl = 0.01*(yHigh-yLow); }
       if (isTiny) { dyh *= 2; dyl *= 2; }
-      for (int j = 100; j < 600; j += 10)  {
+      for (int j = 100; j < 1000; j += 10)  {
 	  if (j > 400 && j % 20 == 10) continue;
 	  tick.DrawLine(j, yLow, j, yLow+(j % 100 == 0 ? 2*dyl : dyl));
 	  tick.DrawLine(j, yHigh, j, yHigh-(j % 100 == 0 ? 2*dyh : dyh));
@@ -547,7 +565,8 @@ void plot_Signif_3lines()
   twoSig->Draw("SAME");
   threeSig->Draw("SAME");
   fourSig->Draw("SAME");
- 
+  fiveSig->Draw("SAME");
+
   sprintf( outfileName,"%s/Pvals_%s_wholeMass_%s_7p8sep.eps",plotDir.c_str(),method.c_str(),dimension.c_str() );
   cl->SaveAs(outfileName);
   sprintf( outfileName,"%s/Pvals_%s_wholeMass_%s_7p8sep.png",plotDir.c_str(),method.c_str(),dimension.c_str() );

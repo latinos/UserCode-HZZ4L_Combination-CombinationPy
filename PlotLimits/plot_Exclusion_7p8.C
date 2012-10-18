@@ -23,13 +23,13 @@ TGraph * removeGlitches2(TGraph *out);
 
 
 // --------- Inputs ------- //
-TString inputFile = "results_2D_Combined_CorScale/higgsCombineHZZ4L_ASCLS.root";
-const bool addObsLimit = true;
+TString inputFile = "results/higgsCombineHZZ4L_ASCLS.root";
+const bool addObsLimit = false;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
 string method = "FREQ";
 Double_t xLow = 99.9;
-Double_t xHigh = 601.0;
+Double_t xHigh = 1001.0;
 Double_t yLow = 0.1;
 Double_t yHigh = 20.0;
 TString xTitle = "m_{H} [GeV]";
@@ -46,7 +46,7 @@ int canvasY = 700;
 //Double_t lumi = 1.616;
 double sqrts = 7.0;
 Double_t lumi = 5.051;
-std::string plotDir = "plots_final";
+std::string plotDir = "plots";
 std::string append = "2D_no2l2tau";
 TString LimitType = "2D";
 // ----------------------- //
@@ -77,7 +77,7 @@ void plot_Exclusion_7p8()
   getLimits(inFile,mH,Val_mean,Val_68l,Val_68h,Val_95l,Val_95h,Val_obs);
   vector<double> v_masses, v_means, v_lo68, v_hi68, v_lo95, v_hi95, v_obs;
   vector<double> expExclusion,obsExclusion;
-  for(unsigned int i = 0; i < mH.size(); i++)
+  for(unsigned int i = 1; i < mH.size(); i++)
     {
       v_masses.push_back( mH[i] );
       v_means.push_back( Val_mean[i] );
@@ -89,6 +89,15 @@ void plot_Exclusion_7p8()
       if(Val_mean[i] < 1.0) expExclusion.push_back(mH[i]);
       if(Val_obs[i] < 1.0 && addObsLimit) obsExclusion.push_back(mH[i]);
     }
+  v_masses.push_back( mH[0] );
+  v_means.push_back( Val_mean[0] );
+  v_lo68.push_back( min( Val_68l[0], Val_68h[0]) );
+  v_hi68.push_back( max( Val_68h[0], Val_68l[0]) );
+  v_lo95.push_back( min( Val_95l[0], Val_95h[0]) );
+  v_hi95.push_back( max( Val_95h[0], Val_95l[0]) );
+  v_obs.push_back(Val_obs[0]);
+  if(Val_mean[0] < 1.0) expExclusion.push_back(mH[0]);
+  if(Val_obs[0] < 1.0 && addObsLimit) obsExclusion.push_back(mH[0]);
 
   // ------------------- For XSxBR --------------------- //
   
@@ -180,7 +189,9 @@ void plot_Exclusion_7p8()
 	  cout << "Observed Exclusion: " <<  obsExclusion[q] << endl;
 	}
     }
-
+  for(int r=0;r<nMassEff;r++){
+    cout<<"Expected Limit "<<a_masses[r]<<": "<<a_means[r]<<endl;
+  }
   // ------------------- Draw  -------------------- //
 
 
@@ -189,22 +200,25 @@ void plot_Exclusion_7p8()
   TGraphAsymmErrors* gr = new TGraphAsymmErrors(nMassEff, a_masses, a_means);
   TGraphAsymmErrors* grshade_68 = new TGraphAsymmErrors(2*nMassEff);
   TGraphAsymmErrors* grshade_95 = new TGraphAsymmErrors(2*nMassEff);
-
+  gr->SetName("Expected");gr->SetTitle("Expected");
+  grshade_68->SetName("68");grshade_68->SetTitle("68");
+  grshade_95->SetName("95");grshade_95->SetTitle("95");
   TGraph *grObs = new TGraph(nMassEff, a_masses, a_obs);
   grObs->SetLineWidth(3);
   grObs->SetLineColor(kBlack);
   grObs->SetMarkerStyle(21);
   grObs->SetMarkerSize(0.8);
  
-  
+  //cout<<"nMasses: "<<nMassEff<<endl;
   for (int a = 0; a < nMassEff; a++)
     {
       grshade_68->SetPoint(a,a_masses[a],a_lo68[a]);
       grshade_68->SetPoint(sizeV+a,a_masses[nMassEff-a-1],a_hi68[nMassEff-a-1]);
+      //cout<<"setting point "<<sizeV+a<<endl;
       grshade_95->SetPoint(a,a_masses[a],a_lo95[a]);
       grshade_95->SetPoint(nMassEff+a,a_masses[nMassEff-a-1],a_hi95[nMassEff-a-1]);
     }
-
+  //for(int a = 0; a < nMassEff; a++)cout<<"mass: "<<a_masses[a]<<endl;
   //TGraphAsymmErrors* grshade_68m = removeGlitches(grshade_68n);
   //TGraphAsymmErrors* grshade_95m = removeGlitches(grshade_95n);
   //TGraphAsymmErrors* gr = removeGlitches(grn);
@@ -212,8 +226,9 @@ void plot_Exclusion_7p8()
   //TGraphAsymmErrors* grshade_68 = slidingWindowAverage(grshade_68m,2);
   //TGraphAsymmErrors* grshade_95 = slidingWindowAverage(grshade_95m,2);
   //TGraph* gr = slidingWindowAverage2(grm,2);
-
-
+  //gr->Sort();
+  //grshade_68->Sort();
+  //grshade_95->Sort();
   gr->SetLineStyle(2);
   gr->SetLineWidth(3);
   gr->SetLineColor(kBlue);
@@ -271,7 +286,7 @@ void plot_Exclusion_7p8()
   pt3->SetFillColor(0);
   pt3->SetTextFont(42);
   char lum2[192];
-  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",5.261);
+  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.1);
   pt3->AddText(lum2); 
 
   if(grid) c->SetGrid();
@@ -317,7 +332,8 @@ void plot_Exclusion_7p8()
   c->SaveAs(outfileName);
   sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_lowMass_%s.png",plotDir.c_str(),method.c_str(), append.c_str() );	
   c->SaveAs(outfileName);
-
+  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_lowMass_%s.root",plotDir.c_str(),method.c_str(), append.c_str() );
+  c->SaveAs(outfileName);
 
   // --------------- Full Mass Range ---------------- //
 	
@@ -398,6 +414,8 @@ void plot_Exclusion_7p8()
   sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_wholeMass_%s.eps",plotDir.c_str(),method.c_str(), append.c_str() );
   cl->SaveAs(outfileName);
   sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_wholeMass_%s.png",plotDir.c_str(),method.c_str(), append.c_str() );	
+  cl->SaveAs(outfileName);
+  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_wholeMass_%s.root",plotDir.c_str(),method.c_str(), append.c_str() );
   cl->SaveAs(outfileName);	
 
   // ---------------- Root File --------------- //
