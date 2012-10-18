@@ -317,6 +317,7 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts)
   c->cd();
   frameM4l->Draw();
   frameM4l->GetYaxis()->SetRangeUser(0,0.4);
+  if(channel == 3)frameM4l->GetYaxis()->SetRangeUser(0,0.06);
   box2->Draw();
   pt->Draw();
   pt2->Draw();
