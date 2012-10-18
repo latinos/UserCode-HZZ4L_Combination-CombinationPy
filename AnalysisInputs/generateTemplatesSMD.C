@@ -44,7 +44,7 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
-const TString destDir = "../CreateDatacards/templates2D_smd_8TeV/"; //it must already exist !
+const TString destDir = "../CreateDatacards/templates2D_smd_8TeV_withSyst/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -82,7 +82,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex=0, int
 TH2F* reweightForInterference(TH2F* temp);
 void makePlot1D( TH1 *h ,TString label );
 void makePlot2D( TH2 *h ,TString label );
-TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0);
+TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,TString superMelaName="superLD",TString templateName="bkgHisto");
 TH1F *fillKDhisto(TString channel="4mu", int sampleIndex=0,float mzzLow=0.0,float mzzHigh=99999.0);
 void makeTemplate(TString channel="4mu");
 void storeLDDistribution();
@@ -401,7 +401,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
 
 //=======================================================================
 
-TH2F* fillTemplate(TString channel, int sampleIndex){
+TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TString templateName){
   TChain* bkgMC = new TChain("SelectedTree");
 
 
@@ -433,9 +433,11 @@ TH2F* fillTemplate(TString channel, int sampleIndex){
     KD_cut=KD;
   }
   
+
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
-  bkgMC->SetBranchAddress("superLD",&sKD);
+  //  bkgMC->SetBranchAddress("superLD",&sKD);
+  bkgMC->SetBranchAddress(superMelaName,&sKD);
 
   if (recompute_) {
     bkgMC->SetBranchAddress("Z1Mass",&m1);
@@ -449,7 +451,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex){
     bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
   }
   
-  TH2F* bkgHist = new TH2F("bkgHisto","bkgHisto",nbinsX,binsX,nbinsY,binsY);
+  TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
 
   bkgHist->Sumw2();
 
@@ -640,6 +642,7 @@ void makeTemplate(TString channel){
   pair<TH2F*,TH2F*> histoPair;
 
   TH2F* low,*high,*h_mzzD;
+  TH2F* h_mzzD_syst1Up,h_mzzD_syst1Down,h_mzzD_syst2Up,h_mzzD_syst2Down;
   TH1F *h_D;
   
   // ========================================
@@ -650,6 +653,9 @@ void makeTemplate(TString channel){
   //high = fillTemplate(channel,0,false);
   h_mzzD = (TH2F*)low->Clone("h_mzzD");//  mergeTemplates(low,high);
   h_D = fillKDhisto(channel,0,105,140);//last two are cuts on mZZ
+
+
+
   // ---------- apply interference reweighting --------
   oldTemp = new TH2F(*h_mzzD);
   oldTemp->SetName("oldTemp");
@@ -669,9 +675,16 @@ void makeTemplate(TString channel){
   fsig->cd();
   h_mzzD->Write("h_superDpsD");
   oldTemp->Write("oldTemp");
-  h_mzzD->Write("h_superDpsD_up");
-  h_mzzD->Write("h_superDpsD_dn");
   h_D->Write("h_superD");
+  //---- systematics for default signal
+  h_mzzD_syst1Up=fillTemplate(channel,0,"superLD_syst1Up","bkgHisto_syst1Up");
+  h_mzzD_syst1Down=fillTemplate(channel,0,"superLD_syst1Down","bkgHisto_syst1Down");
+  h_mzzD_syst2Up=fillTemplate(channel,0,"superLD_syst2Up","bkgHisto_syst2Up");
+  h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+  h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
+  h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
+  h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
+  h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
   fsig->Close();
 
   // ========================================
@@ -698,11 +711,20 @@ void makeTemplate(TString channel){
     makePlot2D( h_mzzD,"PSMH125To"+channel );
   
     fAltsig->cd();
-  h_mzzD->Write("h_superDpsD");
-  oldTemp->Write("oldTemp");
-  h_mzzD->Write("h_superDpsD_up");
-  h_mzzD->Write("h_superDpsD_dn");
-  h_D->Write("h_superD");
+    h_mzzD->Write("h_superDpsD");
+    oldTemp->Write("oldTemp");
+    h_D->Write("h_superD");
+    
+    //---- systematics for alternative signal
+    h_mzzD_syst1Up=fillTemplate(channel,3,"superLD_syst1Up","bkgHisto_syst1Up");
+    h_mzzD_syst1Down=fillTemplate(channel,3,"superLD_syst1Down","bkgHisto_syst1Down");
+    h_mzzD_syst2Up=fillTemplate(channel,3,"superLD_syst2Up","bkgHisto_syst2Up");
+    h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+    h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
+    h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
+    h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
+    h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+    
     fAltsig->Close();
   }//end if makeAltSignal
   
@@ -731,9 +753,17 @@ void makeTemplate(TString channel){
   fqqZZ->cd();
   h_mzzD->Write("h_superDpsD");
   oldTemp->Write("oldTemp");
-  h_mzzD->Write("h_superDpsD_up");
-  h_mzzD->Write("h_superDpsD_dn");
   h_D->Write("h_superD");
+  //---- systematics for qqZZ
+  h_mzzD_syst1Up=fillTemplate(channel,1,"superLD_syst1Up","bkgHisto_syst1Up");
+  h_mzzD_syst1Down=fillTemplate(channel,1,"superLD_syst1Down","bkgHisto_syst1Down");
+  h_mzzD_syst2Up=fillTemplate(channel,1,"superLD_syst2Up","bkgHisto_syst2Up");
+  h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+  h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
+  h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
+  h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
+  h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+  
   fqqZZ->Close();
 
   // ==========================
@@ -758,11 +788,19 @@ void makeTemplate(TString channel){
   makePlot2D( h_mzzD,"ggZZTo"+channel );
 
   fggZZ->cd();
- h_mzzD->Write("h_superDpsD");
+  h_mzzD->Write("h_superDpsD");
   oldTemp->Write("oldTemp");
-  h_mzzD->Write("h_superDpsD_up");
-  h_mzzD->Write("h_superDpsD_dn");
   h_D->Write("h_superD");
+  //---- systematics for ggZZ
+  h_mzzD_syst1Up=fillTemplate(channel,2,"superLD_syst1Up","bkgHisto_syst1Up");
+  h_mzzD_syst1Down=fillTemplate(channel,2,"superLD_syst1Down","bkgHisto_syst1Down");
+  h_mzzD_syst2Up=fillTemplate(channel,2,"superLD_syst2Up","bkgHisto_syst2Up");
+  h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+  h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
+  h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
+  h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
+  h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+  
   fggZZ->Close();
 
 }
