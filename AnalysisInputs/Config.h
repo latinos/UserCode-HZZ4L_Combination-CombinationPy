@@ -23,8 +23,12 @@
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/310812_ggRescaled_HighMassReweight/PRODFSR_8TeV/";
 
 //171012, HCP unblinding
-TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/171012/PRODFSR/";
-TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/171012/PRODFSR_8TeV/";
+//TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/171012/PRODFSR/";
+//TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/171012/PRODFSR_8TeV/";
+
+//181012, HCP unblinding
+TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/181012/PRODFSR/";
+TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/181012/PRODFSR_8TeV/";
 
 // Luminosity, as float and as string to be used in file names, etc.
 double lumi7TeV = 5.051;
