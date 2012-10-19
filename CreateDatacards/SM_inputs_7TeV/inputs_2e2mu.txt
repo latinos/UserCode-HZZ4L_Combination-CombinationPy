@@ -17,9 +17,9 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  33.4606
-rate ggZZ  2.21021
-rate zjets 3.6
+rate qqZZ  33.4587
+rate ggZZ  2.2102
+rate zjets 2.9 
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -29,7 +29,6 @@ signalShape n_CB (-80.2755)+(1.92682*@0)+(-0.0163889*@0*@0)+(6.61152e-05*@0*@0*@
 signalShape n2_CB (20)
 signalShape mean_CB (7.74041)+(-0.1993*@0)+(0.00199694*@0*@0)+(-1.00463e-05*@0*@0*@0)+(2.46727e-08*@0*@0*@0*@0)+(-2.33501e-11*@0*@0*@0*@0*@0)
 signalShape sigma_CB (-32.5568)+(0.867983*@0)+(-0.00861782*@0*@0)+(4.13108e-05*@0*@0*@0)+(-9.4314e-08*@0*@0*@0*@0)+(8.23655e-11*@0*@0*@0*@0*@0)
-
 highmasssignalShape alpha_CB (1.94522)+(-0.0012104*@0)
 highmasssignalShape alpha2_CB (0.878941)+(0.000326235*@0)
 highmasssignalShape n_CB (-27.4789)+(0.146712*@0)+(-0.000188824*@0*@0)+(7.99675e-08*@0*@0*@0)
@@ -37,47 +36,46 @@ highmasssignalShape n2_CB (20)
 highmasssignalShape mean_CB (82.1279)+(-0.457539*@0)+(0.000816838*@0*@0)+(-4.6665e-07*@0*@0*@0)
 highmasssignalShape sigma_CB (41.2978)+(-0.237919*@0)+(0.000343944*@0*@0)+(-1.18454e-08*@0*@0*@0)
 highmasssignalShape gamma_BW TMath::Max((59.6861)+(-0.59096*@0)+(0.00169122*@0*@0)+(-1.05572e-06*@0*@0*@0),30)
-
 ## signal efficiency ##
-signalEff a1  -4.41501
-signalEff a2  4.6245
-signalEff a3  -54.8275
-signalEff a4  105.222
-signalEff b1  2.06797
-signalEff b2  0.00296304
-signalEff b3  -1.76272e-06
+signalEff a1  -4.41691
+signalEff a2  4.62292
+signalEff a3  -36.5501
+signalEff a4  96.1332
+signalEff b1  2.11887
+signalEff b2  0.00295207
+signalEff b3  -1.7409e-06
 
 
 ### background functions ###
-qqZZshape a0_bkgd   111.253
-qqZZshape a1_bkgd   12.3887
-qqZZshape a2_bkgd   117.993
-qqZZshape a3_bkgd   0.0425339
-qqZZshape a4_bkgd   185.206
-qqZZshape a5_bkgd   10.4755
-qqZZshape a6_bkgd   29.3145
-qqZZshape a7_bkgd   0.0850864
-qqZZshape a8_bkgd   53.6676
-qqZZshape a9_bkgd   0.0903612
-qqZZshape a10_bkgd  85.447
-qqZZshape a11_bkgd  -13.2805
-qqZZshape a12_bkgd  37.6356
-qqZZshape a13_bkgd  0.341534
+qqZZshape a0_bkgd   111.163
+qqZZshape a1_bkgd   11.9998
+qqZZshape a2_bkgd   117.557
+qqZZshape a3_bkgd   0.0425536
+qqZZshape a4_bkgd   185.145
+qqZZshape a5_bkgd   10.2669
+qqZZshape a6_bkgd   29.4708
+qqZZshape a7_bkgd   0.0839434
+qqZZshape a8_bkgd   53.3706
+qqZZshape a9_bkgd   0.0913265
+qqZZshape a10_bkgd  85.5325
+qqZZshape a11_bkgd  -13.5325
+qqZZshape a12_bkgd  51.9443
+qqZZshape a13_bkgd  0.329923
 
 
-ggZZshape a0_bkgd  143.025
-ggZZshape a1_bkgd  42.1465
-ggZZshape a2_bkgd  129.429
-ggZZshape a3_bkgd  0.0316708
-ggZZshape a4_bkgd  185.081
-ggZZshape a5_bkgd  12.0778
-ggZZshape a6_bkgd  36.9748
-ggZZshape a7_bkgd  0.170059
-ggZZshape a8_bkgd  57.0063
-ggZZshape a9_bkgd  0.0678948
+ggZZshape a0_bkgd  143.198
+ggZZshape a1_bkgd  42.5313
+ggZZshape a2_bkgd  129.357
+ggZZshape a3_bkgd  0.0316705
+ggZZshape a4_bkgd  185.015
+ggZZshape a5_bkgd  12.0895
+ggZZshape a6_bkgd  36.9175
+ggZZshape a7_bkgd  0.1699
+ggZZshape a8_bkgd  57.0365
+ggZZshape a9_bkgd  0.0678273
 
-zjetsShape mean 136.0
-zjetsShape sigma 15.6
+zjetsShape mean 132.8
+zjetsShape sigma 12.6
 
 
 ### channel dependent systematics ###
