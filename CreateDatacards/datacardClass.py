@@ -117,6 +117,7 @@ class datacardClass:
         self.bkgMorph = theInputs['useCMS_zz4l_bkgMELA']
         self.templateDir = theTemplateDir
 	self.bIncludingError=theIncludingError
+	self.bMEKD = theMEKD
         
         FactorizedShapes = False
 
@@ -614,21 +615,61 @@ class datacardClass:
             TemplateName = "sigTemplateMorphPdf_ggH{2}_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.appendHypType)
             sigTemplateMorphPdf_ggH_ALT = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,CMS_zz4l_mass,D,true,funcList_ggH_ALT,morphVarListSig,1.0,1)
     
-        sig2d_ggH = ROOT.RooProdPdf("sig2d_ggH","sig2d_ggH",ROOT.RooArgSet(self.getVariable(sig_ggH_HM,sig_ggH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(D)))
-        sig2d_VBF = ROOT.RooProdPdf("sig2d_VBF","sig2d_VBF",ROOT.RooArgSet(self.getVariable(sig_VBF_HM,sig_VBF,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(D)))
-        sig2d_WH = ROOT.RooProdPdf("sig2d_WH","sig2d_WH",ROOT.RooArgSet(self.getVariable(sig_WH_HM,sig_WH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_WH),ROOT.RooArgSet(D)))
-        sig2d_ZH = ROOT.RooProdPdf("sig2d_ZH","sig2d_ZH",ROOT.RooArgSet(self.getVariable(sig_ZH_HM,sig_ZH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ZH),ROOT.RooArgSet(D)))
-        sig2d_ttH = ROOT.RooProdPdf("sig2d_ttH","sig2d_ttH",ROOT.RooArgSet(self.getVariable(sig_ttH_HM,sig_ttH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ttH),ROOT.RooArgSet(D)))
+
+	####  ----------------------- mekd  parametrized double gaussian stuffs  -------------------------
+	discVarName = "mekd"
+	MEKD = ROOT.RooRealVar(discVarName, discVarName, -5, 15);
+	if theMEKD: 
+		name = "mekd_sig_a0_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_sig_a0 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_sig_a0_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_sig_a1_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_sig_a1 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_sig_a1_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_sig_a2_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_sig_a2 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_sig_a2_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_sig_a3_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_sig_a3 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_sig_a3_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_sig_a4_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_sig_a4 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_sig_a4_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		sigTemplateMorphPdf_ggH = ROOT.RooGenericPdf("mekd_sig_ggH", "mekd_sig_ggH", "@3*exp((-(@0-@1)^2)/(2*@2^2))/@2+(1-@3)*exp((-(@0-@4)^2)/(2*@5^2))/@5", ROOT.RooArgList(MEKD,mekd_sig_a0, mekd_sig_a1, mekd_sig_a2, mekd_sig_a3, mekd_sig_a4))
+		sigTemplateMorphPdf_VBF = sigTemplateMorphPdf_ggH 
+		sigTemplateMorphPdf_WH = sigTemplateMorphPdf_ggH 
+		sigTemplateMorphPdf_ZH = sigTemplateMorphPdf_ggH 
+		sigTemplateMorphPdf_ttH = sigTemplateMorphPdf_ggH 
+		print "\n \n mekd_sig_a2 channel ",self.channel
+		m = 100
+		while m >= 100 and m < 150:
+			CMS_zz4l_mass.setVal(m)
+			m = m + 0.1
+			if mekd_sig_a2.getVal() < 0 : print m, mekd_sig_a2.getVal() 
+			if mekd_sig_a2.getVal() > 1 : print m, mekd_sig_a2.getVal() 
+		print "\n \n mekd_sig_a1 channel ",self.channel
+		m = 100
+		while m >= 100 and m < 150:
+			CMS_zz4l_mass.setVal(m)
+			m = m + 0.1
+			if mekd_sig_a1.getVal() <= 0 : print m, mekd_sig_a1.getVal() 
+		print "\n \n mekd_sig_a4 channel ",self.channel
+		m = 100
+		while m >= 100 and m < 150:
+			CMS_zz4l_mass.setVal(m)
+			m = m + 0.1
+			if mekd_sig_a4.getVal() <= 0 : print m, mekd_sig_a4.getVal() 
+	####  ----------------------- end mekd -----------------------------------------------------------
+        sig2d_ggH = ROOT.RooProdPdf("sig2d_ggH","sig2d_ggH",ROOT.RooArgSet(self.getVariable(sig_ggH_HM,sig_ggH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sig2d_VBF = ROOT.RooProdPdf("sig2d_VBF","sig2d_VBF",ROOT.RooArgSet(self.getVariable(sig_VBF_HM,sig_VBF,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sig2d_WH = ROOT.RooProdPdf("sig2d_WH","sig2d_WH",ROOT.RooArgSet(self.getVariable(sig_WH_HM,sig_WH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_WH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sig2d_ZH = ROOT.RooProdPdf("sig2d_ZH","sig2d_ZH",ROOT.RooArgSet(self.getVariable(sig_ZH_HM,sig_ZH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ZH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sig2d_ttH = ROOT.RooProdPdf("sig2d_ttH","sig2d_ttH",ROOT.RooArgSet(self.getVariable(sig_ttH_HM,sig_ttH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ttH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
                 
-        sigCB2d_ggH = ROOT.RooProdPdf("sigCB2d_ggH","sigCB2d_ggH",ROOT.RooArgSet(self.getVariable(sig_ggHErr,signalCB_ggH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(D)))
-        sigCB2d_VBF = ROOT.RooProdPdf("sigCB2d_VBF","sigCB2d_VBF",ROOT.RooArgSet(self.getVariable(sig_VBFErr,signalCB_VBF,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(D)))
-        sigCB2d_WH = ROOT.RooProdPdf("sigCB2d_WH","sigCB2d_WH",ROOT.RooArgSet(self.getVariable(sig_WHErr,signalCB_WH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_WH),ROOT.RooArgSet(D)))
-        sigCB2d_ZH = ROOT.RooProdPdf("sigCB2d_ZH","sigCB2d_ZH",ROOT.RooArgSet(self.getVariable(sig_ZHErr,signalCB_ZH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ZH),ROOT.RooArgSet(D)))
-        sigCB2d_ttH = ROOT.RooProdPdf("sigCB2d_ttH","sigCB2d_ttH",ROOT.RooArgSet(self.getVariable(sig_ttHErr,signalCB_ttH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ttH),ROOT.RooArgSet(D)))
+        sigCB2d_ggH = ROOT.RooProdPdf("sigCB2d_ggH","sigCB2d_ggH",ROOT.RooArgSet(self.getVariable(sig_ggHErr,signalCB_ggH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sigCB2d_VBF = ROOT.RooProdPdf("sigCB2d_VBF","sigCB2d_VBF",ROOT.RooArgSet(self.getVariable(sig_VBFErr,signalCB_VBF,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sigCB2d_WH = ROOT.RooProdPdf("sigCB2d_WH","sigCB2d_WH",ROOT.RooArgSet(self.getVariable(sig_WHErr,signalCB_WH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_WH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sigCB2d_ZH = ROOT.RooProdPdf("sigCB2d_ZH","sigCB2d_ZH",ROOT.RooArgSet(self.getVariable(sig_ZHErr,signalCB_ZH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ZH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        sigCB2d_ttH = ROOT.RooProdPdf("sigCB2d_ttH","sigCB2d_ttH",ROOT.RooArgSet(self.getVariable(sig_ttHErr,signalCB_ttH,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ttH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
         
         if(self.isAltSig):
-            sig2d_ggH_ALT = ROOT.RooProdPdf("sig2d_ggH{0}".format(self.appendHypType),"sig2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(sig_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(D)))
-            sigCB2d_ggH_ALT = ROOT.RooProdPdf("sigCB2d_ggH{0}".format(self.appendHypType),"sigCB2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(signalCB_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(D)))            
+            sig2d_ggH_ALT = ROOT.RooProdPdf("sig2d_ggH{0}".format(self.appendHypType),"sig2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(sig_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+            sigCB2d_ggH_ALT = ROOT.RooProdPdf("sigCB2d_ggH{0}".format(self.appendHypType),"sigCB2d_ggH{0}".format(self.appendHypType),ROOT.RooArgSet(signalCB_ggH),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH_ALT),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))            
 
 
 
@@ -874,9 +915,45 @@ class datacardClass:
         TemplateName = "bkgTemplateMorphPdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
         bkgTemplateMorphPdf_zjets = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,CMS_zz4l_mass,D,true,funcList_zjets,morphVarListBkg,1.0,1)
 
-        bkg2d_qqzz = ROOT.RooProdPdf("bkg2d_qqzz","bkg2d_qqzz",ROOT.RooArgSet(self.getVariable(bkg_qqzzErr,bkg_qqzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_qqzz),ROOT.RooArgSet(D)))
-        bkg2d_ggzz = ROOT.RooProdPdf("bkg2d_ggzz","bkg2d_ggzz",ROOT.RooArgSet(self.getVariable(bkg_ggzzErr,bkg_ggzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_ggzz),ROOT.RooArgSet(D)))
-        bkg2d_zjets = ROOT.RooProdPdf("bkg2d_zjets","bkg2d_zjets",ROOT.RooArgSet(self.getVariable(bkg_zjetsErr,bkg_zjets,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_zjets),ROOT.RooArgSet(D)))
+	####  ----------------------- mekd  parametrized double gaussian stuffs  -------------------------
+	if theMEKD: 
+		name = "mekd_qqZZ_a0_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		print "mekd_qqZZ_a0_shape=",theInputs['mekd_qqZZ_a0_shape'] 
+		print "mekd_sig_a0_shape=",theInputs['mekd_sig_a0_shape'] 
+		mekd_qqZZ_a0 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_qqZZ_a0_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_qqZZ_a1_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_qqZZ_a1 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_qqZZ_a1_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_qqZZ_a2_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_qqZZ_a2 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_qqZZ_a2_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_qqZZ_a3_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_qqZZ_a3 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_qqZZ_a3_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		name = "mekd_qqZZ_a4_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
+		mekd_qqZZ_a4 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_qqZZ_a4_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
+		bkgTemplateMorphPdf_qqzz = ROOT.RooGenericPdf("mekd_qqZZ", "mekd_qqZZ", "@3*exp((-(@0-@1)^2)/(2*@2^2))/@2+(1-@3)*exp((-(@0-@4)^2)/(2*@5^2))/@5", ROOT.RooArgList(MEKD,mekd_qqZZ_a0, mekd_qqZZ_a1, mekd_qqZZ_a2, mekd_qqZZ_a3, mekd_qqZZ_a4))
+		bkgTemplateMorphPdf_ggzz = ROOT.RooGenericPdf("mekd_ggZZ", "mekd_ggZZ", "@3*exp((-(@0-@1)^2)/(2*@2^2))/@2+(1-@3)*exp((-(@0-@4)^2)/(2*@5^2))/@5", ROOT.RooArgList(MEKD,mekd_qqZZ_a0, mekd_qqZZ_a1, mekd_qqZZ_a2, mekd_qqZZ_a3, mekd_qqZZ_a4))
+		bkgTemplateMorphPdf_zjets= ROOT.RooGenericPdf("mekd_zjets", "mekd_zjets", "@3*exp((-(@0-@1)^2)/(2*@2^2))/@2+(1-@3)*exp((-(@0-@4)^2)/(2*@5^2))/@5", ROOT.RooArgList(MEKD,mekd_qqZZ_a0, mekd_qqZZ_a1, mekd_qqZZ_a2, mekd_qqZZ_a3, mekd_qqZZ_a4))
+		m = 100
+		while m >= 100 and m < 150:
+			CMS_zz4l_mass.setVal(m)
+			m = m + 0.1
+			if mekd_qqZZ_a2.getVal() < 0 : print m, mekd_qqZZ_a2.getVal() 
+			if mekd_qqZZ_a2.getVal() > 1 : print m, mekd_qqZZ_a2.getVal() 
+		print "\n \n mekd_qqZZ_a1 channel ",self.channel
+		m = 100
+		while m >= 100 and m < 150:
+			CMS_zz4l_mass.setVal(m)
+			m = m + 0.1
+			if mekd_qqZZ_a1.getVal() <= 0 : print m, mekd_qqZZ_a1.getVal() 
+		print "\n \n mekd_qqZZ_a4 channel ",self.channel
+		m = 100
+		while m >= 100 and m < 150:
+			CMS_zz4l_mass.setVal(m)
+			m = m + 0.1
+			if mekd_qqZZ_a4.getVal() <= 0 : print m, mekd_qqZZ_a4.getVal() 
+	####  ----------------------- end mekd -----------------------------------------------------------
+        bkg2d_qqzz = ROOT.RooProdPdf("bkg2d_qqzz","bkg2d_qqzz",ROOT.RooArgSet(self.getVariable(bkg_qqzzErr,bkg_qqzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_qqzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        bkg2d_ggzz = ROOT.RooProdPdf("bkg2d_ggzz","bkg2d_ggzz",ROOT.RooArgSet(self.getVariable(bkg_ggzzErr,bkg_ggzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_ggzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
+        bkg2d_zjets = ROOT.RooProdPdf("bkg2d_zjets","bkg2d_zjets",ROOT.RooArgSet(self.getVariable(bkg_zjetsErr,bkg_zjets,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_zjets),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
 
         ## ----------------- SUPERMELA BACKGROUND SHAPES --------------- ##
         
@@ -1157,8 +1234,8 @@ class datacardClass:
             else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass))
 		
         if (self.is2D == 1):
-            if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D, CMS_zz4l_massErr))
-            else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D))
+            if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,self.getVariable(MEKD,D,self.bMEKD), CMS_zz4l_massErr))
+            else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,self.getVariable(MEKD,D,self.bMEKD)))
 
         if (self.is2D == 2):
             data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(SD))
