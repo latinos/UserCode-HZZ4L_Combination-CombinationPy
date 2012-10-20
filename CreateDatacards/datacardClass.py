@@ -103,7 +103,7 @@ class datacardClass:
             return falseVar
     
     # main datacard and workspace function
-    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False):
+    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False):
 
         ## --------------- SETTINGS AND DECLARATIONS --------------- ##
         DEBUG = False
