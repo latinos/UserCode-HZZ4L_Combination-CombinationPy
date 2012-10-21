@@ -451,7 +451,7 @@ class inputReader:
                 
             if f[0].lower().startswith("dohyptest"):
                 self.doHypTest = self.parseBoolString(f[1])
-            if f[0].lower().startswith("altHypLabel"):
+            if f[0].lower().startswith("althyplabel"):
                 self.altHypLabel = f[1]
 
     def getInputs(self):
