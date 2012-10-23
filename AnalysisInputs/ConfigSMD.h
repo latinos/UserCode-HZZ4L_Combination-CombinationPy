@@ -4,17 +4,17 @@
 
 
 // With high mass reweights + new MELA (analytical background) + superMELA
-TString filePath7TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_171012/PRODFSR_7TeV/";
-TString filePath8TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_171012/PRODFSR_8TeV/";
-TString filePath7TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_171012/JHU_7TeV/";
-TString filePath8TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_171012/JHU_8TeV/";
+TString filePath7TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/PRODFSR_7TeV/";
+TString filePath8TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/PRODFSR_8TeV/";
+TString filePath7TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/JHU_7TeV/";
+TString filePath8TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/JHU_8TeV/";
 
 
 // Luminosity, as float and as string to be used in file names, etc.
 double lumi7TeV = 5.051;
-double lumi8TeV = 5.261;
+double lumi8TeV = 12.21;
 TString lumistr7TeV = "5.051";
-TString lumistr8TeV = "5.261";
+TString lumistr8TeV = "12.21";
 
 
 // Location of output root files containing data events

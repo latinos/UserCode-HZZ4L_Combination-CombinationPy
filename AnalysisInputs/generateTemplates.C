@@ -39,7 +39,7 @@ int sqrts    = 7;              // sqrts, used only for withPt_/withY_
 
 //---
 int useSqrts=0;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "ZZLD_postICHEP"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
+TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
 
 bool makePSTemplate = false;
 bool makeAltSignal = false;
@@ -51,7 +51,7 @@ float mBinSize=2.;
 
 Mela* myMELA;
 
-const TString destDir = "../CreateDatacards/templates2D/";
+const TString destDir = "../CreateDatacards/templates2D_22102012/";
 
 //=======================================================================
 
