@@ -119,16 +119,18 @@ void signalEfficiency_w(int channel, double sqrts)
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
     float MC_weight_norm, mela;
+    int numEvents = 0;
     t1->SetBranchAddress("MC_weight_norm",&MC_weight_norm);
     t1->SetBranchAddress("ZZLD",&mela);
     float totalCtr=0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a); 
       //if(mela>0.5)
-	totalCtr+=MC_weight_norm; 
+        totalCtr+=MC_weight_norm; 
+	++numEvents;
     }
 
-    cout << "efficiency for m = " << masses[i] << " is " << totalCtr << endl;
+    cout << " m = " << masses[i] << " : selected events= " << numEvents <<" efficiency= " << totalCtr << endl;
     efficiencyVal[i] = totalCtr;
     f->Close();
   }
@@ -138,6 +140,8 @@ void signalEfficiency_w(int channel, double sqrts)
 	
   TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)", 110., xMax);
   polyFunc->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07);
+
+  //  TF1 *polyFunc= new TF1("polyFunc","pol9", 110., xMax);
 
   polyFunc->SetLineColor(4);      
   TCanvas *c = new TCanvas("c","c");
@@ -154,6 +158,7 @@ void signalEfficiency_w(int channel, double sqrts)
   polyFunc->Draw("sames");
   c->Print(outname+".eps");
   c->Print(outname+".png"); // Does not work in batch?
+  c->Print(outname+".root"); 
 
   cout << endl;
   cout << "------- Parameters for " << schannel << " sqrts=" << sqrts << endl;
