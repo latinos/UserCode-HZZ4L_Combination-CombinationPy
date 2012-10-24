@@ -81,11 +81,12 @@ void convertTreeForDatacards(TString inFile, TString outfile){
   treedata= new TChain("SelectedTree");
   treedata->Add(inFile);
 
-  float mzz, pseudomela, mela;
+  float mzz, pseudomela, mela, mzzErr;
   float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
   float pt4l, Y4l;
 
   treedata->SetBranchAddress("ZZMass",&mzz);
+  treedata->SetBranchAddress("ZZMassErr",&mzzErr);
   treedata->SetBranchAddress("ZZpseudoLD",&pseudomela); 
   treedata->SetBranchAddress("ZZLD",&mela); 
   treedata->SetBranchAddress("Z1Mass",&m1);
@@ -115,7 +116,7 @@ void convertTreeForDatacards(TString inFile, TString outfile){
     treedata->GetEntry(iEvt);
 
     CMS_zz4l_mass = mzz;
-    CMS_zz4l_massErr = 0;
+    CMS_zz4l_massErr = mzzErr;
     pseudomelaLD = pseudomela;
     melaLD = mela;
     supermelaLD = 0;
