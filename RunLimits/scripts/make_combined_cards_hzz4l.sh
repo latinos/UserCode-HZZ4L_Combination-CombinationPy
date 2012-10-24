@@ -2,7 +2,7 @@
 
 if [[ "$1" == "" ]]; then echo "Usage: $0 mass sqrts"; exit 1; fi;
 if test -d $1; then MASS=$1; else echo "Usage: $0 mass sqrts"; exit 1; fi; 
-#if test -d $2; then sqrts=$2; else echo "Usage: $0 mass sqrts"; exit 1; fi; 
+if [[ "$1" != "" ]]; then sqrts=$2; else echo "Usage: $0 mass sqrts"; exit 1; fi; 
 
 cd $MASS
 
