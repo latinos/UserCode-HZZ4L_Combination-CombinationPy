@@ -42,9 +42,9 @@ Mela* myMELA; //used if recompute is true
 ////////////////////////////////////
 //--- Really important params --- //
 const int mH=125;
-const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../CreateDatacards/templates2D_smd_8TeV_testBin_k5b2/"; //it must already exist !
+const TString destDir = "../CreateDatacards/templates2D_smd_7TeV_M125/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -76,6 +76,8 @@ float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.333, 0
 		       0.433, 0.466, 0.500, 0.533, 0.566, 0.600, 0.633, 0.666, 0.700, 0.733, 
 		       0.766, 0.800, 0.850, 0.900, 0.950, 1.000};
 
+
+
 // const int nbinsY=31;
 // float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.320, 0.340, 0.360,
 // 		       0.380, 0.400, 0.420, 0.440, 0.460, 0.480, 0.500, 0.533, 0.566, 0.600,
@@ -90,6 +92,7 @@ void makePlot1D( TH1 *h ,TString label );
 void makePlot2D( TH2 *h ,TString label );
 TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,TString superMelaName="superLD",TString templateName="bkgHisto");
 TH1F *fillKDhisto(TString channel="4mu", int sampleIndex=0,float mzzLow=0.0,float mzzHigh=99999.0);
+TH2F *mirrorTemplate(TH2F* h2nom,TH2F *h2syst);
 void makeTemplate(TString channel="4mu");
 void storeLDDistribution();
 void generateTemplatesSMD() ;
@@ -490,6 +493,12 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   }
   
   TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
+  //  TH2F* bkgHist = new TH2F(templateName,templateName,200,0.0,1.0,1,0.0,1.0);
+
+  //  const int nBinsFine=100;
+  // float xfine[nBinsFine+1];
+  // for(int i=0;i<=nBinsFine;i++)xfine[i]=i*(1.0/nBinsFine);
+   //  TH2F* bkgHist = new TH2F(templateName,templateName,nBinsFine,xfine,nbinsY,binsY);
 
   bkgHist->Sumw2();
 
@@ -585,14 +594,14 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   bool smooth_=true;
   if(smooth_){
     // bkgHist->Smooth();
-  for(int i=1; i<=nXbins; i++){
-    for(int j=1; j<=nYbins; j++){
-      if(bkgHist->GetBinContent(i,j)<0.000001)
-	bkgHist->SetBinContent(i,j,0.000001);
-    }// for(int j=1; j<=nYbins; j++){
-  }// for(int i=1; i<=nXbins; i++){
-
-  bkgHist->Smooth(1,"k5a"); //other options: "k5b" , "k3a"
+    for(int i=1; i<=bkgHist->GetNbinsX(); i++){
+      for(int j=1; j<=bkgHist->GetNbinsY(); j++){
+	if(bkgHist->GetBinContent(i,j)<0.000001)
+	  bkgHist->SetBinContent(i,j,0.000001);
+      }// for(int j=1; j<=nYbins; j++){
+    }// for(int i=1; i<=nXbins; i++){
+    
+    bkgHist->Smooth(1,"k5b"); //options:  "k3a", "k5a" , "k5b" 
   }//end oif smooth_
 
 
@@ -647,6 +656,7 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh){
   char hTitle[128];
   sprintf(hTitle,"Distribution of superMELA KD with M_{4l} in [%d, %d]",int(mzzLow),int(mzzHigh));
   TH1F* outHist=new TH1F("finHisto",hTitle,200,0.0,1.0);
+  //TH1F* outHist=new TH1F("finHisto",hTitle,nbinsX,binsX);
   outHist->Sumw2();
  // fill histogram
  // cout<<"Looping on tree netries (fillKDHisto) "<<bkgMC->GetEntries()<<endl;
@@ -658,6 +668,28 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh){
       outHist->Fill(LD,w);
     }
   }
+
+
+
+ 
+
+// smooth 
+   bool smooth_=true;
+  if(smooth_){
+    // bkgHist->Smooth();
+    for(int j=1; j<=outHist->GetNbinsX(); j++){
+      if(outHist->GetBinContent(j)<0.000001)
+	outHist->SetBinContent(j,0.000001);
+    }// for(int j=1; j<=nYbins; j++){
+    
+    outHist->Smooth(1,"R"); 
+  }//end oif smooth_
+
+
+
+ //normalize to unity as this is supposed to be a pdf
+  outHist->Scale(1.0/outHist->Integral());
+
   return outHist;
 }
 
@@ -719,11 +751,16 @@ void makeTemplate(TString channel){
   h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,0,"superLD_syst1Up","bkgHisto_syst1Up");
   h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,0,"superLD_syst1Down","bkgHisto_syst1Down");
   h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,0,"superLD_syst2Up","bkgHisto_syst2Up");
-  h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+  h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
   h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
   h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
   h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
   h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+
+  TH1D *h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());
+  h_DprojX->Scale(1.0/h_DprojX->Integral());
+  for(int ii=1;ii<h_DprojX->GetNbinsX();ii++) h_DprojX->SetBinError(ii, 0.0);
+  h_DprojX->Write("h_superDfromProjX");
   fsig->Close();
 
   // ========================================
@@ -758,12 +795,16 @@ void makeTemplate(TString channel){
     h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,3,"superLD_syst1Up","bkgHisto_syst1Up");
     h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,3,"superLD_syst1Down","bkgHisto_syst1Down");
     h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,3,"superLD_syst2Up","bkgHisto_syst2Up");
-    h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+    h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
     h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
     h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
     h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
     h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
-    
+
+    h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());
+    h_DprojX->Scale(1.0/h_DprojX->Integral());
+    h_DprojX->Write("h_superDfromProjX");
+
     fAltsig->Close();
   }//end if makeAltSignal
   
@@ -797,12 +838,14 @@ void makeTemplate(TString channel){
   h_mzzD_syst1Up=fillTemplate(channel,1,"superLD_syst1Up","bkgHisto_syst1Up");
   h_mzzD_syst1Down=fillTemplate(channel,1,"superLD_syst1Down","bkgHisto_syst1Down");
   h_mzzD_syst2Up=fillTemplate(channel,1,"superLD_syst2Up","bkgHisto_syst2Up");
-  h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+  h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
   h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
   h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
   h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
   h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
-  
+  h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());
+  h_DprojX->Scale(1.0/h_DprojX->Integral());
+  h_DprojX->Write("h_superDfromProjX");
   fqqZZ->Close();
 
   // ==========================
@@ -834,12 +877,14 @@ void makeTemplate(TString channel){
   h_mzzD_syst1Up=fillTemplate(channel,2,"superLD_syst1Up","bkgHisto_syst1Up");
   h_mzzD_syst1Down=fillTemplate(channel,2,"superLD_syst1Down","bkgHisto_syst1Down");
   h_mzzD_syst2Up=fillTemplate(channel,2,"superLD_syst2Up","bkgHisto_syst2Up");
-  h_mzzD_syst2Down= (TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+  h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
   h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
   h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
   h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
   h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
-  
+  h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());
+  h_DprojX->Scale(1.0/h_DprojX->Integral());
+  h_DprojX->Write("h_superDfromProjX");
   fggZZ->Close();
 
 }
@@ -860,7 +905,27 @@ void generateTemplatesSMD() {
   storeLDDistribution();
 }
 
+TH2F *mirrorTemplate(TH2F* h2nom,TH2F *h2syst){
 
+  string h2nomName=h2syst->GetName();
+  TH2F *h2res=(TH2F*)h2nom->Clone((h2nomName+"_mirrored").c_str());
+  h2res->Reset();
+
+  for(int ix=1;ix<=h2nom->GetNbinsX();ix++){
+    for(int iy=1;iy<=h2nom->GetNbinsY();iy++){
+      float nom=h2nom->GetBinContent(ix,iy);
+      float syst=h2syst->GetBinContent(ix,iy);
+      float diff=syst-nom;
+      float cont=nom-diff;
+      h2res->SetBinContent(ix,iy, (cont<0? 0.0 : cont) );
+    }
+  }
+
+  //normalize h2res to unity as it is a pdf
+  double totArea=h2res->Integral();
+  h2res->Scale(1.0/totArea);
+  return h2res;
+}
 
 // NOT USED
 void buildChain(TChain* bkgMC, TString channel, int sampleIndex) {
