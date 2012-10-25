@@ -14,7 +14,7 @@
 #include "TH2.h"
 #include "TPad.h"
 
-void getLimits(TFile *f, std::vector<double> &v_mh,std::vector<double> &v_mean,std::vector<double> &v_68l,std::vector<double> &v_68h,std::vector<double> &v_95l,std::vector<double> &v_95h,std::vector<double> &v_obs);
+void getLimits(TFile *f, std::vector<double> &v_mh,std::vector<double> &v_mean,std::vector<double> &v_68l,std::vector<double> &v_68h,std::vector<double> &v_95l,std::vector<double> &v_95h,std::vector<double> &v_obs,std::vector<double> &v_obs95);
 
 TGraphAsymmErrors *slidingWindowAverage(TGraphAsymmErrors *input, int slidingWindow);
 TGraph *slidingWindowAverage2(TGraph *input, int slidingWindow);
@@ -24,7 +24,7 @@ TGraph * removeGlitches2(TGraph *out);
 
 // --------- Inputs ------- //
 TString inputFile = "results/higgsCombineHZZ4L_ASCLS.root";
-const bool addObsLimit = false;
+const bool addObsLimit = true;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
 string method = "FREQ";
@@ -73,10 +73,10 @@ void plot_Exclusion_7p8()
   
   // ------------------- Get Values -------------------- //
 
-  vector<double> mH, Val_obs, Val_mean, Val_68h, Val_68l, Val_95h, Val_95l;
-  getLimits(inFile,mH,Val_mean,Val_68l,Val_68h,Val_95l,Val_95h,Val_obs);
+  vector<double> mH, Val_obs, Val_mean, Val_68h, Val_68l, Val_95h, Val_95l, Val_obs95;
+  getLimits(inFile,mH,Val_mean,Val_68l,Val_68h,Val_95l,Val_95h,Val_obs,Val_obs95);
   vector<double> v_masses, v_means, v_lo68, v_hi68, v_lo95, v_hi95, v_obs;
-  vector<double> expExclusion,obsExclusion;
+  vector<double> expExclusion,obsExclusion,expExcl95,obsExcl95;
   for(unsigned int i = 1; i < mH.size(); i++)
     {
       v_masses.push_back( mH[i] );
@@ -88,7 +88,10 @@ void plot_Exclusion_7p8()
       v_obs.push_back(Val_obs[i]);
       if(Val_mean[i] < 1.0) expExclusion.push_back(mH[i]);
       if(Val_obs[i] < 1.0 && addObsLimit) obsExclusion.push_back(mH[i]);
+      if( max( Val_95h[i], Val_95l[i])< 1.0)expExcl95.push_back(mH[i]);
+      if(Val_obs95[i]<1.0)obsExcl95.push_back(mH[i]);
     }
+  //this is because point at 1TeV is read first->TBC
   v_masses.push_back( mH[0] );
   v_means.push_back( Val_mean[0] );
   v_lo68.push_back( min( Val_68l[0], Val_68h[0]) );
@@ -98,6 +101,8 @@ void plot_Exclusion_7p8()
   v_obs.push_back(Val_obs[0]);
   if(Val_mean[0] < 1.0) expExclusion.push_back(mH[0]);
   if(Val_obs[0] < 1.0 && addObsLimit) obsExclusion.push_back(mH[0]);
+  if(v_hi95[0] < 1.0)expExcl95.push_back(mH[0]);
+  if(Val_obs95[0]<1.0)obsExcl95.push_back(mH[0]);
 
   // ------------------- For XSxBR --------------------- //
   
@@ -155,7 +160,7 @@ void plot_Exclusion_7p8()
       a_hi95[nMassEff] = v_hi95[m];
       a_obs[nMassEff] = v_obs[m];
       a_zero[nMassEff] = 0;
-      cout << v_masses[m] << "  " << v_means[m] << endl;
+      //cout << v_masses[m] << "  " << v_means[m] << endl;
       if(isXSxBR)
 	{
 	  double xs = myCSW->HiggsCS(0,a_masses[nMassEff],sqrts,true);
@@ -176,11 +181,13 @@ void plot_Exclusion_7p8()
   cout << "Excluded " << nExcluded << " sick mass points!" << endl;
 
   // --------------- Excluded Regions --------------- //
-
+  cout<<"*******EXCLUSION*********"<<endl;
   for(int p = 0; p < expExclusion.size(); p++)
     {
       cout << "Expected Exclusion: " <<  expExclusion[p] << endl;
     }
+
+  for(int s=0;s<expExcl95.size();s++)cout<<"Expected Excluxion 95% "<< expExcl95[s]<<endl;
 
   if(addObsLimit)
     {
@@ -188,10 +195,25 @@ void plot_Exclusion_7p8()
 	{
 	  cout << "Observed Exclusion: " <<  obsExclusion[q] << endl;
 	}
+      for(int t=0;t<obsExcl95.size();t++)cout<<"Observed Excluxion 95% "<< obsExcl95[t]<<endl;
     }
+
+  cout<<endl;
+  cout<<"*******LIMITS*********"<<endl;
+
   for(int r=0;r<nMassEff;r++){
     cout<<"Expected Limit "<<a_masses[r]<<": "<<a_means[r]<<endl;
   }
+
+ if(addObsLimit)
+    {
+      for(int q2 = 0; q2 < Val_obs.size(); q2++)
+	{
+	  cout << "Observed limit " <<a_masses[r]<<": "<< Val_obs[q2] << endl;
+	}
+      for(int t2=0;t2<Val_obs95.size();t2++)cout<<"Observed limit 95% " <<a_masses[r]<<": "<< Val_obs95[t2] << endl;
+    }
+  
   // ------------------- Draw  -------------------- //
 
 
@@ -286,19 +308,23 @@ void plot_Exclusion_7p8()
   pt3->SetFillColor(0);
   pt3->SetTextFont(42);
   char lum2[192];
-  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.1);
+  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.21);
   pt3->AddText(lum2); 
 
   if(grid) c->SetGrid();
    
   TH1F *hr = c->DrawFrame(105.0,yLow,180.0,yHigh);
 	
-  
+  gr->Sort();
+  //grshade_68->Sort();
+  //grshade_95->Sort();
+
   grshade_95->Draw("f");
   grshade_68->Draw("f");
   gr->Draw("C");
   if(isXSxBR)
     {
+      gr_XSBR68->Sort();
       gr_XSBR68->SetFillColor(kRed);
       gr_XSBR68->SetFillStyle(3013);
       gr_XSBR68->Draw("3same");
@@ -307,6 +333,7 @@ void plot_Exclusion_7p8()
     }
   if(addObsLimit)
     {
+      grObs->Sort();
       if(points)grObs->Draw("CP");
       else grObs->Draw("C");
     }
@@ -430,18 +457,21 @@ void plot_Exclusion_7p8()
 
 
 
-void getLimits(TFile *f, std::vector<double> &v_mh,std::vector<double> &v_mean,std::vector<double> &v_68l,std::vector<double> &v_68h,std::vector<double> &v_95l,std::vector<double> &v_95h,std::vector<double> &v_obs)
+void getLimits(TFile *f, std::vector<double> &v_mh,std::vector<double> &v_mean,std::vector<double> &v_68l,std::vector<double> &v_68h,std::vector<double> &v_95l,std::vector<double> &v_95h,std::vector<double> &v_obs,std::vector<double> &v_obs95)
 {
 
   TTree *tree =(TTree*)f->Get("limit");
   
-  double mh,limit;
+  double mh,limit,errObs;
   float quant;
   tree->SetBranchAddress("mh",&mh);
   tree->SetBranchAddress("limit",&limit);
   tree->SetBranchAddress("quantileExpected",&quant);
-  
-  for(int i=0;i<tree->GetEntries();i++)
+  tree->SetBranchAddress("limitErr",&errObs);
+
+  int nentry=tree->GetEntries();
+
+  for(int i=0;i<nentry;i++)
     {
       tree->GetEntry(i);
       if(_DEBUG_)cout << "mH: " << mh << " limit: " << limit << " quantileExpected: " << quant << endl;  
@@ -449,6 +479,7 @@ void getLimits(TFile *f, std::vector<double> &v_mh,std::vector<double> &v_mean,s
 	{
 	  v_obs.push_back(limit);
 	  v_mh.push_back(mh);
+	  v_obs95.push_back(limit+2*errObs/limit);
 	}
       else if(quant>0.024 && quant<0.026) v_95l.push_back(limit);
       else if(quant>0.15  && quant<0.17 ) v_68l.push_back(limit);
