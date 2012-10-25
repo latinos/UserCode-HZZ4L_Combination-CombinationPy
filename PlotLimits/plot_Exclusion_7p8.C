@@ -23,7 +23,7 @@ TGraph * removeGlitches2(TGraph *out);
 
 
 // --------- Inputs ------- //
-TString inputFile = "results/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile = "results181012/higgsCombineHZZ4L_ASCLS.root";
 const bool addObsLimit = true;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
@@ -209,9 +209,9 @@ void plot_Exclusion_7p8()
     {
       for(int q2 = 0; q2 < Val_obs.size(); q2++)
 	{
-	  cout << "Observed limit " <<a_masses[r]<<": "<< Val_obs[q2] << endl;
+	  cout << "Observed limit " <<a_masses[q2]<<": "<< Val_obs[q2] << endl;
 	}
-      for(int t2=0;t2<Val_obs95.size();t2++)cout<<"Observed limit 95% " <<a_masses[r]<<": "<< Val_obs95[t2] << endl;
+      for(int t2=0;t2<Val_obs95.size();t2++)cout<<"Observed limit 95% " <<a_masses[t2]<<": "<< Val_obs95[t2] << endl;
     }
   
   // ------------------- Draw  -------------------- //
