@@ -22,6 +22,7 @@
 #include "TH2.h"
 #include "TPad.h"
 #include "TF1.h"
+#include "TGraphErrors.h"
 #include "TSystem.h"
 
 
@@ -101,6 +102,7 @@ void signalEfficiency_w(int channel, double sqrts)
   const int arraySize=200;
   assert (arraySize>=nPoints);
   double efficiencyVal[arraySize];
+  double efficiencyErr[arraySize];
   // R e a d   w o r k s p a c e   f r o m   f i l e
   // -----------------------------------------------
 	
@@ -118,28 +120,74 @@ void signalEfficiency_w(int channel, double sqrts)
     //    cout << "Opening input file: " << infile << endl;
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
-    float MC_weight_norm, mela;
-    int numEvents = 0;
+    float mela, MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
+    int numEventsRaw = 0;
+    float numEventsPowheg =0;
+    float numEventsPU =0;    
+    float numEventsDataMC =0;    
     t1->SetBranchAddress("MC_weight_norm",&MC_weight_norm);
+    t1->SetBranchAddress("MC_weight_powhegWeight",&MC_weight_powhegWeight);
+    t1->SetBranchAddress("MC_weight_PUWeight",&MC_weight_PUWeight);
+    t1->SetBranchAddress("MC_weight_dataMC",&MC_weight_dataMC);
     t1->SetBranchAddress("ZZLD",&mela);
     float totalCtr=0;
+    float eff_noweight=0;
+    float sumw2=0;
+    float den = 0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
-      t1->GetEntry(a); 
-      //if(mela>0.5)
-        totalCtr+=MC_weight_norm; 
-	++numEvents;
+      t1->GetEntry(a);
+      totalCtr+=MC_weight_norm; 
+      sumw2 += MC_weight_norm*MC_weight_norm;
+      ++numEventsRaw;      
+      numEventsPowheg += MC_weight_powhegWeight;
+      numEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
+      numEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
+      if (MC_weight_powhegWeight>0) {
+	eff_noweight +=MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
+	den = (MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC)/MC_weight_norm;
+      }
     }
 
-    cout << " m = " << masses[i] << " : selected events= " << numEvents <<" efficiency= " << totalCtr << endl;
-    efficiencyVal[i] = totalCtr;
+    // FIXME: the 7TeV samples are assumed to have the ad-hoc correction factor for the mll>12 gen cut,
+    // except for the 124,125,126 new samples. As this factor is accounted for in the x-section, we have to 
+    // apply it here
+    float m = masses[i];
+    if (sqrts==7 && m>=123.9 &&  m<=126.1) {
+      float mllCorr = 0.5 + 0.5*erf((m-80.85)/50.42);
+      totalCtr = totalCtr/mllCorr;
+      eff_noweight=eff_noweight/mllCorr;
+    }
+
+    cout << " m = " << masses[i] 
+	 << " : selected events= " << numEventsRaw 
+	 << " Powheg Wtd= " << numEventsPowheg
+	 << " PU Wtd= " << numEventsPU
+	 << " Data/MC Wtd= " << numEventsDataMC
+	 << " efficiency= " << totalCtr 
+//	 << " " << eff_noweight
+	 << endl;
+
+    efficiencyVal[i] = totalCtr; 
+    efficiencyErr[i] = sqrt(sumw2);
+//    efficiencyVal[i] = eff_noweight;
     f->Close();
   }
 	
-  TGraph* grEff = new TGraph( nPoints, mHVal, efficiencyVal );
+  //  TGraph* grEff = new TGraph( nPoints, mHVal, efficiencyVal );
+  TGraphErrors* grEff = new TGraphErrors( nPoints, mHVal, efficiencyVal, 0, efficiencyErr);
   grEff->SetMarkerStyle(20);
-	
-  TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)", 110., xMax);
-  polyFunc->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07);
+
+  //ICHEP parametrization	
+//   TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)", 110., xMax);
+//   polyFunc->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07);
+
+  TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
+  polyFunc->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07,
+			  0.03, 200, 30);
+  polyFunc->SetParLimits(7,0,0.1);
+  polyFunc->SetParLimits(8,160,210);
+  polyFunc->SetParLimits(9,20,50);
+  
 
   //  TF1 *polyFunc= new TF1("polyFunc","pol9", 110., xMax);
 
@@ -186,10 +234,13 @@ void signalEfficiency_w(int channel, double sqrts)
 
   // deviations
   cout << "Deviations..." << endl;
+  double maxResidual=0;
   for (int i = 0; i < nPoints; i++){
     double eval = polyFunc->Eval(masses[i]);
-    cout << "For mass, " << masses[i] << ": measured value is " << efficiencyVal[i] << " and difference from function is " << (eval - efficiencyVal[i]) <<endl;
+    double residual = (eval - efficiencyVal[i]);
+      maxResidual = max(maxResidual,fabs(residual));
+    cout << "For mass, " << masses[i] << ": measured value is " << efficiencyVal[i] << " and difference from function is " << residual <<endl;
   }
-  
+  cout << "Largest residual= " << maxResidual << endl;
 }
 
