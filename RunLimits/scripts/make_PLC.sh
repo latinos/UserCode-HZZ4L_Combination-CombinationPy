@@ -15,12 +15,27 @@ if [[ "$STRICT" == 1 ]]; then
     OPTIONS="--minimizerTolerance=0.0001"
 fi;
 
+LM="300"
+MM="600"
+HM="1000"
+
+RMAX="5"
+RMAXHM="20"
+RMAXMM="10"
+RMAXLM="1"
+
+if (( "$MASS" < "$HM" )); then RMAX=${RMAXHM}; fi
+if (( "$MASS" < "$MM" )); then RMAX=${RMAXMM}; fi
+if (( "$MASS" < "$LM" )); then RMAX=${RMAXLM}; fi
+
+echo "RMAX = $RMAX"
+
 if [[ "$WHAT" == "PLS" ]]; then
-    OPTIONS="$OPTIONS --signif"
+    OPTIONS="$OPTIONS --signif --rMax=${RMAX}"
 elif [[ "$WHAT" == "PLSE" ]]; then
     OPTIONS="$OPTIONS --signif --expectSignal=1 -t -1 --toysFreq"
 elif [[ "$WHAT" == "PLP" ]]; then
-    OPTIONS="$OPTIONS --signif --pvalue"
+    OPTIONS="$OPTIONS --signif --pvalue --rMax=${RMAX}"
 elif [[ "$WHAT" == "PLPE" ]]; then
     OPTIONS="$OPTIONS --signif --pvalue --expectSignal=1 -t -1 --toysFreq"
 fi;
