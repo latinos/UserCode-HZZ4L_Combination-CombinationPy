@@ -52,6 +52,9 @@ bool withPt_ = false;          // Include pT in KD
 bool withY_  = false;          //    "    Y  "  "
 int sqrts    = 8;              // sqrts, used only for withPt_/withY_
 
+bool onlyICHEPStat = false;
+
+
 #ifdef LINKMELA
 Mela* myMELA;
 #endif
@@ -81,10 +84,13 @@ void convertTreeForDatacards(TString inFile, TString outfile){
   treedata= new TChain("SelectedTree");
   treedata->Add(inFile);
 
+  int neventOut=0;
+  Int_t run;
   float mzz, pseudomela, mela, mzzErr;
   float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
   float pt4l, Y4l;
 
+  treedata->SetBranchAddress("RunNumber",&run);
   treedata->SetBranchAddress("ZZMass",&mzz);
   treedata->SetBranchAddress("ZZMassErr",&mzzErr);
   treedata->SetBranchAddress("ZZpseudoLD",&pseudomela); 
@@ -110,10 +116,13 @@ void convertTreeForDatacards(TString inFile, TString outfile){
   newTree->Branch("pseudoMelaLD",&pseudomelaLD,"pseudoMelaLD/D");
   newTree->Branch("supermelaLD",&supermelaLD,"supermelaLD/D");
   cout << inFile << " entries: " << treedata->GetEntries() << endl;
-  cout << "written: " << outfile << endl << endl;
   for(int iEvt=0; iEvt<treedata->GetEntries(); iEvt++){
     //    if(iEvt%5000==0) cout << "event: " << iEvt << endl;
     treedata->GetEntry(iEvt);
+
+    //    cout << run << endl;
+    
+    if (onlyICHEPStat && run>=198049) continue;
 
     CMS_zz4l_mass = mzz;
     CMS_zz4l_massErr = mzzErr;
@@ -139,12 +148,14 @@ void convertTreeForDatacards(TString inFile, TString outfile){
       melaLD = KD;
     }
 #endif
-
+    ++neventOut;
     newTree->Fill();
   }
-
   newTree->Write("data_obs"); 
   newFile->Close();
+
+  cout << "written: " << outfile << " entries: " << neventOut << endl << endl;
+
 }
 
 
