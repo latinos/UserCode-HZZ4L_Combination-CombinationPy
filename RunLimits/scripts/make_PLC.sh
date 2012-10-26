@@ -24,9 +24,9 @@ RMAXHM="20"
 RMAXMM="10"
 RMAXLM="1"
 
-if (( "$MASS" < "$HM" )); then RMAX=${RMAXHM}; fi
-if (( "$MASS" < "$MM" )); then RMAX=${RMAXMM}; fi
-if (( "$MASS" < "$LM" )); then RMAX=${RMAXLM}; fi
+if [[ "$MASS" < "$HM" ]]; then RMAX=${RMAXHM}; fi
+if [[ "$MASS" < "$MM" ]]; then RMAX=${RMAXMM}; fi
+if [[ "$MASS" < "$LM" ]]; then RMAX=${RMAXLM}; fi
 
 echo "RMAX = $RMAX"
 
