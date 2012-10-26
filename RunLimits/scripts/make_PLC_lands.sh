@@ -45,7 +45,7 @@ if [[ "$1" != "" ]] && test -f $1; then
     NAM=$(echo $1 | sed -e s/comb_*// -e s/.txt//   | tr '[a-z]' '[A-Z]')
     if [[ "$UPD" == "1" ]]; then test ${1/.txt/.log.$WHAT.lands} -nt $1 && return; fi;
     [[ "$COMBINE_NO_LOGFILES" != "1" ]] && DO_LOG="tee -a ${1/.txt/.log}.$WHAT.lands$POST" || DO_LOG="dd of=/dev/null"
-    $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M ProfileLikelihood $OPTIONS -L $CMSSW_BASE/*/*/*so -n landsCombine${NAM}_${WHAT}.obsexp --RebinObservables CMS_zz4l_mass 40 0 0 $LD 20 0 0 2>&1 | $DO_LOG
+    $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M ProfileLikelihood $OPTIONS -L $CMSSW_BASE/lib/*/*so -n landsCombine${NAM}_${WHAT}.obsexp --RebinObservables CMS_zz4l_mass 40 0 0 $LD 20 0 0 2>&1 | $DO_LOG
     echo "Done $WHAT for $NAM at $MASS"
 else
     echo "Missing workspace $1 at mass $MASS"; exit 1; 

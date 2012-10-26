@@ -35,9 +35,9 @@ function run {
     if test -f $1; then
          echo "Runnining $TASK asymptotic frequentist limits for $NAM at $MASS. ";
          [[ "$COMBINE_NO_LOGFILES" != "1" ]] && DO_LOG="tee ${1/.txt/.log}.$MYWHAT.lands" || DO_LOG="dd of=/dev/null" 
-	 $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M Asymptotic -m $MASS -L $CMSSW_BASE/*/*/*so \
+	 $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M Asymptotic -m $MASS -L $CMSSW_BASE/lib/*/*so \
 	     --RebinObservables CMS_zz4l_mass 40 0 0 $LD 20 0 0 -rMin 0 -rMax 10 -n landsCombine${NAM}_${MYWHAT}O.obs  2>&1 | $DO_LOG
-	 $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M Asymptotic -m $MASS -L $CMSSW_BASE/*/*/*so \
+	 $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M Asymptotic -m $MASS -L $CMSSW_BASE/lib/*/*so \
 	     --RebinObservables CMS_zz4l_mass 40 0 0 $LD 20 0 0 -rMin 0 -rMax 10 -D asimov_b -n landsCombine${NAM}_${MYWHAT}E.exp 2>&1 | $DO_LOG
     fi;
 }

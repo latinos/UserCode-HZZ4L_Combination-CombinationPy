@@ -18,7 +18,7 @@ function run {
     if [[ "$MATCH" == "" || "$MATCH" == "$1" ]]; then
         if test -f $1; then
 	    #combine -M MaxLikelihoodFit $* -n ${NAM}_${WHAT} -m $MASS $OPTIONS --out . 2>&1 | tee ${1/.root/.log.$WHAT} 
-	    $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M MaxLikelihoodFit -m $MASS -L $CMSSW_BASE/*/*/*so \
+	    $CMSSW_BASE/src/LandS/test/lands.exe -d $* -M MaxLikelihoodFit -m $MASS -L $CMSSW_BASE/lib/*/*so \
 		--RebinObservables CMS_zz4l_mass 40 0 0 $LD 20 0 0 -rMin 0 -rMax 10 -n landsCombine${NAM}_${WHAT}.obs 2>&1 | tee ${1/.txt/.log.$WHAT.lands}
 	fi;
     fi;
