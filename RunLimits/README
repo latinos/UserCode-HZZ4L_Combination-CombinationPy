@@ -32,7 +32,24 @@ and sqrts
 ############################# Running in Batch Mode ##################################
 This script uses other scripts to batch to a pbs scheduler, through makeLimits.pbs.sh
 
---->./make_parallel_limit.sh <type> <massfile> <options>
+python make_parallel_limits.py -h
+
+Usage: make_parallel_limits.py [options] 
+make_parallel_limits.py -h for help
+
+Options:
+  -h, --help            show this help message and exit
+  -M METHOD, --method=METHOD
+                        type [ASCLS,PLP,PLPE,PLS,PLSE,ML]
+  -f MASSFILE, --massfile=MASSFILE
+                        mass file [masses_half.txt]
+  -q SCHEDULER, --scheduler=SCHEDULER
+                        scheduler [pbs or lsf]
+  -t TOOL, --tool=TOOL  tool [lands or combine]
+  -o OPTIONS, --options=OPTIONS
+                        options [-S for strict]
+
+to see options for input
 
 type = ASCLS, PLP, PLPE, PLS, PLSE, ML
 options = <nothing>-default, -s for strict
