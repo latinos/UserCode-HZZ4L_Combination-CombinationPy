@@ -133,6 +133,7 @@ void signalEfficiency_w(int channel, double sqrts)
     float totalCtr=0;
     float eff_noweight=0;
     float sumw2=0;
+    float sumw_init2=0;
     float den = 0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
@@ -143,8 +144,10 @@ void signalEfficiency_w(int channel, double sqrts)
       numEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
       numEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
       if (MC_weight_powhegWeight>0) {
-	eff_noweight +=MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
-	den = (MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC)/MC_weight_norm;
+	float w_initial = MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
+	eff_noweight += w_initial;
+	sumw_init2 += w_initial*w_initial; 
+	//	if (den!=0) den = (MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC)/MC_weight_norm;
       }
     }
 
@@ -169,7 +172,11 @@ void signalEfficiency_w(int channel, double sqrts)
 
     efficiencyVal[i] = totalCtr; 
     efficiencyErr[i] = sqrt(sumw2);
-//    efficiencyVal[i] = eff_noweight;
+
+    // With no reweights
+//     efficiencyVal[i] = eff_noweight;
+//     efficiencyErr[i] =  sqrt(sumw_init2); //sqrt(eff_noweight*(1- eff_noweight)/den);
+  
     f->Close();
   }
 	
@@ -217,6 +224,9 @@ void signalEfficiency_w(int channel, double sqrts)
   cout << "   b1 = " << polyFunc->GetParameter(4) << endl;
   cout << "   b2 = " << polyFunc->GetParameter(5) << endl;
   cout << "   b3 = " << polyFunc->GetParameter(6) << endl;
+  cout << "   g1 = " << polyFunc->GetParameter(7) << endl;
+  cout << "   g2 = " << polyFunc->GetParameter(8) << endl;
+  cout << "   g3 = " << polyFunc->GetParameter(9) << endl;
   cout << "---------------------------" << endl << endl;
 
   of << "## signal efficiency ##" << endl;
@@ -227,6 +237,9 @@ void signalEfficiency_w(int channel, double sqrts)
   of << "signalEff b1  " << polyFunc->GetParameter(4) << endl;
   of << "signalEff b2  " << polyFunc->GetParameter(5) << endl;
   of << "signalEff b3  " << polyFunc->GetParameter(6) << endl;
+  of << "signalEff g1  " << polyFunc->GetParameter(7) << endl;
+  of << "signalEff g2  " << polyFunc->GetParameter(8) << endl;
+  of << "signalEff g3  " << polyFunc->GetParameter(9) << endl;
   of << endl << endl;
   of.close();
   
