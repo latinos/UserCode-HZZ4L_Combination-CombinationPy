@@ -2,7 +2,8 @@
 
 TYPE=$1
 MASS=$2
-OPTION=$3
+TOOL=$3
+OPTION=$4
 
 cd ${LS_SUBCWD}
 
@@ -12,27 +13,35 @@ eval `scram runtime -sh`
 
 if [[ "$TYPE" == "ASCLS" ]]; then
     
-    bash make_ASCLS.sh $OPTIONS -l $MASS comb_hzz4l.root
+    if [[ "$TOOL" == "combine" ]]; then bash make_ASCLS.sh $OPTIONS -l $MASS comb_hzz4l.root; fi;
+    if [[ "$TOOL" == "lands" ]]; then bash make_ASCLS_lands.sh $OPTIONS $MASS comb_hzz4l.txt; fi;
 
 elif [[ "$TYPE" == "PLP" ]]; then
     
-    bash make_PLC.sh $OPTIONS -P $MASS comb_hzz4l.root
+    if [[ "$TOOL" == "combine" ]]; then bash make_PLC.sh $OPTIONS -P $MASS comb_hzz4l.root; fi;
+    if [[ "$TOOL" == "lands" ]]; then bash make_PLC_lands.sh $OPTIONS -P $MASS comb_hzz4l.txt; fi;
 
 elif [[ "$TYPE" == "PLPE" ]]; then
     
-    bash make_PLC.sh $OPTIONS --PE $MASS comb_hzz4l.root
+    if [[ "$TOOL" == "combine" ]]; then bash make_PLC.sh $OPTIONS --PE $MASS comb_hzz4l.root; fi;
+    if [[ "$TOOL" == "lands" ]]; then bash make_PLC_lands.sh $OPTIONS --PE $MASS comb_hzz4l.txt; fi;
 
 elif [[ "$TYPE" == "PLS" ]]; then
     
-    bash make_PLC.sh $OPTIONS -S $MASS comb_hzz4l.root
+    if [[ "$TOOL" == "combine" ]]; then bash make_PLC.sh $OPTIONS -S $MASS comb_hzz4l.root; fi
+    if [[ "$TOOL" == "lands" ]]; then bash make_PLC_lands.sh $OPTIONS -S $MASS comb_hzz4l.txt; fi;
 
 elif [[ "$TYPE" == "PLSE" ]]; then
     
-    bash make_PLC.sh $OPTIONS --SE $MASS comb_hzz4l.root
+    if [[ "$TOOL" == "combine" ]]; then bash make_PLC.sh $OPTIONS --SE $MASS comb_hzz4l.root; fi;
+    if [[ "$TOOL" == "lands" ]]; then bash make_PLC_lands.sh $OPTIONS --SE $MASS comb_hzz4l.txt; fi;
+
 
 elif [[ "$TYPE" == "ML" ]]; then
     
-    bash make_ML.sh $OPTIONS $MASS comb_hzz4l.root
+    if [[ "$TOOL" == "combine" ]]; then bash make_ML.sh $OPTIONS $MASS comb_hzz4l.root; fi;
+    if [[ "$TOOL" == "lands" ]]; then bash make_ML_lands.sh $OPTIONS $MASS comb_hzz4l.txt; fi;
+
 
 else 
     echo "Unkown Type: $TYPE"
