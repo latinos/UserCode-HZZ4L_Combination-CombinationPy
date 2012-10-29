@@ -1034,6 +1034,12 @@ class datacardClass:
         rrvb2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b2'])
         sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts)
         rrvb3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b3'])
+        sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts)
+        rrvg1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g1'])
+        sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts)
+        rrvg2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g2'])
+        sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts)
+        rrvg3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g3'])
 
         if(DEBUG):
             print "sigEff_a1 = ",theInputs['sigEff_a1']
@@ -1047,7 +1053,9 @@ class datacardClass:
     
         sigEffName = "hzz4lsignaleff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
 
-        rfvSigEff = ROOT.RooFormulaVar(sigEffName,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)", ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH))
+        rfvSigEff = ROOT.RooFormulaVar(sigEffName,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)", ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1.rrvg2.rrvg3))
+        #from TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
+        
         ## following printout is needed ,  dont remove it
         print " @@@@@@@@ sigeff ",rfvSigEff.getVal()
     
