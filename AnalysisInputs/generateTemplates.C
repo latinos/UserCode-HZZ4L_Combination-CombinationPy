@@ -22,7 +22,7 @@
 #if !defined(__CINT__) || defined(__MAKECINT__)
 #include <TSystem.h>
 #include <TROOT.h>
-#include "ZZMatrixElement/MELA/interface/Mela.h"
+//#include "ZZMatrixElement/MELA/interface/Mela.h"
 #endif
 
 
@@ -49,9 +49,9 @@ bool extendToHighMass = true; // Include signal samples above 600 GeV
 float highMzz=(extendToHighMass?1600:800);
 float mBinSize=2.;
 
-Mela* myMELA;
+//Mela* myMELA;
 
-const TString destDir = "../CreateDatacards/templates2D_22102012/";
+const TString destDir = "../CreateDatacards/templates2D/";
 
 //=======================================================================
 
@@ -270,7 +270,9 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
     //7TeV
     if(useSqrts<2){
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
-      //    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root"); // Skip: Special sample with a different composition
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H124.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root"); // Skip: Special sample with a different composition
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H126.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H130.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H140.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H150.root");
@@ -323,18 +325,30 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H128.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H129.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H130.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H135.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H140.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H145.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H150.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H160.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H170.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H180.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H190.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H200.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H220.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H250.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H275.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H300.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H325.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H350.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H375.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H400.root");
+      //      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H425.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H450.root");
+      //      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H475.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H500.root");
+      //      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H525.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H550.root");
+      //      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H575.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H600.root");
       if (extendToHighMass) {
 	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H650.root");
@@ -474,7 +488,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 	cout << "pt4l: " << pt4l << endl;
 	cout << "Y4l: " << Y4l << endl;
 	*/
-
+/*
 	myMELA->computeKD(mzz,m1,m2,
 			  costhetastar,
 			  costheta1,
@@ -486,7 +500,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 			  withY_, Y4l);
 	
 	//cout << "LD: " << LD << endl;
-	
+*/	
       }
 
       bkgHist->Fill(mzz,KD,w);
@@ -745,7 +759,7 @@ void storeLDDistribution(){
 
 void generateTemplates() {
   
-  myMELA=0;
-  if (recompute_) myMELA = new Mela(usePowhegTemplate, sqrts); // this is safely leaked
+  //myMELA=0;
+  //if (recompute_) myMELA = new Mela(usePowhegTemplate, sqrts); // this is safely leaked
   storeLDDistribution();
 }
