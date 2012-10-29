@@ -165,6 +165,24 @@ class inputReader:
 	self.mekd_qqZZ_a4_shape = -999.
 	# --- end mekd
 
+	# --- relative error stuffs 
+	self.relerr_ggH_ld_mean = -999.
+	self.relerr_ggH_ld_sigma = -999.
+	self.relerr_ggH_ld_frac = -999.
+	self.relerr_ggH_gs_mean = -999.
+	self.relerr_ggH_gs_sigma = -999.
+	self.relerr_qqzz_ld_mean = -999.
+	self.relerr_qqzz_ld_sigma = -999.
+	self.relerr_qqzz_ld_frac = -999.
+	self.relerr_qqzz_gs_mean = -999.
+	self.relerr_qqzz_gs_sigma = -999.
+	self.relerr_zx_ld_mean = -999.
+	self.relerr_zx_ld_sigma = -999.
+	self.relerr_zx_ld_frac = -999.
+	self.relerr_zx_gs_mean = -999.
+	self.relerr_zx_gs_sigma = -999.
+	# --- end relative error 
+
     def goodEntry(self,variable):
         if variable == -999.9:
             return False
@@ -344,6 +362,23 @@ class inputReader:
                 if f[1].lower().startswith("mekd_qqzz_a4"): 
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.mekd_qqZZ_a4_shape = f[2]
+
+	    if f[0].lower().startswith("relerrshape"):
+		if f[1].startswith("relerr_ggH_ld_frac"): self.relerr_ggH_ld_frac =  f[2]		
+		if f[1].startswith("relerr_ggH_ld_mean"): self.relerr_ggH_ld_mean =  f[2]		
+		if f[1].startswith("relerr_ggH_ld_sigma"): self.relerr_ggH_ld_sigma =  f[2]		
+		if f[1].startswith("relerr_ggH_gs_mean"): self.relerr_ggH_gs_mean =  f[2]		
+		if f[1].startswith("relerr_ggH_gs_sigma"): self.relerr_ggH_gs_sigma =  f[2]		
+		if f[1].startswith("relerr_qqzz_ld_frac"): self.relerr_qqzz_ld_frac =  f[2]		
+		if f[1].startswith("relerr_qqzz_ld_mean"): self.relerr_qqzz_ld_mean =  f[2]		
+		if f[1].startswith("relerr_qqzz_ld_sigma"): self.relerr_qqzz_ld_sigma =  f[2]		
+		if f[1].startswith("relerr_qqzz_gs_mean"): self.relerr_qqzz_gs_mean =  f[2]		
+		if f[1].startswith("relerr_qqzz_gs_sigma"): self.relerr_qqzz_gs_sigma =  f[2]		
+		if f[1].startswith("relerr_zx_ld_frac"): self.relerr_zx_ld_frac =  f[2]		
+		if f[1].startswith("relerr_zx_ld_mean"): self.relerr_zx_ld_mean =  f[2]		
+		if f[1].startswith("relerr_zx_ld_sigma"): self.relerr_zx_ld_sigma =  f[2]		
+		if f[1].startswith("relerr_zx_gs_mean"): self.relerr_zx_gs_mean =  f[2]		
+		if f[1].startswith("relerr_zx_gs_sigma"): self.relerr_zx_gs_sigma =  f[2]		
 
             if f[0].lower().startswith("ggzzshape"):
 
@@ -735,4 +770,21 @@ class inputReader:
 	dict['mekd_qqZZ_a2_shape'] = self.mekd_qqZZ_a2_shape
 	dict['mekd_qqZZ_a3_shape'] = self.mekd_qqZZ_a3_shape
 	dict['mekd_qqZZ_a4_shape'] = self.mekd_qqZZ_a4_shape
+
+	dict['relerr_ggH_ld_frac'] = self.relerr_ggH_ld_frac
+	dict['relerr_ggH_ld_mean'] = self.relerr_ggH_ld_mean
+	dict['relerr_ggH_ld_sigma'] = self.relerr_ggH_ld_sigma
+	dict['relerr_ggH_gs_mean'] = self.relerr_ggH_gs_mean
+	dict['relerr_ggH_gs_sigma'] = self.relerr_ggH_gs_sigma
+	dict['relerr_qqzz_ld_frac'] = self.relerr_qqzz_ld_frac
+	dict['relerr_qqzz_ld_mean'] = self.relerr_qqzz_ld_mean
+	dict['relerr_qqzz_ld_sigma'] = self.relerr_qqzz_ld_sigma
+	dict['relerr_qqzz_gs_mean'] = self.relerr_qqzz_gs_mean
+	dict['relerr_qqzz_gs_sigma'] = self.relerr_qqzz_gs_sigma
+	dict['relerr_zx_ld_frac'] = self.relerr_zx_ld_frac
+	dict['relerr_zx_ld_mean'] = self.relerr_zx_ld_mean
+	dict['relerr_zx_ld_sigma'] = self.relerr_zx_ld_sigma
+	dict['relerr_zx_gs_mean'] = self.relerr_zx_gs_mean
+	dict['relerr_zx_gs_sigma'] = self.relerr_zx_gs_sigma
+
         return dict
