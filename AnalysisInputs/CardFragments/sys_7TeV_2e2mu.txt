@@ -10,7 +10,7 @@ systematic param CMS_zz4l_gamma_sig 0.05
 
 
 ## 4mu systematics ##
-systematic muon_full 0.03
+systematic muon_full 0.012
 systematic muon_trig 0.015
 
 ## 4e systematics ##
