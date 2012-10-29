@@ -1,4 +1,4 @@
-zjetsShape mean 142.6
-zjetsShape sigma 19.8
+zjetsShape mean 142.2
+zjetsShape sigma 17.5
 
 
