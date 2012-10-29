@@ -19,7 +19,7 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  35.8229
 rate ggZZ  2.14538
-rate zjets 5.7 
+rate zjets 5.7
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -36,15 +36,17 @@ highmasssignalShape n2_CB (20)
 highmasssignalShape mean_CB (-96.4993)+(0.472794*@0)+(-0.000704832*@0*@0)+(3.08549e-07*@0*@0*@0)
 highmasssignalShape sigma_CB (107.493)+(-0.624171*@0)+(0.0010989*@0*@0)+(-4.61003e-07*@0*@0*@0)
 highmasssignalShape gamma_BW TMath::Max((-446.657)+(2.13856*@0)+(-0.00298553*@0*@0)+(1.4181e-06*@0*@0*@0),30)
-
 ## signal efficiency ##
-signalEff a1  -4.42814
-signalEff a2  4.61116
-signalEff a3  -68.4113
-signalEff a4  116.562
-signalEff b1  1.8253
-signalEff b2  0.00230693
-signalEff b3  -1.16985e-06
+signalEff a1  -4.36449
+signalEff a2  4.66594
+signalEff a3  -150.422
+signalEff a4  190.821
+signalEff b1  0.963057
+signalEff b2  0.0018979
+signalEff b3  -1.08896e-06
+signalEff g1  0.0990977
+signalEff g2  166.209
+signalEff g3  47.0959
 
 
 ### background functions ###
@@ -75,8 +77,8 @@ ggZZshape a7_bkgd  0.175309
 ggZZshape a8_bkgd  57.6574
 ggZZshape a9_bkgd  0.0696701
 
-zjetsShape mean 143.0
-zjetsShape sigma 17.4
+zjetsShape mean 143.8
+zjetsShape sigma 17.9
 
 
 ### channel dependent systematics ###
@@ -131,5 +133,19 @@ signalShape mekd_sig_a3  8.318+(-0.126)*sqrt(@0-100)+(0.04021)*(@0-100)
 qqZZshape mekd_qqZZ_a3  6.384+(0.2569)*sqrt(@0-100)+(-0.0587)*(@0-100)
 signalShape mekd_sig_a4  TMath::Max(1.55+(0.04004)*sqrt(@0-100)+(-0.01475)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4  TMath::Max(3.003+(0.3404)*sqrt(@0-100)+(-0.05792)*(@0-100),0)
-
+RelErrShape relerr_zx_4e_ld_mean 0.0294366
+RelErrShape relerr_zx_4e_ld_sigma 0.00493466
+RelErrShape relerr_zx_4e_gs_mean 0.0143977
+RelErrShape relerr_zx_4e_gs_sigma 0.00381718
+RelErrShape relerr_zx_4e_ld_frac 0.615173
+RelErrShape relerr_qqzz_4e_ld_frac 0.48 
+RelErrShape relerr_qqzz_4e_ld_mean 0.0138799+(-2.6221e-07*@0)
+RelErrShape relerr_qqzz_4e_ld_sigma 0.00207282 
+RelErrShape relerr_qqzz_4e_gs_mean 0.0325488+(-7.32963e-05*@0)
+RelErrShape relerr_qqzz_4e_gs_sigma 0.00926753+(-3.71026e-05*@0)
+RelErrShape relerr_ggH_4e_ld_mean 0.014949+(-1.64193e-05*@0)
+RelErrShape relerr_ggH_4e_ld_sigma 0.00175217 
+RelErrShape relerr_ggH_4e_gs_mean 0.0304213+(-6.52523e-05*@0)
+RelErrShape relerr_ggH_4e_gs_sigma 0.00765059+(-2.27997e-05*@0)
+RelErrShape relerr_ggH_4e_ld_frac 0.479963 
 
