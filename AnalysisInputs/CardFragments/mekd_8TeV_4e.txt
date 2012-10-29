@@ -1,0 +1,12 @@
+
+
+signalShape mekd_sig_a0  TMath::Max(6.919+(-0.2297)*sqrt(@0-100)+(0.06833)*(@0-100),0)
+qqZZshape mekd_qqZZ_a0  TMath::Max(6.612+(-0.1137)*sqrt(@0-100)+(0.04531)*(@0-100),0)
+signalShape mekd_sig_a1  TMath::Max(0.722+(0.003111)*sqrt(@0-100)+(0.0006354)*(@0-100),0)
+qqZZshape mekd_qqZZ_a1  TMath::Max(1.045+(-0.1066)*sqrt(@0-100)+(0.03073)*(@0-100),0)
+signalShape mekd_sig_a2  TMath::Min(TMath::Max(0.1627+(-0.01572)*sqrt(@0-100)+(0.003246)*(@0-100),0),1)
+qqZZshape mekd_qqZZ_a2  TMath::Min(TMath::Max(0.6801+(-0.01597)*sqrt(@0-100)+(0.006918)*(@0-100),0),1)
+signalShape mekd_sig_a3  8.318+(-0.126)*sqrt(@0-100)+(0.04021)*(@0-100)
+qqZZshape mekd_qqZZ_a3  6.384+(0.2569)*sqrt(@0-100)+(-0.0587)*(@0-100)
+signalShape mekd_sig_a4  TMath::Max(1.55+(0.04004)*sqrt(@0-100)+(-0.01475)*(@0-100),0)
+qqZZshape mekd_qqZZ_a4  TMath::Max(3.003+(0.3404)*sqrt(@0-100)+(-0.05792)*(@0-100),0)
