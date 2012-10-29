@@ -84,6 +84,7 @@ void mergeFragments(int channel, int sqrts, double lumi) {
   append("CardFragments/zjetShape_" + suffix, outfile);  
   append("CardFragments/sys_" + suffix, outfile);
   append("CardFragments/hypTesting.txt", outfile);
+  append("CardFragments/mekd_" + suffix, outfile);
 
   cout << "Wrote " << outfile << endl;
 }
