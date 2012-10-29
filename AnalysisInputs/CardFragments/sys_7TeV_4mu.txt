@@ -20,7 +20,7 @@ systematic QCDscale_ggH True
 systematic QCDscale_qqH True
 systematic QCDscale_VH True
 systematic QCDscale_ttH True
-systematic theoryUncXS_HighMH True
+systematic theoryUncXS_HighMH False
 systematic QCDscale_ggVV True
 systematic QCDscale_VV True
 systematic BRhiggs_hzz4l True
