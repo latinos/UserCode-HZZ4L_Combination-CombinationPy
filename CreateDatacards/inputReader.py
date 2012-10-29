@@ -73,6 +73,9 @@ class inputReader:
         self.sigeff_b1 = -999.9
         self.sigeff_b2 = -999.9
         self.sigeff_b3 = -999.9
+        self.sigeff_g1 = -999.9
+        self.sigeff_g2 = -999.9
+        self.sigeff_g3 = -999.9
         # qqZZ shape
         self.qqZZshape_a0 = -999.9
         self.qqZZshape_a1 = -999.9
@@ -305,6 +308,9 @@ class inputReader:
                 if f[1].lower().startswith("b1"): self.sigeff_b1 = float(f[2])
                 if f[1].lower().startswith("b2"): self.sigeff_b2 = float(f[2])
                 if f[1].lower().startswith("b3"): self.sigeff_b3 = float(f[2])
+                if f[1].lower().startswith("g1"): self.sigeff_g1 = float(f[2])
+                if f[1].lower().startswith("g2"): self.sigeff_g2 = float(f[2])
+                if f[1].lower().startswith("g3"): self.sigeff_g3 = float(f[2])
 
             if f[0].lower().startswith("qqzzshape"):
 
@@ -511,6 +517,9 @@ class inputReader:
         if not self.goodEntry(self.sigeff_b1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_b1")
         if not self.goodEntry(self.sigeff_b2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_b2")
         if not self.goodEntry(self.sigeff_b3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_b3")
+        if not self.goodEntry(self.sigeff_g1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_g1")
+        if not self.goodEntry(self.sigeff_g2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_g2")
+        if not self.goodEntry(self.sigeff_g3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_g3")
 
         if not self.goodEntry(self.qqZZshape_a0): raise RuntimeError, "{0} is not set.  Check inputs!".format("qqZZshape_a0")
         if not self.goodEntry(self.qqZZshape_a1): raise RuntimeError, "{0} is not set.  Check inputs!".format("qqZZshape_a1")
@@ -633,7 +642,10 @@ class inputReader:
         dict['sigEff_b1'] = float(self.sigeff_b1)
         dict['sigEff_b2'] = float(self.sigeff_b2)
         dict['sigEff_b3'] = float(self.sigeff_b3)
-
+        dict['sigEff_g1'] = float(self.sigeff_g1)
+        dict['sigEff_g2'] = float(self.sigeff_g2)
+        dict['sigEff_g3'] = float(self.sigeff_g3)
+        
         dict['qqZZshape_a0'] = float(self.qqZZshape_a0)
         dict['qqZZshape_a1'] = float(self.qqZZshape_a1)
         dict['qqZZshape_a2'] = float(self.qqZZshape_a2)
