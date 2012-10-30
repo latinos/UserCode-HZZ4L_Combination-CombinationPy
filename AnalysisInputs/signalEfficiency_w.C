@@ -47,7 +47,7 @@ void signalEfficiency_w(int channel, double sqrts);
 void signalEfficiency_w() {
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
-  
+
   signalEfficiency_w(1,7);
   signalEfficiency_w(2,7);
   signalEfficiency_w(3,7);
