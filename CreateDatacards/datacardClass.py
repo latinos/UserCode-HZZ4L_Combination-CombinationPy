@@ -460,15 +460,15 @@ class datacardClass:
 
 
 	name = "CMS_zz4l_massErrS_ln_kappa_{0:.0f}".format(self.channel);
-	rfv_EBE_sig_ln_kappa = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_gs_sigma']+")", ROOT.RooArgList(CMS_zz4l_mass)); 
-	name = "CMS_zz4l_massErrS_ln_mean_{0:.0f}".format(self.channel);
-	rfv_EBE_sig_ln_mean = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_gs_mean']+")", ROOT.RooArgList(CMS_zz4l_mass)); 
+	rfv_EBE_sig_ln_kappa = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_gs_sigma']+")", ROOT.RooArgList(self.MH)); 
+	name = "self.MHErrS_ln_mean_{0:.0f}".format(self.channel);
+	rfv_EBE_sig_ln_mean = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_gs_mean']+")", ROOT.RooArgList(self.MH)); 
 	EBE_sig_ln = ROOT.RooLognormal("errLN_ggH","errLN_ggH", RelErr, rfv_EBE_sig_ln_mean, rfv_EBE_sig_ln_kappa);	
 	if self.channel!=1: EBE_sig_ln = ROOT.RooGaussian("errGaus_ggH","errGaus_ggH", RelErr, rfv_EBE_sig_ln_mean, rfv_EBE_sig_ln_kappa);	
-	name = "CMS_zz4l_massErrS_ld_sigma_{0:.0f}".format(self.channel);
-	rfv_EBE_sig_ld_sigma = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_ld_mean']+")", ROOT.RooArgList(CMS_zz4l_mass)); 
-	name = "CMS_zz4l_massErrS_ld_mean_{0:.0f}".format(self.channel);
-	rfv_EBE_sig_ld_mean = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_ld_sigma']+")", ROOT.RooArgList(CMS_zz4l_mass)); 
+	name = "self.MHErrS_ld_sigma_{0:.0f}".format(self.channel);
+	rfv_EBE_sig_ld_sigma = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_ld_mean']+")", ROOT.RooArgList(self.MH)); 
+	name = "self.MHErrS_ld_mean_{0:.0f}".format(self.channel);
+	rfv_EBE_sig_ld_mean = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_ld_sigma']+")", ROOT.RooArgList(self.MH)); 
 	EBE_sig_ld = ROOT.RooLandau("errLD_ggH","errLD_ggH", RelErr, rfv_EBE_sig_ld_mean, rfv_EBE_sig_ld_sigma);	
 	name = "CMS_zz4l_massErrS_ld_frac_{0:.0f}".format(self.channel);
 	rfv_EBE_sig_frac = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_ld_frac']+")", ROOT.RooArgList(self.MH)); 
