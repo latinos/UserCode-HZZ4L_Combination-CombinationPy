@@ -28,6 +28,8 @@
 
 #include "../CreateDatacards/include/tdrstyle.cc"
 
+bool verbose = true;
+
 
 //using namespace RooFit;
 using namespace std;
@@ -45,7 +47,7 @@ void signalEfficiency_w(int channel, double sqrts);
 void signalEfficiency_w() {
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
-
+  
   signalEfficiency_w(1,7);
   signalEfficiency_w(2,7);
   signalEfficiency_w(3,7);
@@ -94,9 +96,8 @@ void signalEfficiency_w(int channel, double sqrts)
   }
   
 
-  float xMax = masses[nPoints-1];
-
-  cout << "xmax: " << xMax << endl;
+  float xMax = masses[nPoints-1]+10;
+  //  cout << "xmax: " << xMax << endl;
 
 
   const int arraySize=200;
@@ -134,7 +135,7 @@ void signalEfficiency_w(int channel, double sqrts)
     float eff_noweight=0;
     float sumw2=0;
     float sumw_init2=0;
-    float den = 0;
+    //    float den = 0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
       totalCtr+=MC_weight_norm; 
@@ -161,15 +162,17 @@ void signalEfficiency_w(int channel, double sqrts)
       eff_noweight=eff_noweight/mllCorr;
     }
 
-    cout << " m = " << masses[i] 
-	 << " : selected events= " << numEventsRaw 
-	 << " Powheg Wtd= " << numEventsPowheg
-	 << " PU Wtd= " << numEventsPU
-	 << " Data/MC Wtd= " << numEventsDataMC
-	 << " efficiency= " << totalCtr 
+    if (verbose) {
+      cout << " m = " << masses[i] 
+	   << " : selected events= " << numEventsRaw 
+	   << " Powheg Wtd= " << numEventsPowheg
+	   << " PU Wtd= " << numEventsPU
+	   << " Data/MC Wtd= " << numEventsDataMC
+	   << " efficiency= " << totalCtr
 //	 << " " << eff_noweight
-	 << endl;
-
+	   << endl;
+    }
+    
     efficiencyVal[i] = totalCtr; 
     efficiencyErr[i] = sqrt(sumw2);
 
@@ -194,12 +197,19 @@ void signalEfficiency_w(int channel, double sqrts)
   polyFunc->SetParLimits(7,0,0.1);
   polyFunc->SetParLimits(8,160,210);
   polyFunc->SetParLimits(9,20,50);
-  
+
+  if (channel==1 && sqrts==7) {    
+    polyFunc->SetParLimits(7,0,0.035);
+    polyFunc->SetParLimits(8,160,210);
+    polyFunc->SetParLimits(9,30,50);
+  }
+
 
   //  TF1 *polyFunc= new TF1("polyFunc","pol9", 110., xMax);
 
   polyFunc->SetLineColor(4);      
-  TCanvas *c = new TCanvas("c","c");
+  TString cname = "eff" + ssqrts + "_" + schannel;
+  TCanvas *c = new TCanvas(cname,cname);
   c->SetGrid();
 
   TString outname = "sigFigs" + ssqrts +"/eff_" + schannel;
@@ -252,7 +262,7 @@ void signalEfficiency_w(int channel, double sqrts)
     double eval = polyFunc->Eval(masses[i]);
     double residual = (eval - efficiencyVal[i]);
       maxResidual = max(maxResidual,fabs(residual));
-    cout << "For mass, " << masses[i] << ": measured value is " << efficiencyVal[i] << " and difference from function is " << residual <<endl;
+      if (verbose)    cout << "For mass, " << masses[i] << ": measured value is " << efficiencyVal[i] << " and difference from function is " << residual <<endl;
   }
   cout << "Largest residual= " << maxResidual << endl;
 }
