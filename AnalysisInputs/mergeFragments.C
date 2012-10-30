@@ -51,7 +51,7 @@ void mergeFragments(int channel, int sqrts, double lumi) {
 
   float lumiUnc = 0;
   if      (sqrts==7) lumiUnc = 1.022;
-  else if (sqrts==8) lumiUnc = 1.05;
+  else if (sqrts==8) lumiUnc = 1.044;
     
 
   of << "############## Inputs for " << schannel << " for " << sqrts << " TeV ##############" << endl
