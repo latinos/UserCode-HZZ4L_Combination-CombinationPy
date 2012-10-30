@@ -7,7 +7,7 @@ decay 4mu
 
 ## lumi ##
 lumi 12.21
-systematic lumiUnc 1.05
+systematic lumiUnc 1.044
 
 ## sqrtS ##
 sqrts 8

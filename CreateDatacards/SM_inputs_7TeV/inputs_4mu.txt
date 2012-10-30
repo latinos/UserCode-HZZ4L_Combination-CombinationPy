@@ -40,16 +40,16 @@ highmasssignalShape gamma_BW (185.192)+(-1.15885*@0)+(0.0025093*@0*@0)+(-1.44677
 
 
 ## signal efficiency ##
-signalEff a1  -4.43121
-signalEff a2  4.61038
-signalEff a3  -37.7824
-signalEff a4  86.2799
-signalEff b1  2.77708
-signalEff b2  0.0038644
-signalEff b3  -2.10365e-06
-signalEff g1  0.0368833
-signalEff g2  193.205
-signalEff g3  24.1827
+signalEff a1  -4.42262
+signalEff a2  4.61834
+signalEff a3  -43.8275
+signalEff a4  90.6511
+signalEff b1  2.53727
+signalEff b2  0.00355065
+signalEff b3  -1.93366e-06
+signalEff g1  0.035
+signalEff g2  193.025
+signalEff g3  30
 
 
 ### background functions ###

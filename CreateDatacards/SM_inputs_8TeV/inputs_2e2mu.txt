@@ -7,7 +7,7 @@ decay 2e2mu
 
 ## lumi ##
 lumi 12.21
-systematic lumiUnc 1.05
+systematic lumiUnc 1.044
 
 ## sqrtS ##
 sqrts 8
@@ -87,7 +87,7 @@ systematic zjetKappaLow   0.3
 systematic zjetKappaHigh  2.0
 systematic param CMS_zz4l_mean_m_sig   0.001
 systematic param CMS_zz4l_sigma_m_sig  0.2
-systematic param CMS_zz4l_mean_e_sig   0.004
+systematic param CMS_zz4l_mean_e_sig   0.002
 systematic param CMS_zz4l_sigma_e_sig  0.2
 systematic param CMS_zz4l_n_sig 0.05
 systematic param CMS_zz4l_gamma_sig 0.05
