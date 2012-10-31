@@ -67,9 +67,9 @@ class datacardClass:
         
         myCSWrhf = HiggsCSandWidth()
         
-        histXsBr = ROOT.TH1F("hsmxsbr_{0}_{1}".format(procName,channelName),"", 1781, 109.75, 1000)
+        histXsBr = ROOT.TH1F("hsmxsbr_{0}_{1}".format(procName,channelName),"", 8905, 109.55, 1000.05)
         
-        for i in range(1,1782):
+        for i in range(1,8906):
             
             mHVal = histXsBr.GetBinCenter(i)
             BR = 0.0 
@@ -86,8 +86,8 @@ class datacardClass:
             else:
                 histXsBr.SetBinContent(i, myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts) * BR)
 
-            #print '\nmakeXsBrFunction : procName=',procName,'   signalProc=',signalProc,'  mH (input)=',rrvMH.getVal(),
-            #print '   CS=',myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts),'   BR=',BR
+            print '\nmakeXsBrFunction : procName=',procName,'   signalProc=',signalProc,'  mH (input)=',mHVal,
+            print '   CS=',myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts),'   BR=',BR
             
         rdhname = "rdhXsBr_{0}_{1}_{2}".format(procName,self.channel,self.sqrts)
         rdhXsBr = RooDataHist(rdhname,rdhname, ROOT.RooArgList(rrvMH), histXsBr)  
@@ -106,7 +106,7 @@ class datacardClass:
     def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False):
 
         ## --------------- SETTINGS AND DECLARATIONS --------------- ##
-        DEBUG = False
+        DEBUG = True#False
         self.mH = theMH
         self.lumi = theInputs['lumi']
         self.sqrts = theInputs['sqrts']
@@ -161,11 +161,13 @@ class datacardClass:
         lowside = 100.0
         if (self.mH >= 275):
             lowside = 180.0
+        elif (self.mH >= 700):
+            lowside = 350.0
         else:
             lowside = 100.0
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-        self.high_M = min( (self.mH + 15.*self.windowVal), 1000)
+        self.high_M = min( (self.mH + 15.*self.windowVal), 1400)
 
         #self.low_M = 100.0
         #self.high_M = 800.0
@@ -362,7 +364,7 @@ class datacardClass:
 	print "SIGMA_D", rfv_sigma_CB.getVal()
 
         name = "CMS_zz4l_gamma_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-        rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape_HM']+")"+"*(1+@1)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
+        rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape_HM']+")"+"*(1+@1*0.05)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
 
         if (DEBUG): print " DEBUG *********  ", theInputs['sigma_CB_shape'] 
 
@@ -900,6 +902,10 @@ class datacardClass:
         ## Reducible backgrounds
         val_meanL = float(theInputs['zjetsShape_mean'])
         val_sigmaL = float(theInputs['zjetsShape_sigma'])
+
+        if (DEBUG):
+            print "ZJets mean = ",theInputs['zjetsShape_mean']
+            print "ZJets sigma = ",theInputs['zjetsShape_sigma']
  
         name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
@@ -1038,7 +1044,7 @@ class datacardClass:
         else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
         super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
         super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
-        super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+        super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(2) )
         zzframe_s.Draw()
         figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
         czz.SaveAs(figName)
@@ -1054,12 +1060,12 @@ class datacardClass:
         
         fr_low_M = self.low_M
         fr_high_M = self.high_M        
-        if (self.mH >= 450): 
-            fr_low_M = 100
-            fr_high_M = 1000
-        if (self.mH >= 750):
-            fr_low_M = 100
-            fr_high_M = 1400
+        #if (self.mH >= 450): 
+        #    fr_low_M = 180
+        #    fr_high_M = 1000
+        #if (self.mH >= 750):
+        #    fr_low_M = 10
+        #    fr_high_M = 1400
             
 
         CMS_zz4l_mass.setRange("fullrangesignal",fr_low_M,fr_high_M)
@@ -1269,7 +1275,7 @@ class datacardClass:
         bkgRate_zjets_Shape = sclFactorBkg_zjets * bkg_zjets.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         
         if(DEBUG):
-            print "Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape," in ",low_M," - ",high_M
+            print "Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape," in ",self.low_M," - ",self.high_M
             CMS_zz4l_mass.setRange("lowmassregion",100.,160.)
             bkgRate_qqzz_lowmassregion = sclFactorBkg_qqzz * bkg_qqzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("lowmassregion") ).getVal()
             bkgRate_ggzz_lowmassregion = sclFactorBkg_ggzz * bkg_ggzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("lowmassregion") ).getVal()
