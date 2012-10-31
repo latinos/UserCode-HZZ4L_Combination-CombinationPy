@@ -211,13 +211,6 @@ class datacardClass:
         self.MH = ROOT.RooRealVar("MH","MH",self.mH)
         self.MH.setConstant(True)
     
-	# bIncludingError 
-	mrelerrVarName = "CMS_zz4l_massRelErr";
-	RelErr = ROOT.RooRealVar(mrelerrVarName,mrelerrVarName,0.002,0.2)
-	RelErr.setBins(100);
-	CMS_zz4l_massErr = ROOT.RooFormulaVar("CMS_zz4l_massErr", "@0*@1", ROOT.RooArgList(CMS_zz4l_mass, RelErr) );
-	#CMS_zz4l_massErr = ROOT.RooRealVar("CMS_zz4l_massErr", "CMS_zz4l_massErr", 0.01*self.low_M/3., 0.01*self.high_M*5 );
-	#CMS_zz4l_massErr.setBins(100);
 
 	# n2, alpha2 are right side parameters of DoubleCB
 	# n, alpha are left side parameters of DoubleCB
@@ -363,13 +356,13 @@ class datacardClass:
             if self.isHighMass : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape_HM']+")"+"*(1+@1)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_e_sig))
             else : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_e_sig))
         elif (self.channel == self.ID_2e2mu) :
-            if self.isHighMass : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape_HM']+")"+"*(1+@1)*(1+@2)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig,CMS_zz4l_sigma_e_sig))
-            else : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)*(1+@2)", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig,CMS_zz4l_sigma_e_sig))
+            if self.isHighMass : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape_HM']+")"+"*TMath::Sqrt((1+@1)*(1+@2))", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig,CMS_zz4l_sigma_e_sig))
+            else : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*TMath::Sqrt((1+@1)*(1+@2))", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig,CMS_zz4l_sigma_e_sig))
 
 	print "SIGMA_D", rfv_sigma_CB.getVal()
 
         name = "CMS_zz4l_gamma_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-        rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape_HM']+")"+"*(1+@1*0.05)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
+        rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape_HM']+")"+"*(1+@1)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
 
         if (DEBUG): print " DEBUG *********  ", theInputs['sigma_CB_shape'] 
 
@@ -386,6 +379,19 @@ class datacardClass:
 
         print "mean_sig_NoConv ", CMS_zz4l_mean_sig_NoConv.getVal()
         
+	# bIncludingError,  defining variables 
+	mrelerrVarName = "CMS_zz4l_massRelErr";
+	RelErr = ROOT.RooRealVar(mrelerrVarName,mrelerrVarName,0.002,0.2)
+	RelErr.setBins(100);
+	CMS_zz4l_massErr = ROOT.RooFormulaVar() 
+        if (self.channel == self.ID_4mu) :
+            CMS_zz4l_massErr = ROOT.RooFormulaVar("CMS_zz4l_massErr","@0*@1*(1+@2)", ROOT.RooArgList(CMS_zz4l_mass, RelErr, CMS_zz4l_sigma_m_sig))
+        elif (self.channel == self.ID_4e) :
+            CMS_zz4l_massErr = ROOT.RooFormulaVar("CMS_zz4l_massErr","@0*@1*(1+@2)", ROOT.RooArgList(CMS_zz4l_mass, RelErr, CMS_zz4l_sigma_e_sig))
+        elif (self.channel == self.ID_2e2mu) :
+            CMS_zz4l_massErr = ROOT.RooFormulaVar("CMS_zz4l_massErr","@0*@1*TMath::Sqrt((1+@2)*(1+@3))", ROOT.RooArgList(CMS_zz4l_mass, RelErr, CMS_zz4l_sigma_m_sig, CMS_zz4l_sigma_e_sig))
+	# end bIncludingError
+
         ## --------------------- SHAPE FUNCTIONS ---------------------- ##
     
         signalCB_ggH = ROOT.RooDoubleCB("signalCB_ggH","signalCB_ggH",CMS_zz4l_mass, self.getVariable(CMS_zz4l_mean_sig_NoConv,rfv_mean_CB, self.bUseCBnoConvolution) , self.getVariable(CMS_zz4l_massErr,rfv_sigma_CB, self.bIncludingError),rfv_alpha_CB,rfv_n_CB, rfv_alpha2_CB, rfv_n2_CB)
@@ -461,13 +467,13 @@ class datacardClass:
 
 	name = "CMS_zz4l_massErrS_ln_kappa_{0:.0f}".format(self.channel);
 	rfv_EBE_sig_ln_kappa = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_gs_sigma']+")", ROOT.RooArgList(self.MH)); 
-	name = "self.MHErrS_ln_mean_{0:.0f}".format(self.channel);
+	name = "CMS_zz4l_massErrS_ln_mean_{0:.0f}".format(self.channel);
 	rfv_EBE_sig_ln_mean = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_gs_mean']+")", ROOT.RooArgList(self.MH)); 
 	EBE_sig_ln = ROOT.RooLognormal("errLN_ggH","errLN_ggH", RelErr, rfv_EBE_sig_ln_mean, rfv_EBE_sig_ln_kappa);	
 	if self.channel!=1: EBE_sig_ln = ROOT.RooGaussian("errGaus_ggH","errGaus_ggH", RelErr, rfv_EBE_sig_ln_mean, rfv_EBE_sig_ln_kappa);	
-	name = "self.MHErrS_ld_sigma_{0:.0f}".format(self.channel);
+	name = "CMS_zz4l_massErrS_ld_sigma_{0:.0f}".format(self.channel);
 	rfv_EBE_sig_ld_sigma = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_ld_mean']+")", ROOT.RooArgList(self.MH)); 
-	name = "self.MHErrS_ld_mean_{0:.0f}".format(self.channel);
+	name = "CMS_zz4l_massErrS_ld_mean_{0:.0f}".format(self.channel);
 	rfv_EBE_sig_ld_mean = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_ld_sigma']+")", ROOT.RooArgList(self.MH)); 
 	EBE_sig_ld = ROOT.RooLandau("errLD_ggH","errLD_ggH", RelErr, rfv_EBE_sig_ld_mean, rfv_EBE_sig_ld_sigma);	
 	name = "CMS_zz4l_massErrS_ld_frac_{0:.0f}".format(self.channel);
