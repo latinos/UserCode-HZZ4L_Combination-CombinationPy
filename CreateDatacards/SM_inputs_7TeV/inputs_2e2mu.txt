@@ -77,13 +77,13 @@ ggZZshape a7_bkgd  0.1699
 ggZZshape a8_bkgd  57.0365
 ggZZshape a9_bkgd  0.0678273
 
-zjetsShape mean 132.8
-zjetsShape sigma 16.2
+zjetsShape mean 143.1
+zjetsShape sigma 19.9
 
 
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.5
-systematic zjetKappaHigh  1.9
+systematic zjetKappaHigh  2.0
 systematic param CMS_zz4l_mean_m_sig   0.001
 systematic param CMS_zz4l_sigma_m_sig  0.2
 systematic param CMS_zz4l_mean_e_sig   0.002
@@ -145,7 +145,6 @@ signalShape mekd_sig_a3  9.652+(0.1479)*sqrt(@0-100)+(-0.04257)*(@0-100)
 qqZZshape mekd_qqZZ_a3  7.794+(-0.7631)*sqrt(@0-100)+(0.1144)*(@0-100)
 signalShape mekd_sig_a4  TMath::Max(0.6735+(-0.07744)*sqrt(@0-100)+(0.0245)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4  TMath::Max(5.427+(1.013)*sqrt(@0-100)+(-0.2845)*(@0-100),0)
-
 RelErrShape relerr_zx_ld_mean 0.0291404
 RelErrShape relerr_zx_ld_sigma 0.00440845
 RelErrShape relerr_zx_gs_mean 0.0133473
@@ -161,3 +160,4 @@ RelErrShape relerr_zx_ld_frac 0.546106
  RelErrShape  relerr_ggH_gs_mean 0.02767+(-6.79398e-05*@0)
  RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
  RelErrShape  relerr_ggH_ld_frac 0.63 
+
