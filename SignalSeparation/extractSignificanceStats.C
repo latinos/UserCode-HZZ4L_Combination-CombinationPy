@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 
+#include "TArrow.h"
 #include "TFile.h"
 #include "TTree.h"
 #include "TChain.h"
@@ -33,9 +34,9 @@ int extractSignificanceStats(){
   t->SetBranchAddress("weight",&w);
   t->SetBranchAddress("type",&type);
 
-  TH1F *hSM=new TH1F("hSM;S = -2 #times ln(L_{1}/L_{2});Number of Toys","",8000,-40,40);
-  TH1F *hPS=new TH1F("hPS;S = -2 #times ln(L_{1}/L_{2});Number of Toys","",8000,-40,40);
-  TH1F *hObs=new TH1F("hObserved","",100,-20,20);
+  TH1F *hSM=new TH1F("hSM;S = -2 #times ln(L_{1}/L_{2});Number of Toys","",8000,-15,15);
+  TH1F *hPS=new TH1F("hPS;S = -2 #times ln(L_{1}/L_{2});Number of Toys","",8000,-15,15);
+  TH1F *hObs=new TH1F("hObserved","",8000,-15,15);
   cout<<"Start to lopp on tree in file "<<fileName<<endl;
 
   std::vector<float> v_SM, v_PS,v_Obs;
@@ -148,8 +149,23 @@ cout<<"Cutting at "<<cut<<endl;
   float sepH= 2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
   cout<<"Separation from histograms = "<<sepH<<" with coverage "<<coverage<<endl;
 
+
+  cout << "OBSERVED SIGNIFICANCE" << endl;
+
+  cout << "observation: " << v_Obs[0] << endl;
+  cout << "bin: " << hObs->GetMaximumBin() << endl;
+  
+  cout << " --------------- " << endl;
+  double obsPval_SM = 1-hSM->Integral(0,hObs->GetMaximumBin())/hSM->Integral();
+  cout << "pvalue SM: " << obsPval_SM << endl;
+  cout << "signif SM: " << ROOT::Math::normal_quantile_c(obsPval_SM,1.0) << endl;;
+  double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/hPS->Integral();
+  cout << "pvalue PS: " << obsPval_PS << endl;
+  cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl;;
+
+
   gStyle->SetOptStat(0);
-  TCanvas *c1=new TCanvas("c1","c1",800,800);
+  TCanvas *c1=new TCanvas("c1","c1",500,500);
   c1->cd();
   hSM->Rebin(50);
   hPS->Rebin(50);
@@ -179,13 +195,17 @@ cout<<"Cutting at "<<cut<<endl;
   hObs->SetLineWidth(2);
   hSM->Draw();
   hPS->Draw("sames");
-  //  hObs->Draw("sames");
+  
+  TArrow *obsArrow  = new TArrow(v_Obs[0],hSM->GetMaximum()/2.,v_Obs[0],0.0,.05,"|>");
+  obsArrow->SetLineWidth(3);
+  obsArrow->Draw("same");
+  //hObs->Draw("sames");
 
-  TLegend *leg = new TLegend(0.2,0.6,0.45,0.9);
+  TLegend *leg = new TLegend(0.7,0.6,0.9,0.9);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(hSM,"  SM, 0+","f");
-  leg->AddEntry(hPS,"  PS, 0-","f");
+  leg->AddEntry(hSM,"  PS, 0-","f");
+  leg->AddEntry(hPS,"  SM, 0+","f");
   leg->Draw();
 
 
