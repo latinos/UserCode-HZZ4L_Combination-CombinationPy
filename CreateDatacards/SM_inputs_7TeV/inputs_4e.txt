@@ -153,4 +153,3 @@ RelErrShape relerr_ggH_ld_sigma 0.00175217
 RelErrShape relerr_ggH_gs_mean 0.0304213+(-6.52523e-05*@0)
 RelErrShape relerr_ggH_gs_sigma 0.00765059+(-2.27997e-05*@0)
 RelErrShape relerr_ggH_ld_frac 0.479963 
-
