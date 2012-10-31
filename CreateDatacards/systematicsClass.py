@@ -638,8 +638,8 @@ class systematicsClass:
             if theInputs['useCMS_zz4l_n']:
                 theFile.write("CMS_zz4l_n_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,N_CB_errPerCent))
             if theInputs['useCMS_zz4l_gamma']:
-                theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
-                #theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
+                #theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
+                theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
             
         if( self.channel == self.ID_4e):
 
@@ -650,8 +650,8 @@ class systematicsClass:
             if theInputs['useCMS_zz4l_n']:
                 theFile.write("CMS_zz4l_n_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,N_CB_errPerCent))
             if theInputs['useCMS_zz4l_gamma']:
-                theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
-                #theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
+                #theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
+                theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
             
         if( self.channel == self.ID_2e2mu):
 
@@ -664,6 +664,6 @@ class systematicsClass:
             if theInputs['useCMS_zz4l_n']:
                 theFile.write("CMS_zz4l_n_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,N_CB_errPerCent))
             if theInputs['useCMS_zz4l_gamma']:
-                theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
-                #theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
+                #theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
+                theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
 
