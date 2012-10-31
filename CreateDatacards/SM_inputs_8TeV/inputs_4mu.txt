@@ -79,20 +79,20 @@ ggZZshape a7_bkgd  0.165642
 ggZZshape a8_bkgd  63.6489
 ggZZshape a9_bkgd  0.0785973
 
-zjetsShape mean 141.1
-zjetsShape sigma 16.7
+zjetsShape mean 140.3
+zjetsShape sigma 21.7
 
 
 ### channel dependent systematics ###
-systematic zjetKappaLow   0.4
-systematic zjetKappaHigh  1.8
+systematic zjetKappaLow   0.5
+systematic zjetKappaHigh  2.1
 systematic param CMS_zz4l_mean_m_sig   0.001
 systematic param CMS_zz4l_sigma_m_sig  0.2
 systematic param CMS_zz4l_n_sig 0.01
 systematic param CMS_zz4l_gamma_sig 0.05
 
 ## 4mu systematics ##
-systematic muon_full 0.03
+systematic muon_full 0.038
 systematic muon_trig 0.015
 
 
@@ -135,7 +135,6 @@ signalShape mekd_sig_a3  8.995+(-0.291)*sqrt(@0-100)+(0.05306)*(@0-100)
 qqZZshape mekd_qqZZ_a3  6.325+(-0.2508)*sqrt(@0-100)+(0.01977)*(@0-100)
 signalShape mekd_sig_a4  TMath::Max(1.198+(0.1424)*sqrt(@0-100)+(-0.03713)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4  TMath::Max(0.8201+(0.3365)*sqrt(@0-100)+(-0.002037)*(@0-100),0)
-
  RelErrShape  relerr_qqzz_ld_frac 0.29 
  RelErrShape  relerr_qqzz_ld_mean 0.0140019 
  RelErrShape  relerr_qqzz_ld_sigma 0.00127166 
