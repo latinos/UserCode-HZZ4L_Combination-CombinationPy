@@ -489,8 +489,8 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
   }
   
-  // TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
-  TH2F* bkgHist = new TH2F(templateName,templateName,50,0.0,1.0, 25,0.0,1.0);
+  TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
+  // TH2F* bkgHist = new TH2F(templateName,templateName,50,0.0,1.0, 25,0.0,1.0);
   // const int nBinsFine=100;
   // float xfine[nBinsFine+1];
   // for(int i=0;i<=nBinsFine;i++)xfine[i]=i*(1.0/nBinsFine);
@@ -566,7 +566,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     }// for(int j=1; j<=nYbins; j++){
   }// for(int i=1; i<=nXbins; i++){
 
-  if(smooth)  bkgHist->Smooth(1,"k5a");
+  if(smooth)  bkgHist->Smooth(1,"k5b");
  
 
 
