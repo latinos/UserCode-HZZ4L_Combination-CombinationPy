@@ -4,10 +4,11 @@
 
 
 // With high mass reweights + new MELA (analytical background) + superMELA
-TString filePath7TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/PRODFSR_7TeV/";
-TString filePath8TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/PRODFSR_8TeV/";
-TString filePath7TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/JHU_7TeV/";
-TString filePath8TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012/JHU_8TeV/";
+//TString filePath7TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012_M126/PRODFSR_7TeV/";
+TString filePath7TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_261012/PRODFSR_7TeV/";
+TString filePath8TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_261012/PRODFSR_8TeV/";
+TString filePath7TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_261012/JHU_7TeV/";
+TString filePath8TeVPS = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_261012/JHU_8TeV/";
 
 
 // Luminosity, as float and as string to be used in file names, etc.

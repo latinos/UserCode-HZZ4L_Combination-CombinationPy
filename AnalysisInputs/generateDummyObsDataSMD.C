@@ -31,8 +31,8 @@ bool extendToHighMass = false; // Include signal samples above 600 GeV
 const bool verbose_=true;
 float highMzz=(extendToHighMass?1000:800);
 float mBinSize=2.;
-const float fracPS=0.00;
-
+const float fracPS=0.50;
+string strLumi="XX.YY";
 
 const TString destDir = "./";//it must already exist
 
@@ -44,37 +44,38 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
 
   TString chPath = channel;//(channel=="2e2mu"?"2mu2e":channel); // Adapt to different naming convention...
 
+  TString filePath(filePath7TeV);
+  TString filePathPS(filePath7TeVPS);
     
 if (sampleIndex==0){
     //8TeV
-  cout<<"Adding Signal-MC tree called "<<(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125_withSMD.root").Data()<<endl;
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125_withSMD.root");
+  cout<<"Adding Signal-MC tree called "<<(filePath + "/" + chPath +"/HZZ4lTree_H125_withSMD_doubleCBonly.root").Data()<<endl;
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_H125_withSMD_doubleCBonly.root");
 
 
  
   } else if (sampleIndex==1){
 
-    //8TeV
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau_withSMD.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu_withSMD_doubleCBonly.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau_withSMD_doubleCBonly.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau_withSMD_doubleCBonly.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ZZTo4e_withSMD_doubleCBonly.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ZZTo4mu_withSMD_doubleCBonly.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ZZTo4tau_withSMD_doubleCBonly.root");
 
     //  } else if (sampleIndex==2){
     //7TeV
-    //   bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l.root");
-    // bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
+    //   bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ggZZ2l2l.root");
+    // bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
 
     //8TeV
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l_withSMD.root");
-    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l_withSMD.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ggZZ2l2l_withSMD_doubleCBonly.root");
+    bkgMC->Add(filePath + "/" + chPath +"/HZZ4lTree_ggZZ4l_withSMD_doubleCBonly.root");
 
     
   }
  else if (sampleIndex==3){
-    bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuPseH125_withSMD.root");
+    bkgMC->Add(filePathPS + "/" + chPath +"/HZZ4lTree_jhuPseH125_withSMD_doubleCBonly.root");
  }
  else cout<<"Wrong sample "<<sampleIndex<<endl;
 }
@@ -126,35 +127,42 @@ void fillTemplate(TString channel="4mu", int sampleIndex=0,float lumi=1.0,bool i
  
   
   // fill histogram
-  TRandom3 *myR=new TRandom3(3041);
-  double dumM,dumLD,dumSuperLD,dumPsLD, dumErr=0.0;
-  ofstream of((destDir + "hzzDummyTMP_" + channel + ".txt").Data(),ios::out);
+  TRandom3 *myR=new TRandom3(6811);
+  double dumM,dumLD,dumSuperLD,dumPsLD, dumErr=0.0,dumType;
+  ofstream of((destDir + "hzzDummyTMP_" + channel+"_" + strLumi + ".txt").Data(),ios::out);
 
 
   int storedEvts=0,storedEvtsSM=0,storedEvtsPS=0,storedEvtsBkg=0;
+  double totExpEvt=0.0;
   for(int i=0; i<treeMCSig->GetEntries(); i++){
  
     treeMCSig->GetEntry(i);
     psLD=LD;//only if (yVarName,"pseudoLD")
     float rnum=myR->Rndm();
-    if(verbose_&&i%2000==0)cout<<"Weight= "<<w<<" RandmNmbr="<< rnum <<"  LD="<<LD<<"  PseudoLD="<< psLD<<"  SuperLD="<<SMD<<endl; 
+    if(mzz>105&&mzz<140&&SMD>=0.0)totExpEvt+=w;
+    if(verbose_&&i%5000==0)cout<<"SMHiggs: Weight= "<<w<<" RandmNmbr="<< rnum <<"  LD="<<LD<<"  PseudoLD="<< psLD<<"  SuperLD="<<SMD<<endl; 
     bool cutPassed= (melaCut>0.0) ? (mela>melaCut) : true;
-    if( rnum < w*lumi && cutPassed && myR->Rndm()<(1.0-fracPS) ){
+    if( rnum < w*lumi && cutPassed && myR->Rndm()<(1.0-fracPS)&&mzz>105&&mzz<140&&SMD>=0.0 ){
       dumM=mzz;
       dumLD=LD;
       dumSuperLD=SMD;
       dumPsLD=psLD;
       dumErr=0.0;
-      cout<<"Signal-MC SMD="<<SMD<<"  SummySMD="<<dumSuperLD<<endl;
+      dumType=0;
+      cout<<"Signal-MC SMD="<<SMD<<"  DummySMD="<<dumSuperLD<<endl;
       storedEvts++;
       storedEvtsSM++;
-      of<<dumM <<"  "<<dumLD<<" "<<dumErr<<" "<<dumSuperLD<<" "<<dumPsLD <<endl;
+      of<<dumM <<"  "<<dumLD<<" "<<dumErr<<" "<<dumSuperLD<<" "<<dumPsLD <<"  "<<dumType<<endl;
     }
 
   }//end loop on entries
+  cout<<"SMHiggs: total expected events for 1.0 inv fb in [105, 140] (no other cuts): "<<totExpEvt<<endl;
+
+
 
   float mzzPS,wPS,psLDPS,LDPS;
   double melaPS,SMDPS;
+  double totExpEvtPS=0.0;
   treeMCPS->SetBranchAddress("ZZMass",&mzzPS);
   treeMCPS->SetBranchAddress("ZZLD",&melaPS);
   //  treeMCPS->SetBranchAddress("pseudoLD",&psLDPS);
@@ -169,24 +177,28 @@ void fillTemplate(TString channel="4mu", int sampleIndex=0,float lumi=1.0,bool i
     psLDPS=LDPS;//only if (yVarName,"pseudoLD")
 
     float rnum=myR->Rndm();
-    if(verbose_&&i%5000==0)cout<<"Weight= "<<w<<" RandmNmbr="<< rnum <<"  MELA="<<LDPS<<endl; 
+    if(verbose_&&i%5000==0)cout<<"PSHiggs: Weight= "<<wPS<<" RandmNmbr="<< rnum <<"  MELA="<<LDPS<<endl; 
+    if(mzzPS>105&&mzzPS<140&&SMDPS>=0.0)totExpEvtPS+=wPS;
+ 
     bool cutPassed= (melaCut>0.0) ? (melaPS>melaCut) : true;
-    if( rnum < wPS*lumi && cutPassed && myR->Rndm()<(fracPS) ){
+    if( rnum < wPS*lumi/2.0 && cutPassed && myR->Rndm()<(fracPS) &&mzzPS>105&&mzzPS<140&&SMDPS>=0.0){
      dumM=mzzPS;
       dumLD=LDPS;
       dumSuperLD=SMDPS;
       dumPsLD=psLDPS;
       dumErr=0.0; 
-
+      dumType=-1;
    
       storedEvts++;
       storedEvtsPS++;
-      of<<dumM <<"  "<<dumLD<<" "<<dumErr<<" "<<dumSuperLD<<" "<<dumPsLD <<endl;
+      of<<dumM <<"  "<<dumLD<<" "<<dumErr<<" "<<dumSuperLD<<" "<<dumPsLD <<"  "<<dumType<<endl;
     }
 
   }//end loop on entries
+  cout<<"PSHiggs: total expected events for 1.0 inv fb in [105, 140] (no other cuts): "<<totExpEvtPS<<endl;
 
- treeMCBkg->SetBranchAddress("ZZMass",&mzz);
+
+  treeMCBkg->SetBranchAddress("ZZMass",&mzz);
   treeMCBkg->SetBranchAddress("ZZLD",&mela);
   treeMCBkg->SetBranchAddress(yVarName,&LD);
   // treeMCBkg->SetBranchAddress("pseudoLD",&psLD);
@@ -199,17 +211,18 @@ void fillTemplate(TString channel="4mu", int sampleIndex=0,float lumi=1.0,bool i
     treeMCBkg->GetEntry(i);
    psLD=LD;//only if (yVarName,"pseudoLD")
     float rnum=myR->Rndm();
-    if(verbose_&&i%5000==0)cout<<"Weight= "<<w<<" RandmNmbr="<< rnum <<"  MELA="<<LD<<endl; 
+    if(verbose_&&i%5000==0)cout<<"Bkg qqZZ: Weight= "<<w<<" RandmNmbr="<< rnum <<"  MELA="<<LD<<endl; 
     bool cutPassed= (melaCut>0.0) ? (mela>melaCut) : true;
-    if( rnum < w*lumi && cutPassed ){
+    if( rnum < w*lumi && cutPassed &&mzz>105&&mzz<140&&SMD>=0.0){
       dumM=mzz;
       dumLD=LD;
       dumErr=0.0;
        dumSuperLD=SMD;
       dumPsLD=psLD;
+      dumType=1;
       storedEvts++;
       storedEvtsBkg++;
-      of<<dumM <<"  "<<dumLD<<" "<<dumErr<<" "<<dumSuperLD<<" "<<dumPsLD <<endl;
+      of<<dumM <<"  "<<dumLD<<" "<<dumErr<<" "<<dumSuperLD<<" "<<dumPsLD <<"  "<<dumType<<endl;
     }
   }
   cout<<"Stored in outptu tree "<<storedEvts<<" events (SM="<<storedEvtsSM<<"  PS="<<storedEvtsPS<<"  Bkg="<<storedEvtsBkg<<endl;
@@ -238,18 +251,25 @@ void makeDummyObs(TString channel="4mu",float lumi=1.0){
 //=======================================================================
 
 void dumptToTree(TString channel="4mu"){
- ifstream inf((destDir + "hzzDummyTMP_" + channel + ".txt").Data(),ios::out);
- TFile* ftmp = new TFile(destDir + "hzzDummyTMP_" + channel + "_withSMD.root","RECREATE");
- double dumM,dumLD,dumSMD,dumPsLD, dumErr=0.0;
+ ifstream inf((destDir + "hzzDummyTMP_"  + channel+"_" + strLumi + ".txt").Data(),ios::out);
+ TFile* ftmp = new TFile(destDir + "hzzDummyTMP_" + channel+"_"+ strLumi  + "_withSMD_doubleCBonly.root","RECREATE");
+ double dumM,dumLD,dumSMD,dumPsLD, dumErr=0.0,dumType;
  TTree* dummyT = new TTree("data_obs","data_obs");
   dummyT->Branch("CMS_zz4l_mass",&dumM,"CMS_zz4l_mass/D");
   dummyT->Branch("melaLD",&dumLD,"melaLD/D");
-  dummyT->Branch("pseudoLD",&dumPsLD,"pseudoLD/D");
+  //  dummyT->Branch("pseudoLD",&dumPsLD,"pseudoLD/D");
+  dummyT->Branch("CMS_zz4l_KD",&dumPsLD,"CMS_zz4l_KD/D");
   dummyT->Branch("CMS_zz4l_smd",&dumSMD,"CMS_zz4l_smd/D");
   dummyT->Branch("CMS_zz4l_massErr",&dumErr,"CMS_zz4l_massErr/D");
- while (inf.good() ){
-   inf>>dumM>>dumLD>>dumErr>>dumSMD>>dumPsLD;
-   dummyT->Fill();
+  dummyT->Branch("dummyEvtType",&dumType,"dummyEvtType/D");
+
+  double oldSMD=-1.0;
+ while (!inf.eof() ){
+   inf>>dumM>>dumLD>>dumErr>>dumSMD>>dumPsLD>>dumType;
+   if(dumSMD!=oldSMD){
+     dummyT->Fill();
+     oldSMD=dumSMD;
+   }
  }
  dummyT->Write();
  delete ftmp;
@@ -269,5 +289,10 @@ void storeLDDistribution(float lumi=1.0){
 
 
 void generateDummyObsData(float lumi=1.0) {
+
+  stringstream ssL;
+  ssL<<lumi;
+  strLumi=ssL.str();
+
   storeLDDistribution(lumi);
 }
