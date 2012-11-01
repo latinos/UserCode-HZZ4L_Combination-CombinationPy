@@ -46,7 +46,7 @@ const float mzzCutLow=105;
 const float mzzCutHigh=140;
 const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../CreateDatacards/templates2D_smd_8TeV_20121031/"; //it must already exist !
+const TString destDir = "../CreateDatacards/templates2D_smd_8TeV_20121101/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -788,8 +788,8 @@ void makeTemplate(TString channel){
     cout << "h_mzzD: " << h_mzzD << endl;
 
   // --------------------------------------------------
-    makePlot1D( h_D,strSqrt+"_PSMH126To"+channel );
-    makePlot2D( h_mzzD,strSqrt+"_PSMH126To"+channel );
+    makePlot1D( h_D,strSqrt+"_PSMH"+str_mh+"To"+channel );
+    makePlot2D( h_mzzD,strSqrt+"_PSMH"+str_mh+"To"+channel );
   
     fAltsig->cd();
     h_mzzD->Write("h_superDpsD");
@@ -832,8 +832,8 @@ void makeTemplate(TString channel){
   histoPair.first=h_mzzD;
   histoPair.second=h_mzzD;
   // --------------------------------------------------
-  makePlot1D( h_D,"qqZZTo"+channel );
-  makePlot2D( h_mzzD,"qqZZTo"+channel );
+  makePlot1D( h_D,strSqrt+"_qqZZTo"+channel );
+  makePlot2D( h_mzzD,strSqrt+"_qqZZTo"+channel );
 
   fqqZZ->cd();
   h_mzzD->Write("h_superDpsD");
@@ -871,8 +871,8 @@ void makeTemplate(TString channel){
  histoPair.first=h_mzzD;
   histoPair.second=h_mzzD;
   // --------------------------------------------------
-  makePlot1D( h_D,"ggZZTo"+channel );
-  makePlot2D( h_mzzD,"ggZZTo"+channel );
+  makePlot1D( h_D,strSqrt+"_ggZZTo"+channel );
+  makePlot2D( h_mzzD,strSqrt+"_ggZZTo"+channel );
 
   fggZZ->cd();
   h_mzzD->Write("h_superDpsD");
