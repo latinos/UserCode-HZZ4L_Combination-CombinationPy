@@ -159,15 +159,32 @@ class datacardClass:
         
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
+        highside = 1000.0
+        
         if (self.mH >= 275):
             lowside = 180.0
+<<<<<<< datacardClass.py
+            highside = 650.0
+        elif (self.mH >= 350):
+            lowside = 200.0
+        elif (self.mH >= 500):
+            lowside = 250.0
+        elif (self.mH >= 700):
+            lowside = 350.0
+            highside = 1400.0
+=======
         elif (self.mH >= 700):
             lowside = 350.0
         else:
             lowside = 100.0
+>>>>>>> 1.27
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
+<<<<<<< datacardClass.py
+        self.high_M = min( (self.mH + 15.*self.windowVal), highside)
+=======
         self.high_M = min( (self.mH + 15.*self.windowVal), 1400)
+>>>>>>> 1.27
 
         #self.low_M = 100.0
         #self.high_M = 800.0
@@ -1060,12 +1077,21 @@ class datacardClass:
         
         fr_low_M = self.low_M
         fr_high_M = self.high_M        
+<<<<<<< datacardClass.py
+        #if (self.mH >= 450): 
+        #    fr_low_M = 100
+        #    fr_high_M = 1000
+        #if (self.mH >= 750):
+        #    fr_low_M = 100
+        #    fr_high_M = 1400
+=======
         #if (self.mH >= 450): 
         #    fr_low_M = 180
         #    fr_high_M = 1000
         #if (self.mH >= 750):
         #    fr_low_M = 10
         #    fr_high_M = 1400
+>>>>>>> 1.27
             
 
         CMS_zz4l_mass.setRange("fullrangesignal",fr_low_M,fr_high_M)
@@ -1118,7 +1144,8 @@ class datacardClass:
         listEff.add(rrvg1)
         listEff.add(rrvg2)
         listEff.add(rrvg3)
-        rfvSigEff = ROOT.RooFormulaVar(sigEffName,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff) #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
+        rfvSigEff = ROOT.RooFormulaVar(sigEffName,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff)
+        #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
         #from TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
         
         ## following printout is needed ,  dont remove it
