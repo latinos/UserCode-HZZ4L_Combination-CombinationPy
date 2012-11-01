@@ -161,15 +161,18 @@ class datacardClass:
         lowside = 100.0
         if (self.mH >= 275):
             lowside = 180.0
-        else:
-            lowside = 100.0
-        
+            highside = 650.0
+        elif (self.mH >= 350):
+            lowside = 200.0
+        elif (self.mH >= 500):
+            lowside = 250.0
+        elif (self.mH >= 700):
+            lowside = 350.0
+            highside = 1400.0
+                        
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-        self.high_M = min( (self.mH + 15.*self.windowVal), 1000)
-
-        #self.low_M = 100.0
-        #self.high_M = 800.0
-       
+        self.high_M = min( (self.mH + 15.*self.windowVal), highside)
+               
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
         elif (self.channel == self.ID_2e2mu): self.appendName = '2e2mu'
