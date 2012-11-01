@@ -15,12 +15,16 @@
 #include "TPaveText.h"
 #include "TGraphErrors.h"
 #include "TStyle.h"
+#include "TArrow.h"
 #include "Math/DistFunc.h"
 
-int extractSignificanceStats(){
+int extractSignificanceStats(bool unblind=false){
+
+  gStyle->SetPalette(1);
+  gStyle->SetOptStat(0);
 
   const float lumi7TeV=5.051;
-  const float lumi8TeV=5.261;
+  const float lumi8TeV=12.21;
 
   char fileName[128];
   sprintf(fileName,"qmu.root");
@@ -34,9 +38,11 @@ int extractSignificanceStats(){
   t->SetBranchAddress("weight",&w);
   t->SetBranchAddress("type",&type);
 
-  TH1F *hSM=new TH1F("hSM;S = -2 #times ln(L_{1}/L_{2});Number of Toys","",8000,-15,15);
-  TH1F *hPS=new TH1F("hPS;S = -2 #times ln(L_{1}/L_{2});Number of Toys","",8000,-15,15);
-  TH1F *hObs=new TH1F("hObserved","",8000,-15,15);
+
+  TH1F *hSM=new TH1F("hSM;S = -2 #times ln(L_{PS}/L_{SM});Number of Toys","",8000,-40,40);
+  TH1F *hPS=new TH1F("hPS;S = -2 #times ln(L_{PS}/L_{SM});Number of Toys","",8000,-40,40);
+  TH1F *hObs=new TH1F("hObserved","",8000,-40,40);
+
   cout<<"Start to lopp on tree in file "<<fileName<<endl;
 
   std::vector<float> v_SM, v_PS,v_Obs;
@@ -54,8 +60,8 @@ int extractSignificanceStats(){
       v_PS.push_back(-q);
     }
     else{
-      hObs->Fill(q);
-      v_Obs.push_back(q);
+      hObs->Fill(-q);
+      v_Obs.push_back(-q);
     }
   }//end loop on tree entries
   cout<<"Finished to loop, sorting vectors "<<v_SM.size()<<" "<<v_PS.size()<<" "<<v_Obs.size()<<endl;
@@ -118,12 +124,13 @@ cout<<"Cutting at "<<cut<<endl;
     }
     cut+=step;
   }//end while loop
-  */
+ 
   cout<<"Finished loop on vector elements, min is "<<diff<<" cut is at "<<cut<<endl;
   cout<<"q value where SM and ALT distributions have same area on opposite sides: "<<crosspoint<<endl;
-  cout<<"Coverage "<<coverage<<endl;
+  //  cout<<"Coverage "<<coverage<<endl;
   float separation=2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
-  cout<<"Separation: "<<separation<<endl<<endl<<endl;
+  // cout<<"Separation: "<<separation<<endl<<endl<<endl;
+  */
 
   float integralSM=hSM->Integral();
   float integralPS=hPS->Integral();
@@ -149,21 +156,33 @@ cout<<"Cutting at "<<cut<<endl;
   float sepH= 2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
   cout<<"Separation from histograms = "<<sepH<<" with coverage "<<coverage<<endl;
 
-
-  cout << "OBSERVED SIGNIFICANCE" << endl;
-
-  cout << "observation: " << v_Obs[0] << endl;
-  cout << "bin: " << hObs->GetMaximumBin() << endl;
+  if(unblind){
+    if(v_Obs.size()!=1){
+      cout<<"Ooops ! The size of the vector with the observed separation is not 1 but "<<v_Obs.size()<<" ! I am not going to plot the observed results."<<endl;
+      unblind=false;
+    }
+    else{
+      float obsTailSM=hSM->Integral(1,hSM->FindBin(v_Obs.at(0)))/integralSM;
+      float obsTailPS=hPS->Integral(hPS->FindBin(v_Obs.at(0)),hPS->GetNbinsX())/integralPS;
+      cout<<"P(SM < Obs): "<<obsTailSM<<"  ("<<ROOT::Math::normal_quantile_c(obsTailSM,1.0) <<" sigma)"<<endl;
+      cout<<"P(PS > Obs): "<<obsTailPS<<"  ("<<ROOT::Math::normal_quantile_c(obsTailPS,1.0) <<" sigma)"<<endl;
+    }
   
-  cout << " --------------- " << endl;
-  double obsPval_SM = 1-hSM->Integral(0,hObs->GetMaximumBin())/hSM->Integral();
-  cout << "pvalue SM: " << obsPval_SM << endl;
-  cout << "signif SM: " << ROOT::Math::normal_quantile_c(obsPval_SM,1.0) << endl;;
-  double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/hPS->Integral();
-  cout << "pvalue PS: " << obsPval_PS << endl;
-  cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl;;
 
 
+    cout << "\n\nOBSERVED SIGNIFICANCE" << endl;
+    cout << "observation: " << v_Obs[0] << endl;
+    cout << "bin: " << hObs->GetMaximumBin() << endl;
+    cout << " --------------- " << endl;
+    double obsPval_SM = 1-hSM->Integral(0,hObs->GetMaximumBin())/hSM->Integral();
+    cout << "pvalue SM: " << obsPval_SM << endl;
+    cout << "signif SM: " << ROOT::Math::normal_quantile_c(obsPval_SM,1.0) << endl;
+    double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/hPS->Integral();
+    cout << "pvalue PS: " << obsPval_PS << endl;
+    cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl<<endl<<endl;
+  }
+
+  //Plotting
   gStyle->SetOptStat(0);
   TCanvas *c1=new TCanvas("c1","c1",500,500);
   c1->cd();
@@ -179,9 +198,9 @@ cout<<"Cutting at "<<cut<<endl;
     hSM->SetMaximum(maxhSM*1.15);
     hPS->SetMaximum(maxhSM*1.15);
   }
-  hSM->SetXTitle("S = -2 #times ln(L_{1}/L_{2})");
+  hSM->SetXTitle(" -2 #times ln(L_{PS}/L_{SM})");
   hSM->SetYTitle("Generated experiments");
-  hPS->SetXTitle("S = -2 #times ln(L_{1}/L_{2})");
+  hPS->SetXTitle(" -2 #times ln(L_{PS}/L_{SM})");
   hPS->SetYTitle("Generated experiments");
   hSM->SetLineColor(kMagenta-3);
   hSM->SetFillColor(kMagenta-3);
@@ -191,31 +210,52 @@ cout<<"Cutting at "<<cut<<endl;
   hPS->SetFillColor(kBlue+1);
   hPS->SetLineWidth(2);
   hPS->SetFillStyle(3695);
+
   hObs->SetLineColor(kGreen+3);
-  hObs->SetLineWidth(2);
+  hObs->SetLineWidth(5);
+
+  TGraph *grObs=new TGraph();//dummy, just for the legend
+  grObs->SetLineColor(kGreen+3);
+  grObs->SetLineWidth(5);
+  
+  hSM->GetXaxis()->SetLabelSize(0.04);
+  hSM->GetYaxis()->SetLabelSize(0.04);
+  hPS->GetXaxis()->SetLabelSize(0.04);
+  hPS->GetYaxis()->SetLabelSize(0.04);
+  hSM->GetXaxis()->SetRangeUser(-15.0,15.0);
+  hPS->GetXaxis()->SetRangeUser(-15.0,15.0);
+
   hSM->Draw();
   hPS->Draw("sames");
-  
-  TArrow *obsArrow  = new TArrow(v_Obs[0],hSM->GetMaximum()/2.,v_Obs[0],0.0,.05,"|>");
-  obsArrow->SetLineWidth(3);
-  obsArrow->Draw("same");
-  //hObs->Draw("sames");
+
+  TArrow *obsArrow=0;
+  if(unblind)obsArrow=new TArrow(v_Obs.at(0),hSM->GetMaximum()/5.0,v_Obs.at(0),0.0,0.05,"|->");
+  else obsArrow=new TArrow(0.0,hSM->GetMaximum()/5.0,0.0,0.0,0.05,"|->");
+  obsArrow->SetLineColor(kGreen+3);
+  obsArrow->SetLineWidth(5.0);
+  if(unblind)  obsArrow->Draw();
 
   TLegend *leg = new TLegend(0.7,0.6,0.9,0.9);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(hSM,"  PS, 0-","f");
-  leg->AddEntry(hPS,"  SM, 0+","f");
+  leg->AddEntry(hSM, "  SM, 0+","f");
+  leg->AddEntry(hPS, "  PS, 0-","f");
+  if(unblind) leg->AddEntry(hObs,"  CMS data","L");
+  //  if(unblind) leg->AddEntry(hObs,"  Simulated data","L");
   leg->Draw();
 
 
-  TPaveText pt(0.16,0.95,0.45,0.99,"NDC");
+  TPaveText pt(0.16,0.95,0.40,0.99,"NDC");
   pt.SetFillColor(0);
-  pt.AddText("CMS Expected");
+  pt.SetTextAlign(12);
+  pt.SetTextSize(0.027);
+  pt.AddText("CMS Preliminary");
   pt.SetBorderSize(0);
-  TPaveText pt2(0.55,0.95,0.99,0.99,"NDC");
+  TPaveText pt2(0.53,0.95,0.98,0.99,"NDC");
   pt2.SetFillColor(0);
-  pt2.AddText(Form(" #sqrt{s} = 7 TeV, L = %.3f fb^{-1}; #sqrt{s} = 8 TeV, L = %.3f fb^{-1}",lumi7TeV,lumi8TeV));
+  pt2.SetTextAlign(32);
+  pt2.SetTextSize(0.027);
+  pt2.AddText(Form(" #sqrt{s} = 7 TeV, L = %.3f fb^{-1}; #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",lumi7TeV,lumi8TeV));
   pt2.SetBorderSize(0);
   pt.Draw();
   pt2.Draw();
