@@ -73,6 +73,8 @@ elif [ $action -eq 3 ]
     text2workspace.py -m $MH $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs --PO=muAsPOI -o scan2D.root
     combine -M MultiDimFit scan2D.root --algo=grid --points 10000 --fastScan  -m $MH -v 2 -n "Test2D"
 ### plot with contours.cxx
+### for the 1D scan of r:
+### combine -M MultiDimFit  scan2D.root --algo=grid --points 100 -m $MH -v 2 -n 1Dr -P r --floatOtherPOI=1
 else
     echo "Requested to perform and unrecognized action: "${action}
     echo "action can be 1:hypothesis test (fixed mu)  ;   2:1D scan, mu floated as nuisance   ;   3:2D scan, mu floated as POI"

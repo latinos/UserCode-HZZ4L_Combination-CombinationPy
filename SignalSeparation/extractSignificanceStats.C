@@ -174,10 +174,10 @@ cout<<"Cutting at "<<cut<<endl;
     cout << "observation: " << v_Obs[0] << endl;
     cout << "bin: " << hObs->GetMaximumBin() << endl;
     cout << " --------------- " << endl;
-    double obsPval_SM = 1-hSM->Integral(0,hObs->GetMaximumBin())/hSM->Integral();
+    double obsPval_SM = 1-hSM->Integral(0,hObs->GetMaximumBin())/integralSM;
     cout << "pvalue SM: " << obsPval_SM << endl;
     cout << "signif SM: " << ROOT::Math::normal_quantile_c(obsPval_SM,1.0) << endl;
-    double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/hPS->Integral();
+    double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/integralPS;
     cout << "pvalue PS: " << obsPval_PS << endl;
     cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl<<endl<<endl;
   }
