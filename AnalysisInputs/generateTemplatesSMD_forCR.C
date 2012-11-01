@@ -18,7 +18,9 @@
 #include "TCanvas.h"
 #include "TString.h"
 #include <sstream>
+#include <Riostream.h>
 #include <vector>
+#include <utility>
 
 #if !defined(__CINT__) || defined(__MAKECINT__)
 #include <TSystem.h>
@@ -41,12 +43,12 @@ Mela* myMELA; //used if recompute is true
 
 ////////////////////////////////////
 //--- Really important params --- //
-const int mH=126;
-const float mzzCutLow=106;
-const float mzzCutHigh=141;
-const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+const int mH=125;
+const float mzzCutLow=105;
+const float mzzCutHigh=140;
+const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../CreateDatacards/templates2D_smd_8TeV_M126/"; //it must already exist !
+const TString destDir = "../CreateDatacards/templates2D_smd_7TeV_20121101/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -667,8 +669,10 @@ void makeTemplate(TString channel){
   histoPair.first=h_mzzD;
   histoPair.second=h_mzzD;
   // --------------------------------------------------
-  makePlot1D( h_D,"ZJetsCR_8TeV" );
-  makePlot2D( h_mzzD,"ZJetsCR_8TeV" );
+  string strSqrt="7TeV";
+  if(useSqrts==2)strSqrt="8TeV";
+  makePlot1D( h_D,strSqrt+"_ZJetsCR" );
+  makePlot2D( h_mzzD,strSqrt+"_ZJetsCR" );
 
   fqqZZ->cd();
   h_mzzD->Write("h_superDpsD");
