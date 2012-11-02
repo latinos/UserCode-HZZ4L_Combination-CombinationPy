@@ -122,30 +122,32 @@ systematic CMS_zz4l_gamma True
 doHypTest False
 #altHypLabel _ALT
 
+signalShape mekd_sig_a0 TMath::Max(6.995+(0.04525)*(@0-100)+(0.0002597)*(@0-100)*(@0-100),0)
+qqZZshape mekd_qqZZ_a0 TMath::Max(6.369+(0.0573)*(@0-100)+(-0.0009289)*(@0-100)*(@0-100),0)
+signalShape mekd_sig_a1 TMath::Max(1.013+(0.02064)*(@0-100)+(-0.0004932)*(@0-100)*(@0-100),0)
+qqZZshape mekd_qqZZ_a1 TMath::Max(1.035+(-0.006097)*(@0-100)+(0.0005243)*(@0-100)*(@0-100),0)
+signalShape mekd_sig_a2 TMath::Min(TMath::Max(0.5656+(0.01081)*(@0-100)+(-0.0002329)*(@0-100)*(@0-100),0),1)
+qqZZshape mekd_qqZZ_a2 TMath::Min(TMath::Max(0.6416+(0.01073)*(@0-100)+(-0.0002315)*(@0-100)*(@0-100),0),1)
+signalShape mekd_sig_a3 TMath::Max(9.321+(0.02013)*(@0-100)+(-0.0007674)*(@0-100)*(@0-100),0)
+qqZZshape mekd_qqZZ_a3 TMath::Max(6.823+(-0.09065)*(@0-100)+(0.002733)*(@0-100)*(@0-100),0)
+signalShape mekd_sig_a4 TMath::Max(1.271+(-0.02567)*(@0-100)+(0.0006759)*(@0-100)*(@0-100),0)
+qqZZshape mekd_qqZZ_a4 TMath::Max(2.495+(0.1665)*(@0-100)+(-0.004267)*(@0-100)*(@0-100),0)
 
-signalShape mekd_sig_a0  TMath::Max(6.919+(-0.2297)*sqrt(@0-100)+(0.06833)*(@0-100),0)
-qqZZshape mekd_qqZZ_a0  TMath::Max(6.612+(-0.1137)*sqrt(@0-100)+(0.04531)*(@0-100),0)
-signalShape mekd_sig_a1  TMath::Max(0.722+(0.003111)*sqrt(@0-100)+(0.0006354)*(@0-100),0)
-qqZZshape mekd_qqZZ_a1  TMath::Max(1.045+(-0.1066)*sqrt(@0-100)+(0.03073)*(@0-100),0)
-signalShape mekd_sig_a2  TMath::Min(TMath::Max(0.1627+(-0.01572)*sqrt(@0-100)+(0.003246)*(@0-100),0),1)
-qqZZshape mekd_qqZZ_a2  TMath::Min(TMath::Max(0.6801+(-0.01597)*sqrt(@0-100)+(0.006918)*(@0-100),0),1)
-signalShape mekd_sig_a3  8.318+(-0.126)*sqrt(@0-100)+(0.04021)*(@0-100)
-qqZZshape mekd_qqZZ_a3  6.384+(0.2569)*sqrt(@0-100)+(-0.0587)*(@0-100)
-signalShape mekd_sig_a4  TMath::Max(1.55+(0.04004)*sqrt(@0-100)+(-0.01475)*(@0-100),0)
-qqZZshape mekd_qqZZ_a4  TMath::Max(3.003+(0.3404)*sqrt(@0-100)+(-0.05792)*(@0-100),0)
+
+
+
 RelErrShape relerr_zx_ld_mean 0.0294366
 RelErrShape relerr_zx_ld_sigma 0.00493466
 RelErrShape relerr_zx_gs_mean 0.0143977
 RelErrShape relerr_zx_gs_sigma 0.00381718
 RelErrShape relerr_zx_ld_frac 0.615173
-RelErrShape relerr_qqzz_ld_frac 0.48 
+RelErrShape relerr_qqzz_ld_frac 0.48
 RelErrShape relerr_qqzz_ld_mean 0.0138799+(-2.6221e-07*@0)
-RelErrShape relerr_qqzz_ld_sigma 0.00207282 
+RelErrShape relerr_qqzz_ld_sigma 0.00207282
 RelErrShape relerr_qqzz_gs_mean 0.0325488+(-7.32963e-05*@0)
 RelErrShape relerr_qqzz_gs_sigma 0.00926753+(-3.71026e-05*@0)
 RelErrShape relerr_ggH_ld_mean 0.014949+(-1.64193e-05*@0)
-RelErrShape relerr_ggH_ld_sigma 0.00175217 
+RelErrShape relerr_ggH_ld_sigma 0.00175217
 RelErrShape relerr_ggH_gs_mean 0.0304213+(-6.52523e-05*@0)
 RelErrShape relerr_ggH_gs_sigma 0.00765059+(-2.27997e-05*@0)
-RelErrShape relerr_ggH_ld_frac 0.479963 
-
+RelErrShape relerr_ggH_ld_frac 0.479963
