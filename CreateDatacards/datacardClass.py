@@ -165,8 +165,10 @@ class datacardClass:
             highside = 650.0
         elif (self.mH >= 350):
             lowside = 200.0
+            highside = 900.0
         elif (self.mH >= 500):
             lowside = 250.0
+            highside = 1000.0
         elif (self.mH >= 700):
             lowside = 350.0
             highside = 1400.0
@@ -300,8 +302,6 @@ class datacardClass:
         #CMS_zz4l_alpha.setConstant(True)  # also read from input file
         CMS_zz4l_mean_BW.setConstant(True)
         #CMS_zz4l_gamma_BW.setConstant(True)
-
-        print "HEEERRRRRRRRRRRRRRRRREEEEEEE"
 
         print "mean_BW ", CMS_zz4l_mean_BW.getVal()
         print "gamma_BW ", CMS_zz4l_gamma.getVal()
