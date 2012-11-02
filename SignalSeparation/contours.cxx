@@ -167,26 +167,20 @@ TList* contourFromTH2(TH2 *h2in, double threshold) {
 
 void plotScan(){
 
-  gStyle->SetPalette(1);
-  gStyle->SetOptStat(0);
-
-  TFile *f=new TFile("higgsCombineTest2D.MultiDimFit.mH125.root","READ");
+  TFile *f=new TFile("higgsCombineTest2D.MultiDimFit.mH126.root","READ");
   TTree *t=(TTree*)f->Get("limit");
   TGraph *gr_BestFit=(TGraph*) bestFit(t, "x", "r");
-  // double dummyX=0.5,dummyY=1.0;
-  //  gr_BestFit->SetPoint(0,dummyX,dummyY);
-
   //  contourPlot(t, "r", "x", double pmin, double pmax,gr_BestFit );
   TH2F* h2D=(TH2F*)treeToHist2D(t, "x", "r", "scan2d", 0.0, 1.0, 0.0, 3.0);
-  TGraph *mycont68=(TGraph*)contourFromTH2(h2D, 2.30 )->At(0);//2.3
+  TGraph *mycont68=(TGraph*)contourFromTH2(h2D, 2.3/2.0 )->At(0);
   mycont68->SetMarkerSize(1.25);
   mycont68->SetLineWidth(1.5);
-  TGraph *mycont95=(TGraph*)contourFromTH2(h2D, 5.99)->At(0);
+  TGraph *mycont95=(TGraph*)contourFromTH2(h2D, 6.17/2.0)->At(0);
   mycont95->SetMarkerSize(1.25);
   mycont95->SetLineWidth(1.5);
   mycont95->SetLineStyle(kDashed);
 
-  TGraph *mycont3sigma=(TGraph*)contourFromTH2(h2D, 11.8)->At(0);//11.8
+  TGraph *mycont3sigma=(TGraph*)contourFromTH2(h2D, 11.8/2.0)->At(0);
   mycont3sigma->SetMarkerSize(1.25);
   mycont3sigma->SetLineWidth(1.5);
   mycont3sigma->SetLineStyle(kDotted);
@@ -194,47 +188,14 @@ void plotScan(){
   TCanvas *c1=new TCanvas("cc1","CANVAS1",800,800);
   c1->cd();
   gPad->SetRightMargin(0.085);
-  h2D->SetXTitle("f_{a3}");
-  h2D->SetYTitle("#mu");
-  h2D->GetXaxis()->SetLabelSize(0.04);
-  h2D->GetYaxis()->SetLabelSize(0.04);
-  h2D->Draw("col");
+  h2D->SetXTitle("x (scalar=0, pseudoscalar=1)");
+  h2D->SetYTitle("#mu (signal strength)");
+  h2D->GetXaxis()->SetLabelSize(0.035);
+  h2D->GetYaxis()->SetLabelSize(0.035);
+  h2D->Draw("colz");
   mycont68->Draw("L");
   mycont95->Draw("L");
   gr_BestFit->Draw("P");
-
-  /*
-  //draw error bars coming from 1D scans
-  float x1dNom[1]={0.0 };
-  float y1dNom[1]={0.93 };
-  float x1dErrMinus[1]={x1dNom[0]-0.0};
-  float x1dErrPlus[1]={0.29-x1dNom[0]};//plus 1-sigma on f_a3
-  float y1dErrMinus[1]={y1dNom[0]-0.61};
-  float y1dErrPlus[1]={1.32-y1dNom[0]};//plus 1-sigma on mu
-  TGraphAsymmErrors *sigma1Dfit=new TGraphAsymmErrors(1,x1dNom,y1dNom,x1dErrMinus,x1dErrPlus,y1dErrMinus,y1dErrPlus);
-  sigma1Dfit->SetMarkerStyle(24);
-  sigma1Dfit->SetMarkerSize(2.
-  sigma1Dfit->Draw("PE");
-  */
-
-  float lumi7TeV=5.051;
-  float lumi8TeV=12.21;
-  TPaveText pt(0.16,0.95,0.40,0.99,"NDC");
-  pt.SetFillColor(0);
-  pt.SetTextAlign(12);
-  pt.SetTextSize(0.027);
-  pt.AddText("CMS Preliminary");
-  pt.SetBorderSize(0);
-  TPaveText pt2(0.53,0.95,0.98,0.99,"NDC");
-  pt2.SetFillColor(0);
-  pt2.SetTextAlign(32);
-  pt2.SetTextSize(0.027);
-  pt2.AddText(Form(" #sqrt{s} = 7 TeV, L = %.3f fb^{-1}; #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",lumi7TeV,lumi8TeV));
-  pt2.SetBorderSize(0);
-  pt.Draw();
-  pt2.Draw();
-
-  c1->SaveAs("sigsep_combine_scan2D_contour.root");
 
   /* TCanvas *c2=new TCanvas("cc2","CANVAS2-CONTOUR",800,800);
   c2->cd();
