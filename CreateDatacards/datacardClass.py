@@ -163,13 +163,13 @@ class datacardClass:
         if (self.mH >= 275):
             lowside = 180.0
             highside = 650.0
-        elif (self.mH >= 350):
+        if (self.mH >= 350):
             lowside = 200.0
             highside = 900.0
-        elif (self.mH >= 500):
+        if (self.mH >= 500):
             lowside = 250.0
             highside = 1000.0
-        elif (self.mH >= 700):
+        if (self.mH >= 700):
             lowside = 350.0
             highside = 1400.0
                         
