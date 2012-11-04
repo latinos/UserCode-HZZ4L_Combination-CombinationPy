@@ -228,8 +228,8 @@ void plot_Exclusion_7p8()
   TGraph *grObs = new TGraph(nMassEff, a_masses, a_obs);
   grObs->SetLineWidth(3);
   grObs->SetLineColor(kBlack);
-  grObs->SetMarkerStyle(21);
-  grObs->SetMarkerSize(0.6);
+  grObs->SetMarkerStyle(20);
+  grObs->SetMarkerSize(0.7);
  
   //cout<<"nMasses: "<<nMassEff<<endl;
   for (int a = 0; a < nMassEff; a++)
