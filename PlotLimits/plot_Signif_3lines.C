@@ -16,18 +16,18 @@
 void getPvals(TFile *f, std::vector<double> &v_mh, std::vector<double> &v_obs);
 
 // --------- Inputs ------- //
-TString inputFile = "results/higgsCombineHZZ4L_PLP.root";
-TString inputFile_1 = "results/higgsCombineHZZ4L_PLP.root";
-TString inputFile_2 = "results/higgsCombineHZZ4L_PLP.root";
-TString inputFileExp ="results/higgsCombineHZZ4L_PLPE.root";
-TString inputFileExp_1 = "results/higgsCombineHZZ4L_PLPE.root";
-TString inputFileExp_2 = "results/higgsCombineHZZ4L_PLPE.root";
-TString Graph1 = "2D Fit 7TeV";
-TString Graph2 = "1D Fit 7+8TeV";
-TString Graph3 = "2D Fit 7+8TeV";
+TString inputFile = "resultstemp/higgsCombineHZZ4L_PLP.root";
+TString inputFile_1 = "results261012_1Dbranch05/higgsCombineHZZ4L_PLP.root";
+TString inputFile_2 = "results261012_2Dbranch05/higgsCombineHZZ4L_PLP.root";//"results261012_2DnewZshape/higgsCombineHZZ4L_PLP.root";
+TString inputFileExp ="resultstemp/higgsCombineHZZ4L_PLPE.root";
+TString inputFileExp_1 = "results261012_1Dbranch05/higgsCombineHZZ4L_PLPE.root";
+TString inputFileExp_2 = "results261012_2Dbranch05/higgsCombineHZZ4L_PLPE.root";//"results261012_2DnewZshape/higgsCombineHZZ4L_PLPE.root";
+TString Graph1 = "2D Fit 7+8TeV";
+TString Graph2 = "Observed (1D)";
+TString Graph3 = "Observed (2D)";
 const bool addObs = false;
-const bool addObs_1 = false;
-const bool addObs_2 = false;
+const bool addObs_1 = true;
+const bool addObs_2 = true;
 const bool addExpected = false;
 const bool addExpected_1 = true;
 const bool addExpected_2 = true;
@@ -42,8 +42,8 @@ const bool logy = true;
 const bool logx = true;
 const bool grid = false;
 const bool gridOnTop = false;
-const bool points = false;
-const bool points_1 = false;
+const bool points = true;
+const bool points_1 = true;
 const bool points_2 = true;
 const bool isTiny = false;
 int canvasX = 900;
@@ -51,7 +51,7 @@ int canvasY = 700;
 Double_t lumi = 5.051;
 const bool _DEBUG_ = false;
 string plotDir = "plots";
-string dimension = "1D2D_no2l2tau";
+string dimension = "2D1D_no2l2tau_branch05";
 // ----------------------- //
 
 
@@ -295,7 +295,8 @@ void plot_Signif_3lines()
       TGraph *grExp = new TGraph(nMassEffExp, a_masses_exp, a_exp);
       grExp->SetLineWidth(2);
       grExp->SetLineColor(kRed);
-      grExp->SetLineStyle(2);
+      //grExp->SetLineStyle(2);
+      grExp->SetLineStyle(7);
       grExp->SetName("Expected");
       grExp->SetTitle("Expected");
     }
@@ -304,7 +305,7 @@ void plot_Signif_3lines()
       TGraph *grExp_1 = new TGraph(nMassEffExp_1, a_masses_exp_1, a_exp_1);
       grExp_1->SetLineWidth(2);
       grExp_1->SetLineColor(kBlue);
-      grExp_1->SetLineStyle(2);
+      grExp_1->SetLineStyle(7);
       grExp_1->SetName("Expected1");
       grExp_1->SetTitle("Expected1");
     }
@@ -313,7 +314,7 @@ void plot_Signif_3lines()
       TGraph *grExp_2 = new TGraph(nMassEffExp_2, a_masses_exp_2, a_exp_2);
       grExp_2->SetLineWidth(2);
       grExp_2->SetLineColor(kBlack);
-      grExp_2->SetLineStyle(2);
+      grExp_2->SetLineStyle(7);
       grExp_2->SetName("Expected2");
       grExp_2->SetTitle("Expected2");
     }
@@ -346,7 +347,7 @@ void plot_Signif_3lines()
   pt3->SetFillColor(0);
   pt3->SetTextFont(42);
   char lum2[192];
-  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.1);
+  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",12.21);
   pt3->AddText(lum2); 
 
 
@@ -354,35 +355,35 @@ void plot_Signif_3lines()
   TPaveText *oneSig = new TPaveText(0.97,0.85,1,0.89,"NDC");
   oneSig->SetFillColor(0);
   oneSig->SetTextFont(42);
-  oneSig->SetTextColor(kRed);
+  //oneSig->SetTextColor(kRed);
   oneSig->AddText("1#sigma"); 
 
   //TPaveText *twoSig = new TPaveText(0.94,0.76,0.97,0.8,"NDC");
   TPaveText *twoSig = new TPaveText(0.97,0.765,1,0.805,"NDC");
   twoSig->SetFillColor(0);
   twoSig->SetTextFont(42);
-  twoSig->SetTextColor(kRed);
+  //twoSig->SetTextColor(kRed);
   twoSig->AddText("2#sigma"); 
 
   //TPaveText *threeSig = new TPaveText(0.94,0.63,0.97,0.67,"NDC");
   TPaveText *threeSig = new TPaveText(0.97,0.64,1,0.68,"NDC");
   threeSig->SetFillColor(0);
   threeSig->SetTextFont(42);
-  threeSig->SetTextColor(kRed);
+  //threeSig->SetTextColor(kRed);
   threeSig->AddText("3#sigma"); 
 
   //TPaveText *fourSig = new TPaveText(0.94,0.455,0.97,0.495,"NDC");
   TPaveText *fourSig = new TPaveText(0.97,0.475,1,0.515,"NDC");
   fourSig->SetFillColor(0);
   fourSig->SetTextFont(42);
-  fourSig->SetTextColor(kRed);
+  //fourSig->SetTextColor(kRed);
   fourSig->AddText("4#sigma"); 
 
   //TPaveText *fiveSig = new TPaveText(0.94,0.24,0.97,0.28,"NDC");
   TPaveText *fiveSig = new TPaveText(0.97,0.26,1,0.3,"NDC");
   fiveSig->SetFillColor(0);
   fiveSig->SetTextFont(42);
-  fiveSig->SetTextColor(kRed);
+  //fiveSig->SetTextColor(kRed);
   fiveSig->AddText("5#sigma");
 
   TLegend * box2 = new TLegend(0.51,0.38,0.71,0.5);
@@ -404,27 +405,27 @@ void plot_Signif_3lines()
   TLine *l1=new TLine();
   l1->SetLineStyle(1);
   l1->SetLineWidth(1);
-  l1->SetLineColor(kRed);
+  //l1->SetLineColor(kRed);
   l1->DrawLine(105.0,ROOT::Math::normal_cdf_c(1, 1.0),180.0,ROOT::Math::normal_cdf_c(1, 1.0));
   TLine *l2=new TLine();
   l2->SetLineStyle(1);
   l2->SetLineWidth(1);
-  l2->SetLineColor(kRed);
+  //l2->SetLineColor(kRed);
   l2->DrawLine(105.0,ROOT::Math::normal_cdf_c(2, 1.0),180.0,ROOT::Math::normal_cdf_c(2, 1.0));
   TLine *l3=new TLine();
   l3->SetLineStyle(1);
   l3->SetLineWidth(1);
-  l3->SetLineColor(kRed);
+  //l3->SetLineColor(kRed);
   l3->DrawLine(105.0,ROOT::Math::normal_cdf_c(3, 1.0),180.0,ROOT::Math::normal_cdf_c(3, 1.0));
   TLine *l4=new TLine();
   l4->SetLineStyle(1);
   l4->SetLineWidth(1);
-  l4->SetLineColor(kRed);
+  //l4->SetLineColor(kRed);
   l4->DrawLine(105.0,ROOT::Math::normal_cdf_c(4, 1.0),180.0,ROOT::Math::normal_cdf_c(4, 1.0));
   TLine *l5=new TLine();
   l5->SetLineStyle(1);
   l5->SetLineWidth(1);
-  l5->SetLineColor(kRed);
+  //l5->SetLineColor(kRed);
   l5->DrawLine(105.0,ROOT::Math::normal_cdf_c(5, 1.0),180.0,ROOT::Math::normal_cdf_c(5, 1.0));
 
 
