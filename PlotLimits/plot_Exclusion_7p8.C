@@ -23,7 +23,7 @@ TGraph * removeGlitches2(TGraph *out);
 
 
 // --------- Inputs ------- //
-TString inputFile = "results181012/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile = "results/higgsCombineHZZ4L_ASCLS.root";//"results261012_1DoldZshape/higgsCombineHZZ4L_ASCLS.root";
 const bool addObsLimit = true;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
@@ -47,8 +47,8 @@ int canvasY = 700;
 double sqrts = 7.0;
 Double_t lumi = 5.051;
 std::string plotDir = "plots";
-std::string append = "2D_no2l2tau";
-TString LimitType = "2D";
+std::string append = "1D_no2l2tau_branch05";
+TString LimitType = "1D";
 // ----------------------- //
 
 
@@ -229,7 +229,7 @@ void plot_Exclusion_7p8()
   grObs->SetLineWidth(3);
   grObs->SetLineColor(kBlack);
   grObs->SetMarkerStyle(21);
-  grObs->SetMarkerSize(0.8);
+  grObs->SetMarkerSize(0.6);
  
   //cout<<"nMasses: "<<nMassEff<<endl;
   for (int a = 0; a < nMassEff; a++)
@@ -420,7 +420,7 @@ void plot_Exclusion_7p8()
       if (gPad->GetLogy() && log((yHigh-5)/yLow) > log(1e6)) { dyh *= 2; dyl *= 2; }
       if (gPad->GetLogy() == 0) { dyh = dyl = 0.01*((yHigh-5)-yLow); }
       if (isTiny) { dyh *= 2; dyl *= 2; }
-      for (int j = 100; j < 600; j += 10)  {
+      for (int j = 100; j < xHigh; j += 10)  {
 	  if (j > 400 && j % 20 == 10) continue;
 	  tick.DrawLine(j, yLow, j, yLow+(j % 100 == 0 ? 2*dyl : dyl));
 	  tick.DrawLine(j, (yHigh-5), j, yHigh-5-(j % 100 == 0 ? 2*dyh : dyh));
