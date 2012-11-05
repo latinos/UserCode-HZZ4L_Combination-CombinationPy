@@ -4,7 +4,7 @@
  * usage: 
  * -set input paths variables in Config.h
  * -run with:
- * root -q -b loadMELA.C generateTemplatesSMD_forCR.C+
+ * root -q -b ../loadMELA.C generateTemplatesSMD_forCR.C+
  * 2D templates are written to "destDir"
  *
  */
@@ -46,12 +46,14 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
-const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../CreateDatacards/templates2D_smd_7TeV_20121101/"; //it must already exist !
+const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_IntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
+const bool applyInterferenceRew=true;
+string fInterferenceName="./1DinterferenceReweight.root";
 //-----
 
 
@@ -66,10 +68,16 @@ const int nbinsX=21;
 float binsX[nbinsX+1]={0.000, 0.030, 0.060, 0.100, 0.200, 0.300, 0.400, 0.500, 0.550, 0.600, 
 		       0.633, 0.666, 0.700, 0.733, 0.766, 0.800, 0.833, 0.866, 0.900, 0.933,
 		       0.966, 1.000};
-const int nbinsY=25;
-float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.333, 0.366, 0.400, 
+const int nbinsYps=25;
+float binsYps[nbinsYps+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.333, 0.366, 0.400, 
 		       0.433, 0.466, 0.500, 0.533, 0.566, 0.600, 0.633, 0.666, 0.700, 0.733, 
 		       0.766, 0.800, 0.850, 0.900, 0.950, 1.000};
+
+const int nbinsYgrav=29;
+float binsYgrav[nbinsYgrav+1]={0.000, 0.100, 0.150, 0.175 , 0.200, 0.225, 0.250, 0.275, 0.300, 0.325, 
+		       0.350, 0.375, 0.400, 0.425 , 0.450, 0.475, 0.500, 0.525, 0.575, 0.600, 
+		       0.633, 0.666, 0.700, 0.733 , 0.766, 0.800, 0.850, 0.900, 0.950, 1.000};
+
 /*
 const int nbinsY=31;
 float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.320, 0.340, 0.360,
@@ -81,6 +89,7 @@ float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.320, 0
 pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp);
 void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex=0, int mh=125) ;
 TH2F* reweightForInterference(TH2F* temp);
+double calcInterfRew(TH1 *h,double KD );
 void makePlot1D( TH1 *h ,TString label );
 void makePlot2D( TH2 *h ,TString label );
 TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,TString superMelaName="superLD",TString templateName="bkgHisto",  bool smooth=false);
@@ -294,6 +303,10 @@ TH2F* reweightForInterference(TH2F* temp){
 
 }
 
+double calcInterfRew(TH1 *h,double KD ){
+  return h->GetBinContent(h->FindBin(KD));
+}
+
 void makePlot1D( TH1 *h ,TString label ){
 
   gStyle->SetOptStat(1);
@@ -489,6 +502,13 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
   }
   
+
+ const int nbinsY=(melaName=="pseudoLD"? nbinsYps : nbinsYgrav);
+  float binsY[nbinsY+1];
+  for(int ib=0;ib<=nbinsY;ib++){
+    if(melaName=="pseudoLD") binsY[ib]=binsYps[ib];
+    if(melaName=="graviLD") binsY[ib]=binsYgrav[ib];
+  }
   TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
   // TH2F* bkgHist = new TH2F(templateName,templateName,50,0.0,1.0, 25,0.0,1.0);
   // const int nBinsFine=100;
@@ -499,6 +519,44 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
 
   bkgHist->Sumw2();
+
+
+  //if asked to applyinterf reweighting, load the TH1
+  TH1F *hInterfRewX=0,*hInterfRewY=0;
+  TFile *fInterfRew=0;
+  if(applyInterferenceRew){
+    if((sampleIndex==0||sampleIndex==3||sampleIndex==4)
+       && (channel=="4mu" || channel=="4e")){
+
+      string curPath=gDirectory->GetPath();
+      //  cout<<"Current Path is "<<curPath.c_str()<<endl;
+      fInterfRew=new TFile( fInterferenceName.c_str());
+      string hIntNameX="";
+
+      if(sampleIndex==0)hIntNameX+="scalar_";
+      else if(sampleIndex==3)hIntNameX+="pseudoscalar_";
+      else if(sampleIndex==4)hIntNameX+="graviton_";
+      else{
+	cout<<"Error from fillTemplate: unrecognized sample -> "<<sampleIndex<<endl;
+	hIntNameX+="unknownSample_";
+      }
+
+      string hIntNameY=hIntNameX;
+      hIntNameX+="superMELA";
+      if(melaName=="pseudoLD")hIntNameY+="pseudoMELA";
+      else  if(melaName=="graviLD")hIntNameY+="graviMELA";
+      else{
+	cout<<"Error from fillTemplate: unrecognized variable name -> "<<melaName.Data()<<endl;
+	hIntNameY+="unknownVar";
+      }
+      hInterfRewX=(TH1F*)fInterfRew->Get(hIntNameX.c_str());
+      hInterfRewY=(TH1F*)fInterfRew->Get(hIntNameY.c_str());
+      gDirectory->cd(curPath.c_str());
+      //      cout<<"Current Path is "<<gDirectory->GetPath()<<endl;
+    }
+  }
+
+
 
   // fill histogram
   cout<<"Input Chain has "<<bkgMC->GetEntries()<<"  entries"<<endl;
@@ -542,6 +600,15 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	//cout << "LD: " << LD << endl;
 	
       }
+
+
+      if(hInterfRewX!=0&&hInterfRewY!=0){
+	w*=calcInterfRew(hInterfRewX,sKD);//reweight in the supermela direction
+	w*=calcInterfRew(hInterfRewY,KD);//reweight in the sig sep KD direction
+      }
+      bkgHist->Fill(sKD,KD,w);
+      //   bkgHist->Fill(mzz,KD,w);
+
       bkgHist->Fill(sKD,KD,w);
       //   bkgHist->Fill(mzz,KD,w);
 
