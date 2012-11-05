@@ -4,7 +4,7 @@
  * usage: 
  * -set input paths variables in Config.h
  * -run with:
- * root -q -b loadMELA.C generateTemplatesSMD.C+
+ * root -q -b ../loadMELA.C generateTemplatesSMD.C+
  * 2D templates are written to "destDir"
  *
  */
@@ -46,12 +46,14 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
-const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../CreateDatacards/templates2D_smd_7TeV_20121101/"; //it must already exist !
+const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
+const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_IntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
+const bool applyInterferenceRew=true;
+string fInterferenceName="./1DinterferenceReweight.root";
 //-----
 
 
@@ -75,12 +77,15 @@ const int nbinsX=21;
 float binsX[nbinsX+1]={0.000, 0.030, 0.060, 0.100, 0.200, 0.300, 0.400, 0.500, 0.550, 0.600, 
 		       0.633, 0.666, 0.700, 0.733, 0.766, 0.800, 0.833, 0.866, 0.900, 0.933,
 		       0.966, 1.000};
-const int nbinsY=25;
-float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.333, 0.366, 0.400, 
+const int nbinsYps=25;
+float binsYps[nbinsYps+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.333, 0.366, 0.400, 
 		       0.433, 0.466, 0.500, 0.533, 0.566, 0.600, 0.633, 0.666, 0.700, 0.733, 
 		       0.766, 0.800, 0.850, 0.900, 0.950, 1.000};
 
-
+const int nbinsYgrav=29;
+float binsYgrav[nbinsYgrav+1]={0.000, 0.100, 0.150, 0.175 , 0.200, 0.225, 0.250, 0.275, 0.300, 0.325, 
+		       0.350, 0.375, 0.400, 0.425 , 0.450, 0.475, 0.500, 0.525, 0.575, 0.600, 
+		       0.633, 0.666, 0.700, 0.733 , 0.766, 0.800, 0.850, 0.900, 0.950, 1.000};
 
 // const int nbinsY=31;
 // float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.320, 0.340, 0.360,
@@ -91,7 +96,7 @@ float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.333, 0
 //--
 pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp);
 void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex=0, int mh=125) ;
-TH2F* reweightForInterference(TH2F* temp);
+double calcInterfRew(TH1 *h,double KD );
 void makePlot1D( TH1 *h ,TString label );
 void makePlot2D( TH2 *h ,TString label );
 TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,TString superMelaName="superLD",TString templateName="bkgHisto",  bool smooth=false);
@@ -104,6 +109,8 @@ void generateTemplatesSMD() ;
 //Following are NOT USED:
 void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0);
 TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp);
+TH2F* reweightForInterference(TH2F* temp);
+double calcInterfRew(double sKD,int sample,int var);
 
 //=======================================================================
 
@@ -225,85 +232,8 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
 }
 
 //=======================================================================
-TH2F* reweightForInterference(TH2F* temp){
-
-  cout << "reweightForInterference" << endl;
-
-  // for interference reweighting of MELA
-  TF1* reweightFunc =0;
-
-  if(makePSTemplate){// or makeAltSignal
-  // ===================================================
-  // for interference reweighting of pseudo-MELA
-    reweightFunc = new TF1("reweightFunc","([0]+[1]*(x-110) )*0.5*(1 + TMath::Erf([2]*(x -[3]) ))*0.5*(1 + TMath::Erf([4]*([5]-x) ))  ",100,200);
-    
-    reweightFunc->SetParameter(0,-5.66409e-01);
-    reweightFunc->SetParameter(1, 1.22591e-02);
-    reweightFunc->SetParameter(2, 1.64942e+00);
-    reweightFunc->SetParameter(3, 1.10080e+02);
-    reweightFunc->SetParameter(4, 2.10905e+00);
-    reweightFunc->SetParameter(5, 1.78529e+02);
-    //  ==================================================== 
-  }
-  else{
-    reweightFunc =new TF1("reweightFunc","gaus",100,1000);
-    
-    reweightFunc->SetParameter(0,0.354258);
-    reweightFunc->SetParameter(1,114.909);
-    reweightFunc->SetParameter(2,17.1512);
-  }
-
-  TH2F* newTemp = new TH2F(*temp);
-  
-  // ---------------------
-  // functions for scaling
-  // ---------------------
-  
-  double oldTempValue=0;
-  double newTempValue=0;
-
-  double slope;
-
-  for(int i=1; i<=temp->GetNbinsX(); i++){
-
-    // choose correct scale factor
-
-    // for reweighting MELA
-    if(makePSTemplate || i>8){
-      slope=reweightFunc->Eval((double)((i-1)*2+101));
-    }
-    else      slope=.354;
-     
-
-    /* ==============================================
-    // for reweighting pseudo-MELA
-    slope = reweightFunc->Eval((double)((i-1)*2+101));
-    ============================================== */
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      oldTempValue = temp->GetBinContent(i,j);
-      newTempValue = oldTempValue*(1+slope*((double)j/30.-.5));
-      newTemp->SetBinContent(i,j,newTempValue);
-
-    }// end loop over Y bins
-
-    // -------------- normalize mZZ slice ----------------
-
-    double norm=(newTemp->ProjectionY("temp",i,i))->Integral();
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      newTemp->SetBinContent(i,j,newTemp->GetBinContent(i,j)/norm);
-
-    }
-
-    // ---------------------------------------------------
-
-  }// end loop over X bins
-
-  return newTemp;
-
+double calcInterfRew(TH1 *h,double KD ){
+  return h->GetBinContent(h->FindBin(KD));
 }
 
 void makePlot1D( TH1 *h ,TString label ){
@@ -499,6 +429,14 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
   }
   
+
+
+  const int nbinsY=(melaName=="pseudoLD"? nbinsYps : nbinsYgrav);
+  float binsY[nbinsY+1];
+  for(int ib=0;ib<=nbinsY;ib++){
+    if(melaName=="pseudoLD") binsY[ib]=binsYps[ib];
+    if(melaName=="graviLD") binsY[ib]=binsYgrav[ib];
+  }
   TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
   // TH2F* bkgHist = new TH2F(templateName,templateName,50,0.0,1.0,25,0.0,1.0);
 
@@ -508,6 +446,42 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
    //  TH2F* bkgHist = new TH2F(templateName,templateName,nBinsFine,xfine,nbinsY,binsY);
 
   bkgHist->Sumw2();
+
+
+  //if asked to applyinterf reweighting, load the TH1
+  TH1F *hInterfRewX=0,*hInterfRewY=0;
+  TFile *fInterfRew=0;
+  if(applyInterferenceRew){
+    if((sampleIndex==0||sampleIndex==3||sampleIndex==4)
+       && (channel=="4mu" || channel=="4e")){
+
+      string curPath=gDirectory->GetPath();
+      //  cout<<"Current Path is "<<curPath.c_str()<<endl;
+      fInterfRew=new TFile( fInterferenceName.c_str());
+      string hIntNameX="";
+
+      if(sampleIndex==0)hIntNameX+="scalar_";
+      else if(sampleIndex==3)hIntNameX+="pseudoscalar_";
+      else if(sampleIndex==4)hIntNameX+="graviton_";
+      else{
+	cout<<"Error from fillTemplate: unrecognized sample -> "<<sampleIndex<<endl;
+	hIntNameX+="unknownSample_";
+      }
+
+      string hIntNameY=hIntNameX;
+      hIntNameX+="superMELA";
+      if(melaName=="pseudoLD")hIntNameY+="pseudoMELA";
+      else  if(melaName=="graviLD")hIntNameY+="graviMELA";
+      else{
+	cout<<"Error from fillTemplate: unrecognized variable name -> "<<melaName.Data()<<endl;
+	hIntNameY+="unknownVar";
+      }
+      hInterfRewX=(TH1F*)fInterfRew->Get(hIntNameX.c_str());
+      hInterfRewY=(TH1F*)fInterfRew->Get(hIntNameY.c_str());
+      gDirectory->cd(curPath.c_str());
+      //      cout<<"Current Path is "<<gDirectory->GetPath()<<endl;
+    }
+  }
 
   // fill histogram
 	
@@ -551,6 +525,11 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	//cout << "LD: " << LD << endl;
 	
       }
+
+      if(hInterfRewX!=0&&hInterfRewY!=0){
+	w*=calcInterfRew(hInterfRewX,sKD);//reweight in the supermela direction
+	w*=calcInterfRew(hInterfRewY,KD);//reweight in the sig sep KD direction
+      }
       bkgHist->Fill(sKD,KD,w);
       //   bkgHist->Fill(mzz,KD,w);
 
@@ -561,41 +540,6 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   int nXbins=bkgHist->GetNbinsX();
   int nYbins=bkgHist->GetNbinsY();
     
-
-  // average is commented (it was applied only for mZZ>300, anyway)
-  /*
-  TH2F* notSmooth = new TH2F(*bkgHist);
-  
-  int effectiveArea=1;
-  double average=0,binsUsed=0;
-  
-  for(int i=1; i<=nXbins; i++){
-    for(int j=1; j<=nYbins; j++){
-      
-      //	binMzz=(i-1)*2+181;
-      float binMzz = bkgHist->GetBinCenter(i);
-      
-      if( binMzz<300 ) continue;
-      if( binMzz>=300 && binMzz<350 ) effectiveArea=1;
-      if( binMzz>=350 && binMzz<500 ) effectiveArea=3;
-      if( binMzz>=500 && binMzz<600 ) effectiveArea=5;
-      if( binMzz>=600 ) effectiveArea=7;
-      
-      for(int a=-effectiveArea; a<=effectiveArea; a++){
-	if(a+i<1 || a+i>nXbins || j>nYbins || j<1) continue;
-	average+= notSmooth->GetBinContent(a+i,j);
-	binsUsed++;
-      }
-      
-      bkgHist->SetBinContent(i,j,average/binsUsed);
-      
-      average=0;
-      binsUsed=0;
-      
-    } // end loop over D
-  } // end loop over mZZ
-  */
-
 
 // smooth 
 
@@ -1101,5 +1045,174 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
   }// end loop over mZZ
 
   return h_mzzD;
+
+}
+
+
+TH2F* reweightForInterference(TH2F* temp){
+
+  cout << "reweightForInterference" << endl;
+
+  // for interference reweighting of MELA
+  TF1* reweightFunc =0;
+
+  if(makePSTemplate){// or makeAltSignal
+  // ===================================================
+  // for interference reweighting of pseudo-MELA
+    reweightFunc = new TF1("reweightFunc","([0]+[1]*(x-110) )*0.5*(1 + TMath::Erf([2]*(x -[3]) ))*0.5*(1 + TMath::Erf([4]*([5]-x) ))  ",100,200);
+    
+    reweightFunc->SetParameter(0,-5.66409e-01);
+    reweightFunc->SetParameter(1, 1.22591e-02);
+    reweightFunc->SetParameter(2, 1.64942e+00);
+    reweightFunc->SetParameter(3, 1.10080e+02);
+    reweightFunc->SetParameter(4, 2.10905e+00);
+    reweightFunc->SetParameter(5, 1.78529e+02);
+    //  ==================================================== 
+  }
+  else{
+    reweightFunc =new TF1("reweightFunc","gaus",100,1000);
+    
+    reweightFunc->SetParameter(0,0.354258);
+    reweightFunc->SetParameter(1,114.909);
+    reweightFunc->SetParameter(2,17.1512);
+  }
+
+  TH2F* newTemp = new TH2F(*temp);
+  
+  // ---------------------
+  // functions for scaling
+  // ---------------------
+  
+  double oldTempValue=0;
+  double newTempValue=0;
+
+  double slope;
+
+  for(int i=1; i<=temp->GetNbinsX(); i++){
+
+    // choose correct scale factor
+
+    // for reweighting MELA
+    if(makePSTemplate || i>8){
+      slope=reweightFunc->Eval((double)((i-1)*2+101));
+    }
+    else      slope=.354;
+     
+
+    /* ==============================================
+    // for reweighting pseudo-MELA
+    slope = reweightFunc->Eval((double)((i-1)*2+101));
+    ============================================== */
+
+    for(int j=1; j<=temp->GetNbinsY(); j++){
+      
+      oldTempValue = temp->GetBinContent(i,j);
+      newTempValue = oldTempValue*(1+slope*((double)j/30.-.5));
+      newTemp->SetBinContent(i,j,newTempValue);
+
+    }// end loop over Y bins
+
+    // -------------- normalize mZZ slice ----------------
+
+    double norm=(newTemp->ProjectionY("temp",i,i))->Integral();
+
+    for(int j=1; j<=temp->GetNbinsY(); j++){
+      
+      newTemp->SetBinContent(i,j,newTemp->GetBinContent(i,j)/norm);
+
+    }
+
+    // ---------------------------------------------------
+
+  }// end loop over X bins
+
+  return newTemp;
+
+}//end reweightForInterference
+
+
+double calcInterfRew(double KD, int sample, int var ){
+
+  const int nBins=30;
+  double Bins[nBins+1];
+  double factor[nBins];
+
+  /*
+  if(sample==0){
+    if(var==0){
+      //Dumping for scalar_superMELA  :
+      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
+      factor= { 1.18507, 0.977561, 0.898954, 1.0435, 0.890893, 0.76997, 0.896865, 0.846479, 0.975199, 0.94788, 0.844742, 0.970861, 0.898826, 1.00451, 0.813552, 0.877781, 0.942754, 0.857228, 0.863034, 0.952789, 0.916475, 0.936719, 0.927974, 0.956584, 0.918833, 0.979569, 0.917289, 1.02654, 1.06457, 1.12997 };
+    }
+    else if(var==1){
+      //Dumping for scalar_pseudoMELA  :
+      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
+      factor= { 1, 1.85465e-07, 0.846479, 0.835627, 0.889097, 0.902255, 0.892185, 0.878248, 1.03515, 1.30822, 1.22188, 1.12075, 1.12748, 1.04155, 1.03368, 0.94484, 1.00269, 0.964909, 0.940151, 1.00931, 0.987935, 0.927407, 0.949474, 0.923974, 0.996851, 0.915705, 0.928214, 0.946008, 0.987219, 0.791668 };
+    }
+    else  if(var==2){
+
+      //Dumping for scalar_graviMELA  :
+      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
+      factor= { 1, 1, 1, 0.809676, 1.31195, 1.13282, 1.0584, 1.08631, 1.02131, 1.03716, 0.959399, 0.964773, 0.951227, 0.968359, 0.994594, 0.976843, 1.04356, 0.861451, 0.845938, 0.881647, 0.751582, 0.833845, 0.517293, 0.575697, 0.310376, 0.129323, 0.290977, 1.23643e-07, 3.7093e-07, 1 };
+    }//end if sample==0 && var==2
+    else{
+      cout<<"Error from calcInterfRew: unrecognized variable code -> "<<var<<endl;
+      return -1.0;
+    }
+  }//end if sample ==0
+  else if(sample==3){//pseudoscalar
+
+    if(var==0){
+      // Dumping for pseudoscalar_superMELA  :      
+      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
+      factor= { 1.11692, 1.01568, 1.20127, 1.04203, 0.789698, 1.12008, 0.935091, 1.13462, 0.99315, 1.0311, 0.990105, 1.16179, 1.05755, 1.13522, 1.18579, 1.1183, 1.04438, 1.07369, 1.14562, 0.972329, 1.02917, 0.948788, 0.939518, 1.02371, 1.05294, 1.00586, 1.14736, 1.10839, 1.08941, 0.845083 };
+    }
+
+    else if(var==1){
+      //Dumping for pseudoscalar_pseudoMELA  :
+      Bins = { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
+      factor  = { 1, 3.43992e-08, 0.455281, 0.337961, 0.484623, 0.662933, 0.650089, 0.770638, 0.845899, 1.01266, 1.00212, 0.956241, 0.981294, 0.971407, 1.06882, 1.00874, 1.05898, 1.08788, 1.14322, 1.18842, 1.17966, 1.27968, 1.32324, 1.31198, 1.49439, 1.57816, 1.85038, 1.66081, 3.12822, 4.63325 };
+    }
+    else{
+      cout<<"Error from calcInterfRew: unrecognized variable code -> "<<var<<endl;
+      return -1.0;
+    }
+
+  }//end if sample ==3
+
+  else if(sample==4){
+    if(var==0){
+//Dumping for graviton_superMELA  :
+ Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
+ factor= { 1.2036, 1.23627, 1.02094, 1.36825, 1.23446, 1.16269, 1.14297, 0.995302, 1.21108, 1.33055, 1.31517, 1.20833, 1.32014, 1.24692, 1.17514, 1.19437, 1.19661, 1.23652, 1.13617, 1.08, 1.12737, 1.16577, 1.09831, 1.09137, 1.0812, 1.11734, 1.10762, 1.02292, 0.969734, 0.690127 };
+    }
+
+    else if(var==2){
+//Dumping for graviton_graviMELA  :
+ Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
+ factor= { 1, 1, 1.34623e-07, 0.592906, 0.765474, 0.94111, 1.01566, 0.967397, 1.00456, 1.05396, 1.02374, 1.0825, 0.995793, 0.990325, 1.05201, 0.914272, 0.98233, 0.832845, 0.758665, 0.937174, 1.33124, 1.05876, 0.992474, 1.27703, 2.07517, 2.07517, 4.15034, 1, 1, 1 };
+    }
+   else{
+      cout<<"Error from calcInterfRew: unrecognized variable code -> "<<var<<endl;
+      return -1.0;
+    }
+  }//end if sample==4
+ else{
+   cout<<"Error from calcInterfRew: unrecognized sample -> "<<sample<<endl;
+   return -1.0;
+
+ }
+  */
+
+//find bin
+ int mybin=-1;
+ for(int ib=0;ib<nBins;ib++){
+   if(Bins[ib]<KD&&Bins[ib+1]>=KD){
+     mybin=ib;
+     break;
+   }
+ }
+
+ return factor[mybin];
 
 }
