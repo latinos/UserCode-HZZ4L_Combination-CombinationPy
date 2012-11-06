@@ -68,7 +68,7 @@ class datacardClass:
         myCSWrhf = HiggsCSandWidth()
         
         histXsBr = ROOT.TH1F("hsmxsbr_{0}_{1}".format(procName,channelName),"", 8905, 109.55, 1000.05)
-        
+                
         for i in range(1,8906):
             
             mHVal = histXsBr.GetBinCenter(i)
@@ -86,8 +86,8 @@ class datacardClass:
             else:
                 histXsBr.SetBinContent(i, myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts) * BR)
 
-            print '\nmakeXsBrFunction : procName=',procName,'   signalProc=',signalProc,'  mH (input)=',mHVal,
-            print '   CS=',myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts),'   BR=',BR
+            #print '\nmakeXsBrFunction : procName=',procName,'   signalProc=',signalProc,'  mH (input)=',rrvMH.getVal(),
+            #print '   CS=',myCSWrhf.HiggsCS(signalProc, mHVal, self.sqrts),'   BR=',BR
             
         rdhname = "rdhXsBr_{0}_{1}_{2}".format(procName,self.channel,self.sqrts)
         rdhXsBr = RooDataHist(rdhname,rdhname, ROOT.RooArgList(rrvMH), histXsBr)  
@@ -103,10 +103,10 @@ class datacardClass:
             return falseVar
     
     # main datacard and workspace function
-    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False):
+    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False, theMassMeasurement=False):
 
         ## --------------- SETTINGS AND DECLARATIONS --------------- ##
-        DEBUG = True#False
+        DEBUG = False
         self.mH = theMH
         self.lumi = theInputs['lumi']
         self.sqrts = theInputs['sqrts']
@@ -118,6 +118,7 @@ class datacardClass:
         self.templateDir = theTemplateDir
 	self.bIncludingError=theIncludingError
 	self.bMEKD = theMEKD
+	self.bMassMeasurement = theMassMeasurement
         
         FactorizedShapes = False
 
@@ -149,7 +150,7 @@ class datacardClass:
         if(self.widthHVal < 0.12):
             self.bUseCBnoConvolution = True
         self.isHighMass = False
-        if self.mH >= 400:
+        if self.mH >= 390:
             if theInputs['useHighMassReweightedShapes']:
                 self.isHighMass = True
             else: print "useHighMassReweightedShapes set to FALSE, using non-reweighted shapes!"
@@ -160,10 +161,8 @@ class datacardClass:
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
         highside = 1000.0
-        
         if (self.mH >= 275):
             lowside = 180.0
-<<<<<<< datacardClass.py
             highside = 650.0
         elif (self.mH >= 350):
             lowside = 200.0
@@ -172,23 +171,14 @@ class datacardClass:
         elif (self.mH >= 700):
             lowside = 350.0
             highside = 1400.0
-=======
-        elif (self.mH >= 700):
-            lowside = 350.0
-        else:
-            lowside = 100.0
->>>>>>> 1.27
-        
+                        
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-<<<<<<< datacardClass.py
         self.high_M = min( (self.mH + 15.*self.windowVal), highside)
-=======
-        self.high_M = min( (self.mH + 15.*self.windowVal), 1400)
->>>>>>> 1.27
-
-        #self.low_M = 100.0
-        #self.high_M = 800.0
-       
+               
+	if(self.bUseCBnoConvolution and self.bMassMeasurement):
+		self.low_M = 100
+		self.high_M = 165
+	
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
         elif (self.channel == self.ID_2e2mu): self.appendName = '2e2mu'
@@ -230,7 +220,6 @@ class datacardClass:
         self.MH = ROOT.RooRealVar("MH","MH",self.mH)
         self.MH.setConstant(True)
     
-
 	# n2, alpha2 are right side parameters of DoubleCB
 	# n, alpha are left side parameters of DoubleCB
 
@@ -289,9 +278,9 @@ class datacardClass:
         CMS_zz4l_n = ROOT.RooRealVar(name,"CMS_zz4l_n",2.,-10.,10.)
         name = "CMS_zz4l_mean_BW_{0}_{1:.0f}".format(self.channel,self.sqrts)
         CMS_zz4l_mean_BW = ROOT.RooRealVar(name,"CMS_zz4l_mean_BW",self.mH,self.low_M,self.high_M)
-        #name = "CMS_zz4l_gamma_sig_{0}_{1:.0f}".format(self.channel,self.sqrts)
         name = "interf_ggH"
-        CMS_zz4l_gamma = ROOT.RooRealVar(name,"CMS_zz4l_gamma",0,-1,1)
+        #name = "CMS_zz4l_gamma_sig_{0}_{1:.0f}".format(self.channel,self.sqrts)
+        CMS_zz4l_gamma = ROOT.RooRealVar(name,"CMS_zz4l_gamma",10.,0.001,1000.)
         name = "CMS_zz4l_widthScale_{0}_{1:.0f}".format(self.channel,self.sqrts)
         CMS_zz4l_widthScale = ROOT.RooRealVar(name,"CMS_zz4l_widthScale",1.0)
         one = ROOT.RooRealVar("one","one",1.0)
@@ -363,8 +352,8 @@ class datacardClass:
             if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_e_sig))
             else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_e_sig))
         elif (self.channel == self.ID_2e2mu) :
-            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+ @0*@1 + @0*@2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig))
-            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+ @0*@1 + @0*@2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig))
+            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+ (@0*@1 + @0*@2)/2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig))
+            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+ (@0*@1 + @0*@2)/2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig))
         
 
         name = "CMS_zz4l_sigma_sig_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
@@ -378,7 +367,6 @@ class datacardClass:
             if self.isHighMass : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape_HM']+")"+"*TMath::Sqrt((1+@1)*(1+@2))", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig,CMS_zz4l_sigma_e_sig))
             else : rfv_sigma_CB = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*TMath::Sqrt((1+@1)*(1+@2))", ROOT.RooArgList(self.MH, CMS_zz4l_sigma_m_sig,CMS_zz4l_sigma_e_sig))
 
-	print "SIGMA_D", rfv_sigma_CB.getVal()
 
         name = "CMS_zz4l_gamma_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
         rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+theInputs['gamma_BW_shape_HM']+")"+"*(1+@1*0.05)",ROOT.RooArgList(self.MH,CMS_zz4l_gamma))
@@ -392,6 +380,7 @@ class datacardClass:
         print "mean_CB ", rfv_mean_CB.getVal()
         print "sigma_CB ", rfv_sigma_CB.getVal()
         print "gamma_BW ", rfv_gamma_BW.getVal()    
+
 
         
         CMS_zz4l_mean_sig_NoConv = ROOT.RooFormulaVar("CMS_zz4l_mean_sig_NoConv_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts),"@0+@1", ROOT.RooArgList(rfv_mean_CB, self.MH))
@@ -473,17 +462,6 @@ class datacardClass:
 
 
 	#------------------------------------------------begin  bIncludingError 
-        name = "CMS_zz4l_sigmaB_sig_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-	rfv_sigmaB_mean = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(CMS_zz4l_mass, CMS_zz4l_sigma_m_sig))
-
-	name = "CMS_zz4l_massErrS_kappa_{0:.0f}".format(self.channel);
-	rfv_sigma_kappa = ROOT.RooFormulaVar(name, "@0*0 + 1.4", ROOT.RooArgList(self.MH)); #the kappa should be parametrized as a function of MH  --> TBD
-	#pdfErrS = ROOT.RooLognormal("pdfErrS", "pdfErrS", CMS_zz4l_massErr,  rfv_sigma_CB, rfv_sigma_kappa);
-	name = "CMS_zz4l_massErrB_kappa_{0:.0f}".format(self.channel);
-	rfv_sigmaB_kappa = ROOT.RooFormulaVar(name, "@0*0 + 1.4", ROOT.RooArgList(CMS_zz4l_mass));  #for bkg,  the kappa should be parametrized as a function of m4l --> TBD
-	#pdfErrB = ROOT.RooLognormal("pdfErrB", "pdfErrB", CMS_zz4l_massErr,  rfv_sigmaB_mean, rfv_sigmaB_kappa);
-
-
 	name = "CMS_zz4l_massErrS_ln_kappa_{0:.0f}".format(self.channel);
 	rfv_EBE_sig_ln_kappa = ROOT.RooFormulaVar(name, "("+theInputs['relerr_ggH_gs_sigma']+")", ROOT.RooArgList(self.MH)); 
 	name = "CMS_zz4l_massErrS_ln_mean_{0:.0f}".format(self.channel);
@@ -528,7 +506,6 @@ class datacardClass:
 	name = "CMS_zz4l_massErrZX_ld_frac_{0:.0f}".format(self.channel);
 	rfv_EBE_zx_frac = ROOT.RooFormulaVar(name, "("+theInputs['relerr_zx_ld_frac']+")", ROOT.RooArgList(self.MH)); 
 	pdfErrZX = ROOT.RooAddPdf("pdfErrZX","pdfErrZX", EBE_zx_ld, EBE_zx_ln, rfv_EBE_zx_frac);
-
 
 
 	sig_ggHErr = ROOT.RooProdPdf("sig_ggHErr","BW (X) CB * pdfErr", ROOT.RooArgSet(signalCB_ggH), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrS), ROOT.RooArgSet(RelErr)));
@@ -725,7 +702,8 @@ class datacardClass:
 			CMS_zz4l_mass.setVal(m)
 			m = m + 0.1
 			if mekd_sig_a4.getVal() <= 0 : print m, mekd_sig_a4.getVal() 
-	
+		CMS_zz4l_mass.setVal(140);
+		print "DEBUG Mingshui ", mekd_qqZZ_a0.getVal(), mekd_qqZZ_a1.getVal(), mekd_qqZZ_a2.getVal(), mekd_qqZZ_a3.getVal(), mekd_qqZZ_a4.getVal()
 	####  ----------------------- end mekd -----------------------------------------------------------
         sig2d_ggH = ROOT.RooProdPdf("sig2d_ggH","sig2d_ggH",ROOT.RooArgSet(self.getVariable(sig_ggH_HM,sig_ggH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
         sig2d_VBF = ROOT.RooProdPdf("sig2d_VBF","sig2d_VBF",ROOT.RooArgSet(self.getVariable(sig_VBF_HM,sig_VBF,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
@@ -919,10 +897,6 @@ class datacardClass:
         ## Reducible backgrounds
         val_meanL = float(theInputs['zjetsShape_mean'])
         val_sigmaL = float(theInputs['zjetsShape_sigma'])
-
-        if (DEBUG):
-            print "ZJets mean = ",theInputs['zjetsShape_mean']
-            print "ZJets sigma = ",theInputs['zjetsShape_sigma']
  
         name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
@@ -931,11 +905,11 @@ class datacardClass:
         bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet) 
 
 
- 
+ 	#bIncludingError    bkg
 	bkg_qqzzErr = ROOT.RooProdPdf("bkg_qqzzErr","bkg_qqzzErr", ROOT.RooArgSet(bkg_qqzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrZZ), ROOT.RooArgSet(RelErr)));
 	bkg_ggzzErr = ROOT.RooProdPdf("bkg_ggzzErr","bkg_ggzzErr", ROOT.RooArgSet(bkg_ggzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrZZ), ROOT.RooArgSet(RelErr)));
 	bkg_zjetsErr = ROOT.RooProdPdf("bkg_zjetsErr","bkg_zjetsErr", ROOT.RooArgSet(bkg_zjets), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrZX), ROOT.RooArgSet(RelErr)));
-
+	#end bIncludingError 
       ## ----------------- 2D BACKGROUND SHAPES --------------- ##
         
         templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
@@ -1026,8 +1000,6 @@ class datacardClass:
 			CMS_zz4l_mass.setVal(m)
 			m = m + 0.1
 			if mekd_qqZZ_a4.getVal() <= 0 : print m, mekd_qqZZ_a4.getVal() 
-		CMS_zz4l_mass.setVal(140);
-		print "DEBUG Mingshui ", mekd_qqZZ_a0.getVal(), mekd_qqZZ_a1.getVal(), mekd_qqZZ_a2.getVal(), mekd_qqZZ_a3.getVal(), mekd_qqZZ_a4.getVal()
 	####  ----------------------- end mekd -----------------------------------------------------------
         bkg2d_qqzz = ROOT.RooProdPdf("bkg2d_qqzz","bkg2d_qqzz",ROOT.RooArgSet(self.getVariable(bkg_qqzzErr,bkg_qqzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_qqzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
         bkg2d_ggzz = ROOT.RooProdPdf("bkg2d_ggzz","bkg2d_ggzz",ROOT.RooArgSet(self.getVariable(bkg_ggzzErr,bkg_ggzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_ggzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
@@ -1061,7 +1033,7 @@ class datacardClass:
         else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
         super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
         super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
-        super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(2) )
+        super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
         zzframe_s.Draw()
         figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
         czz.SaveAs(figName)
@@ -1077,21 +1049,12 @@ class datacardClass:
         
         fr_low_M = self.low_M
         fr_high_M = self.high_M        
-<<<<<<< datacardClass.py
-        #if (self.mH >= 450): 
-        #    fr_low_M = 100
-        #    fr_high_M = 1000
-        #if (self.mH >= 750):
-        #    fr_low_M = 100
-        #    fr_high_M = 1400
-=======
-        #if (self.mH >= 450): 
-        #    fr_low_M = 180
-        #    fr_high_M = 1000
-        #if (self.mH >= 750):
-        #    fr_low_M = 10
-        #    fr_high_M = 1400
->>>>>>> 1.27
+        if (self.mH >= 450): 
+            fr_low_M = 100
+            fr_high_M = 1000
+        if (self.mH >= 750):
+            fr_low_M = 100
+            fr_high_M = 1400
             
 
         CMS_zz4l_mass.setRange("fullrangesignal",fr_low_M,fr_high_M)
@@ -1144,8 +1107,7 @@ class datacardClass:
         listEff.add(rrvg1)
         listEff.add(rrvg2)
         listEff.add(rrvg3)
-        rfvSigEff = ROOT.RooFormulaVar(sigEffName,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff)
-        #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
+        rfvSigEff = ROOT.RooFormulaVar(sigEffName,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff) #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
         #from TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
         
         ## following printout is needed ,  dont remove it
@@ -1192,6 +1154,7 @@ class datacardClass:
         print "#################### ",signalCB_ggH.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrangesignal") ).getVal()
         print "#################### ",signalCB_ggH.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         print "#################### ",sig_ggH.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrangesignal") ).getVal()
+        print "#################### norm Signal",normalizationSignal
         
         sclFactorSig_ggH = sigRate_ggH/normalizationSignal
         sclFactorSig_VBF = sigRate_VBF/normalizationSignal
@@ -1302,7 +1265,7 @@ class datacardClass:
         bkgRate_zjets_Shape = sclFactorBkg_zjets * bkg_zjets.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         
         if(DEBUG):
-            print "Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape," in ",self.low_M," - ",self.high_M
+            print "Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape," in ",low_M," - ",high_M
             CMS_zz4l_mass.setRange("lowmassregion",100.,160.)
             bkgRate_qqzz_lowmassregion = sclFactorBkg_qqzz * bkg_qqzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("lowmassregion") ).getVal()
             bkgRate_ggzz_lowmassregion = sclFactorBkg_ggzz * bkg_ggzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("lowmassregion") ).getVal()
@@ -1330,7 +1293,7 @@ class datacardClass:
         datasetName = "data_obs_{0}".format(self.appendName)
         
         if (self.is2D == 0):
-            if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass, RelErr))
+	    if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass, RelErr))
             else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass))
 		
         if (self.is2D == 1):
