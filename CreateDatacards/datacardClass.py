@@ -103,7 +103,7 @@ class datacardClass:
             return falseVar
     
     # main datacard and workspace function
-    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False):
+    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False, theMassMeasurement=False):
 
         ## --------------- SETTINGS AND DECLARATIONS --------------- ##
         DEBUG = False
@@ -118,6 +118,7 @@ class datacardClass:
         self.templateDir = theTemplateDir
 	self.bIncludingError=theIncludingError
 	self.bMEKD = theMEKD
+	self.bMassMeasurement = theMassMeasurement
         
         FactorizedShapes = False
 
@@ -158,25 +159,26 @@ class datacardClass:
         if(DEBUG): print "width: ",self.widthHVal
         
         self.windowVal = max( self.widthHVal, 1.0)
-        self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
         highside = 1000.0
         if (self.mH >= 275):
             lowside = 180.0
             highside = 650.0
-        if (self.mH >= 350):
+        elif (self.mH >= 350):
             lowside = 200.0
-            highside = 900.0
-        if (self.mH >= 500):
+        elif (self.mH >= 500):
             lowside = 250.0
-            highside = 1000.0
-        if (self.mH >= 700):
+        elif (self.mH >= 700):
             lowside = 350.0
             highside = 1400.0
                         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
         self.high_M = min( (self.mH + 15.*self.windowVal), highside)
                
+	if(self.bUseCBnoConvolution and self.bMassMeasurement):
+		self.low_M = 100
+		self.high_M = 165
+	
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
         elif (self.channel == self.ID_2e2mu): self.appendName = '2e2mu'
@@ -701,8 +703,7 @@ class datacardClass:
 			m = m + 0.1
 			if mekd_sig_a4.getVal() <= 0 : print m, mekd_sig_a4.getVal() 
 		CMS_zz4l_mass.setVal(140);
-
-
+		print "DEBUG Mingshui ", mekd_qqZZ_a0.getVal(), mekd_qqZZ_a1.getVal(), mekd_qqZZ_a2.getVal(), mekd_qqZZ_a3.getVal(), mekd_qqZZ_a4.getVal()
 	####  ----------------------- end mekd -----------------------------------------------------------
         sig2d_ggH = ROOT.RooProdPdf("sig2d_ggH","sig2d_ggH",ROOT.RooArgSet(self.getVariable(sig_ggH_HM,sig_ggH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
         sig2d_VBF = ROOT.RooProdPdf("sig2d_VBF","sig2d_VBF",ROOT.RooArgSet(self.getVariable(sig_VBF_HM,sig_VBF,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
@@ -998,8 +999,7 @@ class datacardClass:
 		while m >= 100 and m < 150:
 			CMS_zz4l_mass.setVal(m)
 			m = m + 0.1
-			if mekd_qqZZ_a4.getVal() <= 0 : print m, mekd_qqZZ_a4.getVal()
-                print "DEBUG Mingshui ", mekd_qqZZ_a0.getVal(), mekd_qqZZ_a1.getVal(), mekd_qqZZ_a2.getVal(), mekd_qqZZ_a3.getVal(), mekd_qqZZ_a4.getVal()
+			if mekd_qqZZ_a4.getVal() <= 0 : print m, mekd_qqZZ_a4.getVal() 
 	####  ----------------------- end mekd -----------------------------------------------------------
         bkg2d_qqzz = ROOT.RooProdPdf("bkg2d_qqzz","bkg2d_qqzz",ROOT.RooArgSet(self.getVariable(bkg_qqzzErr,bkg_qqzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_qqzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
         bkg2d_ggzz = ROOT.RooProdPdf("bkg2d_ggzz","bkg2d_ggzz",ROOT.RooArgSet(self.getVariable(bkg_ggzzErr,bkg_ggzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_ggzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
