@@ -46,9 +46,9 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
-const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_NOIntRew/"; //it must already exist !
+const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+TString melaName = "graviLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
+const TString destDir = "../../CreateDatacards/templates2D_smdGrav_7TeV_20121105_NOIntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -396,12 +396,10 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   //both psMELA (for 2D template) and MELA (for cut)
 
   TString melaCutName = melaName;  
-  if(makePSTemplate) {
-    melaName = "pseudoLD";
-  }
   
   bool cutSameVar=false;
   bkgMC->SetBranchAddress(melaName.Data(),&KD);
+
   if (melaName!=melaCutName) {
     bkgMC->SetBranchAddress(melaCutName.Data(),&KD_cut);
   }
@@ -595,8 +593,7 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
   float mzz=-1.0,mela=-444.0,w=0;
   double LD=-999.;
   char yVarName[32];
-  if(makePSTemplate)sprintf(yVarName,"ZZpseudoLD");
-  else   sprintf(yVarName,"ZZLD");
+  sprintf(yVarName,"ZZLD");
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("ZZLD",&mela);
   //  bkgMC->SetBranchAddress(yVarName,&LD);
