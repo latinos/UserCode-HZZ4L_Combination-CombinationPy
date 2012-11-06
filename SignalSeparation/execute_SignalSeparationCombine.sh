@@ -62,7 +62,7 @@ elif [ $action -eq 2 ]
     text2workspace.py -m $MH $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs  --PO=muFloating -o floatMu.root
     combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i 1 --clsAcc 0 --fullBToys -n "Test1D"
     root -q -b higgsCombineTest1D.HybridNew.mH${MH}.root "${CMSSW_BASE}/src/HiggsAnalysis/CombinedLimit/test/plotting/hypoTestResultTree.cxx(\"qmu.FloatMu.root\",${MH},1,\"x\")"
-    combine -M MultiDimFit floatMu.root --algo=grid --points 100  -m $MH -v 2 -n 1D
+    combine -M MultiDimFit floatMu.root --algo=grid --points 100  -m $MH -n 1D
     cp qmu.FloatMu.root qmu.root
 #draw the output
 ###      limit->Draw("2*deltaNLL:x", "deltaNLL > 0","PL")
@@ -71,10 +71,10 @@ elif [ $action -eq 3 ]
 #Run 2D scan (without profiling nuisances)
 ### FOR 2D: 
     text2workspace.py -m $MH $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs --PO=muAsPOI -o scan2D.root
-    combine -M MultiDimFit scan2D.root --algo=grid --points 10000 --fastScan  -m $MH -v 2 -n "Test2D"
+    combine -M MultiDimFit scan2D.root --algo=grid --points 10000 --fastScan  -m $MH -n "Test2D"
 ### plot with contours.cxx
 ### for the 1D scan of r:
-### combine -M MultiDimFit  scan2D.root --algo=grid --points 100 -m $MH -v 2 -n 1Dr -P r --floatOtherPOI=1
+### combine -M MultiDimFit  scan2D.root --algo=grid --points 100 -m $MH -n 1Dr -P r --floatOtherPOI=1
 else
     echo "Requested to perform and unrecognized action: "${action}
     echo "action can be 1:hypothesis test (fixed mu)  ;   2:1D scan, mu floated as nuisance   ;   3:2D scan, mu floated as POI"
