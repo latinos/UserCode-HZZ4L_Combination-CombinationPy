@@ -77,6 +77,12 @@ int extractSignificanceStats(bool unblind=false){
     cout<<"Please edit the code and change the sign of q when filling histos and vectors in the loop on tree entries"<<endl;
     return 1;
   }
+
+  if((int(v_SM.size())!= ntoysSM)||(int(v_PS.size())!= ntoysPS)){
+    cout<<"Mismatch in size of vectors and #entries of historgams ! v_SM.size()="<< v_SM.size() <<"  ntoysSM="<<ntoysSM<<endl;
+    return 1;
+  }
+
   float medianSM=v_SM.at(int(ntoysSM/2));
   float medianPS=v_PS.at(int(ntoysPS/2));
   cout<<"Toys generated "<<ntoysSM<<"\t"<<ntoysPS<<endl;
@@ -92,53 +98,65 @@ int extractSignificanceStats(bool unblind=false){
   int startSM=ntoysSM-1, startPS=0;
   cout<<"Starting to loop with cut at "<<cut<<endl;
 
-  /*
+  //apply a cut on the vectors with the results of toys,
+  //for each cut check the area in the tail for PS and SM
+  //and calculate the difference.
+  //Find the value of cut that minimizes the difference.
+ 
+
   while(cut<=v_SM.at(ntoysSM-1)+step){
     //    if(int(cut*100)%100==0)
-cout<<"Cutting at "<<cut<<endl;
-    for(int iSM=startSM;iSM>=0;iSM--){
-      
-      if(v_SM.at(iSM)<cut){
-	startSM=ntoysSM-iSM;
-	//break;
+    // cout<<"Cutting at "<<cut<<endl;
+    float cutSM=-1.0,cutPS=-1.0;
+
+    for(int iSM=startSM;iSM>=0;iSM--){      
+      //entries in v_SM and v_PS are sorted
+      if(v_SM.at(iSM)<cut){//gotcha
+	cutSM=ntoysSM-iSM;
+	break;
       }
-      else cout<<"SM "<<v_SM.at(iSM)<<" > "<<cut<<endl;
+      //      //      else cout<<"SM "<<v_SM.at(iSM)<<" > "<<cut<<endl;
     }
 
     for(int iPS=startPS;iPS<ntoysPS;iPS++){
-      if(v_PS.at(iPS)>cut){
-	startPS=iPS;
-	//break;
+      if(v_PS.at(iPS)>cut){//gotcha
+	cutPS=iPS;
+	break;
       }
-      else cout<<v_PS.at(iPS)<<" < "<<cut<<endl;
+      ////      else cout<<v_PS.at(iPS)<<" < "<<cut<<endl;
   
     }
-    float fracSM=(ntoysSM-startSM)/ntoysSM;
-    float fracPS=startPS/ntoysPS;
-    cout<<"Frac "<<fracSM<<" "<<fracPS<<endl;
-    if(fabs(fracSM-fracPS)<diff){
-      diff=fabs(fracSM-fracPS);
-      coverage=fabs(fracSM-fracPS)/2.0;
-      crosspoint=cut;
-      cout<<"New coverage="<<coverage<<" at xpoint="<<crosspoint<<"  "<<startSM<<endl;
-    }
+
+    if(cutSM>=0&&cutPS>=0){
+      float fracSM=(ntoysSM-cutSM)/ntoysSM;
+      float fracPS=(ntoysPS-cutPS)/ntoysPS;
+      // //   cout<<"FracSM: "<<fracSM<<"   FracPS: "<<fracPS<<endl;
+      if(fabs(fracSM-fracPS)<diff){
+	diff=fabs(fracSM-fracPS);
+	coverage=fabs(fracSM+fracPS)/2.0;
+	crosspoint=cut;
+	//cout<<"New coverage="<<coverage<<" at xpoint="<<crosspoint<<" with diff "<<diff<<"  FracSM="<<fracSM<<"  FracPS="<<fracPS<<endl;
+      }
+      ////      else cout<<"Diff is too high: "<<fabs(fracSM-fracPS)<<"   fracSM="<<fracSM<<"  fracPS="<<fracPS<<endl;
+    }//end if both cuutSM and cutPS are >=0
+    //// else cout<<"For cut="<<cut <<" Negative cutSM/cutPS: "<<cutSM<<"  "<<cutPS<<endl;
+
     cut+=step;
   }//end while loop
  
-  cout<<"Finished loop on vector elements, min is "<<diff<<" cut is at "<<cut<<endl;
-  cout<<"q value where SM and ALT distributions have same area on opposite sides: "<<crosspoint<<endl;
-  //  cout<<"Coverage "<<coverage<<endl;
+  cout<<"Finished loop on vector elements, min diff is "<<diff<<", looped until cut_fin="<<cut<<endl;
+  cout<<"q value where SM and ALT distributions have same area on opposite sides: "<<crosspoint<<"  Coverage="<<coverage<<endl;
   float separation=2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
-  // cout<<"Separation: "<<separation<<endl<<endl<<endl;
-  */
+  cout<<"Separation from tail prob: "<<separation<<endl<<endl<<endl;
+  
 
   float integralSM=hSM->Integral();
   float integralPS=hPS->Integral();
  
   float tailSM=hSM->Integral(1,hSM->FindBin(medianPS))/integralSM;
   float tailPS=hPS->Integral(hPS->FindBin(medianSM),hPS->GetNbinsX())/integralPS;
-  cout<<"Tail prob SM: "<<tailSM<<"  ("<<ROOT::Math::normal_quantile_c(tailSM,1.0) <<" sigma)"<<endl;
-  cout<<"Tail prob PS: "<<tailPS<<"  ("<<ROOT::Math::normal_quantile_c(tailPS,1.0) <<" sigma)"<<endl;
+  cout<<"Median point prob SM: "<<tailSM<<"  ("<<ROOT::Math::normal_quantile_c(tailSM,1.0) <<" sigma)"<<endl;
+  cout<<"Median point prob PS: "<<tailPS<<"  ("<<ROOT::Math::normal_quantile_c(tailPS,1.0) <<" sigma)"<<endl;
 
   diff=10.0;
   coverage=0.0;
@@ -169,7 +187,7 @@ cout<<"Cutting at "<<cut<<endl;
     }
   
 
-
+    /*
     cout << "\n\nOBSERVED SIGNIFICANCE" << endl;
     cout << "observation: " << v_Obs[0] << endl;
     cout << "bin: " << hObs->GetMaximumBin() << endl;
@@ -180,6 +198,7 @@ cout<<"Cutting at "<<cut<<endl;
     double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/integralPS;
     cout << "pvalue PS: " << obsPval_PS << endl;
     cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl<<endl<<endl;
+    */
   }
 
   //Plotting
@@ -235,7 +254,7 @@ cout<<"Cutting at "<<cut<<endl;
   obsArrow->SetLineWidth(5.0);
   if(unblind)  obsArrow->Draw();
 
-  TLegend *leg = new TLegend(0.7,0.6,0.9,0.9);
+  TLegend *leg = new TLegend(0.25,0.6,0.45,0.9);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
   leg->AddEntry(hSM, "  SM, 0+","f");

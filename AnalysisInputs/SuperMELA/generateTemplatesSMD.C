@@ -48,11 +48,11 @@ const float mzzCutLow=105;
 const float mzzCutHigh=140;
 const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_IntRew/"; //it must already exist !
+const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_NOIntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
-const bool applyInterferenceRew=true;
+const bool applyInterferenceRew=false;
 string fInterferenceName="./1DinterferenceReweight.root";
 //-----
 
