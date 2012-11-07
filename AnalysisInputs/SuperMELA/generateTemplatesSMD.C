@@ -43,12 +43,12 @@ Mela* myMELA; //used if recompute is true
 
 ////////////////////////////////////
 //--- Really important params --- //
-const int mH=125;
-const float mzzCutLow=105;
-const float mzzCutHigh=140;
+const int mH=126;
+const float mzzCutLow=106;
+const float mzzCutHigh=141;
 const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "graviLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "../../CreateDatacards/templates2D_smdGrav_7TeV_20121105_NOIntRew/"; //it must already exist !
+TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
+const TString destDir = "../../CreateDatacards/templates2D_smd_7TeV_20121106_M126special/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -715,10 +715,15 @@ void makeTemplate(TString channel){
   // alternative signal template
 
   if (makeAltSignal) {
-    low = fillTemplate(channel,3,"superLD","sigHistoALT",true);
+
+    int altSampleType=100;
+    if( melaName == "pseudoLD")altSampleType=3;
+    else   if( melaName == "graviLD")altSampleType=4;
+    else altSampleType=99;
+    low = fillTemplate(channel,altSampleType,"superLD","sigHistoALT",true);
     //    high = fillTemplate(channel,3,false);
     h_mzzD =   (TH2F*)low->Clone("h_mzzD");// mergeTemplates(low,high);
-    h_D = fillKDhisto(channel,3,mzzCutLow,mzzCutHigh,true);//last two are cuts on mZZ
+    h_D = fillKDhisto(channel,altSampleType,mzzCutLow,mzzCutHigh,true);//last two are cuts on mZZ
     // ---------- apply interference reweighting --------
   
     oldTemp = new TH2F(*h_mzzD);
@@ -740,9 +745,9 @@ void makeTemplate(TString channel){
     h_D->Write("h_superD");
     
     //---- systematics for alternative signal
-    h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,3,"superLD_syst1Up","sigHistoALT_syst1Up",true);
-    h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,3,"superLD_syst1Down","sigHistoALT_syst1Down",true);
-    h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,3,"superLD_syst2Up","sigHistoALT_syst2Up",true);
+    h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,altSampleType,"superLD_syst1Up","sigHistoALT_syst1Up",true);
+    h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,altSampleType,"superLD_syst1Down","sigHistoALT_syst1Down",true);
+    h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,altSampleType,"superLD_syst2Up","sigHistoALT_syst2Up",true);
     h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
     h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
     h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
