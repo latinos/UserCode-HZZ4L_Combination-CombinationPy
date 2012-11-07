@@ -43,23 +43,23 @@ Mela* myMELA; //used if recompute is true
 
 ////////////////////////////////////
 //--- Really important params --- //
-const int mH=126;
-const float mzzCutLow=106;
-const float mzzCutHigh=141;
+const int mH=125;
+const float mzzCutLow=105;
+const float mzzCutHigh=140;
 const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121106_M126special/"; //it must already exist !
+const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121106_IntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
-const bool applyInterferenceRew=false;
-string fInterferenceName="./1DinterferenceReweight.root";
 //-----
 
 
 bool extendToHighMass = false; // Include signal samples above 600 GeV
 float highMzz=(extendToHighMass?1000:800);
 float mBinSize=2.;
+const bool applyInterferenceRew=false;//it doesn't matter for Z+jets
+string fInterferenceName="./1DinterferenceReweight.root";
 
 
 

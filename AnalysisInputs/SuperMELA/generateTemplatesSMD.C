@@ -43,16 +43,16 @@ Mela* myMELA; //used if recompute is true
 
 ////////////////////////////////////
 //--- Really important params --- //
-const int mH=126;
-const float mzzCutLow=106;
-const float mzzCutHigh=141;
+const int mH=125;
+const float mzzCutLow=105;
+const float mzzCutHigh=140;
 const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "../../CreateDatacards/templates2D_smd_7TeV_20121106_M126special/"; //it must already exist !
+const TString destDir = "../../CreateDatacards/templates2D_smd_7TeV_20121106_IntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
-const bool applyInterferenceRew=false;
+const bool applyInterferenceRew=true;
 string fInterferenceName="./1DinterferenceReweight.root";
 //-----
 
@@ -347,10 +347,10 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
-      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_graviH"+strM+""+suffix);
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGravH"+strM+""+suffix);
     }
     else{   //8TeV
-      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_graviH"+strM+""+suffix);
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGravH"+strM+""+suffix);
     }
   }
   else if (sampleIndex==5){
@@ -474,6 +474,16 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	cout<<"Error from fillTemplate: unrecognized variable name -> "<<melaName.Data()<<endl;
 	hIntNameY+="unknownVar";
       }
+
+      string strSqrt="7TeV";
+      if(useSqrts==2)strSqrt="8TeV";
+      hIntNameX+="_"+strSqrt;
+      hIntNameY+="_"+strSqrt;
+
+      string strChan=channel.Data();
+      hIntNameX+="_"+strChan;
+      hIntNameY+="_"+strChan;
+
       hInterfRewX=(TH1F*)fInterfRew->Get(hIntNameX.c_str());
       hInterfRewY=(TH1F*)fInterfRew->Get(hIntNameY.c_str());
       gDirectory->cd(curPath.c_str());
