@@ -45,7 +45,7 @@ fi
 
 # Run hypothesis testing, using nominal value of nuisances and mu for generation
 NTOYS=4000 # toys per  job
-MH=125  # mass of the signal hypothesis
+MH=126  # mass of the signal hypothesis
 
 if [ $action -eq 1 ]
     then 

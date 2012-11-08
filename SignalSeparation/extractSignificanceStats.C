@@ -49,8 +49,10 @@ int extractSignificanceStats(bool unblind=false){
 
   for(int i=0;i<t->GetEntries();i++){
     t->GetEntry(i);
+
     if(i==0)cout<<"MASS in the TREE = "<<m<<endl<<endl;
 
+    q*=2.0;
     if(type<0){ //SM hypothesis 
       hSM->Fill(-q);
       v_SM.push_back(-q);
@@ -241,8 +243,8 @@ int extractSignificanceStats(bool unblind=false){
   hSM->GetYaxis()->SetLabelSize(0.04);
   hPS->GetXaxis()->SetLabelSize(0.04);
   hPS->GetYaxis()->SetLabelSize(0.04);
-  hSM->GetXaxis()->SetRangeUser(-15.0,15.0);
-  hPS->GetXaxis()->SetRangeUser(-15.0,15.0);
+  hSM->GetXaxis()->SetRangeUser(-30.0,30.0);
+  hPS->GetXaxis()->SetRangeUser(-30.0,30.0);
 
   hSM->Draw();
   hPS->Draw("sames");
