@@ -46,14 +46,14 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
-const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "../../CreateDatacards/templates2D_smd_7TeV_20121106_IntRew/"; //it must already exist !
+const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121107_M125Rewv3/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
 const bool applyInterferenceRew=true;
-string fInterferenceName="./1DinterferenceReweight.root";
+string fInterferenceName="./1DinterferenceReweight_125to126_v3.root";
 //-----
 
 
@@ -450,8 +450,8 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   TH1F *hInterfRewX=0,*hInterfRewY=0;
   TFile *fInterfRew=0;
   if(applyInterferenceRew){
-    if((sampleIndex==0||sampleIndex==3||sampleIndex==4)
-       && (channel=="4mu" || channel=="4e")){
+    if((sampleIndex==0||sampleIndex==3||sampleIndex==4)){
+       //       && (channel=="4mu" || channel=="4e")){
 
       string curPath=gDirectory->GetPath();
       //  cout<<"Current Path is "<<curPath.c_str()<<endl;

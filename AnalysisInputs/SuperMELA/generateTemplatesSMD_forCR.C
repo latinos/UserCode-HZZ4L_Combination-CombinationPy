@@ -46,9 +46,9 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
-const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121106_IntRew/"; //it must already exist !
+const TString destDir = "../../CreateDatacards/templates2D_smdGrav_7TeV_20121106/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
