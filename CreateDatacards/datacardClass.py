@@ -1233,7 +1233,7 @@ class datacardClass:
         print " sigRate_ZH_Shape=",sigRate_ZH_Shape
         print " @@@@@@@ rfvSigRate_ttH = ",rfvSigRate_ttH.getVal()
         print " sigRate_ttH_Shape=",sigRate_ttH_Shape
-        print "Sum of sigRate_XYZ_Shape=",sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
+        print "NEEDED Sum of sigRate_XYZ_Shape=",sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
         ## SET RATES TO 1 
         ## DC RATES WILL BE MULTIPLIED
         ## BY RATES IMPORTED TO WS
@@ -1264,6 +1264,7 @@ class datacardClass:
         bkgRate_ggzz_Shape = sclFactorBkg_ggzz * bkg_ggzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         bkgRate_zjets_Shape = sclFactorBkg_zjets * bkg_zjets.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         
+	print "NEEDED Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape,", totbkg= ", bkgRate_zjets_Shape+bkgRate_qqzz_Shape+bkgRate_ggzz_Shape,"in ",self.low_M," - ",self.high_M
         if(DEBUG):
             print "Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape," in ",low_M," - ",high_M
             CMS_zz4l_mass.setRange("lowmassregion",100.,160.)
