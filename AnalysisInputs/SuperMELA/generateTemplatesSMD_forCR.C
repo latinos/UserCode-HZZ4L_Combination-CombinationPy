@@ -47,8 +47,10 @@ const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
 const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "pseudoLD"; // name of KD branch to be used.
-const TString destDir = "../../CreateDatacards/templates2D_smdGrav_7TeV_20121106/"; //it must already exist !
+TString melaName = "graviLD"; // name of KD branch to be used.
+bool doME = true;
+TString meName = "graviME"; // name of KD branch to be used: "pseudoLD" or "graviLD"
+const TString destDir = "MEtemplates2D_smd_7TeV_ntran_gravi121108v2/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
@@ -121,7 +123,7 @@ void makePlot1D( TH1 *h ,TString label ){
   h->GetYaxis()->SetTitleOffset(1.15);
   h->SetLineWidth(2);
   h->Draw("HIST");
-  c1D->SaveAs(("can_template1D_SuperMELA_"+label+".root").Data());
+    c1D->SaveAs((destDir+"/can_template1D_SuperMELA_"+label+".eps").Data());
   delete c1D;
 }
 
@@ -139,7 +141,7 @@ void makePlot2D( TH2 *h ,TString label ){
   h->GetYaxis()->SetLabelSize(0.035);
   h->GetYaxis()->SetTitleOffset(1.15);
   h->Draw("col");
-  c2D->SaveAs(("can_template_SMDvsPSD_"+label+".root").Data());
+    c2D->SaveAs((destDir+"/can_template_SMDvsPSD_"+label+".eps").Data());
   delete c2D;
 }
 
@@ -163,7 +165,8 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
   //An error is issued on missing files; if a single file is missing in one set it can be safely ignored.
 
   string suffix="_withSMD_doubleCBonly.root";
-
+    if (doME){ suffix="_withSMD_doubleCBonly_ME.root"; }
+    
   if(sampleIndex==0){
     //7TeV
     if(useSqrts==1)bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H"+strM+suffix);
@@ -260,7 +263,8 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   // bkgMC->ls();
 
   float mzz,KD,KD_cut,w=0;
-  double sKD;
+    double KDME;
+    double sKD;
   float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
   float pt4l=0, Y4l=0;
   float psig=0, pbkg=0;
@@ -282,6 +286,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
    // bkgMC->SetBranchAddress(melaName.Data(),&KD_cut);
   }
   
+    bkgMC->SetBranchAddress(meName.Data(),&KDME);
 
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
@@ -385,15 +390,15 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	cout << "Y4l: " << Y4l << endl;
 	*/
 
-	myMELA->computeKD(mzz,m1,m2,
-			  costhetastar,
-			  costheta1,
-			  costheta2,
-			  phi,
-			  phi1,
-			  KD,psig,pbkg,
-			  withPt_,pt4l,
-			  withY_, Y4l);
+//	myMELA->computeKD(mzz,m1,m2,
+//			  costhetastar,
+//			  costheta1,
+//			  costheta2,
+//			  phi,
+//			  phi1,
+//			  KD,psig,pbkg,
+//			  withPt_,pt4l,
+//			  withY_, Y4l);
 	
 	//cout << "LD: " << LD << endl;
 	
@@ -404,11 +409,10 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	w*=calcInterfRew(hInterfRewX,sKD);//reweight in the supermela direction
 	w*=calcInterfRew(hInterfRewY,KD);//reweight in the sig sep KD direction
       }
-      bkgHist->Fill(sKD,KD,w);
-      //   bkgHist->Fill(mzz,KD,w);
+        
+        if (doME){ bkgHist->Fill(sKD,KDME,w); }
+        else{ bkgHist->Fill(sKD,KD,w); }
 
-      bkgHist->Fill(sKD,KD,w);
-      //   bkgHist->Fill(mzz,KD,w);
 
     }
 
