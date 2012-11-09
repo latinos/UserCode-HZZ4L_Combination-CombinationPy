@@ -23,7 +23,7 @@ TGraph * removeGlitches2(TGraph *out);
 
 
 // --------- Inputs ------- //
-TString inputFile = "results/higgsCombineHZZ4L_ASCLS.root";//"results261012_1DoldZshape/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile = "results261012_1Dbranch05/higgsCombineHZZ4L_ASCLS.root";//"results261012_1DoldZshape/higgsCombineHZZ4L_ASCLS.root";
 const bool addObsLimit = true;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
@@ -33,22 +33,21 @@ Double_t xHigh = 1001.0;
 Double_t yLow = 0.1;
 Double_t yHigh = 20.0;
 TString xTitle = "m_{H} [GeV]";
-TString yTitle = "95% CL limit on #sigma/#sigma_{SM}";
+TString yTitle = "#sigma(H#rightarrow ZZ#rightarrow 4l)_{95% CL}/#sigma(H#rightarrow ZZ#rightarrow 4l)_{SM}";
 const bool logy = true;
 const bool logx = true;
 const bool grid = true;
 const bool gridOnTop = true;
 const bool points = true;
 const bool isTiny = false;
-int canvasX = 900;
+int canvasX = 700;
 int canvasY = 700;
 //double sqrts = 8.0;
 //Double_t lumi = 1.616;
 double sqrts = 7.0;
 Double_t lumi = 5.051;
 std::string plotDir = "plots";
-std::string append = "1D_no2l2tau_branch05";
-TString LimitType = "1D";
+std::string append = "1D_no2l2tau";
 // ----------------------- //
 
 
@@ -225,7 +224,23 @@ void plot_Exclusion_7p8()
   gr->SetName("Expected");gr->SetTitle("Expected");
   grshade_68->SetName("68");grshade_68->SetTitle("68");
   grshade_95->SetName("95");grshade_95->SetTitle("95");
-  TGraph *grObs = new TGraph(nMassEff, a_masses, a_obs);
+  TGraph *grObstemp = new TGraph(nMassEff, a_masses, a_obs);
+  grObstemp->Sort();
+  double *xtemp=grObstemp->GetX();
+  double *ytemp=grObstemp->GetY();
+  TGraph *grObs = new TGraph(0);
+  for(int igo=0;igo<grObstemp->GetN();igo++){
+    if(igo>0)
+      if(xtemp[igo]-xtemp[igo-1]<0.5){
+	float delta = TMath::Abs(xtemp[igo]-(int)xtemp[igo]);
+	bool okd = false;
+	if(TMath::Abs(delta-0.5)<0.01)okd=true;
+	if(delta<0.01)okd=true;
+	if(!okd)continue;
+      }
+    grObs->Set(grObs->GetN()+1);
+    grObs->SetPoint(grObs->GetN()-1,xtemp[igo],ytemp[igo]);
+  }
   grObs->SetLineWidth(3);
   grObs->SetLineColor(kBlack);
   grObs->SetMarkerStyle(20);
@@ -272,7 +287,7 @@ void plot_Exclusion_7p8()
 
   // --------------- Low Mass Zoom -------------- //
 	
-  TLegend * box2 = new TLegend(0.56,0.7,0.85,0.9);
+  TLegend * box2 = new TLegend(0.5,0.7,0.79,0.9);
   box2->SetFillColor(0);
   //box2->SetBorderSize(0);
   if (addObsLimit){ box2->AddEntry(grObs,"Observed","l"); }
@@ -286,30 +301,39 @@ void plot_Exclusion_7p8()
 
 
   double ptLow= 0.28, ptHigh = 0.54;
-		
-  TPaveText *pt = new TPaveText(ptLow,0.84,ptHigh,0.88,"NDC");
-  pt->SetFillColor(0);
-  pt->SetTextFont(42);
-  pt->AddText("CMS Preliminary");
-  TPaveText *pt4 = new TPaveText(ptLow,0.8,ptHigh,0.84,"NDC");
-  pt4->SetFillColor(0);
-  pt4->SetTextFont(42);
-  pt4->AddText("H #rightarrow ZZ #rightarrow 4L"); 
 
-  //TPaveText *pt2 = new TPaveText(0.69,0.94,0.98,0.99,"NDC");
-  TPaveText *pt2 = new TPaveText(ptLow,0.76,ptHigh,0.8,"NDC");
-  pt2->SetFillColor(0);
-  pt2->SetTextFont(42);
-  char lum[192];
-  sprintf(lum," #sqrt{s} = 7 TeV, L = %.2f fb^{-1}",5.051);
-  pt2->AddText(lum); 
-  //TPaveText *pt3 = new TPaveText(0.69,0.90,0.98,0.95,"NDC");
-  TPaveText *pt3 = new TPaveText(ptLow,0.72,ptHigh,0.76,"NDC");
-  pt3->SetFillColor(0);
-  pt3->SetTextFont(42);
-  char lum2[192];
-  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.21);
-  pt3->AddText(lum2); 
+  TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
+  pt->SetBorderSize(0);
+  pt->SetTextAlign(12);
+  pt->SetFillStyle(0);
+  pt->SetTextFont(42);
+  pt->SetTextSize(0.03);
+  TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
+  text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 12.2 fb^{-1}");
+		
+//   TPaveText *pt = new TPaveText(ptLow,0.84,ptHigh,0.88,"NDC");
+//   pt->SetFillColor(0);
+//   pt->SetTextFont(42);
+//   pt->AddText("CMS Preliminary");
+//   TPaveText *pt4 = new TPaveText(ptLow,0.8,ptHigh,0.84,"NDC");
+//   pt4->SetFillColor(0);
+//   pt4->SetTextFont(42);
+//   pt4->AddText("H #rightarrow ZZ #rightarrow 4L"); 
+
+//   //TPaveText *pt2 = new TPaveText(0.69,0.94,0.98,0.99,"NDC");
+//   TPaveText *pt2 = new TPaveText(ptLow,0.76,ptHigh,0.8,"NDC");
+//   pt2->SetFillColor(0);
+//   pt2->SetTextFont(42);
+//   char lum[192];
+//   sprintf(lum," #sqrt{s} = 7 TeV, L = %.2f fb^{-1}",5.051);
+//   pt2->AddText(lum); 
+//   //TPaveText *pt3 = new TPaveText(0.69,0.90,0.98,0.95,"NDC");
+//   TPaveText *pt3 = new TPaveText(ptLow,0.72,ptHigh,0.76,"NDC");
+//   pt3->SetFillColor(0);
+//   pt3->SetTextFont(42);
+//   char lum2[192];
+//   sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.21);
+//   pt3->AddText(lum2); 
 
   if(grid) c->SetGrid();
    
@@ -343,6 +367,10 @@ void plot_Exclusion_7p8()
 
   hr->GetXaxis()->SetTitle(xTitle);
   hr->GetYaxis()->SetTitle(yTitle);
+  hr->GetXaxis()->SetTitleSize(0.05);
+  hr->GetYaxis()->SetTitleSize(0.05);
+  hr->GetXaxis()->SetLabelSize(0.04);
+  hr->GetYaxis()->SetLabelSize(0.04);
   hr->GetYaxis()->SetTitleOffset(1.2);		
   if(logy)gPad->SetLogy();
   
@@ -350,22 +378,22 @@ void plot_Exclusion_7p8()
   c->Update();
   if(gridOnTop)gPad->RedrawAxis("g");
   pt->Draw("SAME");
-  pt2->Draw("SAME");
-  pt3->Draw("SAME");
-  pt4->Draw("SAME");
+ //  pt2->Draw("SAME");
+//   pt3->Draw("SAME");
+//   pt4->Draw("SAME");
 
   box2->Draw();
-  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_lowMass_%s.eps",plotDir.c_str(),method.c_str(), append.c_str() );
+  sprintf( outfileName,"%s/UpperLimit_%s_lowMass_%s.eps",plotDir.c_str(),method.c_str(), append.c_str() );
   c->SaveAs(outfileName);
-  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_lowMass_%s.png",plotDir.c_str(),method.c_str(), append.c_str() );	
+  sprintf( outfileName,"%s/UpperLimit_%s_lowMass_%s.png",plotDir.c_str(),method.c_str(), append.c_str() );	
   c->SaveAs(outfileName);
-  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_lowMass_%s.root",plotDir.c_str(),method.c_str(), append.c_str() );
+  sprintf( outfileName,"%s/UpperLimit_%s_lowMass_%s.root",plotDir.c_str(),method.c_str(), append.c_str() );
   c->SaveAs(outfileName);
 
   // --------------- Full Mass Range ---------------- //
 	
   //TLegend * box3 = new TLegend(0.64,0.67,0.94,0.87);
-  TLegend * box3 = new TLegend(0.56,0.7,0.86,0.9);
+  TLegend * box3 = new TLegend(0.5,0.7,0.8,0.9);
     box3->SetFillColor(0);
   //box3->SetBorderSize(0);
   if (addObsLimit){ box3->AddEntry(grObs,"Observed","l"); }
@@ -404,6 +432,10 @@ void plot_Exclusion_7p8()
 
   hrl->GetXaxis()->SetTitle(xTitle);
   hrl->GetYaxis()->SetTitle(yTitle);
+  hrl->GetXaxis()->SetTitleSize(0.05);
+  hrl->GetYaxis()->SetTitleSize(0.05);
+  hrl->GetXaxis()->SetLabelSize(0.04);
+  hrl->GetYaxis()->SetLabelSize(0.04);
   hrl->GetYaxis()->SetTitleOffset(1.2);		
   //hrl->GetXaxis()->SetXmax(xHigh);
   
@@ -433,16 +465,16 @@ void plot_Exclusion_7p8()
   if(gridOnTop)gPad->RedrawAxis("g");
 
   pt->Draw("SAME");
-  pt2->Draw("SAME");
-  pt3->Draw("SAME");
-  pt4->Draw("SAME");
+ //  pt2->Draw("SAME");
+//   pt3->Draw("SAME");
+//   pt4->Draw("SAME");
   
   box3->Draw();
-  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_wholeMass_%s.eps",plotDir.c_str(),method.c_str(), append.c_str() );
+  sprintf( outfileName,"%s/UpperLimit_%s_wholeMass_%s.eps",plotDir.c_str(),method.c_str(), append.c_str() );
   cl->SaveAs(outfileName);
-  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_wholeMass_%s.png",plotDir.c_str(),method.c_str(), append.c_str() );	
+  sprintf( outfileName,"%s/UpperLimit_%s_wholeMass_%s.png",plotDir.c_str(),method.c_str(), append.c_str() );	
   cl->SaveAs(outfileName);
-  sprintf( outfileName,"%s/UpperLimit_%s_7p8TeV_wholeMass_%s.root",plotDir.c_str(),method.c_str(), append.c_str() );
+  sprintf( outfileName,"%s/UpperLimit_%s_wholeMass_%s.root",plotDir.c_str(),method.c_str(), append.c_str() );
   cl->SaveAs(outfileName);	
 
   // ---------------- Root File --------------- //
