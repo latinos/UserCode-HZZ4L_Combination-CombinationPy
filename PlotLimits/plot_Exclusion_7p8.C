@@ -23,7 +23,7 @@ TGraph * removeGlitches2(TGraph *out);
 
 
 // --------- Inputs ------- //
-TString inputFile = "results261012_1Dbranch05/higgsCombineHZZ4L_ASCLS.root";//"results261012_1DoldZshape/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile = "results261012_2Dbranch05/higgsCombineHZZ4L_ASCLS.root";//"results261012_1DoldZshape/higgsCombineHZZ4L_ASCLS.root";
 const bool addObsLimit = true;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
@@ -46,8 +46,8 @@ int canvasY = 700;
 //Double_t lumi = 1.616;
 double sqrts = 7.0;
 Double_t lumi = 5.051;
-std::string plotDir = "plots";
-std::string append = "1D_no2l2tau";
+std::string plotDir = "p";
+std::string append = "2D_no2l2tau";
 // ----------------------- //
 
 
@@ -76,7 +76,7 @@ void plot_Exclusion_7p8()
   getLimits(inFile,mH,Val_mean,Val_68l,Val_68h,Val_95l,Val_95h,Val_obs,Val_obs95);
   vector<double> v_masses, v_means, v_lo68, v_hi68, v_lo95, v_hi95, v_obs;
   vector<double> expExclusion,obsExclusion,expExcl95,obsExcl95;
-  for(unsigned int i = 1; i < mH.size(); i++)
+  for(unsigned int i = 0; i < mH.size(); i++)
     {
       v_masses.push_back( mH[i] );
       v_means.push_back( Val_mean[i] );
@@ -91,17 +91,17 @@ void plot_Exclusion_7p8()
       if(Val_obs95[i]<1.0)obsExcl95.push_back(mH[i]);
     }
   //this is because point at 1TeV is read first->TBC
-  v_masses.push_back( mH[0] );
-  v_means.push_back( Val_mean[0] );
-  v_lo68.push_back( min( Val_68l[0], Val_68h[0]) );
-  v_hi68.push_back( max( Val_68h[0], Val_68l[0]) );
-  v_lo95.push_back( min( Val_95l[0], Val_95h[0]) );
-  v_hi95.push_back( max( Val_95h[0], Val_95l[0]) );
-  v_obs.push_back(Val_obs[0]);
-  if(Val_mean[0] < 1.0) expExclusion.push_back(mH[0]);
-  if(Val_obs[0] < 1.0 && addObsLimit) obsExclusion.push_back(mH[0]);
-  if(v_hi95[0] < 1.0)expExcl95.push_back(mH[0]);
-  if(Val_obs95[0]<1.0)obsExcl95.push_back(mH[0]);
+//   v_masses.push_back( mH[0] );
+//   v_means.push_back( Val_mean[0] );
+//   v_lo68.push_back( min( Val_68l[0], Val_68h[0]) );
+//   v_hi68.push_back( max( Val_68h[0], Val_68l[0]) );
+//   v_lo95.push_back( min( Val_95l[0], Val_95h[0]) );
+//   v_hi95.push_back( max( Val_95h[0], Val_95l[0]) );
+//   v_obs.push_back(Val_obs[0]);
+//   if(Val_mean[0] < 1.0) expExclusion.push_back(mH[0]);
+//   if(Val_obs[0] < 1.0 && addObsLimit) obsExclusion.push_back(mH[0]);
+//   if(v_hi95[0] < 1.0)expExcl95.push_back(mH[0]);
+//   if(Val_obs95[0]<1.0)obsExcl95.push_back(mH[0]);
 
   // ------------------- For XSxBR --------------------- //
   
@@ -219,8 +219,10 @@ void plot_Exclusion_7p8()
 
   TCanvas *c = new TCanvas("c","c",canvasX,canvasY);
   TGraphAsymmErrors* gr = new TGraphAsymmErrors(nMassEff, a_masses, a_means);
-  TGraphAsymmErrors* grshade_68 = new TGraphAsymmErrors(2*nMassEff);
-  TGraphAsymmErrors* grshade_95 = new TGraphAsymmErrors(2*nMassEff);
+ //  TGraphAsymmErrors* grshade_68 = new TGraphAsymmErrors(2*nMassEff);
+//   TGraphAsymmErrors* grshade_95 = new TGraphAsymmErrors(2*nMassEff);
+  TGraphAsymmErrors* grshade_68 = new TGraphAsymmErrors(nMassEff);
+  TGraphAsymmErrors* grshade_95 = new TGraphAsymmErrors(nMassEff);
   gr->SetName("Expected");gr->SetTitle("Expected");
   grshade_68->SetName("68");grshade_68->SetTitle("68");
   grshade_95->SetName("95");grshade_95->SetTitle("95");
@@ -246,15 +248,25 @@ void plot_Exclusion_7p8()
   grObs->SetMarkerStyle(20);
   grObs->SetMarkerSize(0.7);
  
-  //cout<<"nMasses: "<<nMassEff<<endl;
-  for (int a = 0; a < nMassEff; a++)
-    {
-      grshade_68->SetPoint(a,a_masses[a],a_lo68[a]);
-      grshade_68->SetPoint(sizeV+a,a_masses[nMassEff-a-1],a_hi68[nMassEff-a-1]);
-      //cout<<"setting point "<<sizeV+a<<endl;
-      grshade_95->SetPoint(a,a_masses[a],a_lo95[a]);
-      grshade_95->SetPoint(nMassEff+a,a_masses[nMassEff-a-1],a_hi95[nMassEff-a-1]);
-    }
+  cout<<"nMasses: "<<nMassEff<<endl;
+//    for (int a = 0; a < nMassEff; a++)
+//      {
+//        grshade_68->SetPoint(a,a_masses[a],a_lo68[a]);
+//        grshade_68->SetPoint(sizeV+a,a_masses[nMassEff-a-1],a_hi68[nMassEff-a-1]);
+//        //cout<<"setting point "<<sizeV+a<<endl;
+//        grshade_95->SetPoint(a,a_masses[a],a_lo95[a]);
+//        grshade_95->SetPoint(nMassEff+a,a_masses[nMassEff-a-1],a_hi95[nMassEff-a-1]); 
+//      }
+
+   for (int a = 0; a < nMassEff; a++)
+     {
+       grshade_68->SetPoint(a,a_masses[a],a_means[a]);
+       grshade_68->SetPointError(a,0,0,a_means[a]-a_lo68[a],-a_means[a]+a_hi68[a]);
+       grshade_95->SetPoint(a,a_masses[a],a_means[a]);
+       grshade_95->SetPointError(a,0,0,a_means[a]-a_lo95[a],-a_means[a]+a_hi95[a]);
+     }
+//   grshade_68->Sort();
+//   grshade_95->Sort();
   //for(int a = 0; a < nMassEff; a++)cout<<"mass: "<<a_masses[a]<<endl;
   //TGraphAsymmErrors* grshade_68m = removeGlitches(grshade_68n);
   //TGraphAsymmErrors* grshade_95m = removeGlitches(grshade_95n);
@@ -264,8 +276,8 @@ void plot_Exclusion_7p8()
   //TGraphAsymmErrors* grshade_95 = slidingWindowAverage(grshade_95m,2);
   //TGraph* gr = slidingWindowAverage2(grm,2);
   //gr->Sort();
-  //grshade_68->Sort();
-  //grshade_95->Sort();
+  grshade_68->Sort();
+  grshade_95->Sort();
   gr->SetLineStyle(2);
   gr->SetLineWidth(3);
   gr->SetLineColor(kBlue);
@@ -275,8 +287,8 @@ void plot_Exclusion_7p8()
   grshade_95->SetLineStyle(2);
   grshade_68->SetLineWidth(3);
   grshade_95->SetLineWidth(3);
-  grshade_68->SetLineColor(kBlue);
-  grshade_95->SetLineColor(kBlue);
+  grshade_68->SetLineColor(kGreen);
+  grshade_95->SetLineColor(kYellow);
 	
 	
   char outfileName[192];
@@ -340,12 +352,10 @@ void plot_Exclusion_7p8()
   TH1F *hr = c->DrawFrame(105.0,yLow,180.0,yHigh);
 	
   gr->Sort();
-  //grshade_68->Sort();
-  //grshade_95->Sort();
-
-  grshade_95->Draw("f");
-  grshade_68->Draw("f");
-  gr->Draw("C");
+ 
+  grshade_95->Draw("e3");
+  grshade_68->Draw("e3");
+  gr->Draw("L");
   if(isXSxBR)
     {
       gr_XSBR68->Sort();
@@ -409,8 +419,8 @@ void plot_Exclusion_7p8()
   if(grid) cl->SetGrid();
   
   TH1F *hrl = cl->DrawFrame(xLow,yLow,xHigh,yHigh-5);
-  grshade_95->Draw("f");
-  grshade_68->Draw("f");
+  grshade_95->Draw("e3");
+  grshade_68->Draw("e3");
   gr->Draw("C");
   if(isXSxBR)
     {
