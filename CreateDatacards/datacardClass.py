@@ -117,7 +117,7 @@ class datacardClass:
         self.bkgMorph = theInputs['useCMS_zz4l_bkgMELA']
         self.templateDir = theTemplateDir
 	self.bIncludingError=theIncludingError
-	#self.bMEKD = theMEKD
+	self.bMEKD = False #theMEKD
         self.useMEKDTemplates = theMEKD
         
         FactorizedShapes = False
@@ -300,8 +300,6 @@ class datacardClass:
         #CMS_zz4l_alpha.setConstant(True)  # also read from input file
         CMS_zz4l_mean_BW.setConstant(True)
         #CMS_zz4l_gamma_BW.setConstant(True)
-
-        print "HEEERRRRRRRRRRRRRRRRREEEEEEE"
 
         print "mean_BW ", CMS_zz4l_mean_BW.getVal()
         print "gamma_BW ", CMS_zz4l_gamma.getVal()
