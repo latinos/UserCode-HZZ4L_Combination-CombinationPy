@@ -103,7 +103,7 @@ class datacardClass:
             return falseVar
     
     # main datacard and workspace function
-    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False, theMassMeasurement=False):
+    def makeCardsWorkspaces(self, theMH, theis2D, theOutputDir, theInputs,theTemplateDir="templates2D", theIncludingError=False, theMEKD=False):
 
         ## --------------- SETTINGS AND DECLARATIONS --------------- ##
         DEBUG = False
@@ -117,8 +117,8 @@ class datacardClass:
         self.bkgMorph = theInputs['useCMS_zz4l_bkgMELA']
         self.templateDir = theTemplateDir
 	self.bIncludingError=theIncludingError
-	self.bMEKD = theMEKD
-	self.bMassMeasurement = theMassMeasurement
+	#self.bMEKD = theMEKD
+        self.useMEKDTemplates = theMEKD
         
         FactorizedShapes = False
 
@@ -159,26 +159,25 @@ class datacardClass:
         if(DEBUG): print "width: ",self.widthHVal
         
         self.windowVal = max( self.widthHVal, 1.0)
+        self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
         highside = 1000.0
         if (self.mH >= 275):
             lowside = 180.0
             highside = 650.0
-        elif (self.mH >= 350):
+        if (self.mH >= 350):
             lowside = 200.0
-        elif (self.mH >= 500):
+            highside = 900.0
+        if (self.mH >= 500):
             lowside = 250.0
-        elif (self.mH >= 700):
+            highside = 1000.0
+        if (self.mH >= 700):
             lowside = 350.0
             highside = 1400.0
                         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
         self.high_M = min( (self.mH + 15.*self.windowVal), highside)
                
-	if(self.bUseCBnoConvolution and self.bMassMeasurement):
-		self.low_M = 100
-		self.high_M = 165
-	
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
         elif (self.channel == self.ID_2e2mu): self.appendName = '2e2mu'
@@ -518,14 +517,25 @@ class datacardClass:
         ## --------------------------- MELA 2D PDFS ------------------------- ##
 
         discVarName = "melaLD"
-        D = ROOT.RooRealVar(discVarName,discVarName,0,1)
-    
+        #MELA
+        dLow = 0
+        dHigh = 1
+        if self.useMEKDTemplates:
+            dLow = -5
+            dHigh = 15
+        D = ROOT.RooRealVar(discVarName,discVarName,dLow,dHigh)
+
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         
         sigTempFile = ROOT.TFile(templateSigName)
         sigTemplate = sigTempFile.Get("h_mzzD")
         sigTemplate_Up = sigTempFile.Get("h_mzzD_up")
         sigTemplate_Down = sigTempFile.Get("h_mzzD_dn")
+
+        #Set Bins
+        dBins = sigTemplate.GetYaxis().GetNbins()
+        print "^(&*$%@#(&^^)*&_)#(*&%)#^$(^%*^&%* BINS ", dBins
+        D.setBins(dBins)
         
         TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         sigTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),sigTemplate)
@@ -667,7 +677,7 @@ class datacardClass:
 	####  ----------------------- mekd  parametrized double gaussian stuffs  -------------------------
 	discVarName = "mekd"
 	MEKD = ROOT.RooRealVar(discVarName, discVarName, -5, 15);
-	if theMEKD: 
+	if self.bMEKD: 
 		name = "mekd_sig_a0_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
 		mekd_sig_a0 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_sig_a0_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
 		name = "mekd_sig_a1_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
@@ -703,7 +713,8 @@ class datacardClass:
 			m = m + 0.1
 			if mekd_sig_a4.getVal() <= 0 : print m, mekd_sig_a4.getVal() 
 		CMS_zz4l_mass.setVal(140);
-		print "DEBUG Mingshui ", mekd_qqZZ_a0.getVal(), mekd_qqZZ_a1.getVal(), mekd_qqZZ_a2.getVal(), mekd_qqZZ_a3.getVal(), mekd_qqZZ_a4.getVal()
+
+
 	####  ----------------------- end mekd -----------------------------------------------------------
         sig2d_ggH = ROOT.RooProdPdf("sig2d_ggH","sig2d_ggH",ROOT.RooArgSet(self.getVariable(sig_ggH_HM,sig_ggH,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_ggH),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
         sig2d_VBF = ROOT.RooProdPdf("sig2d_VBF","sig2d_VBF",ROOT.RooArgSet(self.getVariable(sig_VBF_HM,sig_VBF,self.isHighMass)),ROOT.RooFit.Conditional(ROOT.RooArgSet(sigTemplateMorphPdf_VBF),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
@@ -966,7 +977,7 @@ class datacardClass:
         bkgTemplateMorphPdf_zjets = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,CMS_zz4l_mass,D,true,funcList_zjets,morphVarListBkg,1.0,1)
 
 	####  ----------------------- mekd  parametrized double gaussian stuffs  -------------------------
-	if theMEKD: 
+	if self.bMEKD: 
 		name = "mekd_qqZZ_a0_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
 		print "mekd_qqZZ_a0_shape=",theInputs['mekd_qqZZ_a0_shape'] 
 		print "mekd_sig_a0_shape=",theInputs['mekd_sig_a0_shape'] 
@@ -999,7 +1010,8 @@ class datacardClass:
 		while m >= 100 and m < 150:
 			CMS_zz4l_mass.setVal(m)
 			m = m + 0.1
-			if mekd_qqZZ_a4.getVal() <= 0 : print m, mekd_qqZZ_a4.getVal() 
+			if mekd_qqZZ_a4.getVal() <= 0 : print m, mekd_qqZZ_a4.getVal()
+                print "DEBUG Mingshui ", mekd_qqZZ_a0.getVal(), mekd_qqZZ_a1.getVal(), mekd_qqZZ_a2.getVal(), mekd_qqZZ_a3.getVal(), mekd_qqZZ_a4.getVal()
 	####  ----------------------- end mekd -----------------------------------------------------------
         bkg2d_qqzz = ROOT.RooProdPdf("bkg2d_qqzz","bkg2d_qqzz",ROOT.RooArgSet(self.getVariable(bkg_qqzzErr,bkg_qqzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_qqzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
         bkg2d_ggzz = ROOT.RooProdPdf("bkg2d_ggzz","bkg2d_ggzz",ROOT.RooArgSet(self.getVariable(bkg_ggzzErr,bkg_ggzz,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(bkgTemplateMorphPdf_ggzz),ROOT.RooArgSet(self.getVariable(MEKD,D,self.bMEKD))))
@@ -1233,7 +1245,7 @@ class datacardClass:
         print " sigRate_ZH_Shape=",sigRate_ZH_Shape
         print " @@@@@@@ rfvSigRate_ttH = ",rfvSigRate_ttH.getVal()
         print " sigRate_ttH_Shape=",sigRate_ttH_Shape
-        print "NEEDED Sum of sigRate_XYZ_Shape=",sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
+        print "Sum of sigRate_XYZ_Shape=",sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
         ## SET RATES TO 1 
         ## DC RATES WILL BE MULTIPLIED
         ## BY RATES IMPORTED TO WS
@@ -1264,7 +1276,6 @@ class datacardClass:
         bkgRate_ggzz_Shape = sclFactorBkg_ggzz * bkg_ggzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         bkgRate_zjets_Shape = sclFactorBkg_zjets * bkg_zjets.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         
-	print "NEEDED Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape,", totbkg= ", bkgRate_zjets_Shape+bkgRate_qqzz_Shape+bkgRate_ggzz_Shape,"in ",self.low_M," - ",self.high_M
         if(DEBUG):
             print "Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape," in ",low_M," - ",high_M
             CMS_zz4l_mass.setRange("lowmassregion",100.,160.)
