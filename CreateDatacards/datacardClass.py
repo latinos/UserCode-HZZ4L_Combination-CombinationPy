@@ -513,8 +513,12 @@ class datacardClass:
 	#------------------------------------------------end bIncludingError 
 
         ## --------------------------- MELA 2D PDFS ------------------------- ##
+        discVarName = ""
+        if self.useMEKDTemplates:
+            discVarName = "mekdLD"
+        else:
+            discVarName = "melaLD"
 
-        discVarName = "melaLD"
         #MELA
         dLow = 0
         dHigh = 1
@@ -532,7 +536,6 @@ class datacardClass:
 
         #Set Bins
         dBins = sigTemplate.GetYaxis().GetNbins()
-        print "^(&*$%@#(&^^)*&_)#(*&%)#^$(^%*^&%* BINS ", dBins
         D.setBins(dBins)
         
         TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
