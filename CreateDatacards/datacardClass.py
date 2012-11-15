@@ -526,7 +526,7 @@ class datacardClass:
             dLow = -5
             dHigh = 15
         D = ROOT.RooRealVar(discVarName,discVarName,dLow,dHigh)
-
+        print "discVarName ",discVarName
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         
         sigTempFile = ROOT.TFile(templateSigName)
@@ -1311,7 +1311,8 @@ class datacardClass:
 		
         if (self.is2D == 1):
             if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,self.getVariable(MEKD,D,self.bMEKD), RelErr))
-            else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,self.getVariable(MEKD,D,self.bMEKD)))
+            else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D))
+#            else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,self.getVariable(MEKD,D,self.bMEKD)))
 
         if (self.is2D == 2):
             data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(SD))
