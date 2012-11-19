@@ -40,7 +40,7 @@ using namespace ROOT::Math;
 //<----------
 
 
-void signalEfficiency_w(int channel, double sqrts);
+void signalEfficiency_w(int channel, double sqrts, bool VBFtag = false);
 
 
 // Run all final states and sqrts in one go
@@ -48,17 +48,24 @@ void signalEfficiency_w() {
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
 
-  signalEfficiency_w(1,7);
-  signalEfficiency_w(2,7);
-  signalEfficiency_w(3,7);
-  signalEfficiency_w(1,8);
-  signalEfficiency_w(2,8);
-  signalEfficiency_w(3,8);
+  signalEfficiency_w(1,7, true);
+  signalEfficiency_w(2,7, true);
+  signalEfficiency_w(3,7, true);
+  signalEfficiency_w(1,8, true);
+  signalEfficiency_w(2,8, true);
+  signalEfficiency_w(3,8, true);
+
+  signalEfficiency_w(1,7, false);
+  signalEfficiency_w(2,7, false);
+  signalEfficiency_w(3,7, false);
+  signalEfficiency_w(1,8, false);
+  signalEfficiency_w(2,8, false);
+  signalEfficiency_w(3,8, false);
 }
 
 
 // The actual job
-void signalEfficiency_w(int channel, double sqrts) 
+void signalEfficiency_w(int channel, double sqrts, bool VBFtag) 
 {
   TString schannel;
   if      (channel == 1) schannel = "4mu";
@@ -68,9 +75,9 @@ void signalEfficiency_w(int channel, double sqrts)
 
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  cout << "schannel = " << schannel << "  sqrts = " << sqrts << endl;
+  cout << "schannel = " << schannel << "  sqrts = " << sqrts << " VBFtag = " << VBFtag << endl;
 
-  TString outfile = "CardFragments/signalEfficiency_" + ssqrts + "_" + schannel + ".txt";
+  TString outfile = "CardFragments/signalEfficiency_" + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag)) +".txt";
   ofstream of(outfile,ios_base::out);
 
   gSystem->AddIncludePath("-I$ROOFITSYS/include");
@@ -122,6 +129,10 @@ void signalEfficiency_w(int channel, double sqrts)
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
     float mela, MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
+    std::vector<double> *JetEta = new vector<double>;
+    //std::vector<double> *JetPt = new vector<double>;
+    //std::vector<double> *JetPhi = new vector<double>;
+    std::vector<double> *JetMass = new vector<double>;
     int numEventsRaw = 0;
     float numEventsPowheg =0;
     float numEventsPU =0;    
@@ -131,6 +142,9 @@ void signalEfficiency_w(int channel, double sqrts)
     t1->SetBranchAddress("MC_weight_PUWeight",&MC_weight_PUWeight);
     t1->SetBranchAddress("MC_weight_dataMC",&MC_weight_dataMC);
     t1->SetBranchAddress("ZZLD",&mela);
+    //t1->SetBranchAddress("JetPt", &JetPt);
+    t1->SetBranchAddress("JetEta", &JetEta);
+    t1->SetBranchAddress("JetMass", &JetMass);
     float totalCtr=0;
     float eff_noweight=0;
     float sumw2=0;
@@ -138,18 +152,21 @@ void signalEfficiency_w(int channel, double sqrts)
     //    float den = 0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
-      totalCtr+=MC_weight_norm; 
-      sumw2 += MC_weight_norm*MC_weight_norm;
-      ++numEventsRaw;      
-      numEventsPowheg += MC_weight_powhegWeight;
-      numEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
-      numEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
-      if (MC_weight_powhegWeight>0) {
-	float w_initial = MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
-	eff_noweight += w_initial;
-	sumw_init2 += w_initial*w_initial; 
-	//	if (den!=0) den = (MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC)/MC_weight_norm;
-      }
+      if( (VBFtag == true && JetMass->size() == 2) || (VBFtag == false && JetMass->size() != 2))
+	{
+	  totalCtr+=MC_weight_norm; 
+	  sumw2 += MC_weight_norm*MC_weight_norm;
+	  ++numEventsRaw;      
+	  numEventsPowheg += MC_weight_powhegWeight;
+	  numEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
+	  numEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
+	  if (MC_weight_powhegWeight>0) {
+	    float w_initial = MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
+	    eff_noweight += w_initial;
+	    sumw_init2 += w_initial*w_initial; 
+	    //	if (den!=0) den = (MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC)/MC_weight_norm;
+	  }
+	}
     }
 
     // FIXME: the 7TeV samples are assumed to have the ad-hoc correction factor for the mll>12 gen cut,
@@ -208,11 +225,11 @@ void signalEfficiency_w(int channel, double sqrts)
   //  TF1 *polyFunc= new TF1("polyFunc","pol9", 110., xMax);
 
   polyFunc->SetLineColor(4);      
-  TString cname = "eff" + ssqrts + "_" + schannel;
+  TString cname = "eff" + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag));
   TCanvas *c = new TCanvas(cname,cname);
   c->SetGrid();
 
-  TString outname = "sigFigs" + ssqrts +"/eff_" + schannel;
+  TString outname = "sigFigs" + ssqrts +"/eff_" + schannel + "_" + Form("%d",int(VBFtag));
 
   grEff->Fit(polyFunc,"Rt");
   TString xaxisText = "m_{" + schannel + "}";
@@ -226,7 +243,7 @@ void signalEfficiency_w(int channel, double sqrts)
   c->Print(outname+".root"); 
 
   cout << endl;
-  cout << "------- Parameters for " << schannel << " sqrts=" << sqrts << endl;
+  cout << "------- Parameters for " << schannel << " sqrts=" << sqrts << " VBFtag = " << VBFtag << endl;
   cout << "   a1 = " << polyFunc->GetParameter(0) << endl;
   cout << "   a2 = " << polyFunc->GetParameter(1) << endl;
   cout << "   a3 = " << polyFunc->GetParameter(2) << endl;

@@ -1,0 +1,4 @@
+## rates --- format = chan N lumi ##
+## if lumi is blank, lumi for cards used ##
+rate qqZZ  0.550895
+rate ggZZ  0.0555823
