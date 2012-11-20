@@ -5,7 +5,7 @@
 #-----------------------------------------------
 import sys, os, pwd, commands
 import optparse, shlex, re
-import math
+import math, warnings
 from ROOT import *
 import ROOT
 from array import array
@@ -46,7 +46,6 @@ def parseOptions():
         sys.exit()
 
 
-
     
 # define make directory function
 def makeDirectory(subDirName):
@@ -82,6 +81,10 @@ def creationLoop(directory):
     stepSizes=[ 0.5, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0 ]
     endVal=[ 29, 20, 7,  30, 65, 12, 5, 10, 9 ]
 
+#    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0]
+#    stepSizes=[   0.5,   0.1,   0.5,   1.0,   2.0]
+#    endVal=[       29,    20,     7,    30,    11]
+
 
     startMass=[ 125.0 ]
     stepSizes=[ 0.5 ]
@@ -102,7 +105,9 @@ def creationLoop(directory):
     myReader2e2mu.readInputs()
     theInputs2e2mu = myReader2e2mu.getInputs()
 
-    
+    if(opt.mekd == 1):
+        warnings.warn("MEKD will be used instead of MELA!!!")
+            
     a=0
     while (a < len(startMass) ):
 	
