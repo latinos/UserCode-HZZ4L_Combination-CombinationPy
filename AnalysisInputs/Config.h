@@ -35,9 +35,11 @@
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012_ichep/PRODFSR_8TeV/";
 
 //Final set, HCP
-TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR/";
-TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR_8TeV/";
+//TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR/";
+//TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR_8TeV/";
 
+TString filePath7TeV = "root://lxcms00//data3/2012/HZZ_root/161112/PRODFSR/";
+TString filePath8TeV = "root://lxcms00//data3/2012/HZZ_root/161112/PRODFSR_8TeV/";
 
 // Luminosity, as float and as string to be used in file names, etc.
 double lumi7TeV = 5.051;
