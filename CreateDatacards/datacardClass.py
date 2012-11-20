@@ -177,6 +177,9 @@ class datacardClass:
                         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
         self.high_M = min( (self.mH + 15.*self.windowVal), highside)
+	if(self.bUseCBnoConvolution):
+		self.low_M = 100.
+		self.high_M = max(180.,self.high_M)
                
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
