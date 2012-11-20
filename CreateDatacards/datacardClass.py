@@ -923,7 +923,6 @@ class datacardClass:
 	bkg_zjetsErr = ROOT.RooProdPdf("bkg_zjetsErr","bkg_zjetsErr", ROOT.RooArgSet(bkg_zjets), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrZX), ROOT.RooArgSet(RelErr)));
 	#end bIncludingError 
       ## ----------------- 2D BACKGROUND SHAPES --------------- ##
-        
         templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         bkgTempFile = ROOT.TFile(templateBkgName)
         bkgTemplate = bkgTempFile.Get("h_mzzD")
@@ -1310,8 +1309,10 @@ class datacardClass:
             else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass))
 		
         if (self.is2D == 1):
-            if(self.bIncludingError): data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,self.getVariable(MEKD,D,self.bMEKD), RelErr))
-            else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D))
+            if(self.bIncludingError):
+                data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D, RelErr))
+            else:
+                data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,D))
 #            else: data_obs = ROOT.RooDataSet(datasetName,datasetName,data_obs_tree,ROOT.RooArgSet(CMS_zz4l_mass,self.getVariable(MEKD,D,self.bMEKD)))
 
         if (self.is2D == 2):
