@@ -520,12 +520,12 @@ class datacardClass:
             discVarName = "melaLD"
 
         #MELA
-        dLow = 0
-        dHigh = 1
-        if self.useMEKDTemplates:
-            dLow = -5
-            dHigh = 15
-        D = ROOT.RooRealVar(discVarName,discVarName,dLow,dHigh)
+        #dLow = 0
+        #dHigh = 1
+        #if self.useMEKDTemplates:
+        #    dLow = -5
+        #    dHigh = 15
+
         print "discVarName ",discVarName
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         
@@ -536,7 +536,11 @@ class datacardClass:
 
         #Set Bins
         dBins = sigTemplate.GetYaxis().GetNbins()
+        dLow = sigTemplate.GetYaxis().GetXmin()
+        dHigh = sigTemplate.GetYaxis().GetXmax()
+        D = ROOT.RooRealVar(discVarName,discVarName,dLow,dHigh)
         D.setBins(dBins)
+        print "discVarName ", discVarName, " dLow " , dLow, " dHigh ", dHigh, " dBins ", dBins
         
         TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         sigTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),sigTemplate)
@@ -677,7 +681,7 @@ class datacardClass:
 
 	####  ----------------------- mekd  parametrized double gaussian stuffs  -------------------------
 	discVarName = "mekd"
-	MEKD = ROOT.RooRealVar(discVarName, discVarName, -5, 15);
+	MEKD = ROOT.RooRealVar(discVarName, discVarName,dLow,dHigh);
 	if self.bMEKD: 
 		name = "mekd_sig_a0_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
 		mekd_sig_a0 = ROOT.RooFormulaVar(name,"("+theInputs['mekd_sig_a0_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
