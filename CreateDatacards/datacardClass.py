@@ -519,13 +519,6 @@ class datacardClass:
         else:
             discVarName = "melaLD"
 
-        #MELA
-        #dLow = 0
-        #dHigh = 1
-        #if self.useMEKDTemplates:
-        #    dLow = -5
-        #    dHigh = 15
-
         print "discVarName ",discVarName
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         
@@ -950,12 +943,32 @@ class datacardClass:
         bkgTemplatePdf_qqzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHist)
         TemplateName = "bkgTemplatePdf_ggzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
         bkgTemplatePdf_ggzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),ggbkgTempDataHist)
+
+
+        ### NEW MEKD
+        if self.useMEKDTemplates :
+            templateBkgName = "{0}/Dbackground_ZX_{1}.root".format(self.templateDir ,self.appendName)
+        else:
+            templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
+
+        bkgTempFileZX = ROOT.TFile(templateBkgName)
+        bkgTemplateZX = bkgTempFileZX.Get("h_mzzD")
+        bkgTemplateZX_Up = bkgTempFileZX.Get("h_mzzD_up")
+        bkgTemplateZX_Down = bkgTempFileZX.Get("h_mzzD_dn")
+
+        TemplateName = "bkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        bkgTempDataHistZX = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),bkgTemplateZX)
+        TemplateName = "bkgTempDataHist_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        bkgTempDataHistZX_Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),bkgTemplateZX_Up)
+        TemplateName = "bkgTempDataHist_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        bkgTempDataHistZX_Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),bkgTemplateZX_Down)
+        
         TemplateName = "bkgTemplatePdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
-        bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHist)
+        bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHistZX)
         TemplateName = "bkgTemplatePdf_zjets_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
-        bkgTemplatePdf_zjets_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHist_Up)
+        bkgTemplatePdf_zjets_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHistZX_Up)
         TemplateName = "bkgTemplatePdf_zjets_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
-        bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHist_Down)
+        bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHistZX_Down)
         
         funcList_zjets = ROOT.RooArgList()  
         morphBkgVarName = "CMS_zz4l_bkgMELA"    
