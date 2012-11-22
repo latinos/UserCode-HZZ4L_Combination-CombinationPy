@@ -1,0 +1,11 @@
+ggZZshape a0_bkgd  150.134
+ggZZshape a1_bkgd  51.4646
+ggZZshape a2_bkgd  132.509
+ggZZshape a3_bkgd  0.0336623
+ggZZshape a4_bkgd  185.504
+ggZZshape a5_bkgd  9.91658
+ggZZshape a6_bkgd  41.424
+ggZZshape a7_bkgd  0.16433
+ggZZshape a8_bkgd  52.8736
+ggZZshape a9_bkgd  0.0671404
+
