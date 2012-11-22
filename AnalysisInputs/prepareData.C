@@ -59,7 +59,7 @@ bool onlyICHEPStat = false;
 Mela* myMELA;
 #endif
 
-void convertTreeForDatacards(TString inFile, TString outfile);
+void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag);
 
 // Run all final states and sqrts in one go
 void prepareData() {
@@ -69,17 +69,24 @@ void prepareData() {
 #endif
 
   gSystem->Exec("mkdir -p "+ DataRootFilePath);
-  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleMu.root",  DataRootFilePath+"hzz4mu_"  +lumistr7TeV+".root");
-  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleEle.root", DataRootFilePath+"hzz4e_"   +lumistr7TeV+".root");
-  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleOr.root",  DataRootFilePath+"hzz2e2mu_"+lumistr7TeV+".root");
-  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleMu.root",  DataRootFilePath+"hzz4mu_"  +lumistr8TeV+".root");
-  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleEle.root", DataRootFilePath+"hzz4e_"   +lumistr8TeV+".root");
-  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleOr.root",  DataRootFilePath+"hzz2e2mu_"+lumistr8TeV+".root");
+  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleMu.root",  DataRootFilePath+"hzz4mu_"  +lumistr7TeV+"_1.root",true);
+  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleEle.root", DataRootFilePath+"hzz4e_"   +lumistr7TeV+"_1.root",true);
+  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleOr.root",  DataRootFilePath+"hzz2e2mu_"+lumistr7TeV+"_1.root",true);
+  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleMu.root",  DataRootFilePath+"hzz4mu_"  +lumistr8TeV+"_1.root",true);
+  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleEle.root", DataRootFilePath+"hzz4e_"   +lumistr8TeV+"_1.root",true);
+  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleOr.root",  DataRootFilePath+"hzz2e2mu_"+lumistr8TeV+"_1.root",true);
+
+  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleMu.root",  DataRootFilePath+"hzz4mu_"  +lumistr7TeV+"_0.root",false);
+  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleEle.root", DataRootFilePath+"hzz4e_"   +lumistr7TeV+"_0.root",false);
+  convertTreeForDatacards(filePath7TeV + "/data/HZZ4lTree_DoubleOr.root",  DataRootFilePath+"hzz2e2mu_"+lumistr7TeV+"_0.root",false);
+  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleMu.root",  DataRootFilePath+"hzz4mu_"  +lumistr8TeV+"_0.root",false);
+  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleEle.root", DataRootFilePath+"hzz4e_"   +lumistr8TeV+"_0.root",false);
+  convertTreeForDatacards(filePath8TeV + "/data/HZZ4lTree_DoubleOr.root",  DataRootFilePath+"hzz2e2mu_"+lumistr8TeV+"_0.root",false);
 }
 
 
 // The actual job
-void convertTreeForDatacards(TString inFile, TString outfile){
+void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag){
   TChain* treedata ;
   treedata= new TChain("SelectedTree");
   treedata->Add(inFile);
@@ -89,6 +96,7 @@ void convertTreeForDatacards(TString inFile, TString outfile){
   float mzz, pseudomela, mela, mzzErr;
   float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
   float pt4l, Y4l;
+  int NJets;
 
   treedata->SetBranchAddress("RunNumber",&run);
   treedata->SetBranchAddress("ZZMass",&mzz);
@@ -104,7 +112,9 @@ void convertTreeForDatacards(TString inFile, TString outfile){
   treedata->SetBranchAddress("phistarZ1",&phi1);
   
   treedata->SetBranchAddress("ZZPt",&pt4l);
-  treedata->SetBranchAddress("ZZRapidity",&Y4l);  
+  treedata->SetBranchAddress("ZZRapidity",&Y4l);
+
+  treedata->SetBranchAddress("NJets",&NJets);
 
   TFile* newFile  = new TFile(outfile, "RECREATE");
   newFile->cd();
@@ -123,6 +133,8 @@ void convertTreeForDatacards(TString inFile, TString outfile){
     //    cout << run << endl;
     
     if (onlyICHEPStat && run>=198049) continue;
+
+    if ((VBFtag && NJets!=2) || (!VBFtag && NJets==2)) continue;
 
     CMS_zz4l_mass = mzz;
     CMS_zz4l_massErr = mzzErr;

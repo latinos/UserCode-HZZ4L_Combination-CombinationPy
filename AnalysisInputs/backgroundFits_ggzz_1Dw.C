@@ -38,23 +38,30 @@ using namespace std;
 #include "Config.h"
 //<----------
 
-void backgroundFits_ggzz_1Dw(int channel, int sqrts);
+void backgroundFits_ggzz_1Dw(int channel, int sqrts, bool VBFtag);
 
 // Run all final states and sqrts in one go
 void backgroundFits_ggzz_1Dw() {
   gSystem->Exec("mkdir -p bkgFigs7TeV");
   gSystem->Exec("mkdir -p bkgFigs8TeV");
 
-  backgroundFits_ggzz_1Dw(1,7);
-  backgroundFits_ggzz_1Dw(2,7);
-  backgroundFits_ggzz_1Dw(3,7);  
-  backgroundFits_ggzz_1Dw(1,8);
-  backgroundFits_ggzz_1Dw(2,8);
-  backgroundFits_ggzz_1Dw(3,8);
+  backgroundFits_ggzz_1Dw(1,7,true);
+  backgroundFits_ggzz_1Dw(2,7,true);
+  backgroundFits_ggzz_1Dw(3,7,true);  
+  backgroundFits_ggzz_1Dw(1,8,true);
+  backgroundFits_ggzz_1Dw(2,8,true);
+  backgroundFits_ggzz_1Dw(3,8,true);
+
+  backgroundFits_ggzz_1Dw(1,7,false);
+  backgroundFits_ggzz_1Dw(2,7,false);
+  backgroundFits_ggzz_1Dw(3,7,false);  
+  backgroundFits_ggzz_1Dw(1,8,false);
+  backgroundFits_ggzz_1Dw(2,8,false);
+  backgroundFits_ggzz_1Dw(3,8,false);
 }
 
 // The actual job
-void backgroundFits_ggzz_1Dw(int channel, int sqrts)
+void backgroundFits_ggzz_1Dw(int channel, int sqrts, bool VBFtag)
 {
   TString schannel;
   if      (channel == 1) schannel = "4mu";
@@ -64,9 +71,9 @@ void backgroundFits_ggzz_1Dw(int channel, int sqrts)
 
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  cout << "schannel = " << schannel << "  sqrts = " << sqrts << endl;
+  cout << "schannel = " << schannel << "  sqrts = " << sqrts << " VBFtag = "<< VBFtag << endl;
 
-  TString outfile = "CardFragments/ggzzBackgroundFit_" + ssqrts + "_" + schannel + ".txt";
+  TString outfile = "CardFragments/ggzzBackgroundFit_" + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag)) + ".txt";
   ofstream of(outfile,ios_base::out);
 
   gSystem->AddIncludePath("-I$ROOFITSYS/include");
@@ -88,13 +95,18 @@ void backgroundFits_ggzz_1Dw(int channel, int sqrts)
   RooRealVar* MC_weight = new RooRealVar("MC_weight","MC_weight",0.,2.) ; 
   RooRealVar* ZZMass = new RooRealVar("ZZMass","ZZMass",100.,1000.);
   RooRealVar* ZZLD = new RooRealVar("ZZLD","ZZLD",0.,1.);
-
+  RooRealVar* NJets = new RooRealVar("NJets","NJets",0.,100.);
   
   char cut[10];
   sprintf(cut,"ZZLD>0.5");
   //RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*ZZLD),cut,"MC_weight");
-  RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight),0,"MC_weight");
-	
+  if (VBFtag==true){
+    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets==2","MC_weight");
+  }
+  else{
+    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets!=2","MC_weight");
+  }
+
   double totalweight = 0.;
   for (int i=0 ; i<set->numEntries() ; i++) { 
     set->get(i) ; 
@@ -209,7 +221,7 @@ void backgroundFits_ggzz_1Dw(int channel, int sqrts)
 
   TString outputPath = "bkgFigs";
   outputPath = outputPath+ (long) sqrts + "TeV/";
-  outputName =  outputPath + "bkgggzz_" + schannel;
+  outputName =  outputPath + "bkgggzz_" + schannel + "_" + Form("%d",int(VBFtag));
   c->SaveAs(outputName + ".eps");
   c->SaveAs(outputName + ".png");
   c->SaveAs(outputName + ".root");

@@ -40,7 +40,7 @@ using namespace RooFit ;
 using namespace std;
 
 //Declaration
-void signalFits(int channel, int sqrts);
+void signalFits(int channel, int sqrts, bool VBFtag);
 float WidthValue(float mHStarWidth);
 
 void signalFits()
@@ -50,25 +50,31 @@ void signalFits()
 
   gSystem->Load("../CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
 
-  signalFits(1,7);
-  signalFits(2,7);
-  signalFits(3,7);
+  signalFits(1,7,true);
+  signalFits(2,7,true);
+  signalFits(3,7,true);
+  signalFits(1,8,true);
+  signalFits(2,8,true);
+  signalFits(3,8,true);
 
-  signalFits(1,8);
-  signalFits(2,8);
-  signalFits(3,8);
+  signalFits(1,7,false);
+  signalFits(2,7,false);
+  signalFits(3,7,false);
+  signalFits(1,8,false);
+  signalFits(2,8,false);
+  signalFits(3,8,false);
 
   return;
 }
 
 //The actual job
-void signalFits(int channel, int sqrts)
+void signalFits(int channel, int sqrts, bool VBFtag)
 {
   string schannel;
   if (channel == 1) schannel = "4mu";
   if (channel == 2) schannel = "4e";
   if (channel == 3) schannel = "2e2mu";
-  cout << "Final state = " << schannel << " and sqrt(s) = " << sqrts << endl;
+  cout << "Final state = " << schannel << " and sqrt(s) = " << sqrts << " VBFtag = " << VBFtag << endl;
 
   //Pick the correct mass points and paths
   TString filePath;
@@ -114,7 +120,9 @@ void signalFits(int channel, int sqrts)
     sprintf(tmp_finalInPath,"/HZZ4lTree_H%i.root",masses[i]);
     string finalInPath = filePath + tmp_finalInPath;
 
-    TFile *f = new TFile(finalInPath.c_str()) ;
+    //cout<<finalInPath<<endl;
+
+    TFile *f = new TFile(finalInPath.c_str());
     TTree *tree= (TTree*) f->Get("SelectedTree");
     if(tree==NULL){
       cout << "Impossible to retrieve the tree for mass point " << masses[i] <<" GeV " << endl;
@@ -138,11 +146,19 @@ void signalFits(int channel, int sqrts)
     //Set the observable and get the RooDataSomething
     RooRealVar ZZMass("ZZMass","ZZMass",low_M,high_M);
     RooRealVar MC_weight("MC_weight","MC_weight",0.,10.);
+    RooRealVar NJets("NJets","NJets",0.,100.);
 
     if(channel == 2) ZZMass.setBins(50);
     if(channel == 3) ZZMass.setBins(50);
 
-    RooDataSet *set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
+    RooDataSet* set2;
+
+    if (VBFtag == true){
+      set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets==2", "MC_weight");
+    }
+    else{
+      set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets!=2", "MC_weight");
+    }
     RooDataHist *set = (RooDataHist*)set2->binnedClone("datahist","datahist");
 
     //Theoretical signal model  
@@ -211,7 +227,7 @@ void signalFits(int channel, int sqrts)
     tmp_plotFileTitle += "/fitMass_H";
     char tmp2_plotFileTitle[200];
     sprintf(tmp2_plotFileTitle,"%i_%iTeV_",masses[i],sqrts);
-    string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel + ".gif";
+    string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) +".gif";
 
     canv.SaveAs(plotFileTitle.c_str());
   }
@@ -268,13 +284,13 @@ void signalFits(int channel, int sqrts)
   tmp_paramPlotFileTitle += "/fitParam_";
   char tmp2_paramPlotFileTitle[200];
   sprintf(tmp2_paramPlotFileTitle,"%iTeV_",sqrts);
-  string paramPlotFileTitle = tmp_paramPlotFileTitle + tmp2_paramPlotFileTitle + schannel + ".gif";
+  string paramPlotFileTitle = tmp_paramPlotFileTitle + tmp2_paramPlotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) + ".gif";
 
   canv2.SaveAs(paramPlotFileTitle.c_str());
 
   char tmp_outCardName[200];
   sprintf(tmp_outCardName,"CardFragments/signalFunctions_%iTeV_",sqrts);
-  string outCardName = tmp_outCardName + schannel + ".txt";
+  string outCardName = tmp_outCardName + schannel + "_" + Form("%d",int(VBFtag)) +".txt";
   ofstream ofsCard(outCardName.c_str(),fstream::out);
   ofsCard << "usehighmassreweightedshapes" << endl;
   ofsCard << "## signal functions --- no spaces! ##" << endl;

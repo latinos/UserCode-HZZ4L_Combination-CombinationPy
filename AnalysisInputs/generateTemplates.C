@@ -404,7 +404,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
 
 //=======================================================================
 
-TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true){
+TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true,bool VBFtag=false){
   TChain* bkgMC = new TChain("SelectedTree");
 
   if (isLowMass) {
@@ -415,13 +415,14 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
     buildChain(bkgMC, "4mu", sampleIndex);
   }
 
-  cout << "Chain for " << channel << " " << sampleIndex << " " << isLowMass << " " << bkgMC->GetEntries() << endl;
+  cout << "Chain for " << channel << " " << sampleIndex << " " << isLowMass << " " << VBFtag << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
   float mzz,KD,KD_cut,w;
   float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
   float pt4l=0, Y4l=0;
   float psig=0, pbkg=0;
+  int NJets;
   
   
   //distinction btw LD and mela needed because we might want 
@@ -441,6 +442,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
+  bkgMC->SetBranchAddress("NJets",&NJets);
   if (recompute_) {
     bkgMC->SetBranchAddress("Z1Mass",&m1);
     bkgMC->SetBranchAddress("Z2Mass",&m2);
@@ -502,9 +504,9 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 	//cout << "LD: " << LD << endl;
 */	
       }
-
-      bkgHist->Fill(mzz,KD,w);
-
+      if ((VBFtag==true && NJets==2) || (VBFtag==false && NJets!=2)){
+	bkgHist->Fill(mzz,KD,w);
+      }
     }
 
   }
@@ -618,19 +620,23 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
 
 //=======================================================================
 
-void makeTemplate(TString channel="4mu"){
+void makeTemplate(TString channel="4mu", bool VBFtag=false){
+
+  TString vbf;
+  if (VBFtag) vbf="_1";
+  if (!VBFtag) vbf="_0";
 
   //  sprintf(temp,"../datafiles/Dsignal_%s.root",channel.Data());
-  TFile* fsig = new TFile(destDir + "Dsignal_" + channel + ".root","RECREATE");
+  TFile* fsig = new TFile(destDir + "Dsignal_" + channel + vbf + ".root","RECREATE");
   TFile* fAltsig = 0;
   if (makeAltSignal) {
     //    sprintf(temp,"../datafiles/Dsignal_ALT_%s.root",channel.Data());
-    fAltsig = new TFile(destDir + "Dsignal_ALT_" + channel + ".root","RECREATE");
+    fAltsig = new TFile(destDir + "Dsignal_ALT_" + channel + vbf + ".root","RECREATE");
   }
   //  sprintf(temp,"../datafiles/Dbackground_qqZZ_%s.root",channel.Data());
-  TFile* fqqZZ = new TFile(destDir + "Dbackground_qqZZ_" + channel + ".root","RECREATE");
+  TFile* fqqZZ = new TFile(destDir + "Dbackground_qqZZ_" + channel + vbf + ".root","RECREATE");
   //  sprintf(temp,"../datafiles/Dbackground_ggZZ_%s.root",channel.Data());
-  TFile* fggZZ = new TFile(destDir + "Dbackground_ggZZ_" + channel + ".root","RECREATE");
+  TFile* fggZZ = new TFile(destDir + "Dbackground_ggZZ_" + channel + vbf + ".root","RECREATE");
   TH2F* oldTemp;
 
   pair<TH2F*,TH2F*> histoPair;
@@ -640,8 +646,8 @@ void makeTemplate(TString channel="4mu"){
   // ========================================
   // SM Higgs template
 
-  low = fillTemplate(channel,0,true);
-  high = fillTemplate(channel,0,false);
+  low = fillTemplate(channel,0,true,VBFtag);
+  high = fillTemplate(channel,0,false,VBFtag);
   h_mzzD = mergeTemplates(low,high);
 
   // ---------- apply interference reweighting --------
@@ -669,8 +675,8 @@ void makeTemplate(TString channel="4mu"){
   // alternative signal template
 
   if (makeAltSignal) {
-    low = fillTemplate(channel,3,true);
-    high = fillTemplate(channel,3,false);
+    low = fillTemplate(channel,3,true,VBFtag);
+    high = fillTemplate(channel,3,false,VBFtag);
     h_mzzD = mergeTemplates(low,high);
 
     // ---------- apply interference reweighting --------
@@ -697,8 +703,8 @@ void makeTemplate(TString channel="4mu"){
   // =======================================
   // qqZZ template
 
-  low = fillTemplate(channel,1,true);
-  high = fillTemplate(channel,1,false);
+  low = fillTemplate(channel,1,true,VBFtag);
+  high = fillTemplate(channel,1,false,VBFtag);
   h_mzzD = mergeTemplates(low,high);
 
   // ---------- apply interference reweighting --------
@@ -722,8 +728,8 @@ void makeTemplate(TString channel="4mu"){
   // ==========================
   // ggZZ templates
   
-  low = fillTemplate(channel,2,true);
-  high = fillTemplate(channel,2,false);
+  low = fillTemplate(channel,2,true,VBFtag);
+  high = fillTemplate(channel,2,false,VBFtag);
   h_mzzD = mergeTemplates(low,high);
 
   // ---------- apply interference reweighting --------
@@ -750,9 +756,12 @@ void makeTemplate(TString channel="4mu"){
 
 void storeLDDistribution(){
 
-  makeTemplate("4mu");
-  makeTemplate("4e");
-  makeTemplate("2e2mu");
+  makeTemplate("4mu",true);
+  makeTemplate("4e",true);
+  makeTemplate("2e2mu",true);
+  makeTemplate("4mu",false);
+  makeTemplate("4e",false);
+  makeTemplate("2e2mu",false);
 
 }
 
