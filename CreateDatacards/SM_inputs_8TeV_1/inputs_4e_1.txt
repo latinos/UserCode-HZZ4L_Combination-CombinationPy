@@ -121,7 +121,10 @@ systematic CMS_zz4l_gamma True
 ### for hypothesis testing ###
 doHypTest False
 #altHypLabel _ALT
-
+### for VBF fraction ###
+doVBFtest True
+useCMS_zz4l_Fisher True
+useCMS_zz4l_PToverM False
 
 signalShape mekd_sig_a0  TMath::Max(6.919+(-0.2297)*sqrt(@0-100)+(0.06833)*(@0-100),0)
 qqZZshape mekd_qqZZ_a0  TMath::Max(6.612+(-0.1137)*sqrt(@0-100)+(0.04531)*(@0-100),0)

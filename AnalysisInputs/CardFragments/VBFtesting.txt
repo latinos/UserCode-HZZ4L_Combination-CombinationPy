@@ -1,0 +1,4 @@
+### for VBF fraction ###
+doVBFtest True
+useCMS_zz4l_Fisher True
+useCMS_zz4l_PToverM False

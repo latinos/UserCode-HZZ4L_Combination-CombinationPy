@@ -82,14 +82,18 @@ def creationLoop(directory):
 #    stepSizes=[ 0.5, 0.5, 2.0, 5.0, 10.0, 20.0, 50.0 ]
 #    endVal=[ 60, 40, 65, 12, 5, 10, 9 ]
 
-    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0, 290.0, 350.0, 400.0, 600.0 ]
-    stepSizes=[ 0.5, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0 ]
-    endVal=[ 29, 20, 7,  30, 65, 12, 5, 10, 9 ]
+#    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0, 290.0, 350.0, 400.0, 600.0 ]
+#    stepSizes=[ 0.5, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0 ]
+#    endVal=[ 29, 20, 7,  30, 65, 12, 5, 10, 9 ]
 
 
 #    startMass=[ 125.0 ]
 #    stepSizes=[ 0.5 ]
 #    endVal=[ 1 ]
+ 
+    startMass=  [110.0, 124.5, 126.5, 130.0]
+    stepSizes=  [0.5,   0.1,   0.5,   1.0]
+    endVal=     [29,    20,    7,     30]
 
     myClass = datacardClass()
     myClass.loadIncludes()
@@ -148,20 +152,20 @@ def creationLoop(directory):
             if (opt.useVBF == 0):
                 makeDirectory(directory+'/HCG/'+mhs)
                 makeDirectory(directory+'/HCG_XSxBR/'+mhs)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4e,opt.templateDir, opt.massError, opt.mekd)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4mu,opt.templateDir,opt.massError, opt.mekd)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs2e2mu,opt.templateDir,opt.massError, opt.mekd)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4e,opt.templateDir, opt.massError, opt.mekd,opt.useVBF)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4mu,opt.templateDir,opt.massError, opt.mekd,opt.useVBF)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs2e2mu,opt.templateDir,opt.massError, opt.mekd,opt.useVBF)
             if (opt.useVBF == 1):
                 makeDirectory(directory+'_0/HCG/'+mhs)
                 makeDirectory(directory+'_0/HCG_XSxBR/'+mhs)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_0',theInputs4e_0,opt.templateDir, opt.massError, opt.mekd)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_0',theInputs4mu_0,opt.templateDir,opt.massError, opt.mekd)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_0',theInputs2e2mu_0,opt.templateDir,opt.massError, opt.mekd)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_0',theInputs4e_0,opt.templateDir, opt.massError, opt.mekd,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_0',theInputs4mu_0,opt.templateDir,opt.massError, opt.mekd,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_0',theInputs2e2mu_0,opt.templateDir,opt.massError, opt.mekd,0)
                 makeDirectory(directory+'_1/HCG/'+mhs)
                 makeDirectory(directory+'_1/HCG_XSxBR/'+mhs)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_1',theInputs4e_1,opt.templateDir, opt.massError, opt.mekd)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_1',theInputs4mu_1,opt.templateDir,opt.massError, opt.mekd)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_1',theInputs2e2mu_1,opt.templateDir,opt.massError, opt.mekd)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_1',theInputs4e_1,opt.templateDir, opt.massError, opt.mekd,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_1',theInputs4mu_1,opt.templateDir,opt.massError, opt.mekd,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_1',theInputs2e2mu_1,opt.templateDir,opt.massError, opt.mekd,1)
             c += 1
             
 
@@ -186,7 +190,8 @@ def makeDCsandWSs():
     subdir = ['HCG','HCG_XSxBR','figs']
 
     for d in subdir:
-        makeDirectory(dirName+'/'+d)
+        makeDirectory(dirName+'_0/'+d)
+        makeDirectory(dirName+'_1/'+d)
         
 
     creationLoop(dirName)

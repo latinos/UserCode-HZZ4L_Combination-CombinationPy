@@ -93,6 +93,7 @@ void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag) {
   append("CardFragments/zjetShape_" + suffix_both, outfile);  
   append("CardFragments/sys_" + suffix_both, outfile);
   append("CardFragments/hypTesting.txt", outfile);
+  append("CardFragments/VBFtesting.txt",outfile);
   append("CardFragments/mekd_" + suffix_both, outfile);
   append("CardFragments/relerr_" + suffix_both, outfile);
 

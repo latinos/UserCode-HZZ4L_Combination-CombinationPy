@@ -151,6 +151,9 @@ class inputReader:
         self.useCMS_zz4l_gamma = False
         self.doHypTest = False
         self.altHypLabel = ""
+        self.doVBFtest = False
+        self.useCMS_zz4l_Fisher = False
+        self.useCMS_zz4l_PToverM = False
         
 	# ---  mekd stuffs
 	self.mekd_sig_a0_shape = -999.
@@ -495,6 +498,13 @@ class inputReader:
             if f[0].lower().startswith("althyplabel"):
                 self.altHypLabel = f[1]
 
+            if f[0].lower().startswith('dovbftest'):
+                self.doVBFtest = self.parseBoolString(f[1])
+            if f[0].lower().startswith('cms_zz4l_fisher'):
+                self.useCMS_zz4l_Fisher = self.parseBoolString(f[2])
+            if f[0].lower().startswith('cms_zz4l_ptoverm'):
+                self.useCMS_zz4l_PToverM = self.parseBoolString(f[2])
+
     def getInputs(self):
 
         dict = {}
@@ -620,6 +630,8 @@ class inputReader:
 
         if self.doHypTest:
             print "!!! HYPTOTHESIS TESTING !!!"
+        if self.doVBFtest:
+            print "!!! VBF TESTING !!!"
   
         if self.doHypTest and not self.all_chan:
             raise RuntimeError,"You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs !"
@@ -759,6 +771,10 @@ class inputReader:
 
         dict['doHypTest'] = self.doHypTest
         dict['altHypLabel'] = str(self.altHypLabel)
+
+        dict['doVBFtest'] = self.doVBFtest
+        dict['useCMS_zz4l_Fisher'] = self.useCMS_zz4l_Fisher
+        dict['useCMS_zz4l_PToverM'] = self.useCMS_zz4l_PToverM
         
 	dict['mekd_sig_a0_shape'] = self.mekd_sig_a0_shape
 	dict['mekd_sig_a1_shape'] = self.mekd_sig_a1_shape
