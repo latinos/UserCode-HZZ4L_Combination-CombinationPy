@@ -86,10 +86,10 @@ void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag) {
 
   append("CardFragments/ZZRates_" + suffix_split, outfile);
   append("CardFragments/zjetRate_" + suffix_both, outfile);
-  append("CardFragments/signalFunctions_" + suffix_both, outfile);
+  append("CardFragments/signalFunctions_" + suffix_split, outfile);
   append("CardFragments/signalEfficiency_" + suffix_split, outfile);
-  append("CardFragments/qqzzBackgroundFit_" + suffix_both, outfile);
-  append("CardFragments/ggzzBackgroundFit_" + suffix_both, outfile);
+  append("CardFragments/qqzzBackgroundFit_" + suffix_split, outfile);
+  append("CardFragments/ggzzBackgroundFit_" + suffix_split, outfile);
   append("CardFragments/zjetShape_" + suffix_both, outfile);  
   append("CardFragments/sys_" + suffix_both, outfile);
   append("CardFragments/hypTesting.txt", outfile);
