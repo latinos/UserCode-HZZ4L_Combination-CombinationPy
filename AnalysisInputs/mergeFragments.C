@@ -20,24 +20,31 @@
 //<----------
 
 using namespace std;
-void mergeFragments(int channel, int sqrts, double lumi);
+void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag = false);
 void append(TString file, TString outfile);
 
 
 // Run all fs/sqrts in one go
 void mergeFragments() {
 
-  mergeFragments(1, 7, lumi7TeV);
-  mergeFragments(2, 7, lumi7TeV);
-  mergeFragments(3, 7, lumi7TeV);
-  mergeFragments(1, 8, lumi8TeV);
-  mergeFragments(2, 8, lumi8TeV);
-  mergeFragments(3, 8, lumi8TeV);
+  mergeFragments(1, 7, lumi7TeV,false);
+  mergeFragments(2, 7, lumi7TeV,false);
+  mergeFragments(3, 7, lumi7TeV,false);
+  mergeFragments(1, 8, lumi8TeV,false);
+  mergeFragments(2, 8, lumi8TeV,false);
+  mergeFragments(3, 8, lumi8TeV,false);
+
+  mergeFragments(1, 7, lumi7TeV,true);
+  mergeFragments(2, 7, lumi7TeV,true);
+  mergeFragments(3, 7, lumi7TeV,true);
+  mergeFragments(1, 8, lumi8TeV,true);
+  mergeFragments(2, 8, lumi8TeV,true);
+  mergeFragments(3, 8, lumi8TeV,true);
   
 }
 
 
-void mergeFragments(int channel, int sqrts, double lumi) {
+void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag) {
 
   TString schannel;
   if      (channel == 1) schannel = "4mu";
@@ -46,7 +53,7 @@ void mergeFragments(int channel, int sqrts, double lumi) {
 
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  TString outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "/inputs_" +  schannel + ".txt";
+  TString outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "_" + Form("%d",int(VBFtag)) + "/inputs_" +  schannel + "_" + Form("%d",int(VBFtag)) + ".txt";
   ofstream of(outfile,ios_base::out);
 
   float lumiUnc = 0;
@@ -54,7 +61,7 @@ void mergeFragments(int channel, int sqrts, double lumi) {
   else if (sqrts==8) lumiUnc = 1.044;
     
 
-  of << "############## Inputs for " << schannel << " for " << sqrts << " TeV ##############" << endl
+  of << "############## Inputs for " << schannel << " for " << sqrts << " TeV " << " VBFtag-> " << VBFtag << "  ##############" << endl
      << "## SM ##"                 << endl
      << "model SM"                 << endl
      <<                               endl
@@ -73,19 +80,22 @@ void mergeFragments(int channel, int sqrts, double lumi) {
      <<                               endl;
   of.close();
 
-  TString suffix = ssqrts + "_" + schannel + ".txt";
+  TString suffix_both = ssqrts + "_" + schannel + ".txt";
 
-  append("CardFragments/ZZRates_" + suffix, outfile);
-  append("CardFragments/zjetRate_" + suffix, outfile);
-  append("CardFragments/signalFunctions_" + suffix, outfile);
-  append("CardFragments/signalEfficiency_" + suffix, outfile);
-  append("CardFragments/qqzzBackgroundFit_" + suffix, outfile);
-  append("CardFragments/ggzzBackgroundFit_" + suffix, outfile);
-  append("CardFragments/zjetShape_" + suffix, outfile);  
-  append("CardFragments/sys_" + suffix, outfile);
+  TString suffix_split = ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag)) + ".txt";
+
+  append("CardFragments/ZZRates_" + suffix_split, outfile);
+  append("CardFragments/zjetRate_" + suffix_both, outfile);
+  append("CardFragments/signalFunctions_" + suffix_split, outfile);
+  append("CardFragments/signalEfficiency_" + suffix_split, outfile);
+  append("CardFragments/qqzzBackgroundFit_" + suffix_split, outfile);
+  append("CardFragments/ggzzBackgroundFit_" + suffix_split, outfile);
+  append("CardFragments/zjetShape_" + suffix_both, outfile);  
+  append("CardFragments/sys_" + suffix_both, outfile);
   append("CardFragments/hypTesting.txt", outfile);
-  append("CardFragments/mekd_" + suffix, outfile);
-  append("CardFragments/relerr_" + suffix, outfile);
+  append("CardFragments/VBFtesting.txt",outfile);
+  append("CardFragments/mekd_" + suffix_both, outfile);
+  append("CardFragments/relerr_" + suffix_both, outfile);
 
   cout << "Wrote " << outfile << endl;
 }
