@@ -186,6 +186,9 @@ int extractSignificanceStats(bool unblind=false){
       float obsTailPS=hPS->Integral(hPS->FindBin(v_Obs.at(0)),hPS->GetNbinsX())/integralPS;
       cout<<"P(SM < Obs): "<<obsTailSM<<"  ("<<ROOT::Math::normal_quantile_c(obsTailSM,1.0) <<" sigma)"<<endl;
       cout<<"P(PS > Obs): "<<obsTailPS<<"  ("<<ROOT::Math::normal_quantile_c(obsTailPS,1.0) <<" sigma)"<<endl;
+
+      float obsCLsRatio = obsTailPS / (1.0 - obsTailSM);
+      cout<<"CLs criterion P(PS > Obs) / P(SM > Obs) : "<<obsCLsRatio<<"  ("<<ROOT::Math::normal_quantile_c(obsCLsRatio,1.0) <<" sigma)"<<endl;
     }
   
 
@@ -201,7 +204,8 @@ int extractSignificanceStats(bool unblind=false){
     cout << "pvalue PS: " << obsPval_PS << endl;
     cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl<<endl<<endl;
     */
-  }
+
+  }//end if unblinding
 
   //Plotting
   gStyle->SetOptStat(0);
@@ -219,9 +223,9 @@ int extractSignificanceStats(bool unblind=false){
     hSM->SetMaximum(maxhSM*1.15);
     hPS->SetMaximum(maxhSM*1.15);
   }
-  hSM->SetXTitle(" -2 #times ln(L_{PS}/L_{SM})");
+  hSM->SetXTitle(" -2 #times ln(L_{0-}/L_{0+})");
   hSM->SetYTitle("Generated experiments");
-  hPS->SetXTitle(" -2 #times ln(L_{PS}/L_{SM})");
+  hPS->SetXTitle(" -2 #times ln(L_{0-}/L_{0+})");
   hPS->SetYTitle("Generated experiments");
   hSM->SetLineColor(kMagenta-3);
   hSM->SetFillColor(kMagenta-3);
@@ -258,9 +262,11 @@ int extractSignificanceStats(bool unblind=false){
 
   TLegend *leg = new TLegend(0.25,0.6,0.45,0.9);
   leg->SetFillColor(0);
+  //  leg->SetTextFont(42);
+  leg->SetTextSize(0.035);
   leg->SetBorderSize(0);
-  leg->AddEntry(hSM, "  SM, 0+","f");
-  leg->AddEntry(hPS, "  PS, 0-","f");
+  leg->AddEntry(hSM, "   0+","f");
+  leg->AddEntry(hPS, "   0-","f");
   if(unblind) leg->AddEntry(hObs,"  CMS data","L");
   //  if(unblind) leg->AddEntry(hObs,"  Simulated data","L");
   leg->Draw();
@@ -270,13 +276,15 @@ int extractSignificanceStats(bool unblind=false){
   pt.SetFillColor(0);
   pt.SetTextAlign(12);
   pt.SetTextSize(0.027);
+  pt.SetTextFont(42);
   pt.AddText("CMS Preliminary");
   pt.SetBorderSize(0);
   TPaveText pt2(0.53,0.95,0.98,0.99,"NDC");
   pt2.SetFillColor(0);
   pt2.SetTextAlign(32);
   pt2.SetTextSize(0.027);
-  pt2.AddText(Form(" #sqrt{s} = 7 TeV, L = %.3f fb^{-1}; #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",lumi7TeV,lumi8TeV));
+  pt2.SetTextFont(42);
+  pt2.AddText(Form(" #sqrt{s} = 7 TeV, L = %.1f fb^{-1}; #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",lumi7TeV,lumi8TeV));
   pt2.SetBorderSize(0);
   pt.Draw();
   pt2.Draw();
