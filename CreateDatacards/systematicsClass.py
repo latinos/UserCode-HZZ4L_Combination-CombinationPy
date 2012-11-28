@@ -550,6 +550,12 @@ class systematicsClass:
     def Write_CMS_zz4l_sigMELA(self,theFile,theInputs):
         theFile.write("CMS_zz4l_sigMELA param 0  1  [-3,3]\n")
 
+    def Write_CMS_zz4l_Fisher(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_Fisher param 0  1  [-3,3]\n")
+
+    def Write_CMS_zz4l_PToverM(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_PToverM param 0  1  [-3,3]\n")
+
     
     def WriteSystematics(self,theFile,theInputs):
 
@@ -618,6 +624,10 @@ class systematicsClass:
         if theInputs['useCMS_zz4l_sigMELA']:
             self.Write_CMS_zz4l_sigMELA(theFile,theInputs)
 
+        if (theInputs['useCMS_zz4l_doVBFtest'] and theInputs['useCMS_zz4l_Fisher']):
+            self.Write_CMS_zz4l_Fisher(theFile,theInputs)
+        if (theInputs['useCMS_zz4l_doVBFtest'] and theInputs['useCMS_zz4l_PToverM']):
+            self.Write_CMS_zz4l_PToverM(theFile,theInputs)
 
 
     def WriteShapeSystematics(self,theFile,theInputs):

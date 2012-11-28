@@ -151,7 +151,7 @@ class inputReader:
         self.useCMS_zz4l_gamma = False
         self.doHypTest = False
         self.altHypLabel = ""
-        self.doVBFtest = False
+        self.useCMS_zz4l_doVBFtest = False
         self.useCMS_zz4l_Fisher = False
         self.useCMS_zz4l_PToverM = False
         
@@ -498,7 +498,7 @@ class inputReader:
             if f[0].lower().startswith("althyplabel"):
                 self.altHypLabel = f[1]
 
-            if f[0].lower().startswith('dovbftest'):
+            if f[0].lower().startswith('cms_zz4l_dovbftest'):
                 self.doVBFtest = self.parseBoolString(f[1])
             if f[0].lower().startswith('cms_zz4l_fisher'):
                 self.useCMS_zz4l_Fisher = self.parseBoolString(f[2])
@@ -772,7 +772,7 @@ class inputReader:
         dict['doHypTest'] = self.doHypTest
         dict['altHypLabel'] = str(self.altHypLabel)
 
-        dict['doVBFtest'] = self.doVBFtest
+        dict['useCMS zz4l_doVBFtest'] = self.useCMS_zz4l_doVBFtest
         dict['useCMS_zz4l_Fisher'] = self.useCMS_zz4l_Fisher
         dict['useCMS_zz4l_PToverM'] = self.useCMS_zz4l_PToverM
         
