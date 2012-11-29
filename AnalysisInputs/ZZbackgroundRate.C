@@ -136,24 +136,26 @@ double sumWeights(TString name, double lumi, bool selVBF){
   tree->Add((TString)(name));
 
   float MC_weight,ZZMass,mela,Z2Mass,Z1Mass;
-  std::vector<double> *JetEta = new vector<double>;
+  int NJets;
+  //std::vector<double> *JetEta = new vector<double>;
   //std::vector<double> *JetPt = new vector<double>;
   //std::vector<double> *JetPhi = new vector<double>;
-  std::vector<double> *JetMass = new vector<double>;
+  //std::vector<double> *JetMass = new vector<double>;
   tree->SetBranchAddress("MC_weight",&MC_weight);  
   tree->SetBranchAddress("ZZMass",&ZZMass);  
   tree->SetBranchAddress("Z1Mass",&Z1Mass);  
   tree->SetBranchAddress("Z2Mass",&Z2Mass);  
-  tree->SetBranchAddress("ZZLD",&mela); 
+  tree->SetBranchAddress("ZZLD",&mela);
+  tree->SetBranchAddress("NJets",&NJets);
   //tree->SetBranchAddress("JetPt", &JetPt);
-  tree->SetBranchAddress("JetEta", &JetEta);
-  tree->SetBranchAddress("JetMass", &JetMass); 
+  //tree->SetBranchAddress("JetEta", &JetEta);
+  //tree->SetBranchAddress("JetMass", &JetMass); 
 
   double totEvents=0;
   //Get Histos for LD
   for(int iEvt=0; iEvt<tree->GetEntries(); iEvt++){
     tree->GetEntry(iEvt);
-    if( (selVBF == true && JetMass->size() == 2) || (selVBF == false && JetMass->size() != 2))
+    if( (selVBF == true && NJets > 1) || (selVBF == false && NJets < 2))
       {
 	totEvents=totEvents+MC_weight;
       }

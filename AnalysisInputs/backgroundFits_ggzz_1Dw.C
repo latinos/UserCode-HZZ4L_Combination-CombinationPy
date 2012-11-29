@@ -101,10 +101,10 @@ void backgroundFits_ggzz_1Dw(int channel, int sqrts, bool VBFtag)
   sprintf(cut,"ZZLD>0.5");
   //RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*ZZLD),cut,"MC_weight");
   if (VBFtag==true){
-    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets==2","MC_weight");
+    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets>1","MC_weight");
   }
   else{
-    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets!=2","MC_weight");
+    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets<2","MC_weight");
   }
 
   double totalweight = 0.;
