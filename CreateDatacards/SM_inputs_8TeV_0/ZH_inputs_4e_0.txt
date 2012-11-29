@@ -1,4 +1,4 @@
-############## Inputs for 4e for 7 TeV  VBFtag-> 0  ##############
+############## Inputs for 4e for 8 TeV  VBFtag-> 0  ##############
 ## SM ##
 model SM
 
@@ -6,89 +6,90 @@ model SM
 decay 4e
 
 ## lumi ##
-lumi 5.051
-systematic lumiUnc 1.022
+lumi 12.21
+systematic lumiUnc 1.044
 
 ## sqrtS ##
-sqrts 7
+sqrts 8
 
 ## Channels to include in cards ##
 channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  13.46
-rate ggZZ  0.879624
-rate zjets 1.9 
+rate qqZZ  35.5766
+rate ggZZ  2.09392
+rate zjets 4.5
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
-signalShape n_CB 4.80994+(-0.0136919*@0)+(2.27389e-05*@0*@0)+(-1.19779e-08*@0*@0*@0)
-signalShape alpha_CB 0.820389+(-0.00329655*@0)+(2.45388e-05*@0*@0)+(-2.09825e-08*@0*@0*@0)
-signalShape mean_CB 0.738252+(-0.0178577*@0)+(4.71152e-05*@0*@0)+(-3.69131e-08*@0*@0*@0)
-signalShape sigma_CB -6.92425+(0.0940723*@0)+(-0.00026259*@0*@0)+(2.69897e-07*@0*@0*@0)
-signalShape gamma_BW 35.8874+(-0.416393*@0)+(0.00127092*@0*@0)+(-6.63834e-07*@0*@0*@0)
-HighMasssignalShape gamma_BW 35.8874+(-0.416393*@0)+(0.00127092*@0*@0)+(-6.63834e-07*@0*@0*@0)
+signalShape n_CB -3466.66+(82.4328*@0)+(-0.650568*@0*@0)+(0.0017051*@0*@0*@0)
+signalShape alpha_CB 3897.68+(-92.2058*@0)+(0.725879*@0*@0)+(-0.0019006*@0*@0*@0)
+signalShape mean_CB -1658.13+(40.1908*@0)+(-0.323125*@0*@0)+(0.000861681*@0*@0*@0)
+signalShape sigma_CB -125.923+(2.7043*@0)+(-0.0184056*@0*@0)+(4.06307e-05*@0*@0*@0)
+signalShape gamma_BW -0.38605+(0.0098398*@0)+(-8.35856e-05*@0*@0)+(2.38661e-07*@0*@0*@0)
+HighMasssignalShape gamma_BW -0.38605+(0.0098398*@0)+(-8.35856e-05*@0*@0)+(2.38661e-07*@0*@0*@0)
 
 ## signal efficiency ##
-signalEff a1  -4.43873
-signalEff a2  4.60097
-signalEff a3  -59.3714
-signalEff a4  105.575
-signalEff b1  1.94616
-signalEff b2  0.00209686
-signalEff b3  -1.59098e-06
-signalEff g1  0.0232372
-signalEff g2  187.404
-signalEff g3  34.2906
+signalEff a1  -4.4114
+signalEff a2  4.62554
+signalEff a3  -18.4331
+signalEff a4  22.2866
+signalEff b1  0.793733
+signalEff b2  -0.00557769
+signalEff b3  2.92486e-05
+signalEff g1  0.0999998
+signalEff g2  160
+signalEff g3  20.6809
 
 
 ### background functions ###
-qqZZshape a0_bkgd   109.465
-qqZZshape a1_bkgd   18.4032
-qqZZshape a2_bkgd   116.5
-qqZZshape a3_bkgd   0.0547614
-qqZZshape a4_bkgd   183.43
-qqZZshape a5_bkgd   10.8479
-qqZZshape a6_bkgd   32.7353
-qqZZshape a7_bkgd   0.139289
-qqZZshape a8_bkgd   57.2093
-qqZZshape a9_bkgd   0.0991105
-qqZZshape a10_bkgd  97.9026
-qqZZshape a11_bkgd  -8.03227
-qqZZshape a12_bkgd  4.53949
-qqZZshape a13_bkgd  0.0808174
+qqZZshape a0_bkgd   111.774
+qqZZshape a1_bkgd   21.9302
+qqZZshape a2_bkgd   120.199
+qqZZshape a3_bkgd   0.0533201
+qqZZshape a4_bkgd   184.663
+qqZZshape a5_bkgd   10.7361
+qqZZshape a6_bkgd   33.1916
+qqZZshape a7_bkgd   0.144492
+qqZZshape a8_bkgd   56.8632
+qqZZshape a9_bkgd   0.100416
+qqZZshape a10_bkgd  98.15
+qqZZshape a11_bkgd  -7.12917
+qqZZshape a12_bkgd  15.6447
+qqZZshape a13_bkgd  0.1145
 
 
-ggZZshape a0_bkgd  136.438
-ggZZshape a1_bkgd  42.5654
-ggZZshape a2_bkgd  133.366
-ggZZshape a3_bkgd  0.0297817
-ggZZshape a4_bkgd  184.357
-ggZZshape a5_bkgd  13.1066
-ggZZshape a6_bkgd  38.1961
-ggZZshape a7_bkgd  0.181886
-ggZZshape a8_bkgd  51.5649
-ggZZshape a9_bkgd  0.065911
+ggZZshape a0_bkgd  127.716
+ggZZshape a1_bkgd  51.777
+ggZZshape a2_bkgd  142.188
+ggZZshape a3_bkgd  0.0289857
+ggZZshape a4_bkgd  185.504
+ggZZshape a5_bkgd  11.1727
+ggZZshape a6_bkgd  37.7802
+ggZZshape a7_bkgd  0.175516
+ggZZshape a8_bkgd  58.2821
+ggZZshape a9_bkgd  0.0720682
 
-zjetsShape mean 148.0
-zjetsShape sigma 20.6
+zjetsShape mean 148.9
+zjetsShape sigma 20.2
 
 
 ### channel dependent systematics ###
-systematic zjetKappaLow   0.4
-systematic zjetKappaHigh  2.3
+systematic zjetKappaLow   0.3
+systematic zjetKappaHigh  2.7
 systematic param CMS_zz4l_mean_e_sig   0.002
 systematic param CMS_zz4l_sigma_e_sig  0.2
-systematic param CMS_zz4l_n_sig	       0.05
-systematic param CMS_zz4l_gamma_sig    0.05
+systematic param CMS_zz4l_n_sig 0.05
+systematic param CMS_zz4l_gamma_sig 0.05
+
 
 ## 4e systematics ##
-systematic elec_full 0.11 0.06 150
+systematic elec_full 0.085 0.055 180
 systematic elec_trig 0.015
 
 ##### Add Systematic to Cards ####
-##### allowed true/false, 1/0 ####
+##### allowed true/false ####
 systematic luminosity True
 systematic pdf_gg True
 systematic pdf_qqbar True
@@ -111,7 +112,6 @@ systematic CMS_zz4l_mean True
 systematic CMS_zz4l_sigma True
 systematic CMS_zz4l_n True
 systematic CMS_zz4l_gamma True
-
 ### for hypothesis testing ###
 doHypTest False
 #altHypLabel _ALT

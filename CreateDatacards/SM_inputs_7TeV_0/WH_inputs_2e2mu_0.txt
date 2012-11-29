@@ -23,24 +23,24 @@ rate zjets 3.0
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
-signalShape n_CB 5.74183+(-0.0199635*@0)+(3.49489e-05*@0*@0)+(-1.89166e-08*@0*@0*@0)
-signalShape alpha_CB 0.32789+(0.0017168*@0)+(1.38983e-05*@0*@0)+(-1.46227e-08*@0*@0*@0)
-signalShape mean_CB 1.32911+(-0.0194581*@0)+(6.0597e-05*@0*@0)+(-4.98459e-08*@0*@0*@0)
-signalShape sigma_CB -11.1648+(0.137003*@0)+(-0.000391878*@0*@0)+(3.73898e-07*@0*@0*@0)
-signalShape gamma_BW 30.3994+(-0.371136*@0)+(0.00119358*@0*@0)+(-6.38567e-07*@0*@0*@0)
-HighMasssignalShape gamma_BW 30.3994+(-0.371136*@0)+(0.00119358*@0*@0)+(-6.38567e-07*@0*@0*@0)
+signalShape n_CB 782.181+(-18.1571*@0)+(0.140205*@0*@0)+(-0.000359297*@0*@0*@0)
+signalShape alpha_CB 105.801+(-2.69512*@0)+(0.0229771*@0*@0)+(-6.47429e-05*@0*@0*@0)
+signalShape mean_CB -339.338+(8.02604*@0)+(-0.0631748*@0*@0)+(0.000165197*@0*@0*@0)
+signalShape sigma_CB 34.6787+(-0.869395*@0)+(0.00740552*@0*@0)+(-2.04274e-05*@0*@0*@0)
+signalShape gamma_BW -0.371277+(0.00950121*@0)+(-8.10101e-05*@0*@0)+(2.32157e-07*@0*@0*@0)
+HighMasssignalShape gamma_BW -0.371277+(0.00950121*@0)+(-8.10101e-05*@0*@0)+(2.32157e-07*@0*@0*@0)
 
 ## signal efficiency ##
-signalEff a1  -4.42799
-signalEff a2  4.612
-signalEff a3  -56.2785
-signalEff a4  104.044
-signalEff b1  2.23325
-signalEff b2  0.00154219
-signalEff b3  -1.32e-06
-signalEff g1  0.016067
-signalEff g2  191.825
-signalEff g3  20
+signalEff a1  -4.43515
+signalEff a2  4.60281
+signalEff a3  -83.7442
+signalEff a4  104.881
+signalEff b1  0.764568
+signalEff b2  -0.00239246
+signalEff b3  4.02764e-05
+signalEff g1  0.015259
+signalEff g2  209.158
+signalEff g3  20.5932
 
 
 ### background functions ###

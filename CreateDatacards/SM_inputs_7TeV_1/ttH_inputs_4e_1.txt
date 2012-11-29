@@ -1,4 +1,4 @@
-############## Inputs for 4e for 7 TeV  VBFtag-> 0  ##############
+############## Inputs for 4e for 7 TeV  VBFtag-> 1  ##############
 ## SM ##
 model SM
 
@@ -17,59 +17,59 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  13.46
-rate ggZZ  0.879624
+rate qqZZ  0.662123
+rate ggZZ  0.0636478
 rate zjets 1.9 
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
-signalShape n_CB 4.80994+(-0.0136919*@0)+(2.27389e-05*@0*@0)+(-1.19779e-08*@0*@0*@0)
-signalShape alpha_CB 0.820389+(-0.00329655*@0)+(2.45388e-05*@0*@0)+(-2.09825e-08*@0*@0*@0)
-signalShape mean_CB 0.738252+(-0.0178577*@0)+(4.71152e-05*@0*@0)+(-3.69131e-08*@0*@0*@0)
-signalShape sigma_CB -6.92425+(0.0940723*@0)+(-0.00026259*@0*@0)+(2.69897e-07*@0*@0*@0)
-signalShape gamma_BW 35.8874+(-0.416393*@0)+(0.00127092*@0*@0)+(-6.63834e-07*@0*@0*@0)
-HighMasssignalShape gamma_BW 35.8874+(-0.416393*@0)+(0.00127092*@0*@0)+(-6.63834e-07*@0*@0*@0)
+signalShape n_CB 355.023+(-5.81932*@0)+(0.0253465*@0*@0)+(-1.21496e-05*@0*@0*@0)
+signalShape alpha_CB 1748.17+(-41.711*@0)+(0.330487*@0*@0)+(-0.000868431*@0*@0*@0)
+signalShape mean_CB -1066.57+(25.8213*@0)+(-0.207545*@0*@0)+(0.000553252*@0*@0*@0)
+signalShape sigma_CB 3485.63+(-82.7735*@0)+(0.653503*@0*@0)+(-0.00171418*@0*@0*@0)
+signalShape gamma_BW -0.371277+(0.00950121*@0)+(-8.10101e-05*@0*@0)+(2.32157e-07*@0*@0*@0)
+HighMasssignalShape gamma_BW -0.371277+(0.00950121*@0)+(-8.10101e-05*@0*@0)+(2.32157e-07*@0*@0*@0)
 
 ## signal efficiency ##
-signalEff a1  -4.43873
-signalEff a2  4.60097
-signalEff a3  -59.3714
-signalEff a4  105.575
-signalEff b1  1.94616
-signalEff b2  0.00209686
-signalEff b3  -1.59098e-06
-signalEff g1  0.0232372
-signalEff g2  187.404
-signalEff g3  34.2906
+signalEff a1  -4.4808
+signalEff a2  4.55316
+signalEff a3  -205.251
+signalEff a4  74.9434
+signalEff b1  1.64164
+signalEff b2  -0.00704888
+signalEff b3  -4.89974e-05
+signalEff g1  0.0997938
+signalEff g2  160.001
+signalEff g3  22.262
 
 
 ### background functions ###
-qqZZshape a0_bkgd   109.465
-qqZZshape a1_bkgd   18.4032
-qqZZshape a2_bkgd   116.5
-qqZZshape a3_bkgd   0.0547614
-qqZZshape a4_bkgd   183.43
-qqZZshape a5_bkgd   10.8479
-qqZZshape a6_bkgd   32.7353
-qqZZshape a7_bkgd   0.139289
-qqZZshape a8_bkgd   57.2093
-qqZZshape a9_bkgd   0.0991105
-qqZZshape a10_bkgd  97.9026
-qqZZshape a11_bkgd  -8.03227
-qqZZshape a12_bkgd  4.53949
-qqZZshape a13_bkgd  0.0808174
+qqZZshape a0_bkgd   120.354
+qqZZshape a1_bkgd   2.88433
+qqZZshape a2_bkgd   162.923
+qqZZshape a3_bkgd   0.0666291
+qqZZshape a4_bkgd   187.815
+qqZZshape a5_bkgd   14.5275
+qqZZshape a6_bkgd   99.9686
+qqZZshape a7_bkgd   0.0356484
+qqZZshape a8_bkgd   59.2498
+qqZZshape a9_bkgd   0.213732
+qqZZshape a10_bkgd  99.5546
+qqZZshape a11_bkgd  -20.4396
+qqZZshape a12_bkgd  12.2776
+qqZZshape a13_bkgd  0.105971
 
 
-ggZZshape a0_bkgd  136.438
-ggZZshape a1_bkgd  42.5654
-ggZZshape a2_bkgd  133.366
-ggZZshape a3_bkgd  0.0297817
-ggZZshape a4_bkgd  184.357
-ggZZshape a5_bkgd  13.1066
-ggZZshape a6_bkgd  38.1961
-ggZZshape a7_bkgd  0.181886
-ggZZshape a8_bkgd  51.5649
-ggZZshape a9_bkgd  0.065911
+ggZZshape a0_bkgd  165.676
+ggZZshape a1_bkgd  149.399
+ggZZshape a2_bkgd  126.721
+ggZZshape a3_bkgd  0.0338919
+ggZZshape a4_bkgd  185.229
+ggZZshape a5_bkgd  13.0292
+ggZZshape a6_bkgd  35.6563
+ggZZshape a7_bkgd  0.138529
+ggZZshape a8_bkgd  69.3496
+ggZZshape a9_bkgd  0.0797728
 
 zjetsShape mean 148.0
 zjetsShape sigma 20.6
