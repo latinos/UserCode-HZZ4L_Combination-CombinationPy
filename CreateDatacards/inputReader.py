@@ -498,12 +498,12 @@ class inputReader:
             if f[0].lower().startswith("althyplabel"):
                 self.altHypLabel = f[1]
 
-            if f[0].lower().startswith('cms_zz4l_dovbftest'):
-                self.doVBFtest = self.parseBoolString(f[1])
-            if f[0].lower().startswith('cms_zz4l_fisher'):
-                self.useCMS_zz4l_Fisher = self.parseBoolString(f[2])
-            if f[0].lower().startswith('cms_zz4l_ptoverm'):
-                self.useCMS_zz4l_PToverM = self.parseBoolString(f[2])
+            if f[0].lower().startswith('usecms_zz4l_dovbftest'):
+                self.useCMS_zz4l_doVBFtest = self.parseBoolString(f[1])
+            if f[0].lower().startswith('usecms_zz4l_fisher'):
+                self.useCMS_zz4l_Fisher = self.parseBoolString(f[1])
+            if f[0].lower().startswith('usecms_zz4l_ptoverm'):
+                self.useCMS_zz4l_PToverM = self.parseBoolString(f[1])
 
     def getInputs(self):
 
@@ -630,7 +630,7 @@ class inputReader:
 
         if self.doHypTest:
             print "!!! HYPTOTHESIS TESTING !!!"
-        if self.doVBFtest:
+        if self.useCMS_zz4l_doVBFtest:
             print "!!! VBF TESTING !!!"
   
         if self.doHypTest and not self.all_chan:
@@ -772,7 +772,7 @@ class inputReader:
         dict['doHypTest'] = self.doHypTest
         dict['altHypLabel'] = str(self.altHypLabel)
 
-        dict['useCMS zz4l_doVBFtest'] = self.useCMS_zz4l_doVBFtest
+        dict['useCMS_zz4l_doVBFtest'] = self.useCMS_zz4l_doVBFtest
         dict['useCMS_zz4l_Fisher'] = self.useCMS_zz4l_Fisher
         dict['useCMS_zz4l_PToverM'] = self.useCMS_zz4l_PToverM
         

@@ -86,7 +86,7 @@ void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag) {
 
   append("CardFragments/ZZRates_" + suffix_split, outfile);
   append("CardFragments/zjetRate_" + suffix_both, outfile);
-  append("CardFragments/signalFunctions_" + suffix_split, outfile);
+  append("CardFragments/signalFunctions_" + suffix_both, outfile);
   append("CardFragments/signalEfficiency_" + suffix_split, outfile);
   append("CardFragments/qqzzBackgroundFit_" + suffix_split, outfile);
   append("CardFragments/ggzzBackgroundFit_" + suffix_split, outfile);

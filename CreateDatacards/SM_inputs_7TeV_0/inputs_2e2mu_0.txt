@@ -17,65 +17,59 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  32.2139
-rate ggZZ  2.0831
+rate qqZZ  31.9895
+rate ggZZ  2.06418
 rate zjets 3.0 
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
-signalShape alpha_CB (-19.1247)+(0.511858*@0)+(-0.00507084*@0*@0)+(2.40314e-05*@0*@0*@0)+(-5.4294e-08*@0*@0*@0*@0)+(4.70018e-11*@0*@0*@0*@0*@0)
-signalShape alpha2_CB (2.83488)+(-0.0208357*@0)+(8.703e-05*@0*@0)
-signalShape n_CB (-80.2755)+(1.92682*@0)+(-0.0163889*@0*@0)+(6.61152e-05*@0*@0*@0)+(-1.29134e-07*@0*@0*@0*@0)+(9.86492e-11*@0*@0*@0*@0*@0)
-signalShape n2_CB (20)
-signalShape mean_CB (7.74041)+(-0.1993*@0)+(0.00199694*@0*@0)+(-1.00463e-05*@0*@0*@0)+(2.46727e-08*@0*@0*@0*@0)+(-2.33501e-11*@0*@0*@0*@0*@0)
-signalShape sigma_CB (-32.5568)+(0.867983*@0)+(-0.00861782*@0*@0)+(4.13108e-05*@0*@0*@0)+(-9.4314e-08*@0*@0*@0*@0)+(8.23655e-11*@0*@0*@0*@0*@0)
-highmasssignalShape alpha_CB (1.94522)+(-0.0012104*@0)
-highmasssignalShape alpha2_CB (0.878941)+(0.000326235*@0)
-highmasssignalShape n_CB (-27.4789)+(0.146712*@0)+(-0.000188824*@0*@0)+(7.99675e-08*@0*@0*@0)
-highmasssignalShape n2_CB (20)
-highmasssignalShape mean_CB (82.1279)+(-0.457539*@0)+(0.000816838*@0*@0)+(-4.6665e-07*@0*@0*@0)
-highmasssignalShape sigma_CB (41.2978)+(-0.237919*@0)+(0.000343944*@0*@0)+(-1.18454e-08*@0*@0*@0)
-highmasssignalShape gamma_BW TMath::Max((59.6861)+(-0.59096*@0)+(0.00169122*@0*@0)+(-1.05572e-06*@0*@0*@0),30)
+signalShape n_CB 1.79601+(0.000478166*@0)+(2.04006e-06*@0*@0)+(-1.64592e-09*@0*@0*@0)
+signalShape alpha_CB 1.13944+(-0.0017309*@0)+(1.76329e-05*@0*@0)+(-1.41155e-08*@0*@0*@0)
+signalShape mean_CB -0.826179+(-0.000520126*@0)+(1.38189e-05*@0*@0)+(-2.65649e-10*@0*@0*@0)
+signalShape sigma_CB -18.1429+(0.192957*@0)+(-0.00047901*@0*@0)+(3.94219e-07*@0*@0*@0)
+signalShape gamma_BW 32.7257+(-0.384785*@0)+(0.00119012*@0*@0)+(-6.03308e-07*@0*@0*@0)
+HighMasssignalShape gamma_BW 32.7257+(-0.384785*@0)+(0.00119012*@0*@0)+(-6.03308e-07*@0*@0*@0)
+
 ## signal efficiency ##
-signalEff a1  -4.43081
-signalEff a2  4.60936
-signalEff a3  -52.741
-signalEff a4  101.236
-signalEff b1  2.24703
-signalEff b2  0.00239787
-signalEff b3  -1.67075e-06
-signalEff g1  0.0181772
-signalEff g2  192.039
+signalEff a1  -4.42799
+signalEff a2  4.612
+signalEff a3  -56.2785
+signalEff a4  104.044
+signalEff b1  2.23325
+signalEff b2  0.00154219
+signalEff b3  -1.32e-06
+signalEff g1  0.016067
+signalEff g2  191.825
 signalEff g3  20
 
 
 ### background functions ###
-qqZZshape a0_bkgd   111.163
-qqZZshape a1_bkgd   11.9998
-qqZZshape a2_bkgd   117.557
-qqZZshape a3_bkgd   0.0425536
-qqZZshape a4_bkgd   185.145
-qqZZshape a5_bkgd   10.2669
-qqZZshape a6_bkgd   29.4708
-qqZZshape a7_bkgd   0.0839434
-qqZZshape a8_bkgd   53.3706
-qqZZshape a9_bkgd   0.0913265
-qqZZshape a10_bkgd  85.5325
-qqZZshape a11_bkgd  -13.5325
-qqZZshape a12_bkgd  51.9443
-qqZZshape a13_bkgd  0.329923
+qqZZshape a0_bkgd   111.319
+qqZZshape a1_bkgd   11.3398
+qqZZshape a2_bkgd   115.431
+qqZZshape a3_bkgd   0.0423575
+qqZZshape a4_bkgd   185.089
+qqZZshape a5_bkgd   10.1479
+qqZZshape a6_bkgd   29.6177
+qqZZshape a7_bkgd   0.0867345
+qqZZshape a8_bkgd   52.7462
+qqZZshape a9_bkgd   0.090071
+qqZZshape a10_bkgd  85.3993
+qqZZshape a11_bkgd  -13.1752
+qqZZshape a12_bkgd  247.77
+qqZZshape a13_bkgd  0.342906
 
 
-ggZZshape a0_bkgd  143.198
-ggZZshape a1_bkgd  42.5313
-ggZZshape a2_bkgd  129.357
-ggZZshape a3_bkgd  0.0316705
-ggZZshape a4_bkgd  185.015
-ggZZshape a5_bkgd  12.0895
-ggZZshape a6_bkgd  36.9175
-ggZZshape a7_bkgd  0.1699
-ggZZshape a8_bkgd  57.0365
-ggZZshape a9_bkgd  0.0678273
+ggZZshape a0_bkgd  141.684
+ggZZshape a1_bkgd  41.391
+ggZZshape a2_bkgd  128.886
+ggZZshape a3_bkgd  0.0311346
+ggZZshape a4_bkgd  184.943
+ggZZshape a5_bkgd  11.9858
+ggZZshape a6_bkgd  36.5686
+ggZZshape a7_bkgd  0.170745
+ggZZshape a8_bkgd  57.7008
+ggZZshape a9_bkgd  0.0690983
 
 zjetsShape mean 143.1
 zjetsShape sigma 19.9
@@ -134,9 +128,24 @@ systematic CMS_zz4l_gamma True
 doHypTest False
 #altHypLabel _ALT
 ### for VBF fraction ###
-doVBFtest True
+useCMS_zz4l_doVBFtest True
 useCMS_zz4l_Fisher True
 useCMS_zz4l_PToverM False
+
+### pToverM shapes systematic boolians###
+systematic CMS_zz4l_ggH_Resummation True
+systematic CMS_zz4l_ggH_TopMass True
+systematic CMS_zz4l_ggH_Statistics True
+systematic CMS_zz4l_ggzz_Statistics True
+systematic CMS_zz4l_vbf_PDF True
+systematic CMS_zz4l_vbf_Scale True
+systematic CMS_zz4l_vbf_Statistics True
+systematic CMS_zz4l_zx_Statistics True
+systematic CMS_zz4l_zz_PDF True
+systematic CMS_zz4l_zz_Scale True
+systematic CMS_zz4l_zz_SingleZ True
+systematic CMS_zz4l_zz_Statistics True
+
 
 signalShape mekd_sig_a0  TMath::Max(7.43+(-0.2505)*sqrt(@0-100)+(0.04581)*(@0-100),0)
 qqZZshape mekd_qqZZ_a0  TMath::Max(6.332+(-0.199)*sqrt(@0-100)+(0.05032)*(@0-100),0)
