@@ -40,7 +40,7 @@ using namespace ROOT::Math;
 //<----------
 
 
-void signalEfficiency_w(int channel, double sqrts, bool VBFtag = false);
+void signalEfficiency_w(int channel, double sqrts, int process, bool VBFtag = false);
 
 
 // Run all final states and sqrts in one go
@@ -48,36 +48,103 @@ void signalEfficiency_w() {
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
 
-  signalEfficiency_w(1,7, true);
-  signalEfficiency_w(2,7, true);
-  signalEfficiency_w(3,7, true);
-  signalEfficiency_w(1,8, true);
-  signalEfficiency_w(2,8, true);
-  signalEfficiency_w(3,8, true);
+  //ggH
+  signalEfficiency_w(1,7,1,true);
+  signalEfficiency_w(2,7,1,true);
+  signalEfficiency_w(3,7,1,true);
+  signalEfficiency_w(1,8,1,true);
+  signalEfficiency_w(2,8,1,true);
+  signalEfficiency_w(3,8,1,true);
+  //qqH
+  signalEfficiency_w(1,7,2,true);
+  signalEfficiency_w(2,7,2,true);
+  signalEfficiency_w(3,7,2,true);
+  signalEfficiency_w(1,8,2,true);
+  signalEfficiency_w(2,8,2,true);
+  signalEfficiency_w(3,8,2,true);
+  //ZH
+  signalEfficiency_w(1,7,3,true);
+  signalEfficiency_w(2,7,3,true);
+  signalEfficiency_w(3,7,3,true);
+  signalEfficiency_w(1,8,3,true);
+  signalEfficiency_w(2,8,3,true);
+  signalEfficiency_w(3,8,3,true);
+  //WH
+  signalEfficiency_w(1,7,4,true);
+  signalEfficiency_w(2,7,4,true);
+  signalEfficiency_w(3,7,4,true);
+  signalEfficiency_w(1,8,4,true);
+  signalEfficiency_w(2,8,4,true);
+  signalEfficiency_w(3,8,4,true);
+  //ttH
+  signalEfficiency_w(1,7,5,true);
+  signalEfficiency_w(2,7,5,true);
+  signalEfficiency_w(3,7,5,true);
+  signalEfficiency_w(1,8,5,true);
+  signalEfficiency_w(2,8,5,true);
+  signalEfficiency_w(3,8,5,true);
 
-  signalEfficiency_w(1,7, false);
-  signalEfficiency_w(2,7, false);
-  signalEfficiency_w(3,7, false);
-  signalEfficiency_w(1,8, false);
-  signalEfficiency_w(2,8, false);
-  signalEfficiency_w(3,8, false);
+  //ggH
+  signalEfficiency_w(1,7,1,false);
+  signalEfficiency_w(2,7,1,false);
+  signalEfficiency_w(3,7,1,false);
+  signalEfficiency_w(1,8,1,false);
+  signalEfficiency_w(2,8,1,false);
+  signalEfficiency_w(3,8,1,false);
+  //qqH
+  signalEfficiency_w(1,7,2,false);
+  signalEfficiency_w(2,7,2,false);
+  signalEfficiency_w(3,7,2,false);
+  signalEfficiency_w(1,8,2,false);
+  signalEfficiency_w(2,8,2,false);
+  signalEfficiency_w(3,8,2,false);
+  //ZH
+  signalEfficiency_w(1,7,3,false);
+  signalEfficiency_w(2,7,3,false);
+  signalEfficiency_w(3,7,3,false);
+  signalEfficiency_w(1,8,3,false);
+  signalEfficiency_w(2,8,3,false);
+  signalEfficiency_w(3,8,3,false);
+  //WH
+  signalEfficiency_w(1,7,4,false);
+  signalEfficiency_w(2,7,4,false);
+  signalEfficiency_w(3,7,4,false);
+  signalEfficiency_w(1,8,4,false);
+  signalEfficiency_w(2,8,4,false);
+  signalEfficiency_w(3,8,4,false);
+  //ttH
+  signalEfficiency_w(1,7,5,false);
+  signalEfficiency_w(2,7,5,false);
+  signalEfficiency_w(3,7,5,false);
+  signalEfficiency_w(1,8,5,false);
+  signalEfficiency_w(2,8,5,false);
+  signalEfficiency_w(3,8,5,false);
+
 }
 
 
 // The actual job
-void signalEfficiency_w(int channel, double sqrts, bool VBFtag) 
+void signalEfficiency_w(int channel, double sqrts, int process, bool VBFtag) 
 {
   TString schannel;
   if      (channel == 1) schannel = "4mu";
   else if (channel == 2) schannel = "4e";
   else if (channel == 3) schannel = "2e2mu";
-  else cout << "Not a valid channel: " << schannel << endl;
+  else cout << "Not a valid channel: " << channel << endl;
+
+  TString sprocess;
+  if      (process == 1) sprocess = "ggH";
+  else if (process == 2) sprocess = "qqH";
+  else if (process == 3) sprocess = "ZH";
+  else if (process == 4) sprocess = "WH";
+  else if (process == 5) sprocess = "ttH";
+  else cout << "Not a valid channel: " << process << endl;
 
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  cout << "schannel = " << schannel << "  sqrts = " << sqrts << " VBFtag = " << VBFtag << endl;
+  cout << "process = " << sprocess << " schannel = " << schannel << "  sqrts = " << sqrts <<  " VBFtag = " << VBFtag << endl;
 
-  TString outfile = "CardFragments/signalEfficiency_" + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag)) +".txt";
+  TString outfile = "CardFragments/signalEfficiency_" + sprocess + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag)) +".txt";
   ofstream of(outfile,ios_base::out);
 
   gSystem->AddIncludePath("-I$ROOFITSYS/include");
@@ -90,18 +157,43 @@ void signalEfficiency_w(int channel, double sqrts, bool VBFtag)
 
   // Pick the correct set of mass points, set subpath
   TString filepath;
-  if (sqrts==7) {
-    nPoints = nPoints7TeV;
-    masses  = masses7TeV;
-    mHVal   = mHVal7TeV;
-    filepath = filePath7TeV;
-  } else if (sqrts==8) {
-    nPoints = nPoints8TeV;
-    masses  = masses8TeV;
-    mHVal   = mHVal8TeV;
-    filepath =filePath8TeV;
-  }
-  
+  if (process==1){
+    if (sqrts==7) {
+      nPoints = nPoints7TeV;
+      masses  = masses7TeV;
+      mHVal   = mHVal7TeV;
+      filepath = filePath7TeV;
+    } else if (sqrts==8) {
+      nPoints = nPoints8TeV;
+      masses  = masses8TeV;
+      mHVal   = mHVal8TeV;
+      filepath =filePath8TeV;
+    }
+  } else if (process==2) {
+    if (sqrts==7) {
+      nPoints = nVBFPoints7TeV;
+      masses  = VBFmasses7TeV;
+      mHVal   = mHVBFVal7TeV;
+      filepath = filePath7TeV;
+    } else if (sqrts==8) {
+      nPoints = nVBFPoints8TeV;
+      masses  = VBFmasses8TeV;
+      mHVal   = mHVBFVal8TeV;
+      filepath =filePath8TeV;
+    }
+  } else if (process==3 || process==4 || process==5) {
+    if (sqrts==7) {
+      nPoints = nVHPoints7TeV;
+      masses  = VHmasses7TeV;
+      mHVal   = mHVHVal7TeV;
+      filepath = filePath7TeV;
+    } else if (sqrts==8) {
+      nPoints = nVHPoints8TeV;
+      masses  = VHmasses8TeV;
+      mHVal   = mHVHVal8TeV;
+      filepath =filePath8TeV;
+    }
+  }  
 
   float xMax = masses[nPoints-1]+10;
   //  cout << "xmax: " << xMax << endl;
@@ -123,28 +215,31 @@ void signalEfficiency_w(int channel, double sqrts, bool VBFtag)
 
   //  HiggsCSandWidth *myCSW = new HiggsCSandWidth();
 	
+  TString infile;
+
   for (int i = 0; i < nPoints; i++){
-    TString infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
+    if (process==1) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
+    else if (process==2) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VBFH" + (long)masses[i] + ".root";
+    else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VH" + (long)masses[i] + ".root";    
     //    cout << "Opening input file: " << infile << endl;
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
     float mela, MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
-    std::vector<double> *JetEta = new vector<double>;
     //std::vector<double> *JetPt = new vector<double>;
-    //std::vector<double> *JetPhi = new vector<double>;
-    std::vector<double> *JetMass = new vector<double>;
+    int NJets;
     int numEventsRaw = 0;
     float numEventsPowheg =0;
     float numEventsPU =0;    
-    float numEventsDataMC =0;    
+    float numEventsDataMC =0;
+    int genProcessId=0;
     t1->SetBranchAddress("MC_weight_norm",&MC_weight_norm);
     t1->SetBranchAddress("MC_weight_powhegWeight",&MC_weight_powhegWeight);
     t1->SetBranchAddress("MC_weight_PUWeight",&MC_weight_PUWeight);
     t1->SetBranchAddress("MC_weight_dataMC",&MC_weight_dataMC);
     t1->SetBranchAddress("ZZLD",&mela);
     //t1->SetBranchAddress("JetPt", &JetPt);
-    t1->SetBranchAddress("JetEta", &JetEta);
-    t1->SetBranchAddress("JetMass", &JetMass);
+    t1->SetBranchAddress("NJets",&NJets);
+    t1->SetBranchAddress("genProcessId",&genProcessId);
     float totalCtr=0;
     float eff_noweight=0;
     float sumw2=0;
@@ -152,21 +247,21 @@ void signalEfficiency_w(int channel, double sqrts, bool VBFtag)
     //    float den = 0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
-      if( (VBFtag == true && JetMass->size() == 2) || (VBFtag == false && JetMass->size() != 2))
-	{
-	  totalCtr+=MC_weight_norm; 
-	  sumw2 += MC_weight_norm*MC_weight_norm;
-	  ++numEventsRaw;      
-	  numEventsPowheg += MC_weight_powhegWeight;
-	  numEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
-	  numEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
-	  if (MC_weight_powhegWeight>0) {
-	    float w_initial = MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
-	    eff_noweight += w_initial;
-	    sumw_init2 += w_initial*w_initial; 
-	    //	if (den!=0) den = (MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC)/MC_weight_norm;
-	  }
+      if ((process==3 && genProcessId!=24) || (process==4 && genProcessId!=26) || (process==5 && (genProcessId!=121 && genProcessId!=122))) continue;
+      if( (VBFtag == true && NJets > 1) || (VBFtag == false && NJets < 2)){
+	totalCtr+=MC_weight_norm; 
+	sumw2 += MC_weight_norm*MC_weight_norm;
+	++numEventsRaw;      
+	numEventsPowheg += MC_weight_powhegWeight;
+	numEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
+	numEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
+	if (MC_weight_powhegWeight>0) {
+	  float w_initial = MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
+	  eff_noweight += w_initial;
+	  sumw_init2 += w_initial*w_initial; 
+	  //	if (den!=0) den = (MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC)/MC_weight_norm;
 	}
+      }
     }
 
     // FIXME: the 7TeV samples are assumed to have the ad-hoc correction factor for the mll>12 gen cut,
@@ -225,16 +320,16 @@ void signalEfficiency_w(int channel, double sqrts, bool VBFtag)
   //  TF1 *polyFunc= new TF1("polyFunc","pol9", 110., xMax);
 
   polyFunc->SetLineColor(4);      
-  TString cname = "eff" + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag));
+  TString cname = "eff" + sprocess + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag));
   TCanvas *c = new TCanvas(cname,cname);
   c->SetGrid();
 
-  TString outname = "sigFigs" + ssqrts +"/eff_" + schannel + "_" + Form("%d",int(VBFtag));
+  TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + Form("%d",int(VBFtag));
 
   grEff->Fit(polyFunc,"Rt");
   TString xaxisText = "m_{" + schannel + "}";
   grEff->GetXaxis()->SetTitle(xaxisText);
-  TString yaxisText = "efficiency, " + schannel;
+  TString yaxisText = "efficiency, " + sprocess + ", " + schannel;
   grEff->GetYaxis()->SetTitle(yaxisText);
   grEff->Draw("AP");
   polyFunc->Draw("sames");
@@ -243,7 +338,7 @@ void signalEfficiency_w(int channel, double sqrts, bool VBFtag)
   c->Print(outname+".root"); 
 
   cout << endl;
-  cout << "------- Parameters for " << schannel << " sqrts=" << sqrts << " VBFtag = " << VBFtag << endl;
+  cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << " VBFtag = " << VBFtag << endl;
   cout << "   a1 = " << polyFunc->GetParameter(0) << endl;
   cout << "   a2 = " << polyFunc->GetParameter(1) << endl;
   cout << "   a3 = " << polyFunc->GetParameter(2) << endl;

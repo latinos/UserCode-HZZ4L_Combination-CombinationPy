@@ -40,7 +40,7 @@ using namespace RooFit ;
 using namespace std;
 
 //Declaration
-void signalFits(int channel, int sqrts, bool VBFtag);
+void signalFits(int channel, int sqrts, int process, bool VBFtag);
 float WidthValue(float mHStarWidth);
 
 void signalFits()
@@ -50,47 +50,133 @@ void signalFits()
 
   gSystem->Load("../CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
 
-  signalFits(1,7,true);
-  signalFits(2,7,true);
-  signalFits(3,7,true);
-  signalFits(1,8,true);
-  signalFits(2,8,true);
-  signalFits(3,8,true);
+  //ggH
+  signalFits(1,7,1,true);
+  signalFits(2,7,1,true);
+  signalFits(3,7,1,true);
+  signalFits(1,8,1,true);
+  signalFits(2,8,1,true);
+  signalFits(3,8,1,true);
+  //qqH
+  signalFits(1,7,2,true);
+  signalFits(2,7,2,true);
+  signalFits(3,7,2,true);
+  signalFits(1,8,2,true);
+  signalFits(2,8,2,true);
+  signalFits(3,8,2,true);
+  //ZH
+  signalFits(1,7,3,true);
+  signalFits(2,7,3,true);
+  signalFits(3,7,3,true);
+  signalFits(1,8,3,true);
+  signalFits(2,8,3,true);
+  signalFits(3,8,3,true);
+  //WH
+  signalFits(1,7,4,true);
+  signalFits(2,7,4,true);
+  signalFits(3,7,4,true);
+  signalFits(1,8,4,true);
+  signalFits(2,8,4,true);
+  signalFits(3,8,4,true);
+  //ttH
+  signalFits(1,7,5,true);
+  signalFits(2,7,5,true);
+  signalFits(3,7,5,true);
+  signalFits(1,8,5,true);
+  signalFits(2,8,5,true);
+  signalFits(3,8,5,true);
 
-  signalFits(1,7,false);
-  signalFits(2,7,false);
-  signalFits(3,7,false);
-  signalFits(1,8,false);
-  signalFits(2,8,false);
-  signalFits(3,8,false);
+
+  //ggH
+  signalFits(1,7,1,false);
+  signalFits(2,7,1,false);
+  signalFits(3,7,1,false);
+  signalFits(1,8,1,false);
+  signalFits(2,8,1,false);
+  signalFits(3,8,1,false);
+  //qqH
+  signalFits(1,7,2,false);
+  signalFits(2,7,2,false);
+  signalFits(3,7,2,false);
+  signalFits(1,8,2,false);
+  signalFits(2,8,2,false);
+  signalFits(3,8,2,false);
+  //ZH
+  signalFits(1,7,3,false);
+  signalFits(2,7,3,false);
+  signalFits(3,7,3,false);
+  signalFits(1,8,3,false);
+  signalFits(2,8,3,false);
+  signalFits(3,8,3,false);
+  //WH
+  signalFits(1,7,4,false);
+  signalFits(2,7,4,false);
+  signalFits(3,7,4,false);
+  signalFits(1,8,4,false);
+  signalFits(2,8,4,false);
+  signalFits(3,8,4,false);
+  //ttH
+  signalFits(1,7,5,false);
+  signalFits(2,7,5,false);
+  signalFits(3,7,5,false);
+  signalFits(1,8,5,false);
+  signalFits(2,8,5,false);
+  signalFits(3,8,5,false);
 
   return;
 }
 
 //The actual job
-void signalFits(int channel, int sqrts, bool VBFtag)
+void signalFits(int channel, int sqrts, int process, bool VBFtag)
 {
   string schannel;
   if (channel == 1) schannel = "4mu";
   if (channel == 2) schannel = "4e";
   if (channel == 3) schannel = "2e2mu";
-  cout << "Final state = " << schannel << " and sqrt(s) = " << sqrts << " VBFtag = " << VBFtag << endl;
+  string sprocess;
+  if      (process == 1) sprocess = "ggH";
+  else if (process == 2) sprocess = "qqH";
+  else if (process == 3) sprocess = "ZH";
+  else if (process == 4) sprocess = "WH";
+  else if (process == 5) sprocess = "ttH";
+  cout << sprocess << ": Final state = " << schannel << " and sqrt(s) = " << sqrts << " VBFtag = " << VBFtag << endl;
 
   //Pick the correct mass points and paths
   TString filePath;
   int nPoints;
-  double *masses;
+  double* masses;
 
-  if(sqrts == 7){
-    filePath = filePath7TeV;
-    nPoints = nPoints7TeV;
-    masses = mHVal7TeV;
-  }
-  else if(sqrts == 8){
-    filePath = filePath8TeV;
-    nPoints = nPoints8TeV;
-    masses = mHVal8TeV;
-  }
+  if (process==1){
+    if (sqrts==7) {
+      nPoints = nPoints7TeV;
+      masses  = mHVal7TeV;
+      filePath = filePath7TeV;
+    } else if (sqrts==8) {
+      nPoints = nPoints8TeV;
+      masses  = mHVal8TeV;
+      filePath =filePath8TeV;
+    }
+  } else if (process==2) {
+    if (sqrts==7) {
+      nPoints = nVBFPoints7TeV;
+      masses  = mHVBFVal7TeV;
+      filePath = filePath7TeV;
+    } else if (sqrts==8) {
+      nPoints = nVBFPoints8TeV;
+      masses  = mHVBFVal8TeV;
+      filePath =filePath8TeV;
+    }
+  } else if (process==3 || process==4 || process==5) {
+    if (sqrts==7) {
+      nPoints = nVHPoints7TeV;
+      masses  = mHVHVal7TeV;
+      filePath = filePath7TeV;
+    } else if (sqrts==8) {
+      nPoints = nVHPoints8TeV;
+      masses  = mHVHVal8TeV;
+      filePath =filePath8TeV;
+    }
+  }  
   else abort();
 
   filePath.Append(schannel=="2e2mu"?"2mu2e":schannel);
@@ -117,10 +203,16 @@ void signalFits(int channel, int sqrts, bool VBFtag)
 		
     //Open input file with shapes and retrieve the tree
     char tmp_finalInPath[200];
-    sprintf(tmp_finalInPath,"/HZZ4lTree_H%i.root",masses[i]);
+    if (process==1){
+      sprintf(tmp_finalInPath,"/HZZ4lTree_H%i.root",masses[i]);
+    } else if (process==2){
+      sprintf(tmp_finalInPath,"/HZZ4lTree_VBFH%i.root",masses[i]);
+    } else if (process==3 || process==4 || process==5){
+      sprintf(tmp_finalInPath,"/HZZ4lTree_VH%i.root",masses[i]);
+    }
     string finalInPath = filePath + tmp_finalInPath;
 
-    //cout<<finalInPath<<endl;
+    cout<<finalInPath<<endl;
 
     TFile *f = new TFile(finalInPath.c_str());
     TTree *tree= (TTree*) f->Get("SelectedTree");
@@ -147,6 +239,7 @@ void signalFits(int channel, int sqrts, bool VBFtag)
     RooRealVar ZZMass("ZZMass","ZZMass",low_M,high_M);
     RooRealVar MC_weight("MC_weight","MC_weight",0.,10.);
     RooRealVar NJets("NJets","NJets",0.,100.);
+    RooRealVar genProcessId("genProcessId","genProcessId",0.,150.);
 
     if(channel == 2) ZZMass.setBins(50);
     if(channel == 3) ZZMass.setBins(50);
@@ -154,10 +247,16 @@ void signalFits(int channel, int sqrts, bool VBFtag)
     RooDataSet* set2;
 
     if (VBFtag == true){
-      set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets==2", "MC_weight");
+      if (process==1 || process==2) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets>1", "MC_weight");
+      if (process==3) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets>1 && genProcessId==24", "MC_weight");
+      if (process==4) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets>1 && genProcessId==26", "MC_weight");
+      if (process==5) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets>1 && (genProcessId==121 || genProcessId==122)", "MC_weight");
     }
     else{
-      set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets!=2", "MC_weight");
+      if (process==1 || process==2) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets<2", "MC_weight");
+      if (process==3) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets<2 && genProcessId==24", "MC_weight");
+      if (process==4) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets<2 && genProcessId==26", "MC_weight");
+      if (process==5) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets<2 && (genProcessId==121 || genProcessId==122)", "MC_weight");
     }
     RooDataHist *set = (RooDataHist*)set2->binnedClone("datahist","datahist");
 
@@ -224,10 +323,10 @@ void signalFits(int channel, int sqrts, bool VBFtag)
 
     string tmp_plotFileTitle;
     tmp_plotFileTitle.insert(0,outfile);
-    tmp_plotFileTitle += "/fitMass_H";
+    tmp_plotFileTitle += "/fitMass_";
     char tmp2_plotFileTitle[200];
     sprintf(tmp2_plotFileTitle,"%i_%iTeV_",masses[i],sqrts);
-    string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) +".gif";
+    string plotFileTitle = tmp_plotFileTitle + sprocess + tmp2_plotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) +".gif";
 
     canv.SaveAs(plotFileTitle.c_str());
   }
@@ -284,13 +383,13 @@ void signalFits(int channel, int sqrts, bool VBFtag)
   tmp_paramPlotFileTitle += "/fitParam_";
   char tmp2_paramPlotFileTitle[200];
   sprintf(tmp2_paramPlotFileTitle,"%iTeV_",sqrts);
-  string paramPlotFileTitle = tmp_paramPlotFileTitle + tmp2_paramPlotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) + ".gif";
+  string paramPlotFileTitle = tmp_paramPlotFileTitle + sprocess + tmp2_paramPlotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) + ".gif";
 
   canv2.SaveAs(paramPlotFileTitle.c_str());
 
   char tmp_outCardName[200];
-  sprintf(tmp_outCardName,"CardFragments/signalFunctions_%iTeV_",sqrts);
-  string outCardName = tmp_outCardName + schannel + "_" + Form("%d",int(VBFtag)) +".txt";
+  sprintf(tmp_outCardName,"%iTeV_",sqrts);
+  string outCardName = "CardFragments/signalFunctions_" + sprocess + tmp_outCardName + schannel + "_" + Form("%d",int(VBFtag)) +".txt";
   ofstream ofsCard(outCardName.c_str(),fstream::out);
   ofsCard << "usehighmassreweightedshapes" << endl;
   ofsCard << "## signal functions --- no spaces! ##" << endl;
