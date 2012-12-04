@@ -128,7 +128,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag){
   newTree->Branch("pseudoMelaLD",&pseudomelaLD,"pseudoMelaLD/D");
   newTree->Branch("supermelaLD",&supermelaLD,"supermelaLD/D");
   newTree->Branch("CMS_zz4l_Fisher",&Fisher,"CMS_zz4l_Fisher/D");
-  newTRee->Branch("CMS_zz4l_PToverM",&ptoverm,"CMS_zz4l_PToverM/D");
+  newTree->Branch("CMS_zz4l_PToverM",&ptoverm,"CMS_zz4l_PToverM/D");
   cout << inFile << " entries: " << treedata->GetEntries() << endl;
   for(int iEvt=0; iEvt<treedata->GetEntries(); iEvt++){
     //    if(iEvt%5000==0) cout << "event: " << iEvt << endl;
