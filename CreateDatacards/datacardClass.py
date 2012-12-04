@@ -483,8 +483,10 @@ class datacardClass:
 
             VD_name = "CMS_zz4l_Fisher"
             VD = ROOT.RooRealVar(VD_name,VD_name,0,2)
+            VD.setBins(50)
             ptoverm_name = "CMS_zz4l_PToverM"
             ptoverm = ROOT.RooRealVar(ptoverm_name,ptoverm_name,0,4)
+            ptoverm.setBins(100)
             sigCB2d_ggH_Fisher = ROOT.RooProdPdf()
             sigCB2d_qqH_Fisher = ROOT.RooProdPdf()
             sigCB2d_WH_Fisher = ROOT.RooProdPdf()
@@ -808,6 +810,8 @@ class datacardClass:
         
         discVarName = "melaLD"
         D = ROOT.RooRealVar(discVarName,discVarName,0,1)
+        if self.bVBF:
+            D.setBins(30)
     
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         

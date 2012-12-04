@@ -95,7 +95,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag){
   Int_t run;
   float mzz, pseudomela, mela, mzzErr;
   float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
-  float pt4l, Y4l;
+  float pt4l, Y4l, fisher;
   int NJets;
 
   treedata->SetBranchAddress("RunNumber",&run);
@@ -113,6 +113,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag){
   
   treedata->SetBranchAddress("ZZPt",&pt4l);
   treedata->SetBranchAddress("ZZRapidity",&Y4l);
+  treedata->SetBranchAddress("Fisher",&fisher);
 
   treedata->SetBranchAddress("NJets",&NJets);
 
@@ -120,11 +121,14 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag){
   newFile->cd();
   TTree* newTree = new TTree("data_obs","data_obs"); 
   Double_t CMS_zz4l_mass, melaLD, pseudomelaLD, supermelaLD, CMS_zz4l_massErr;
+  Double_t ptoverm = -99, Fisher = -99;
   newTree->Branch("CMS_zz4l_mass",&CMS_zz4l_mass,"CMS_zz4l_mass/D");
   newTree->Branch("CMS_zz4l_massErr",&CMS_zz4l_massErr,"CMS_zz4l_massErr/D");
   newTree->Branch("melaLD",&melaLD,"melaLD/D");
   newTree->Branch("pseudoMelaLD",&pseudomelaLD,"pseudoMelaLD/D");
   newTree->Branch("supermelaLD",&supermelaLD,"supermelaLD/D");
+  newTree->Branch("CMS_zz4l_Fisher",&Fisher,"CMS_zz4l_Fisher/D");
+  newTRee->Branch("CMS_zz4l_PToverM",&ptoverm,"CMS_zz4l_PToverM/D");
   cout << inFile << " entries: " << treedata->GetEntries() << endl;
   for(int iEvt=0; iEvt<treedata->GetEntries(); iEvt++){
     //    if(iEvt%5000==0) cout << "event: " << iEvt << endl;
@@ -141,6 +145,8 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag){
     pseudomelaLD = pseudomela;
     melaLD = mela;
     supermelaLD = 0;
+    if(!VBFtag) ptoverm = pt4l/mzz;
+    if(VBFtag) Fisher = fisher;
 
 
 #ifdef LINKMELA
