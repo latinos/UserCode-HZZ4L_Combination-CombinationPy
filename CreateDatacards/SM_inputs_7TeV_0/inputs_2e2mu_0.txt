@@ -23,13 +23,19 @@ rate zjets 3.0
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
-signalShape n_CB 5.74183+(-0.0199635*@0)+(3.49489e-05*@0*@0)+(-1.89166e-08*@0*@0*@0)
-signalShape alpha_CB 0.32789+(0.0017168*@0)+(1.38983e-05*@0*@0)+(-1.46227e-08*@0*@0*@0)
-signalShape mean_CB 1.32911+(-0.0194581*@0)+(6.0597e-05*@0*@0)+(-4.98459e-08*@0*@0*@0)
-signalShape sigma_CB -11.1648+(0.137003*@0)+(-0.000391878*@0*@0)+(3.73898e-07*@0*@0*@0)
-signalShape gamma_BW 30.3994+(-0.371136*@0)+(0.00119358*@0*@0)+(-6.38567e-07*@0*@0*@0)
-HighMasssignalShape gamma_BW 30.3994+(-0.371136*@0)+(0.00119358*@0*@0)+(-6.38567e-07*@0*@0*@0)
-
+signalShape alpha_CB (-19.1247)+(0.511858*@0)+(-0.00507084*@0*@0)+(2.40314e-05*@0*@0*@0)+(-5.4294e-08*@0*@0*@0*@0)+(4.70018e-11*@0*@0*@0*@0*@0)
+signalShape alpha2_CB (2.83488)+(-0.0208357*@0)+(8.703e-05*@0*@0)
+signalShape n_CB TMath::Max((-80.2755)+(1.92682*@0)+(-0.0163889*@0*@0)+(6.61152e-05*@0*@0*@0)+(-1.29134e-07*@0*@0*@0*@0)+(9.86492e-11*@0*@0*@0*@0*@0),1)
+signalShape n2_CB (20)
+signalShape mean_CB (7.74041)+(-0.1993*@0)+(0.00199694*@0*@0)+(-1.00463e-05*@0*@0*@0)+(2.46727e-08*@0*@0*@0*@0)+(-2.33501e-11*@0*@0*@0*@0*@0)
+signalShape sigma_CB (-32.5568)+(0.867983*@0)+(-0.00861782*@0*@0)+(4.13108e-05*@0*@0*@0)+(-9.4314e-08*@0*@0*@0*@0)+(8.23655e-11*@0*@0*@0*@0*@0)
+highmasssignalShape alpha_CB (1.94522)+(-0.0012104*@0)
+highmasssignalShape alpha2_CB (0.878941)+(0.000326235*@0)
+highmasssignalShape n_CB (-27.4789)+(0.146712*@0)+(-0.000188824*@0*@0)+(7.99675e-08*@0*@0*@0)
+highmasssignalShape n2_CB (20)
+highmasssignalShape mean_CB (82.1279)+(-0.457539*@0)+(0.000816838*@0*@0)+(-4.6665e-07*@0*@0*@0)
+highmasssignalShape sigma_CB (41.2978)+(-0.237919*@0)+(0.000343944*@0*@0)+(-1.18454e-08*@0*@0*@0)
+highmasssignalShape gamma_BW TMath::Max((59.6861)+(-0.59096*@0)+(0.00169122*@0*@0)+(-1.05572e-06*@0*@0*@0),30)
 ## signal efficiency ##
 signalEff a1  -4.42799
 signalEff a2  4.612
@@ -129,7 +135,7 @@ doHypTest False
 #altHypLabel _ALT
 ### for VBF fraction ###
 useCMS_zz4l_doVBFtest True
-useCMS_zz4l_Fisher True
+useCMS_zz4l_Fisher False
 useCMS_zz4l_PToverM False
 
 ### pToverM shapes systematic boolians###

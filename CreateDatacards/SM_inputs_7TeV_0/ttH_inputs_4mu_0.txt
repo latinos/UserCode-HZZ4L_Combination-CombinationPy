@@ -117,7 +117,7 @@ doHypTest False
 #altHypLabel _ALT
 ### for VBF fraction ###
 useCMS_zz4l_doVBFtest True
-useCMS_zz4l_Fisher True
+useCMS_zz4l_Fisher False
 useCMS_zz4l_PToverM False
 
 ### pToverM shapes systematic boolians###

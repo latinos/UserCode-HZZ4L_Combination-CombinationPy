@@ -147,6 +147,7 @@ void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag, int proces
      <<                               endl;
   of.close();
 
+  TString sigsuffix_both_old = ssqrts+"_"+schannel+".txt";
   TString sigsuffix_both = sprocess + ssqrts + "_" + schannel + ".txt";
   TString sigsuffix_split = sprocess + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag)) + ".txt";
   TString bkgsuffix_both = ssqrts + "_" + schannel + ".txt";
@@ -154,7 +155,14 @@ void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag, int proces
 
   append("CardFragments/ZZRates_" + bkgsuffix_split, outfile);
   append("CardFragments/zjetRate_" + bkgsuffix_both, outfile);
-  append("CardFragments/signalFunctions_" + sigsuffix_split, outfile);
+  if(process == 1)
+    {
+      append("CardFragments/signalFunctions_" + sigsuffix_both_old, outfile);
+    }
+  else
+    {
+      append("CardFragments/signalFunctions_" + sigsuffix_split, outfile);
+    }
   append("CardFragments/signalEfficiency_" + sigsuffix_split, outfile);
   append("CardFragments/qqzzBackgroundFit_" + bkgsuffix_split, outfile);
   append("CardFragments/ggzzBackgroundFit_" + bkgsuffix_split, outfile);
