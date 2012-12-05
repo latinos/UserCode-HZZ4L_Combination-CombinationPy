@@ -1442,7 +1442,6 @@ class datacardClass:
         ggbkgTemplate = ggbkgTempFile.Get("h_mzzD")
         TemplateName = "ggbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
         ggbkgTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(CMS_zz4l_mass,D),ggbkgTemplate)
-        
         TemplateName = "bkgTemplatePdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
         bkgTemplatePdf_qqzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHist)
         TemplateName = "bkgTemplatePdf_ggzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)    
@@ -1718,21 +1717,36 @@ class datacardClass:
 
       #  rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
 
-        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ggH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+        if self.bVBF:
+            rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_{0}_norm".format(self.VBFcat),"@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ggH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
 
-        print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
+            print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
         
-        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_VBF),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
-                         
+            rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_{0}_norm".format(self.VBFcat),"@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_VBF),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
+            
+            
+            rfvSigRate_WH = ROOT.RooFormulaVar("WH_{0}_norm".format(self.VBFcat),"@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_WH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
+            
+            
+            rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_{0}_norm".format(self.VBFcat),"@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ZH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
+            
+            
+            rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_{0}_norm".format(self.VBFcat),"@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ttH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_5))
+        else:
+            rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ggH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
 
-        rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_WH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
-                         
-
-        rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ZH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
-                         
-
-        rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ttH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_5))
-                         
+            print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
+        
+            rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_VBF),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
+            
+            
+            rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_WH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
+            
+            
+            rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ZH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
+            
+            
+            rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),integral_ttH),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_5))
 
 
         print signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),"   ",sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal()
@@ -1794,7 +1808,10 @@ class datacardClass:
 
         dataFileDir = "CMSdata"
         dataTreeName = "data_obs" 
-        dataFileName = "{0}/hzz{1}_{2}.root".format(dataFileDir,self.appendName,self.lumi)
+        if not self.bVBF:
+            dataFileName = "{0}/hzz{1}_{2}.root".format(dataFileDir,self.appendName,self.lumi)
+        else:
+            dataFileName = "{0}/hzz{1}_{2}_{3}.root".format(dataFileDir,self.appendName,self.lumi,self.VBFcat)
         if (DEBUG): print dataFileName," ",dataTreeName 
         data_obs_file = ROOT.TFile(dataFileName)
 
@@ -1931,11 +1948,11 @@ class datacardClass:
                         getattr(w,'import')(sigCB2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
 
                 else:
-                    sigCB2d_ggH_VBF_KD.SetNameTitle("ggH","ggH")
-                    sigCB2d_qqH_VBF_KD.SetNameTitle("qqH","qqH")
-                    sigCB2d_WH_VBF_KD.SetNameTitle("WH","WH")
-                    sigCB2d_ZH_VBF_KD.SetNameTitle("ZH","ZH")
-                    sigCB2d_ttH_VBF_KD.SetNameTitle("ttH","ttH")
+                    sigCB2d_ggH_VBF_KD.SetNameTitle("ggH_{0}".format(self.VBFcat),"ggH_{0}".format(self.VBFcat))
+                    sigCB2d_qqH_VBF_KD.SetNameTitle("qqH_{0}".format(self.VBFcat),"qqH_{0}".format(self.VBFcat))
+                    sigCB2d_WH_VBF_KD.SetNameTitle("WH_{0}".format(self.VBFcat),"WH_{0}".format(self.VBFcat))
+                    sigCB2d_ZH_VBF_KD.SetNameTitle("ZH_{0}".format(self.VBFcat),"ZH_{0}".format(self.VBFcat))
+                    sigCB2d_ttH_VBF_KD.SetNameTitle("ttH_{0}".format(self.VBFcat),"ttH_{0}".format(self.VBFcat))
                     print "Got Here\n"
                     getattr(w,'import')(sigCB2d_ggH_VBF_KD,ROOT.RooFit.RecycleConflictNodes())
                     print "imported ggH \n"
@@ -2125,7 +2142,10 @@ class datacardClass:
             else: name_Shape = "{0}/HCG_XSxBR/{2:.0f}/hzz4l_{1}S_{3:.0f}TeV_{4}.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts,self.bVBF)
             
         fo = open( name_Shape, "wb" )
-        self.WriteDatacard(fo, theInputs,name_ShapeWS2, rates, data_obs.numEntries(), self.is2D )
+        if not self.bVBF:
+            self.WriteDatacard(fo, theInputs,name_ShapeWS2, rates, data_obs.numEntries(), self.is2D )
+        else:
+            self.WriteDatacard(fo,theInputs,name_ShapeWS2,rates,data_obs.numEntries(),self.is2D,False,"",True,self.VBFcat)
         systematics_forXSxBR.WriteSystematics(fo, theInputs)
         systematics_forXSxBR.WriteShapeSystematics(fo,theInputs)
         fo.close()
@@ -2141,11 +2161,11 @@ class datacardClass:
         
 
 
-    def WriteDatacard(self,file,theInputs,nameWS,theRates,obsEvents,is2D,isAltCard=False,AltLabel=""):
+    def WriteDatacard(self,file,theInputs,nameWS,theRates,obsEvents,is2D,isAltCard=False,AltLabel="",bVBF=False,VBFcat=""):
 
         numberSig = self.numberOfSigChan(theInputs)
         numberBg  = self.numberOfBgChan(theInputs)
-
+        
         file.write("imax 1\n")
         file.write("jmax {0}\n".format(numberSig+numberBg-1))
         file.write("kmax *\n")
@@ -2154,7 +2174,10 @@ class datacardClass:
         file.write("shapes * * {0} w:$PROCESS \n".format(nameWS))
         file.write("------------\n")
         
-        file.write("bin a{0} \n".format(self.channel))
+        if not self.bVBF:
+            file.write("bin a{0} \n".format(self.channel))
+        else:
+            file.write("bin a{0}_{1} \n".format(self.channel,self.VBFcat))
         file.write("observation {0} \n".format(obsEvents))
         
         file.write("------------\n")
@@ -2175,10 +2198,15 @@ class datacardClass:
             else:
                 channelName2D=['ggH','bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets','bkg2d_ttbar','bkg2d_zbb']
           
+        if self.bVBF :
+            channelName2D=['ggH_{0}'.format(self.VBFcat),'qqH_{0}'.format(self.VBFcat),'WH_{0}'.format(self.VBFcat),'ZH_{0}'.format(self.VBFcat),'ttH_{0}'.format(self.VBFcat),'bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets','bkg2d_ttbar','bkg2d_zbb']
          
         for chan in channelList:
             if theInputs[chan]:
-                file.write("a{0} ".format(self.channel))
+                if not self.bVBF:
+                    file.write("a{0} ".format(self.channel))
+                else:
+                    file.write("a{0}_{1} ".format(self.channel,self.VBFcat))
             else:
                 if chan.startswith("ggH") and theInputs["all"] :
                     file.write("a{0} ".format(self.channel))
@@ -2197,12 +2225,12 @@ class datacardClass:
 #                print 'checking if ',chan,' is in the list of to-do'
                 if theInputs[chan]:
                     file.write("{0} ".format(channelName2D[i]))
-#                    print 'writing in card index=',i,'  chan=',chan
+ #                   print 'writing in card index=',i,'  chan=',chan
                     i+=1
                 else:
                     if chan.startswith("ggH") and theInputs["all"] :
                         file.write("{0} ".format(channelName2D[i]))
-#                        print 'writing in card TOTAL SUM, index=',i,'  chan=',chan,'  ',channelName2D[i]
+  #                      print 'writing in card TOTAL SUM, index=',i,'  chan=',chan,'  ',channelName2D[i]
                         i+=1
         
         file.write("\n")
