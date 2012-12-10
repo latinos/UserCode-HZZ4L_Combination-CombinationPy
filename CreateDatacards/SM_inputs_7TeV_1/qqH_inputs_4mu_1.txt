@@ -120,6 +120,12 @@ useCMS_zz4l_doVBFtest True
 useCMS_zz4l_Fisher False
 useCMS_zz4l_PToverM False
 
+signalEff tagged_ggH_ratio 0.111965
+signalEff tagged_qqH_ratio 0.539344
+signalEff tagged_ZH_ratio 0.20874
+signalEff tagged_WH_ratio 0.372068
+singalEff tagged_ttH_ratio 0.950358
+
 ### pToverM shapes systematic boolians###
 systematic CMS_zz4l_ggH_Resummation True
 systematic CMS_zz4l_ggH_TopMass True

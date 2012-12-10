@@ -76,6 +76,12 @@ class inputReader:
         self.sigeff_g1 = -999.9
         self.sigeff_g2 = -999.9
         self.sigeff_g3 = -999.9
+        # signal efficiency ratios for jet tagging catagoies
+        self.tagged_ggH_ratio = -999.9
+        self.tagged_qqH_ratio = -999.9
+        self.tagged_WH_ratio = -999.9
+        self.tagged_ZH_ratio = -999.9
+        self.tagged_ttH_ratio = -999.9
         # qqZZ shape
         self.qqZZshape_a0 = -999.9
         self.qqZZshape_a1 = -999.9
@@ -332,6 +338,12 @@ class inputReader:
                 if f[1].lower().startswith("g1"): self.sigeff_g1 = float(f[2])
                 if f[1].lower().startswith("g2"): self.sigeff_g2 = float(f[2])
                 if f[1].lower().startswith("g3"): self.sigeff_g3 = float(f[2])
+
+                if f[1].lower().startswith("tagged_ggh_ratio"): self.tagged_ggH_ratio = float(f[2])
+                if f[1].lower().startswith("tagged_qqh_ratio"): self.tagged_qqH_ratio = float(f[2])
+                if f[1].lower().startswith("tagged_wh_ratio"): self.tagged_WH_ratio = float(f[2])
+                if f[1].lower().startswith("tagged_zh_ratio"): self.tagged_ZH_ratio = float(f[2])
+                if f[1].lower().startswith("tagged_tth_ratio"): self.tagged_ttH_ratio = float(f[2])
 
             if f[0].lower().startswith("qqzzshape"):
 
@@ -692,6 +704,12 @@ class inputReader:
         dict['sigEff_g1'] = float(self.sigeff_g1)
         dict['sigEff_g2'] = float(self.sigeff_g2)
         dict['sigEff_g3'] = float(self.sigeff_g3)
+
+        dict['tagged_ggH_ratio'] = float(self.tagged_ggH_ratio)
+        dict['tagged_qqH_ratio'] = float(self.tagged_qqH_ratio)
+        dict['tagged_WH_ratio'] = float(self.tagged_WH_ratio)
+        dict['tagged_ZH_ratio'] = float(self.tagged_ZH_ratio)
+        dict['tagged_ttH_ratio'] = float(self.tagged_ttH_ratio)
         
         dict['qqZZshape_a0'] = float(self.qqZZshape_a0)
         dict['qqZZshape_a1'] = float(self.qqZZshape_a1)

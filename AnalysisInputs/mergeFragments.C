@@ -163,13 +163,20 @@ void mergeFragments(int channel, int sqrts, double lumi, bool VBFtag, int proces
     {
       append("CardFragments/signalFunctions_" + sigsuffix_split, outfile);
     }
-  append("CardFragments/signalEfficiency_" + sigsuffix_split, outfile);
+  if(process ==1)
+    {
+      append("CardFragments/signalEfficiency_" + sigsuffix_both_old, outfile);
+    }
+  else
+    {
+      append("CardFragments/signalEfficiency_" + sigsuffix_split, outfile);
+    }
   append("CardFragments/qqzzBackgroundFit_" + bkgsuffix_split, outfile);
   append("CardFragments/ggzzBackgroundFit_" + bkgsuffix_split, outfile);
   append("CardFragments/zjetShape_" + bkgsuffix_both, outfile);  
   append("CardFragments/sys_" + bkgsuffix_both, outfile);
   append("CardFragments/hypTesting.txt", outfile);
-  append("CardFragments/VBFtesting.txt",outfile);
+  append("CardFragments/VBFtagging_"+sigsuffix_both_old,outfile);
   append("CardFragments/mekd_" + bkgsuffix_both, outfile);
   append("CardFragments/relerr_" + bkgsuffix_both, outfile);
 

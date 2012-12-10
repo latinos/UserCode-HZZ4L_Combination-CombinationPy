@@ -40,15 +40,15 @@ highmasssignalShape gamma_BW (185.192)+(-1.15885*@0)+(0.0025093*@0*@0)+(-1.44677
 
 
 ## signal efficiency ##
-signalEff a1  -4.42715
-signalEff a2  4.6134
-signalEff a3  -47.8108
-signalEff a4  92.3671
-signalEff b1  2.53884
-signalEff b2  0.00168805
-signalEff b3  -1.3813e-06
+signalEff a1  -4.41182
+signalEff a2  4.6281
+signalEff a3  -41.5689
+signalEff a4  90.9293
+signalEff b1  2.28005
+signalEff b2  0.0032116
+signalEff b3  -1.74884e-06
 signalEff g1  0.035
-signalEff g2  192.048
+signalEff g2  192.869
 signalEff g3  30
 
 
@@ -128,6 +128,12 @@ doHypTest False
 useCMS_zz4l_doVBFtest True
 useCMS_zz4l_Fisher False
 useCMS_zz4l_PToverM False
+
+signalEff tagged_ggH_ratio 0.111965
+signalEff tagged_qqH_ratio 0.539344
+signalEff tagged_ZH_ratio 0.20874
+signalEff tagged_WH_ratio 0.372068
+singalEff tagged_ttH_ratio 0.950358
 
 ### pToverM shapes systematic boolians###
 systematic CMS_zz4l_ggH_Resummation True

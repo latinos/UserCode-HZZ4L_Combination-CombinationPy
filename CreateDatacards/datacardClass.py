@@ -211,8 +211,11 @@ class datacardClass:
         if(self.bUseCBnoConvolution): bins = 200
         if(self.bIncludingError): bins = 200
 
-        
-        CMS_zz4l_mass = ROOT.RooRealVar("CMS_zz4l_mass","CMS_zz4l_mass",self.low_M,self.high_M)
+        if not self.bVBF:
+            CMS_zz4l_mass = ROOT.RooRealVar("CMS_zz4l_mass","CMS_zz4l_mass",self.low_M,self.high_M)
+        else:
+            CMS_zz4l_mass = ROOT.RooRealVar("CMS_zz4l_mass_{0}".format(self.VBFcat),"CMS_zz4l_mass_{0}".format(self.VBFcat),self.low_M,self.high_M)
+            
         CMS_zz4l_mass.setBins(bins,"fft")
 
         self.LUMI = ROOT.RooRealVar("LUMI_{0:.0f}".format(self.sqrts),"LUMI_{0:.0f}".format(self.sqrts),self.lumi)
@@ -281,18 +284,18 @@ class datacardClass:
             rhfXsBrFuncV_5 = ROOT.RooHistFunc(rhfname,rhfname, ROOT.RooArgSet(self.MH), rdhXsBrFuncV_5, 1)
     
         ## -------- Variable Definitions -------- ##
-    
-        name = "CMS_zz4l_mean_e_sig"
-        CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
-        name = "CMS_zz4l_sigma_e_sig"
-        CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
-        
-        name = "CMS_zz4l_mean_m_sig"
-        CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
-        name = "CMS_zz4l_sigma_m_sig"
-        CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
-        
+            
         if not self.bVBF:
+            name = "CMS_zz4l_mean_e_sig"
+            CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
+            name = "CMS_zz4l_sigma_e_sig"
+            CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
+            
+            name = "CMS_zz4l_mean_m_sig"
+            CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
+            name = "CMS_zz4l_sigma_m_sig"
+            CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
+
             name = "CMS_zz4l_alpha2_{0}_{1:.0f}".format(self.channel,self.sqrts)
             CMS_zz4l_alpha2 = ROOT.RooRealVar(name,"CMS_zz4l_alpha2",1.,-10.,10.)
             name = "CMS_zz4l_n2_sig_{0}_{1:.0f}".format(self.channel,self.sqrts)
@@ -309,6 +312,16 @@ class datacardClass:
             name = "CMS_zz4l_widthScale_{0}_{1:.0f}".format(self.channel,self.sqrts)
             CMS_zz4l_widthScale = ROOT.RooRealVar(name,"CMS_zz4l_widthScale",1.0)
         else:
+            name = "CMS_zz4l_mean_e_sig_{0}".format(self.VBFcat)
+            CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
+            name = "CMS_zz4l_sigma_e_sig_{0}".format(self.VBFcat)
+            CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
+            
+            name = "CMS_zz4l_mean_m_sig_{0}".format(self.VBFcat)
+            CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
+            name = "CMS_zz4l_sigma_m_sig_{0}".format(self.VBFcat)
+            CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
+            
             name = "CMS_zz4l_alpha2_{0}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             CMS_zz4l_alpha2 = ROOT.RooRealVar(name,"CMS_zz4l_alpha2",1.,-10.,10.)
             name = "CMS_zz4l_n2_sig_{0}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
@@ -685,7 +698,7 @@ class datacardClass:
                 FisherList_ZH.add(FisherTemplatePdf_ZH)
                 FisherList_ttH.add(FisherTemplatePdf_ttH)
 
-            morphFisherVarName = "CMS_zz4l_Fisher_{0:.0f}".format(self.channel)
+            morphFisherVarName = "CMS_zz4l_Fisher_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             alphaMorphFisher = ROOT.RooRealVar(morphFisherVarName,morphFisherVarName,0,-20,20)
             if(self.FisherMorph):
                 alphaMorphFisher.setConstant(False)
@@ -839,7 +852,7 @@ class datacardClass:
                 PtList_ZH.add(PtTemplatePdf_ZH)
                 PtList_ttH.add(PtTemplatePdf_ttH)
 
-            morphPtVarName = "CMS_zz4l_PToverM_{0:.0f}".format(self.channel)
+            morphPtVarName = "CMS_zz4l_PToverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             alphaMorphPt = ROOT.RooRealVar(morphPtVarName,morphPtVarName,0,-20,20)
             if(self.PtMorph):
                 alphaMorphPt.setConstant(False)
@@ -874,8 +887,10 @@ class datacardClass:
 
 
         ## --------------------------- MELA 2D PDFS ------------------------- ##
-        
-        discVarName = "melaLD"
+        if not self.bVBF:
+            discVarName = "melaLD"
+        else:
+            discVarName = "melaLD_{0}".format(self.VBFcat)
         D = ROOT.RooRealVar(discVarName,discVarName,0,1)
         if self.bVBF:
             D.setBins(30)
@@ -996,7 +1011,7 @@ class datacardClass:
             if(self.isAltSig):
                 funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT)
     
-        morphSigVarName = "CMS_zz4l_sigMELA_{0:.0f}".format(self.channel)
+        morphSigVarName = "CMS_zz4l_sigMELA_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
         alphaMorphSig = ROOT.RooRealVar(morphSigVarName,morphSigVarName,0,-20,20)
         if(self.sigMorph): alphaMorphSig.setConstant(False)
         else: alphaMorphSig.setConstant(True)
@@ -1419,7 +1434,7 @@ class datacardClass:
                 FisherList_ZX.add(FisherTemplatePdf_ZX)
                 
 
-            morphFisherVarName = "CMS_zz4l_Fisher_{0:.0f}".format(self.channel)
+            morphFisherVarName = "CMS_zz4l_Fisher_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             alphaMorphFisher = ROOT.RooRealVar(morphFisherVarName,morphFisherVarName,0,-20,20)
             if(self.FisherMorph):
                 alphaMorphFisher.setConstant(False)
@@ -1522,7 +1537,7 @@ class datacardClass:
                 PtList_ZX.add(PtTemplatePdf_ZX)
                 
 
-            morphPtVarName = "CMS_zz4l_PToverM_{0:.0f}".format(self.channel)
+            morphPtVarName = "CMS_zz4l_PToverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             alphaMorphPt = ROOT.RooRealVar(morphPtVarName,morphPtVarName,0,-20,20)
             if(self.PtMorph):
                 alphaMorphPt.setConstant(False)
@@ -1579,7 +1594,7 @@ class datacardClass:
         bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHist_Down)
         
         funcList_zjets = ROOT.RooArgList()  
-        morphBkgVarName = "CMS_zz4l_bkgMELA"    
+        morphBkgVarName = "CMS_zz4l_bkgMELA_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)    
         alphaMorphBkg = ROOT.RooRealVar(morphBkgVarName,morphBkgVarName,0,-20,20)
         morphVarListBkg = ROOT.RooArgList()
         
@@ -1811,6 +1826,30 @@ class datacardClass:
         sigRate_WH = csCorrection*CS_WH*BR*sigEfficiency*1000.*self.lumi
         sigRate_ZH = csCorrection*CS_ZH*BR*sigEfficiency*1000.*self.lumi
         sigRate_ttH = csCorrection*CS_ttH*BR*sigEfficiency*1000.*self.lumi
+
+        if self.bVBF:
+            tag_Ratio_Name = "hzz4l_tag_ratio_ggH_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            rrvTag_Ratio_ggH = ROOT.RooRealVar(tag_Ratio_Name,tag_Ratio_Name, theInputs['tagged_ggH_ratio'])
+            tag_Ratio_Name = "hzz4l_tag_ratio_qqH_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            rrvTag_Ratio_qqH = ROOT.RooRealVar(tag_Ratio_Name,tag_Ratio_Name, theInputs['tagged_qqH_ratio'])
+            tag_Ratio_Name = "hzz4l_tag_ratio_WH_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            rrvTag_Ratio_WH = ROOT.RooRealVar(tag_Ratio_Name,tag_Ratio_Name, theInputs['tagged_WH_ratio'])
+            tag_Ratio_Name = "hzz4l_tag_ratio_ZH_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            rrvTag_Ratio_ZH = ROOT.RooRealVar(tag_Ratio_Name,tag_Ratio_Name, theInputs['tagged_ZH_ratio'])
+            tag_Ratio_Name = "hzz4l_tag_ratio_ttH_{0:.0f}_{1:.0f}_{2}_a1".format(self.channel,self.sqrts,self.VBFcat)
+            rrvTag_Ratio_ttH = ROOT.RooRealVar(tag_Ratio_Name,tag_Ratio_Name, theInputs['tagged_ttH_ratio'])
+            if self.VBFcat:
+                sigRate_ggH *= rrvTag_Ratio_ggH.getVal()
+                sigRate_VBF *= rrvTag_Ratio_qqH.getVal()
+                sigRate_WH *= rrvTag_Ratio_WH.getVal()
+                sigRate_ZH *= rrvTag_Ratio_ZH.getVal()
+                sigRate_ttH *= rrvTag_Ratio_ttH.getVal()
+            else:
+                sigRate_ggH *= (one.getVal() - rrvTag_Ratio_ggH.getVal())
+                sigRate_VBF *= (one.getVal() - rrvTag_Ratio_qqH.getVal())
+                sigRate_WH *= (one.getVal() - rrvTag_Ratio_WH.getVal())
+                sigRate_ZH *= (one.getVal() - rrvTag_Ratio_ZH.getVal())
+                sigRate_ttH *= (one.getVal() - rrvTag_Ratio_ttH.getVal())
        
         tmpNormSigNoConv = signalCB_ggH.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrangesignal") ).getVal()
         tmpNormSigConv = sig_ggH.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrangesignal") ).getVal()

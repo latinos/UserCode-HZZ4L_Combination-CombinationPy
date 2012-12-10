@@ -1,0 +1,24 @@
+### for VBF fraction ###
+useCMS_zz4l_doVBFtest True
+useCMS_zz4l_Fisher False
+useCMS_zz4l_PToverM False
+
+signalEff tagged_ggH_ratio 0.107984
+signalEff tagged_qqH_ratio 0.585978
+signalEff tagged_ZH_ratio 0.269299
+signalEff tagged_WH_ratio 0.398642
+singalEff tagged_ttH_ratio 0.953515
+
+### pToverM shapes systematic boolians###
+systematic CMS_zz4l_ggH_Resummation True
+systematic CMS_zz4l_ggH_TopMass True
+systematic CMS_zz4l_ggH_Statistics True
+systematic CMS_zz4l_ggzz_Statistics True
+systematic CMS_zz4l_vbf_PDF True
+systematic CMS_zz4l_vbf_Scale True
+systematic CMS_zz4l_vbf_Statistics True
+systematic CMS_zz4l_zx_Statistics True
+systematic CMS_zz4l_zz_PDF True
+systematic CMS_zz4l_zz_Scale True
+systematic CMS_zz4l_zz_SingleZ True
+systematic CMS_zz4l_zz_Statistics True
