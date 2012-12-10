@@ -143,7 +143,7 @@ signalEff tagged_ggH_ratio 0.106832
 signalEff tagged_qqH_ratio 0.582099
 signalEff tagged_ZH_ratio 0.256765
 signalEff tagged_WH_ratio 0.39649
-singalEff tagged_ttH_ratio 0.932036
+signalEff tagged_ttH_ratio 0.932036
 
 ### pToverM shapes systematic boolians###
 systematic CMS_zz4l_ggH_Resummation True
