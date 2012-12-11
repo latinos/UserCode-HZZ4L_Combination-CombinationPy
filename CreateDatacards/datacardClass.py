@@ -211,10 +211,7 @@ class datacardClass:
         if(self.bUseCBnoConvolution): bins = 200
         if(self.bIncludingError): bins = 200
 
-        if not self.bVBF:
-            CMS_zz4l_mass = ROOT.RooRealVar("CMS_zz4l_mass","CMS_zz4l_mass",self.low_M,self.high_M)
-        else:
-            CMS_zz4l_mass = ROOT.RooRealVar("CMS_zz4l_mass_{0}".format(self.VBFcat),"CMS_zz4l_mass_{0}".format(self.VBFcat),self.low_M,self.high_M)
+        CMS_zz4l_mass = ROOT.RooRealVar("CMS_zz4l_mass","CMS_zz4l_mass",self.low_M,self.high_M)
             
         CMS_zz4l_mass.setBins(bins,"fft")
 
@@ -312,14 +309,14 @@ class datacardClass:
             name = "CMS_zz4l_widthScale_{0}_{1:.0f}".format(self.channel,self.sqrts)
             CMS_zz4l_widthScale = ROOT.RooRealVar(name,"CMS_zz4l_widthScale",1.0)
         else:
-            name = "CMS_zz4l_mean_e_sig_{0}".format(self.VBFcat)
+            name = "CMS_zz4l_mean_e_sig".format(self.VBFcat)
             CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
-            name = "CMS_zz4l_sigma_e_sig_{0}".format(self.VBFcat)
+            name = "CMS_zz4l_sigma_e_sig".format(self.VBFcat)
             CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
             
-            name = "CMS_zz4l_mean_m_sig_{0}".format(self.VBFcat)
+            name = "CMS_zz4l_mean_m_sig".format(self.VBFcat)
             CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
-            name = "CMS_zz4l_sigma_m_sig_{0}".format(self.VBFcat)
+            name = "CMS_zz4l_sigma_m_sig".format(self.VBFcat)
             CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
             
             name = "CMS_zz4l_alpha2_{0}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
@@ -698,7 +695,7 @@ class datacardClass:
                 FisherList_ZH.add(FisherTemplatePdf_ZH)
                 FisherList_ttH.add(FisherTemplatePdf_ttH)
 
-            morphFisherVarName = "CMS_zz4l_Fisher_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            morphFisherVarName = "CMS_zz4l_sigFisher"
             alphaMorphFisher = ROOT.RooRealVar(morphFisherVarName,morphFisherVarName,0,-20,20)
             if(self.FisherMorph):
                 alphaMorphFisher.setConstant(False)
@@ -852,7 +849,7 @@ class datacardClass:
                 PtList_ZH.add(PtTemplatePdf_ZH)
                 PtList_ttH.add(PtTemplatePdf_ttH)
 
-            morphPtVarName = "CMS_zz4l_PToverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            morphPtVarName = "CMS_zz4l_sigPToverM"
             alphaMorphPt = ROOT.RooRealVar(morphPtVarName,morphPtVarName,0,-20,20)
             if(self.PtMorph):
                 alphaMorphPt.setConstant(False)
@@ -887,13 +884,10 @@ class datacardClass:
 
 
         ## --------------------------- MELA 2D PDFS ------------------------- ##
-        if not self.bVBF:
-            discVarName = "melaLD"
-        else:
-            discVarName = "melaLD_{0}".format(self.VBFcat)
+        
+        discVarName = "melaLD"
         D = ROOT.RooRealVar(discVarName,discVarName,0,1)
-        if self.bVBF:
-            D.setBins(30)
+        D.setBins(30)
     
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         
@@ -1011,7 +1005,7 @@ class datacardClass:
             if(self.isAltSig):
                 funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT)
     
-        morphSigVarName = "CMS_zz4l_sigMELA_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+        morphSigVarName = "CMS_zz4l_sigMELA"
         alphaMorphSig = ROOT.RooRealVar(morphSigVarName,morphSigVarName,0,-20,20)
         if(self.sigMorph): alphaMorphSig.setConstant(False)
         else: alphaMorphSig.setConstant(True)
@@ -1434,7 +1428,7 @@ class datacardClass:
                 FisherList_ZX.add(FisherTemplatePdf_ZX)
                 
 
-            morphFisherVarName = "CMS_zz4l_Fisher_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            morphFisherVarName = "CMS_zz4l_bkgFisher"
             alphaMorphFisher = ROOT.RooRealVar(morphFisherVarName,morphFisherVarName,0,-20,20)
             if(self.FisherMorph):
                 alphaMorphFisher.setConstant(False)
@@ -1537,7 +1531,7 @@ class datacardClass:
                 PtList_ZX.add(PtTemplatePdf_ZX)
                 
 
-            morphPtVarName = "CMS_zz4l_PToverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            morphPtVarName = "CMS_zz4l_bkgPToverM"
             alphaMorphPt = ROOT.RooRealVar(morphPtVarName,morphPtVarName,0,-20,20)
             if(self.PtMorph):
                 alphaMorphPt.setConstant(False)
@@ -1594,7 +1588,7 @@ class datacardClass:
         bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(CMS_zz4l_mass,D),bkgTempDataHist_Down)
         
         funcList_zjets = ROOT.RooArgList()  
-        morphBkgVarName = "CMS_zz4l_bkgMELA_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)    
+        morphBkgVarName = "CMS_zz4l_bkgMELA"    
         alphaMorphBkg = ROOT.RooRealVar(morphBkgVarName,morphBkgVarName,0,-20,20)
         morphVarListBkg = ROOT.RooArgList()
         
