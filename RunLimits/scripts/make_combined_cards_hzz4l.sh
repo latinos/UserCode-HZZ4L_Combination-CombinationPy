@@ -15,6 +15,7 @@ XS_COMB=""
 
 if [[ "$2" == "0" ]]; then COMBINED4L="TRUE"; else COMBINED4L="FALSE"; fi
 if [[ "$2" == "-1" ]]; then COMBINED2l2tau="TRUE"; else COMBINED2l2tau="FALSE"; fi
+if [[ "$2" == "-2" ]]; then COMBINED4L_JETS="TRUE"; else COMBINED4L_JETS="FALSE"; fi
 
 
 #if expr index $MASS .5 > /dev/null; then MASSD="$MASS"; else MASSD="$MASS.0"; fi
@@ -22,6 +23,9 @@ if echo $MASS | grep -F -q .5; then MASSD="$MASS"; else MASSD="$MASS.0"; fi
 
 if [[ "$COMBINED4L" == "TRUE" ]]; then
     HZZ4L="hzz4l_2e2mu_7=hzz4l_2e2muS_7TeV.txt hzz4l_4e_7=hzz4l_4eS_7TeV.txt hzz4l_4mu_7=hzz4l_4muS_7TeV.txt hzz4l_2e2mu_8=hzz4l_2e2muS_8TeV.txt hzz4l_4e_8=hzz4l_4eS_8TeV.txt hzz4l_4mu_8=hzz4l_4muS_8TeV.txt"
+
+elif [[ "$COMBINED4L_JETS" == "TRUE" ]]; then
+    HZZ4L="hzz4l_2e2mu_7_0=hzz4l_2e2muS_7TeV_0.txt hzz4l_4e_7_0=hzz4l_4eS_7TeV_0.txt hzz4l_4mu_7_0=hzz4l_4muS_7TeV_0.txt hzz4l_2e2mu_8_0=hzz4l_2e2muS_8TeV_0.txt hzz4l_4e_8_0=hzz4l_4eS_8TeV_0.txt hzz4l_4mu_8_0=hzz4l_4muS_8TeV_0.txt hzz4l_2e2mu_7_1=hzz4l_2e2muS_7TeV_1.txt hzz4l_4e_7_1=hzz4l_4eS_7TeV_1.txt hzz4l_4mu_7_1=hzz4l_4muS_7TeV_1.txt hzz4l_2e2mu_8_1=hzz4l_2e2muS_8TeV_1.txt hzz4l_4e_8_1=hzz4l_4eS_8TeV_1.txt hzz4l_4mu_8_1=hzz4l_4muS_8TeV_1.txt"
 
 elif [[ "$COMBINED2l2tau" == "TRUE" ]]; then
 
