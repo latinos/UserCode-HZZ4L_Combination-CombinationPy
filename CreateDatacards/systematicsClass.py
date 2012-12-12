@@ -550,12 +550,29 @@ class systematicsClass:
     def Write_CMS_zz4l_sigMELA(self,theFile,theInputs):
         theFile.write("CMS_zz4l_sigMELA param 0  1  [-3,3]\n")
 
-    def Write_CMS_zz4l_Fisher(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_Fisher param 0  1  [-3,3]\n")
+    def Write_CMS_zz4l_Fisher_JES(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_Fisher_JES param 0  1  [-3,3]\n")
 
-    def Write_CMS_zz4l_PToverM(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_PToverM param 0  1  [-3,3]\n")
+    def Write_CMS_zz4l_ggH_PToverM_Resummation(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_PToverM_Resummation param 0  1  [-3,3]\n")
 
+    def Write_CMS_zz4l_ggH_PToverM_TopMass(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_PToverM_TopMass param 0 1 [-3,3]\n")
+
+    def Write_CMS_zz4l_vbf_PToverM_PDF(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_PToverM_PDF param 0 1 [-3,3]\n")
+
+    def Write_CMS_zz4l_vbf_PToverM_Scale(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_PToverM_Scale param 0 1 [-3,3]\n")
+
+    def Write_CMS_zz4l_zz_PToverM_PDF(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_zz_PToverM_PDF param 0 1 [-3,3]\n")
+
+    def Write_CMS_zz4l_zz_PToverM_Scale(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_zz_PToverM_Scale param 0 1 [-3,3]\n")
+
+    def Write_CMS_zz4l_zz_PToverM_SingleZ(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_zz_PToverM_SingleZ param 0 1 [-3,3]\n")
     
     def WriteSystematics(self,theFile,theInputs):
 
@@ -624,11 +641,24 @@ class systematicsClass:
         if theInputs['useCMS_zz4l_sigMELA']:
             self.Write_CMS_zz4l_sigMELA(theFile,theInputs)
 
-        if (theInputs['useCMS_zz4l_doVBFtest'] and theInputs['useCMS_zz4l_Fisher']):
-            self.Write_CMS_zz4l_Fisher(theFile,theInputs)
-        if (theInputs['useCMS_zz4l_doVBFtest'] and theInputs['useCMS_zz4l_PToverM']):
-            self.Write_CMS_zz4l_PToverM(theFile,theInputs)
-
+        if theInputs['useCMS_zz4l_Fisher_sys']:
+            self.Write_CMS_zz4l_Fisher_JES(theFile,theInputs)
+            
+        if theInputs['useCMS_zz4l_PToverM_sys']:
+            if theInputs['CMS_zz4l_ggH_PToverM_Resummation']:
+                self.Write_CMS_zz4l_ggH_PToverM_Resummation(theFile,theInputs)
+            if theInputs['CMS_zz4l_ggH_PToverM_TopMass']:
+                self.Write_CMS_zz4l_ggH_PToverM_TopMass(theFile,theInputs)
+            if theInputs['CMS_zz4l_vbf_PToverM_PDF']:
+                self.Write_CMS_zz4l_vbf_PToverM_PDF(theFile,theInputs)
+            if theInputs['CMS_zz4l_vbf_PToverM_Scale']:
+                self.Write_CMS_zz4l_vbf_PToverM_Scale(theFile,theInputs)
+            if theInputs['CMS_zz4l_zz_PToverM_PDF']:
+                self.Write_CMS_zz4l_zz_PToverM_PDF(theFile,theInputs)
+            if theInputs['CMS_zz4l_zz_PToverM_Scale']:
+                self.Write_CMS_zz4l_zz_PToverM_Scale(theFile,theInputs)
+            if theInputs['CMS_zz4l_zz_PToverM_SingleZ']:
+                self.Write_CMS_zz4l_zz_PToverM_SingleZ(theFile,theInputs)
 
     def WriteShapeSystematics(self,theFile,theInputs):
   

@@ -122,8 +122,8 @@ class datacardClass:
         if(theInputs['useCMS_zz4l_doVBFtest']):
             self.bVBF = True
         self.VBFcat = theVBFcat
-        self.FisherMorph = theInputs['useCMS_zz4l_Fisher']
-        self.PtMorph = theInputs['useCMS_zz4l_PToverM']
+        self.FisherMorph = theInputs['useCMS_zz4l_Fisher_sys']
+        self.PtMorph = theInputs['useCMS_zz4l_PToverM_sys']
         
         FactorizedShapes = False
 
@@ -281,18 +281,17 @@ class datacardClass:
             rhfXsBrFuncV_5 = ROOT.RooHistFunc(rhfname,rhfname, ROOT.RooArgSet(self.MH), rdhXsBrFuncV_5, 1)
     
         ## -------- Variable Definitions -------- ##
+        name = "CMS_zz4l_mean_e_sig"
+        CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
+        name = "CMS_zz4l_sigma_e_sig"
+        CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
+        
+        name = "CMS_zz4l_mean_m_sig"
+        CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
+        name = "CMS_zz4l_sigma_m_sig"
+        CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
             
         if not self.bVBF:
-            name = "CMS_zz4l_mean_e_sig"
-            CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
-            name = "CMS_zz4l_sigma_e_sig"
-            CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
-            
-            name = "CMS_zz4l_mean_m_sig"
-            CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
-            name = "CMS_zz4l_sigma_m_sig"
-            CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
-
             name = "CMS_zz4l_alpha2_{0}_{1:.0f}".format(self.channel,self.sqrts)
             CMS_zz4l_alpha2 = ROOT.RooRealVar(name,"CMS_zz4l_alpha2",1.,-10.,10.)
             name = "CMS_zz4l_n2_sig_{0}_{1:.0f}".format(self.channel,self.sqrts)
@@ -309,16 +308,6 @@ class datacardClass:
             name = "CMS_zz4l_widthScale_{0}_{1:.0f}".format(self.channel,self.sqrts)
             CMS_zz4l_widthScale = ROOT.RooRealVar(name,"CMS_zz4l_widthScale",1.0)
         else:
-            name = "CMS_zz4l_mean_e_sig".format(self.VBFcat)
-            CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
-            name = "CMS_zz4l_sigma_e_sig".format(self.VBFcat)
-            CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
-            
-            name = "CMS_zz4l_mean_m_sig".format(self.VBFcat)
-            CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
-            name = "CMS_zz4l_sigma_m_sig".format(self.VBFcat)
-            CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
-            
             name = "CMS_zz4l_alpha2_{0}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             CMS_zz4l_alpha2 = ROOT.RooRealVar(name,"CMS_zz4l_alpha2",1.,-10.,10.)
             name = "CMS_zz4l_n2_sig_{0}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
@@ -668,6 +657,7 @@ class datacardClass:
             FisherList_ttH = ROOT.RooArgList()
 
             if(self.FisherMorph):
+                
                 FisherList_ggH.add(FisherTemplatePdf_ggH)
                 FisherList_ggH.add(FisherTemplatePdf_ggH_Up)
                 FisherList_ggH.add(FisherTemplatePdf_ggH_Dn)  
@@ -695,7 +685,7 @@ class datacardClass:
                 FisherList_ZH.add(FisherTemplatePdf_ZH)
                 FisherList_ttH.add(FisherTemplatePdf_ttH)
 
-            morphFisherVarName = "CMS_zz4l_sigFisher"
+            morphFisherVarName = "CMS_zz4l_Fisher_JES"
             alphaMorphFisher = ROOT.RooRealVar(morphFisherVarName,morphFisherVarName,0,-20,20)
             if(self.FisherMorph):
                 alphaMorphFisher.setConstant(False)
@@ -733,19 +723,19 @@ class datacardClass:
             ggHtempPtFileName = "{0}/PtoverM_mZZ_gg_{1}_{2:d}TeV.root".format(self.templateDir,self.appendName,int(self.sqrts))
             ggHtempPtFile = ROOT.TFile(ggHtempPtFileName)
             ggHtemplatePt = ggHtempPtFile.Get("h_Ptmzz_mzz")
-            #ggHtemplatePt_Up = ggHtempPtFile.Get("h_ptoverm_up")
-            #ggHtemplatePt_Dn = ggHtempPtFile.Get("h_ptoverm_dn")            
+            ggHtemplatePt_Up = ggHtempPtFile.Get("h_Ptmzz_mzz_Resummation_up")
+            ggHtemplatePt_Dn = ggHtempPtFile.Get("h_Ptmzz_mzz_Resummation_down")            
             
             PtOverM_ggH_dataHist = ROOT.RooDataHist("tempPt_ggH","tempPt_ggH",ROOT.RooArgList(ptoverm,CMS_zz4l_mass),ggHtemplatePt)
-            #PtOverM_ggH_dataHist_Up = ROOT.RooDataHist("tempPt_ggH_Up","tempPt_ggH_Up",ROOT.RooArgList(ptoverm,CMS_zz4l_mass),ggHtemplatePt_Up)
-            #PtOverM_ggH_dataHist_Dn = ROOT.RooDataHist("tempPt_ggH_Dn","tempPt_ggH_Dn",ROOT.RooArgList(ptoverm,CMS_zz4l_mass),ggHtemplatePt_Dn)
+            PtOverM_ggH_dataHist_Up = ROOT.RooDataHist("tempPt_ggH_Up","tempPt_ggH_Up",ROOT.RooArgList(ptoverm,CMS_zz4l_mass),ggHtemplatePt_Up)
+            PtOverM_ggH_dataHist_Dn = ROOT.RooDataHist("tempPt_ggH_Dn","tempPt_ggH_Dn",ROOT.RooArgList(ptoverm,CMS_zz4l_mass),ggHtemplatePt_Dn)
             
             TemplateName = "PtTempDataHist_ggH_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             PtTemplatePdf_ggH = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(ptoverm,CMS_zz4l_mass),PtOverM_ggH_dataHist)
-            #TemplateName = "PtTempDataHist_ggH_Up_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            #PtTemplatePdf_ggH_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(ptoverm,CMS_zz4l_mass),PtOverM_ggH_dataHist_Up)
-            #TemplateName = "PtTempDataHist_ggH_Dn_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            #PtTemplatePdf_ggH_Dn = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(ptoverm,CMS_zz4l_mass),PtOverM_ggH_dataHist_Dn)
+            TemplateName = "PtTempDataHist_ggH_Up_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            PtTemplatePdf_ggH_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(ptoverm,CMS_zz4l_mass),PtOverM_ggH_dataHist_Up)
+            TemplateName = "PtTempDataHist_ggH_Dn_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            PtTemplatePdf_ggH_Dn = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(ptoverm,CMS_zz4l_mass),PtOverM_ggH_dataHist_Dn)
 
             qqHtempPtFileName = "{0}/PtoverM_mZZ_vbf_{1}_{2:d}TeV.root".format(self.templateDir,self.appendName,int(self.sqrts))
             qqHtempPtFile = ROOT.TFile(qqHtempPtFileName)
@@ -823,8 +813,8 @@ class datacardClass:
 
             if(self.PtMorph):
                 PtList_ggH.add(PtTemplatePdf_ggH)
-                #PtList_ggH.add(PtTemplatePdf_ggH_Up)
-                #PtList_ggH.add(PtTemplatePdf_ggH_Dn)  
+                PtList_ggH.add(PtTemplatePdf_ggH_Up)
+                PtList_ggH.add(PtTemplatePdf_ggH_Dn)  
                 
                 PtList_qqH.add(PtTemplatePdf_qqH)
                 #PtList_qqH.add(PtTemplatePdf_qqH_Up)
@@ -849,20 +839,21 @@ class datacardClass:
                 PtList_ZH.add(PtTemplatePdf_ZH)
                 PtList_ttH.add(PtTemplatePdf_ttH)
 
-            morphPtVarName = "CMS_zz4l_sigPToverM"
+            morphPtVarName = "CMS_zz4l_ggH_PToverM_Resummation"
             alphaMorphPt = ROOT.RooRealVar(morphPtVarName,morphPtVarName,0,-20,20)
             if(self.PtMorph):
                 alphaMorphPt.setConstant(False)
             else:
                 alphaMorphPt.setConstant(True)
         
+            morphVarListPt_Resum = ROOT.RooArgList()
             morphVarListPt = ROOT.RooArgList()
                 
             if(self.PtMorph):
-                morphVarListPt.add(alphaMorphPt)
+                morphVarListPt_Resum.add(alphaMorphPt)
         
             PtTemplateName = "PtTemplateMorphPdf_ggH_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            PtTemplateMorphPdf_ggH = ROOT.FastVerticalInterpHistPdf2D(PtTemplateName,PtTemplateName,CMS_zz4l_mass,ptoverm,true,PtList_ggH,morphVarListPt,1.0,1)
+            PtTemplateMorphPdf_ggH = ROOT.FastVerticalInterpHistPdf2D(PtTemplateName,PtTemplateName,CMS_zz4l_mass,ptoverm,true,PtList_ggH,morphVarListPt_Resum,1.0,1)
         
             PtTemplateName = "PtTemplateMorphPdf_qqH_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             PtTemplateMorphPdf_qqH = ROOT.FastVerticalInterpHistPdf2D(PtTemplateName,PtTemplateName,CMS_zz4l_mass,ptoverm,true,PtList_qqH,morphVarListPt,1.0,1)
@@ -1428,7 +1419,7 @@ class datacardClass:
                 FisherList_ZX.add(FisherTemplatePdf_ZX)
                 
 
-            morphFisherVarName = "CMS_zz4l_bkgFisher"
+            morphFisherVarName = "CMS_zz4l_Fisher_JES"
             alphaMorphFisher = ROOT.RooRealVar(morphFisherVarName,morphFisherVarName,0,-20,20)
             if(self.FisherMorph):
                 alphaMorphFisher.setConstant(False)
@@ -1472,7 +1463,7 @@ class datacardClass:
             #TemplateName = "PtTempDataHist_qqZZ_Dn_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             #PtTemplatePdf_qqZZ_Dn = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(ptoverm,CMS_zz4l_mass),PtOverM_qqZZ_dataHist_Dn)
             
-            ggZZtempPtFileName = "{0}/PtoverM_mZZ__{1}_{2:d}TeV.root".format(self.templateDir,self.appendName,int(self.sqrts))
+            ggZZtempPtFileName = "{0}/PtoverM_mZZ_ggzz_{1}_{2:d}TeV.root".format(self.templateDir,self.appendName,int(self.sqrts))
             ggZZtempPtFile = ROOT.TFile(ggZZtempPtFileName)
             ggZZtemplatePt = ggZZtempPtFile.Get("h_Ptmzz_mzz")
             #ggHtemplatePt_Up = ggHtempPtFile.Get("h_ptoverm_up")
@@ -1538,10 +1529,11 @@ class datacardClass:
             else:
                 alphaMorphPt.setConstant(True)
         
+            morphVarListPt_Resum = ROOT.RooArgList()
             morphVarListPt = ROOT.RooArgList()
                 
             if(self.PtMorph):
-                morphVarListPt.add(alphaMorphPt)
+                morphVarListPt_Resum.add(alphaMorphPt)
         
             PtTemplateName = "PtTemplateMorphPdf_qqzz_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             PtTemplateMorphPdf_qqZZ = ROOT.FastVerticalInterpHistPdf2D(PtTemplateName,PtTemplateName,CMS_zz4l_mass,ptoverm,true,PtList_qqZZ,morphVarListPt,1.0,1)
@@ -2125,11 +2117,8 @@ class datacardClass:
                     sigCB2d_WH_VBF_KD.SetNameTitle("WH","WH")
                     sigCB2d_ZH_VBF_KD.SetNameTitle("ZH","ZH")
                     sigCB2d_ttH_VBF_KD.SetNameTitle("ttH","ttH")
-                    print "Got Here\n"
                     getattr(w,'import')(sigCB2d_ggH_VBF_KD,ROOT.RooFit.RecycleConflictNodes())
-                    print "imported ggH \n"
                     getattr(w,'import')(sigCB2d_qqH_VBF_KD,ROOT.RooFit.RecycleConflictNodes())
-                    print "imported qqH \n"
                     getattr(w,'import')(sigCB2d_WH_VBF_KD,ROOT.RooFit.RecycleConflictNodes())
                     getattr(w,'import')(sigCB2d_ZH_VBF_KD,ROOT.RooFit.RecycleConflictNodes())
                     getattr(w,'import')(sigCB2d_ttH_VBF_KD,ROOT.RooFit.RecycleConflictNodes())

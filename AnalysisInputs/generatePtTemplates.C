@@ -1,5 +1,5 @@
 /* 
- * Create 2D (mass, LD) templates. Script imported from: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/JHU/MELA/scripts/generateTemplates.C?revision=1.1.2.1&view=markup&pathrev=post_unblinding
+ * Create 2D (ptoverm, mass) templates. Script imported from: http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/JHU/MELA/scripts/generateTemplates.C?revision=1.1.2.1&view=markup&pathrev=post_unblinding
   * usage: 
  * -set input paths variables in Config.h
  * -run with:
@@ -32,14 +32,14 @@
 
 //---
 int useSqrts=0;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
+//TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
 
 bool extendToHighMass = false; // Include signal samples above 600 GeV
 
 float highMzz=(extendToHighMass?1600:800);
 float mBinSize=2.;
 
-const TString destDir = "../CreateDatacards/templates2D/";
+const TString destDir = "../../TEST_TEST/";//"../CreateDatacards/templates2D/";
 static const int nsamp = 8;
 const TString dataFileNames[nsamp] = {"gg","vbf","wh","zh","tth","zz","zx","ggzz"};
 TString systSources[nsamp][5];
@@ -169,6 +169,35 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,int LHCsqrts= 7,bool
   
 }
 
+//======================================================================
+
+TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
+
+  int nYbins=lowTemp->GetNbinsY();
+  if (highTemp->GetNbinsY()!=nYbins) {
+    cout << "ERROR: mergeTemplates: incorrect binning " << endl;
+    abort();
+  }
+
+  TH2F* h_mzzD = new TH2F("h_Ptmzz_mzz","h_Ptmzz_mzz",int((highMzz-100.)/mBinSize +0.5),100,highMzz,nYbins,0,1);
+
+  // copy lowmass into h_mzzD
+  for(int i=1; i<=lowTemp->GetNbinsX(); ++i){
+    for(int j=1; j<=nYbins; ++j){
+      h_mzzD->SetBinContent(i,j, lowTemp->GetBinContent(i,j)  );
+    }// end loop over D
+  }// end loop over mZZ
+
+  // copy high mass into h_mzzD
+  for(int i=1; i<=highTemp->GetNbinsX(); ++i){
+    for(int j=1; j<=nYbins; ++j){
+      h_mzzD->SetBinContent(i+lowTemp->GetNbinsX(),j, highTemp->GetBinContent(i,j)  );
+    }// end loop over D
+  }// end loop over mZZ
+
+  return h_mzzD;
+
+}
 //=======================================================================
 
 void makeTemplate(TString channel="4mu"){
@@ -183,7 +212,9 @@ void makeTemplate(TString channel="4mu"){
 
       TFile* ftemp = new TFile(destDir + "PtoverM_mZZ_" + dataFileNames[k] + "_" + channel + "_"+ lhcs + "TeV.root","RECREATE");
   
-      TH2F* h_mzzD = fillTemplate(channel,k,lhc,true);
+      TH2F* h_mzzD_low = fillTemplate(channel,k,lhc,true);
+      TH2F* h_mzzD_high = fillTemplate(channel,k,lhc,false);
+      TH2F* h_mzzD = mergeTemplates(h_mzzD_low,h_mzzD_high);
      
       ftemp->cd();
   

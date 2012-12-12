@@ -157,9 +157,18 @@ class inputReader:
         self.useCMS_zz4l_gamma = False
         self.doHypTest = False
         self.altHypLabel = ""
+
+        # --- VBF systematics
         self.useCMS_zz4l_doVBFtest = False
-        self.useCMS_zz4l_Fisher = False
-        self.useCMS_zz4l_PToverM = False
+        self.useCMS_zz4l_Fisher_sys = False
+        self.useCMS_zz4l_PToverM_sys = False
+        self.useCMS_zz4l_ggH_PToverM_Resummation = False
+        self.useCMS_zz4l_ggH_PToverM_TopMass = False
+        self.useCMS_zz4l_vbf_PToverM_PDF = False
+        self.useCMS_zz4l_vbf_PToverM_Scale = False
+        self.useCMS_zz4l_zz_PToverM_PDF = False
+        self.useCMS_zz4l_zz_PToverM_Scale = False
+        self.useCMS_zz4l_zz_PToverM_SingleZ = False
         
 	# ---  mekd stuffs
 	self.mekd_sig_a0_shape = -999.
@@ -497,6 +506,21 @@ class inputReader:
                     self.useCMS_zz4l_n = self.parseBoolString(f[2])
                 if f[1].lower().startswith("cms_zz4l_gamma"):
                     self.useCMS_zz4l_gamma = self.parseBoolString(f[2])
+                    
+                if f[1].lower().startswith("cms_zz4l_ggh_ptoverm_resummation"):
+                    self.useCMS_zz4l_ggH_PToverM_Resummation = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_ggh_ptoverm_topmass"):
+                    self.useCMS_zz4l_ggH_PToverM_TopMass = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_vbf_ptoverm_pdf"):
+                    self.useCMS_zz4l_vbf_PToverM_PDF = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_vbf_ptoverm_scale"):
+                    self.useCMS_zz4l_vbf_PToverM_Scale = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_zz_ptoverm_pdf"):
+                    self.useCMS_zz4l_zz_PToverM_PDF = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_zz_ptoverm_scale"):
+                    self.useCMS_zz4l_zz_PToverM_Scale = self.parseBoolString(f[2])
+                if f[1].lower().startswith("cms_zz4l_zz_ptoverm_singlez"):
+                    self.useCMS_zz4l_zz_PToverM_SingleZ = self.parseBoolString(f[2])
                 
                     
             if f[0].lower().startswith("lumi"):
@@ -510,12 +534,12 @@ class inputReader:
             if f[0].lower().startswith("althyplabel"):
                 self.altHypLabel = f[1]
 
-            if f[0].lower().startswith('usecms_zz4l_dovbftest'):
+            if f[0].lower().startswith("usecms_zz4l_dovbftest"):
                 self.useCMS_zz4l_doVBFtest = self.parseBoolString(f[1])
-            if f[0].lower().startswith('usecms_zz4l_fisher'):
-                self.useCMS_zz4l_Fisher = self.parseBoolString(f[1])
-            if f[0].lower().startswith('usecms_zz4l_ptoverm'):
-                self.useCMS_zz4l_PToverM = self.parseBoolString(f[1])
+            if f[0].lower().startswith("usecms_zz4l_fisher_sys"):
+                self.useCMS_zz4l_Fisher_sys = self.parseBoolString(f[1])
+            if f[0].lower().startswith("usecms_zz4l_ptoverm_sys"):
+                self.useCMS_zz4l_PToverM_sys = self.parseBoolString(f[1])
 
     def getInputs(self):
 
@@ -791,8 +815,16 @@ class inputReader:
         dict['altHypLabel'] = str(self.altHypLabel)
 
         dict['useCMS_zz4l_doVBFtest'] = self.useCMS_zz4l_doVBFtest
-        dict['useCMS_zz4l_Fisher'] = self.useCMS_zz4l_Fisher
-        dict['useCMS_zz4l_PToverM'] = self.useCMS_zz4l_PToverM
+        dict['useCMS_zz4l_Fisher_sys'] = self.useCMS_zz4l_Fisher_sys
+        dict['useCMS_zz4l_PToverM_sys'] = self.useCMS_zz4l_PToverM_sys
+
+        dict['useCMS_zz4l_ggH_PToverM_Resummation'] = self.useCMS_zz4l_ggH_PToverM_Resummation
+        dict['useCMS_zz4l_ggH_PToverM_TopMass'] = self.useCMS_zz4l_ggH_PToverM_TopMass
+        dict['useCMS_zz4l_vbf_PToverM_PDF'] = self.useCMS_zz4l_vbf_PToverM_PDF
+        dict['useCMS_zz4l_vbf_PToverM_Scale'] = self.useCMS_zz4l_vbf_PToverM_Scale
+        dict['useCMS_zz4l_zz_PToverM_PDF'] = self.useCMS_zz4l_zz_PToverM_PDF
+        dict['useCMS_zz4l_zz_PToverM_Scale'] = self.useCMS_zz4l_zz_PToverM_Scale
+        dict['useCMS_zz4l_zz_PToverM_SingleZ'] = self.useCMS_zz4l_zz_PToverM_SingleZ
         
 	dict['mekd_sig_a0_shape'] = self.mekd_sig_a0_shape
 	dict['mekd_sig_a1_shape'] = self.mekd_sig_a1_shape
