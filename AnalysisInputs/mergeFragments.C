@@ -86,7 +86,7 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   TString bkg_tagged = ssqrts + "_" + schannel + "_" + Form("%d",int(dijettag)) + ".txt";
 
   append("CardFragments/ZZRates_" + bkg_tagged, outfile);
-  append("CardFragments/zjetRate_" + bkg_untagged, outfile);
+  append("CardFragments/zjetRate_" + bkg_tagged, outfile);
   append("CardFragments/signalFunctions_" + sig_untagged, outfile);
   append("CardFragments/signalEfficiency_" + sig_untagged, outfile);
   append("CardFragments/qqzzBackgroundFit_" + bkg_tagged, outfile);
