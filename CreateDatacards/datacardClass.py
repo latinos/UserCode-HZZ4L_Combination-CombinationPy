@@ -1773,23 +1773,23 @@ class datacardClass:
 
         ## ----------------------- PLOTS FOR SANITY CHECKS -------------------------- ##
 
-        canv_name = "czz_{0}".format(self.mH)
-        czz = ROOT.TCanvas( canv_name, canv_name, 750, 700 )
-        czz.cd()
-        zzframe_s = CMS_zz4l_mass.frame(45)
-        if self.bUseCBnoConvolution: super(RooDoubleCB,signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        elif self.isHighMass : super(ROOT.RooFFTConvPdf,sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
-        super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
-        super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
-        zzframe_s.Draw()
-        if not self.bVBF:
-            figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
-        else:
-            figName = "{0}/figs/mzz_{1}_{2}_{3}.png".format(self.outputDir, self.mH, self.appendName,self.VBFcat)
-        czz.SaveAs(figName)
-        del czz
+        #canv_name = "czz_{0}".format(self.mH)
+        #czz = ROOT.TCanvas( canv_name, canv_name, 750, 700 )
+        #czz.cd()
+        #zzframe_s = CMS_zz4l_mass.frame(45)
+        #if self.bUseCBnoConvolution: super(RooDoubleCB,signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        #elif self.isHighMass : super(ROOT.RooFFTConvPdf,sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        #else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        #super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
+        #super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
+        #super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+        #zzframe_s.Draw()
+        #if not self.bVBF:
+        #    figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
+        #else:
+        #    figName = "{0}/figs/mzz_{1}_{2}_{3}.png".format(self.outputDir, self.mH, self.appendName,self.VBFcat)
+        #czz.SaveAs(figName)
+        #del czz
         
         ## ------------------- LUMI -------------------- ##
         
