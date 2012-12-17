@@ -31,153 +31,117 @@
 #include "RooPlot.h"
 */
 
-
 //----------> SET INPUT VARIABLES in Config.h
 #include "Config.h"
 //<----------
 
-using namespace RooFit ;
+//Parameters to choose which samples to examine
+//HCP option is useVBF,useVH = false and usedijet,usenondijet=true
+bool debug = false;
+bool useVBF = false;
+bool useVH = false;
+bool usedijet = true;
+bool usenondijet = true;
+
+TFile* massfits;
+
+using namespace RooFit;
 using namespace std;
 
 //Declaration
-void signalFits(int channel, int sqrts, int process, bool VBFtag);
+void signalFits(int channel, int sqrts);
 float WidthValue(float mHStarWidth);
+float highparameter(TF1 *generatedfit, int gamma);
 
-void signalFits()
-{
+void signalFits(){
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
 
   gSystem->Load("../CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
 
-  //ggH
-  signalFits(1,7,1,true);
-  signalFits(2,7,1,true);
-  signalFits(3,7,1,true);
-  signalFits(1,8,1,true);
-  signalFits(2,8,1,true);
-  signalFits(3,8,1,true);
-  //qqH
-  signalFits(1,7,2,true);
-  signalFits(2,7,2,true);
-  signalFits(3,7,2,true);
-  signalFits(1,8,2,true);
-  signalFits(2,8,2,true);
-  signalFits(3,8,2,true);
-  //ZH
-  signalFits(1,7,3,true);
-  signalFits(2,7,3,true);
-  signalFits(3,7,3,true);
-  signalFits(1,8,3,true);
-  signalFits(2,8,3,true);
-  signalFits(3,8,3,true);
-  //WH
-  signalFits(1,7,4,true);
-  signalFits(2,7,4,true);
-  signalFits(3,7,4,true);
-  signalFits(1,8,4,true);
-  signalFits(2,8,4,true);
-  signalFits(3,8,4,true);
-  //ttH
-  signalFits(1,7,5,true);
-  signalFits(2,7,5,true);
-  signalFits(3,7,5,true);
-  signalFits(1,8,5,true);
-  signalFits(2,8,5,true);
-  signalFits(3,8,5,true);
+  if (!usedijet && !usenondijet){
+    cout << "Neither dijet tagging category was chosen. Please choose one or both." << endl;
+    abort();
+  }
 
-
-  //ggH
-  signalFits(1,7,1,false);
-  signalFits(2,7,1,false);
-  signalFits(3,7,1,false);
-  signalFits(1,8,1,false);
-  signalFits(2,8,1,false);
-  signalFits(3,8,1,false);
-  //qqH
-  signalFits(1,7,2,false);
-  signalFits(2,7,2,false);
-  signalFits(3,7,2,false);
-  signalFits(1,8,2,false);
-  signalFits(2,8,2,false);
-  signalFits(3,8,2,false);
-  //ZH
-  signalFits(1,7,3,false);
-  signalFits(2,7,3,false);
-  signalFits(3,7,3,false);
-  signalFits(1,8,3,false);
-  signalFits(2,8,3,false);
-  signalFits(3,8,3,false);
-  //WH
-  signalFits(1,7,4,false);
-  signalFits(2,7,4,false);
-  signalFits(3,7,4,false);
-  signalFits(1,8,4,false);
-  signalFits(2,8,4,false);
-  signalFits(3,8,4,false);
-  //ttH
-  signalFits(1,7,5,false);
-  signalFits(2,7,5,false);
-  signalFits(3,7,5,false);
-  signalFits(1,8,5,false);
-  signalFits(2,8,5,false);
-  signalFits(3,8,5,false);
+  signalFits(1,7);
+  signalFits(2,7);
+  signalFits(3,7);
+  signalFits(1,8);
+  signalFits(2,8);
+  signalFits(3,8);
 
   return;
 }
 
 //The actual job
-void signalFits(int channel, int sqrts, int process, bool VBFtag)
-{
+void signalFits(int channel, int sqrts){
   string schannel;
   if (channel == 1) schannel = "4mu";
   if (channel == 2) schannel = "4e";
   if (channel == 3) schannel = "2e2mu";
-  string sprocess;
-  if      (process == 1) sprocess = "ggH";
-  else if (process == 2) sprocess = "qqH";
-  else if (process == 3) sprocess = "ZH";
-  else if (process == 4) sprocess = "WH";
-  else if (process == 5) sprocess = "ttH";
-  cout << sprocess << ": Final state = " << schannel << " and sqrt(s) = " << sqrts << " VBFtag = " << VBFtag << endl;
+  cout << "Final state = " << schannel << " and sqrt(s) = " << sqrts << endl;
 
   //Pick the correct mass points and paths
   TString filePath;
-  int nPoints;
-  double* masses;
+  int nPointsggH,nPointsVBF,nPointsVH;
+  double* massesggH,*massesVBF,*massesVH;
 
-  if (process==1){
-    if (sqrts==7) {
-      nPoints = nPoints7TeV;
-      masses  = mHVal7TeV;
-      filePath = filePath7TeV;
-    } else if (sqrts==8) {
-      nPoints = nPoints8TeV;
-      masses  = mHVal8TeV;
-      filePath =filePath8TeV;
-    }
-  } else if (process==2) {
-    if (sqrts==7) {
-      nPoints = nVBFPoints7TeV;
-      masses  = mHVBFVal7TeV;
-      filePath = filePath7TeV;
-    } else if (sqrts==8) {
-      nPoints = nVBFPoints8TeV;
-      masses  = mHVBFVal8TeV;
-      filePath =filePath8TeV;
-    }
-  } else if (process==3 || process==4 || process==5) {
-    if (sqrts==7) {
-      nPoints = nVHPoints7TeV;
-      masses  = mHVHVal7TeV;
-      filePath = filePath7TeV;
-    } else if (sqrts==8) {
-      nPoints = nVHPoints8TeV;
-      masses  = mHVHVal8TeV;
-      filePath =filePath8TeV;
-    }
-  }  
+  if (sqrts==7) {
+    nPointsggH = nPoints7TeV;
+    massesggH  = mHVal7TeV;
+    nPointsVBF = nVBFPoints7TeV;
+    massesVBF  = mHVBFVal7TeV;
+    nPointsVH = nVHPoints7TeV;
+    massesVH  = mHVHVal7TeV;
+    filePath = filePath7TeV;  
+  } else if (sqrts==8) {
+    nPointsggH = nPoints8TeV;
+    massesggH  = mHVal8TeV;
+    nPointsVBF = nVBFPoints8TeV;
+    massesVBF  = mHVBFVal8TeV;
+    nPointsVH = nVHPoints8TeV;
+    massesVH  = mHVHVal8TeV;
+    filePath = filePath8TeV;
+  }
   else abort();
+
+  int nPoints;
+  double masses[200];
+  for (int i=0;i<200;i++){
+    masses[i]=-1;
+  }
+  for (int i=0; i<nPointsggH; i++){
+    masses[i]=massesggH[i];
+  }
+  nPoints=nPointsggH;
+
+  bool flag=0;
+  //If any mass points are in VBF/VH but not in ggH, this will include them
+  if (useVBF){
+    for (int i=0; i<nPointsVBF; i++){
+      flag=1;
+      for (int j=0; j<nPoints, j++){
+	if (massesVBF[i]==masses[j]) flag=0;
+      }
+      if (flag==1){
+	masses[nPoints]=massesVBF[i];
+	nPoints++;
+      }
+    }
+  }
+  if (useVH){
+    for (int i=0; i<nPointsVH; i++){
+      flag=1;
+      for (int j=0; j<nPoints, j++){
+	if (massesVBF[i]==masses[j]) flag=0;
+      }
+      if (flag==1){
+	masses[nPoints]=massesVH[i];
+	nPoints++;
+      }
+    }
+  }
 
   filePath.Append(schannel=="2e2mu"?"2mu2e":schannel);
 
@@ -185,11 +149,13 @@ void signalFits(int channel, int sqrts, int process, bool VBFtag)
   const int arraySize=200;
   assert(arraySize >= nPoints);
 
-  Double_t a_meanCB[arraySize];  Double_t a_meanCB_err[arraySize]; 
-  Double_t a_sigmaCB[arraySize]; Double_t a_sigmaCB_err[arraySize];
-  Double_t a_alphaCB[arraySize]; Double_t a_alphaCB_err[arraySize];
-  Double_t a_nCB[arraySize];     Double_t a_nCB_err[arraySize];
-  Double_t a_Gamma[arraySize];   Double_t a_Gamma_err[arraySize];
+  Double_t a_meanCB[arraySize];    Double_t a_meanCB_err[arraySize]; 
+  Double_t a_sigmaCB[arraySize];   Double_t a_sigmaCB_err[arraySize];
+  Double_t a_alphaCB_1[arraySize]; Double_t a_alphaCB_1_err[arraySize];
+  Double_t a_nCB_1[arraySize];     Double_t a_nCB_1_err[arraySize];
+  Double_t a_Gamma[arraySize];     Double_t a_Gamma_err[arraySize];
+  Double_t a_alphaCB_2[arraySize]; Double_t a_alphaCB_2_err[arraySize];
+  Double_t a_nCB_2[arraySize];     Double_t a_nCB_2_err[arraySize];
 
   Double_t a_fitCovQual[arraySize];
   Double_t a_fitEDM[arraySize];
@@ -200,25 +166,39 @@ void signalFits(int channel, int sqrts, int process, bool VBFtag)
                 
   //Loop over the mass points
   for (int i = 0; i < nPoints; i++){
+
+    bool flagVBF==0;
+    bool flagVH==0;
+
+    if (debug && masses[i]!=126.) continue;
 		
     //Open input file with shapes and retrieve the tree
-    char tmp_finalInPath[200];
-    if (process==1){
-      sprintf(tmp_finalInPath,"/HZZ4lTree_H%i.root",masses[i]);
-    } else if (process==2){
-      sprintf(tmp_finalInPath,"/HZZ4lTree_VBFH%i.root",masses[i]);
-    } else if (process==3 || process==4 || process==5){
-      sprintf(tmp_finalInPath,"/HZZ4lTree_VH%i.root",masses[i]);
+    char tmp_finalInPathggH[200],tmp_finalInPathVBF[200],tmp_finalInPathVH[200];
+    sprintf(tmp_finalInPathggH,"/HZZ4lTree_H%i.root",masses[i]);
+    sprintf(tmp_finalInPathVBF,"/HZZ4lTree_VBFH%i.root",masses[i]);
+    sprintf(tmp_finalInPathVH,"/HZZ4lTree_VH%i.root",masses[i]);
+    string finalInPathggH = filePath + tmp_finalInPathggH;
+    string finalInPathVBF = filePath + tmp_finalInPathggH;
+    string finalInPathVH = filePath + tmp_finalInPathggH;
+
+    TChain *f = new TChain("SelectedTree");
+    if (i<nPointsggH) f->Add(finalInPathggH.c_str());
+    else{
+      cout<<"No ggH sample at this mass point."<<endl;
     }
-    string finalInPath = filePath + tmp_finalInPath;
-
-    cout<<finalInPath<<endl;
-
-    TFile *f = new TFile(finalInPath.c_str());
-    TTree *tree= (TTree*) f->Get("SelectedTree");
-    if(tree==NULL){
-      cout << "Impossible to retrieve the tree for mass point " << masses[i] <<" GeV " << endl;
-      abort();
+    if (useVBF){
+      for (int j=0;j<nPointsVBF;j++){
+	if (massesVBF[j]=masses[i]) flagVBF=1;
+      }
+      if (flagVBF==1) f->Add(finalInPathVBF.c_str());
+      if (flagVBF==0) cout<<"No qqH sample at this mass point."<<endl;
+    }
+    if (useVH){
+      for (int j=0;j<nPointsVH;j++){
+	if (massesVH[j]=masses[i]) flagVH=1;
+      }
+      if (flagVH==1) f->Add(finalInPathVH.c_str());
+      if (flagVH==0) cout<<"No VH sample at this mass point."<<endl;
     }
 
     double valueWidth = WidthValue(masses[i]);
@@ -244,21 +224,30 @@ void signalFits(int channel, int sqrts, int process, bool VBFtag)
     if(channel == 2) ZZMass.setBins(50);
     if(channel == 3) ZZMass.setBins(50);
 
-    RooDataSet* set2;
+    RooDataSet* set;
 
-    if (VBFtag == true){
-      if (process==1 || process==2) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets>1", "MC_weight");
-      if (process==3) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets>1 && genProcessId==24", "MC_weight");
-      if (process==4) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets>1 && genProcessId==26", "MC_weight");
-      if (process==5) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets>1 && (genProcessId==121 || genProcessId==122)", "MC_weight");
+    if (!flagVH){
+      if (usedijet && !usenondijet){
+	set = new RooDataSet("data","data", f, RooArgSet(ZZMass,MC_weight,NJets), "NJets>1", "MC_weight");
+      }
+      else if (usenondijet && !usedijet){
+	set = new RooDataSet("data","data", f, RooArgSet(ZZMass,MC_weight,NJets), "NJets<2", "MC_weight");
+      } else{
+	set = new RooDataSet("data","data", f, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
+      }
     }
-    else{
-      if (process==1 || process==2) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets), "NJets<2", "MC_weight");
-      if (process==3) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets<2 && genProcessId==24", "MC_weight");
-      if (process==4) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets<2 && genProcessId==26", "MC_weight");
-      if (process==5) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets<2 && (genProcessId==121 || genProcessId==122)", "MC_weight");
+    if (flagVH){
+      if (usedijet && !usenondijet){
+	set = new RooDataSet("data","data", f, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets>1 && (genProcessId==24 || genProcessId==26 || genProcessId==121 || genProcessId==122 || genProcessId== 10011 )", "MC_weight");
+      }
+      else if (usenondijet && !usedijet){
+	set = new RooDataSet("data","data", f, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "NJets<2 && (genProcessId==24 || genProcessId==26 || genProcessId==121 || genProcessId==122 || genProcessId== 10011)", "MC_weight");
+      } else{
+	set = new RooDataSet("data","data", f, RooArgSet(ZZMass,MC_weight,NJets,genProcessId), "(genProcessId==24 || genProcessId==26 || genProcessId==121 || genProcessId==122 || genProcessId== 10011)", "MC_weight");
+      }
     }
-    RooDataHist *set = (RooDataHist*)set2->binnedClone("datahist","datahist");
+
+    RooDataHist *hist = (RooDataHist*)set->binnedClone("datahist","datahist"); 
 
     //Theoretical signal model  
     RooRealVar MHStar("MHStar","MHStar",masses[i],0.,2000.);
@@ -272,139 +261,252 @@ void signalFits(int channel, int sqrts, int process, bool VBFtag)
     RooRelBWUFParam SignalTheorLM("signalTheorLM","signalTheorLM",ZZMass,MHStar,one);
 
     //Experimental resolution
-    RooRealVar meanCB("meanCB","meanCB",0.,-20.,20.);
-    RooRealVar sigmaCB("sigmaCB","sigmaCB",1.,0.01,100.);
-    RooRealVar alphaCB("alphaCB","alphaCB",3.,-10.,10.);
-    RooRealVar nCB("nCB","nCB",2.,-10.,10.);
+    RooRealVar meanCB("meanCB","meanCB",0.,-25.,25.);
+    RooRealVar sigmaCB("sigmaCB","sigmaCB",1.,0.,5.);
+    RooRealVar sigmaCB_high("sigmaCB_high","sigmaCB_high",5.,0.,150.);
+    RooRealVar alphaCB_1("alphaCB_1","alphaCB_1",2.,0.,50.);
+    RooRealVar nCB_1("nCB_1","nCB_1",2.,0.,12.);
+    RooRealVar alphaCB_2("alphaCB_2","alphaCB_2",2.,0.,50.);
+    RooRealVar nCB_2("nCB_2","nCB_2",20.);
+    nCB_2.setConstant(kTRUE);
 
     //Initialize to decent values
     float m = masses[i];
-    if(channel == 1) sigmaCB.setVal(11.282-0.213437*m+0.0015906*m*m-5.18846e-06*m*m*m+8.05552e-09*m*m*m*m -4.69101e-12*m*m*m*m*m);
-    else if(channel == 2) sigmaCB.setVal(3.58777+-0.0252106*m+0.000288074*m*m+-8.11435e-07*m*m*m+7.9996e-10*m*m*m*m);
-    else if(channel == 3) sigmaCB.setVal(7.42629+-0.100902*m+0.000660553*m*m+-1.52583e-06*m*m*m+1.2399e-09*m*m*m*m);
-    else abort();
 
-    RooCBShape massRes("massRes","crystal ball",ZZMass,meanCB,sigmaCB,alphaCB,nCB);
+    /*if(channel == 1){
+      sigmaCB_R.setVal(11.282-0.213437*m+0.0015906*m*m-5.18846e-06*m*m*m+8.05552e-09*m*m*m*m -4.69101e-12*m*m*m*m*m);
+      sigmaCB_L.setVal(11.282-0.213437*m+0.0015906*m*m-5.18846e-06*m*m*m+8.05552e-09*m*m*m*m -4.69101e-12*m*m*m*m*m);
+    }
+    else if(channel == 2) sigmaCB_R.setVal(3.58777+-0.0252106*m+0.000288074*m*m+-8.11435e-07*m*m*m+7.9996e-10*m*m*m*m);
+    else if(channel == 3) sigmaCB_R.setVal(7.42629+-0.100902*m+0.000660553*m*m+-1.52583e-06*m*m*m+1.2399e-09*m*m*m*m);*/
+
+    sigmaCB.setVal(-4.56178+0.123209*m-0.00107193*m*m+4.5413e-06*m*m*m-8.19429e-09*m*m*m*m+4.75955e-12*m*m*m*m*m);
+    sigmaCB_high.setVal(151.967-0.939938*m+0.00173551*m*m-8.26677e-07*m*m*m);
+
+    //else abort();
+
+    RooDoubleCB massRes("massRes","Double Crystal Ball",ZZMass,meanCB,sigmaCB,alphaCB_1,nCB_1,alphaCB_2,nCB_2);
+    RooDoubleCB massResH("massResH","DCB Highmass",ZZMass,meanCB,sigmaCB_high,alphaCB_1,nCB_1,alphaCB_2,nCB_2);
 
     //Convolute theoretical shape and resolution
     RooFFTConvPdf *sigPDF;
-    if(masses[i] < 399.) sigPDF = new RooFFTConvPdf("sigPDF","sigPDF",ZZMass, SignalTheorLM,massRes);
-    else sigPDF = new RooFFTConvPdf("sigPDF","sigPDF",ZZMass, SignalTheor,massRes);
+    if(masses[i] < 399.) sigPDF = new RooFFTConvPdf("sigPDF","sigPDF",ZZMass,SignalTheorLM,massRes);
+    else sigPDF = new RooFFTConvPdf("sigPDF","sigPDF",ZZMass,SignalTheor,massResH);
     sigPDF->setBufferFraction(0.2);
 
-    //Fit the shape
-    RooFitResult *fitRes = sigPDF->fitTo(*set,Save(1), SumW2Error(kTRUE));
-
-    a_fitEDM[i] = fitRes->edm();
-    a_fitCovQual[i] = fitRes->covQual();
-    a_fitStatus[i] = fitRes->status();
-
-    a_meanCB[i]  = meanCB.getVal();
-    a_sigmaCB[i] = sigmaCB.getVal();
-    a_alphaCB[i]  = alphaCB.getVal();
-    a_nCB[i]     = nCB.getVal();
-    a_Gamma[i] = Gamma_TOT.getVal();
-
-    a_meanCB_err[i]  = meanCB.getError();
-    a_sigmaCB_err[i] = sigmaCB.getError();
-    a_alphaCB_err[i]  = alphaCB.getError();
-    a_nCB_err[i]     = nCB.getError();
-    if(masses[i] > 399.) a_Gamma_err[i] = Gamma_TOT.getError();
-    else a_Gamma_err[i] = 0.;
-
-    //Plot in the figures directory
     RooPlot *xplot = ZZMass.frame();
-    set->plotOn(xplot);
-    sigPDF->plotOn(xplot);
-
-    TCanvas canv;
-    canv.cd();
-    xplot->Draw();
+    TCanvas *canv = new TCanvas("canv","canv",1200,800);
 
     string tmp_plotFileTitle;
     tmp_plotFileTitle.insert(0,outfile);
     tmp_plotFileTitle += "/fitMass_";
     char tmp2_plotFileTitle[200];
     sprintf(tmp2_plotFileTitle,"%i_%iTeV_",masses[i],sqrts);
-    string plotFileTitle = tmp_plotFileTitle + sprocess + tmp2_plotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) +".gif";
+    string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel;
+    TString rootTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel;
+    if (useVBF){
+      plotFileTitle+="_VBF";
+      rootTitle+="_VBF";
+    }
+    if (useVH){
+      plotFileTitle+="_VH";
+      rootTitle+="_VH";
+    }
+    if (usedijet && !usenondijet){
+      plotFileTitle += "_1";
+      rootTitle += "_1";
+    }
+    if (usenondijet && !usedijet){
+      plotFileTitle += "_0";
+      rootTitle += "_0";
+    }
 
-    canv.SaveAs(plotFileTitle.c_str());
+    double mass,mean,sigma,a1,n1,a2,n2,gamma;
+    TH1F* parameters;
+
+    //Fit the shape
+    massfits = new TFile(rootTitle + ".root","RECREATE");
+    
+    RooFitResult *fitRes = sigPDF->fitTo(*hist,Save(1), SumW2Error(kTRUE));
+
+    a_fitEDM[i] = fitRes->edm();
+    a_fitCovQual[i] = fitRes->covQual();
+    a_fitStatus[i] = fitRes->status();
+
+    mass = masses[i];
+    mean = meanCB.getVal();
+    if (mass > 399.) sigma = sigmaCB_high.getVal();
+    else sigma = sigmaCB.getVal();
+    a1=alphaCB_1.getVal();
+    n1=nCB_1.getVal();
+    a2=alphaCB_2.getVal();
+    n2=nCB_2.getVal();
+    gamma=Gamma_TOT.getVal();
+
+    a_meanCB[i]  = mean;
+    a_sigmaCB[i] = sigma;
+    a_alphaCB_1[i]  = a1;
+    a_nCB_1[i]     = n1;
+    a_alphaCB_2[i]  = a2;
+    a_nCB_2[i]     = n2;
+    a_Gamma[i] = gamma;
+    
+    a_meanCB_err[i]  = meanCB.getError();
+    if (masses[i] > 399.) a_sigmaCB_err[i] = sigmaCB_high.getError();
+    else a_sigmaCB_err[i] = sigmaCB.getError();
+    a_alphaCB_1_err[i]  = alphaCB_1.getError();
+    a_nCB_1_err[i]     = nCB_1.getError();
+    a_alphaCB_2_err[i]  = alphaCB_2.getError();
+    a_nCB_2_err[i]     = 0;
+    if(masses[i] > 399.) a_Gamma_err[i] = Gamma_TOT.getError();
+    else a_Gamma_err[i] = 0.;
+
+    //Plot in the figures directory
+    hist->plotOn(xplot);
+    sigPDF->plotOn(xplot);
+    canv->cd();
+    xplot->Draw();
+
+    string plotgif = plotFileTitle + ".gif";
+    canv->SaveAs(plotgif.c_str());
+    massfits->cd();
+    set->Write("MassData");
+    parameters = new TH1F("","",8,0,8);
+    parameters->Fill(0,mass);
+    parameters->SetBinError(1,0);
+    parameters->Fill(1,mean);
+    parameters->SetBinError(2,a_meanCB_err[i]);
+    parameters->Fill(2,sigma);
+    parameters->SetBinError(3,a_sigmaCB_err[i]);
+    parameters->Fill(3,a1);
+    parameters->SetBinError(4,a_alphaCB_1_err[i]);
+    parameters->Fill(4,n1);
+    parameters->SetBinError(5,a_nCB_1_err[i]);
+    parameters->Fill(5,a2);
+    parameters->SetBinError(6,a_alphaCB_2_err[i]);
+    parameters->Fill(6,n2);
+    parameters->SetBinError(7,a_nCB_2_err[i]);
+    parameters->Fill(7,gamma);
+    parameters->SetBinError(8,a_Gamma_err[i]);
+    parameters->Write("Parameters");
+    massfits->Close();
+    
   }
 
-  Double_t x_err[arraySize];
-
-//   TGraphErrors* gr_meanCB  = new TGraphErrors(nPoints, masses, a_meanCB, x_err, a_meanCB_err);
-//   TGraphErrors* gr_sigmaCB = new TGraphErrors(nPoints, masses, a_sigmaCB, x_err, a_sigmaCB_err);
-//   TGraphErrors* gr_alphaCB = new TGraphErrors(nPoints, masses, a_alphaCB, x_err, a_alphaCB_err);
-//   TGraphErrors* gr_nCB     = new TGraphErrors(nPoints, masses, a_nCB, x_err, a_nCB_err);
-//   TGraphErrors* gr_Gamma   = new TGraphErrors(nPoints, masses, a_Gamma, x_err, a_Gamma_err);
+  if (debug) return;
 
   TGraph* gr_meanCB  = new TGraph(nPoints, masses, a_meanCB);
   TGraph* gr_sigmaCB = new TGraph(nPoints, masses, a_sigmaCB);
-  TGraph* gr_alphaCB = new TGraph(nPoints, masses, a_alphaCB);
-  TGraph* gr_nCB     = new TGraph(nPoints, masses, a_nCB);
+  TGraph* gr_alphaCB_1 = new TGraph(nPoints, masses, a_alphaCB_1);
+  TGraph* gr_nCB_1     = new TGraph(nPoints, masses, a_nCB_1);
+  TGraph* gr_alphaCB_2 = new TGraph(nPoints, masses, a_alphaCB_2);
+  TGraph* gr_nCB_2     = new TGraph(nPoints, masses, a_nCB_2);
   TGraph* gr_Gamma   = new TGraph(nPoints, masses, a_Gamma);
 
-  gr_meanCB->Fit("pol3");
-  gr_sigmaCB->Fit("pol3");
-  gr_alphaCB->Fit("pol3");
-  gr_nCB->Fit("pol3");
-  gr_Gamma->Fit("pol3");
+  TF1 *paramfit = new TF1("paramfit","(x<400)*([0]+[1]*x+[2]*x*x+[3]*x*x*x+[4]*x*x*x*x+[5]*x*x*x*x*x)+(x>=400)*(([0]+([1]-[6])*400+([2]-[7])*pow(400,2)+([3]-[8])*pow(400,3)+[4]*pow(400,4)+[5]*pow(400,5))+[6]*x+[7]*x*x+[8]*x*x*x)",115,1000);
+  TF1 *gammafit = new TF1("gammafit","(x<400)*([0]+[1]*x+[2]*x*x+[3]*x*x*x+[4]*x*x*x*x+[5]*x*x*x*x*x)+(x>=400)*(([0]+([6]-[2])*pow(400,2)+2*([7]-[3])*pow(400,3)-3*[4]*pow(400,4)-4*[5]*pow(400,5))+([1]+2*([2]-[6])*400+3*([3]-[7])*pow(400,2)+4*[4]*pow(400,3)+5*[5]*pow(400,4))*x+[6]*x*x+[7]*x*x*x)",115,1000);
+
+  gr_meanCB->Fit("paramfit");
+  gr_sigmaCB->Fit("paramfit");
+  gr_alphaCB_1->Fit("paramfit");
+  gr_nCB_1->Fit("paramfit");
+  gr_alphaCB_2->Fit("paramfit");
+  gr_nCB_2->Fit("pol0");
+  gr_Gamma->Fit("gammafit");
 
   TF1 *fit_meanCB  = gr_meanCB->GetListOfFunctions()->First();
   TF1 *fit_sigmaCB = gr_sigmaCB->GetListOfFunctions()->First();
-  TF1 *fit_alphaCB = gr_alphaCB->GetListOfFunctions()->First();
-  TF1 *fit_nCB     = gr_nCB->GetListOfFunctions()->First();
+  TF1 *fit_alphaCB_1 = gr_alphaCB_1->GetListOfFunctions()->First();
+  TF1 *fit_nCB_1     = gr_nCB_1->GetListOfFunctions()->First();
+  TF1 *fit_alphaCB_2 = gr_alphaCB_2->GetListOfFunctions()->First();
+  TF1 *fit_nCB_2     = gr_nCB_2->GetListOfFunctions()->First();
   TF1 *fit_Gamma   = gr_Gamma->GetListOfFunctions()->First();
 
-  gr_meanCB->GetXaxis()->SetTitle("Mean value of the CB function");
-  gr_sigmaCB->GetXaxis()->SetTitle("Sigma of the CB function");
-  gr_alphaCB->GetXaxis()->SetTitle("Alpha parameter of the CB function");
-  gr_nCB->GetXaxis()->SetTitle("n parameter of the CB function");
+  gr_meanCB->GetXaxis()->SetTitle("Mean value of the DCB function");
+  gr_sigmaCB->GetXaxis()->SetTitle("Sigma of the DCB function");
+  gr_alphaCB_1->GetXaxis()->SetTitle("Alpha parameter of the R leg of DCB function");
+  gr_nCB_1->GetXaxis()->SetTitle("n parameter of the R leg of DCB function");
+  gr_alphaCB_2->GetXaxis()->SetTitle("Alpha parameter of the L leg of DCB function");
+  gr_nCB_2->GetXaxis()->SetTitle("n parameter of the L leg of DCB function");
   gr_Gamma->GetXaxis()->SetTitle("#Gamma of the BW function");
 
   gr_meanCB->SetTitle("");
   gr_sigmaCB->SetTitle("");
-  gr_alphaCB->SetTitle("");
-  gr_nCB->SetTitle("");
+  gr_alphaCB_1->SetTitle("");
+  gr_nCB_1->SetTitle("");
+  gr_alphaCB_2->SetTitle("");
+  gr_nCB_2->SetTitle("");
   gr_Gamma->SetTitle("");
 
-  TCanvas canv2;
-  canv2.Divide(3,2);
+  TCanvas *canv2 = new TCanvas("canv2","canv2",1600,800);
+  canv2->Divide(4,2);
 
-  canv2.cd(1); gr_meanCB->Draw("A*");  fit_meanCB->Draw("SAME");
-  canv2.cd(2); gr_sigmaCB->Draw("A*"); fit_sigmaCB->Draw("SAME");
-  canv2.cd(3); gr_alphaCB->Draw("A*"); fit_alphaCB->Draw("SAME");
-  canv2.cd(4); gr_nCB->Draw("A*");     fit_nCB->Draw("SAME");
-  canv2.cd(5); gr_Gamma->Draw("A*");   fit_Gamma->Draw("SAME");
+  canv2->cd(1); gr_meanCB->Draw("A*");  fit_meanCB->Draw("SAME");
+  canv2->cd(2); gr_sigmaCB->Draw("A*"); fit_sigmaCB->Draw("SAME");
+  canv2->cd(3); gr_alphaCB_1->Draw("A*"); fit_alphaCB_1->Draw("SAME");
+  canv2->cd(4); gr_nCB_1->Draw("A*");     fit_nCB_1->Draw("SAME");
+  canv2->cd(5); gr_alphaCB_2->Draw("A*"); fit_alphaCB_2->Draw("SAME");
+  canv2->cd(6); gr_nCB_2->Draw("A*");     fit_nCB_2->Draw("SAME");
+  canv2->cd(7); gr_Gamma->Draw("A*");   fit_Gamma->Draw("SAME");
 
   string tmp_paramPlotFileTitle;
   tmp_paramPlotFileTitle.insert(0,outfile);
   tmp_paramPlotFileTitle += "/fitParam_";
   char tmp2_paramPlotFileTitle[200];
   sprintf(tmp2_paramPlotFileTitle,"%iTeV_",sqrts);
-  string paramPlotFileTitle = tmp_paramPlotFileTitle + sprocess + tmp2_paramPlotFileTitle + schannel + "_" + Form("%d",int(VBFtag)) + ".gif";
-
-  canv2.SaveAs(paramPlotFileTitle.c_str());
+  string paramPlotFileTitle = tmp_paramPlotFileTitle + tmp2_paramPlotFileTitle + schannel;
+  if (useVBF) paramPlotFileTitle+="_VBF";
+  if (useVH) paramPlotFileTitle+="_VH";
+  string paramgif=paramPlotFileTitle;
+  if (usedijet && !usenondijet){
+    paramgif+="_0.gif";
+  }else if (usenondijet && !usedijet){
+    paramgif+="_1.gif";
+  }else if (usenondijet && usedijet){
+    paramgif+="deriv5.gif";
+  }
+  canv2->SaveAs(paramgif.c_str());
 
   char tmp_outCardName[200];
   sprintf(tmp_outCardName,"%iTeV_",sqrts);
-  string outCardName = "CardFragments/signalFunctions_" + sprocess + tmp_outCardName + schannel + "_" + Form("%d",int(VBFtag)) +".txt";
-  ofstream ofsCard(outCardName.c_str(),fstream::out);
-  ofsCard << "usehighmassreweightedshapes" << endl;
-  ofsCard << "## signal functions --- no spaces! ##" << endl;
-  ofsCard << "signalShape n_CB " << fit_nCB->GetParameter(0) << "+(" << fit_nCB->GetParameter(1) << "*@0)+(" << fit_nCB->GetParameter(2) << "*@0*@0)+(" << fit_nCB->GetParameter(3) << "*@0*@0*@0)" << endl;
-  ofsCard << "signalShape alpha_CB " << fit_alphaCB->GetParameter(0) << "+(" << fit_alphaCB->GetParameter(1) << "*@0)+(" << fit_alphaCB->GetParameter(2) << "*@0*@0)+(" << fit_alphaCB->GetParameter(3) << "*@0*@0*@0)" << endl;
-  ofsCard << "signalShape mean_CB " << fit_meanCB->GetParameter(0) << "+(" << fit_meanCB->GetParameter(1) << "*@0)+(" << fit_meanCB->GetParameter(2) << "*@0*@0)+(" << fit_meanCB->GetParameter(3) << "*@0*@0*@0)" << endl;
-  ofsCard << "signalShape sigma_CB " << fit_sigmaCB->GetParameter(0) << "+(" << fit_sigmaCB->GetParameter(1) << "*@0)+(" << fit_sigmaCB->GetParameter(2) << "*@0*@0)+(" << fit_sigmaCB->GetParameter(3) << "*@0*@0*@0)" << endl;
-  ofsCard << "signalShape gamma_BW " << fit_Gamma->GetParameter(0) << "+(" << fit_Gamma->GetParameter(1) << "*@0)+(" << fit_Gamma->GetParameter(2) << "*@0*@0)+(" << fit_Gamma->GetParameter(3) << "*@0*@0*@0)" << endl;
-  ofsCard << "HighMasssignalShape gamma_BW " << fit_Gamma->GetParameter(0) << "+(" << fit_Gamma->GetParameter(1) << "*@0)+(" << fit_Gamma->GetParameter(2) << "*@0*@0)+(" << fit_Gamma->GetParameter(3) << "*@0*@0*@0)" << endl;
-  ofsCard << endl;
+  string prependName = "CardFragments/signalFunctions_";
+  string appendName = ".txt";
+  string outCardName =  prependName + tmp_outCardName + schannel + appendName;
+
+  float highn1,higha1,higha2,highmean,highsigma,highgamma1,highgamma2;
+  highn1=highparameter(fit_nCB_1,0);
+  higha1=highparameter(fit_alphaCB_1,0);
+  higha2=highparameter(fit_alphaCB_2,0);
+  highmean=highparameter(fit_meanCB,0);
+  highsigma=highparameter(fit_sigmaCB,0);  
+  highgamma1=highparameter(fit_Gamma,1);
+  highgamma2=highparameter(fit_Gamma,2);
+
+  ofstream ofsCard;
+  if (usedijet && usenondijet){
+    ofsCard.open(outCardName.c_str(),fstream::out);
+    ofsCard << "## signal functions --- no spaces! ##" << endl;
+    ofsCard << "signalShape n_CB_1 " << fit_nCB_1->GetParameter(0) << "+(" << fit_nCB_1->GetParameter(1) << "*@0)+(" << fit_nCB_1->GetParameter(2) << "*@0*@0)+(" << fit_nCB_1->GetParameter(3) << "*@0*@0*@0)+(" << fit_nCB_1->GetParameter(4) << "*@0*@0*@0*@0)+(" << fit_nCB_1->GetParameter(5) << "*@0*@0*@0*@0*@0)" << endl;
+    ofsCard << "signalShape alpha_CB_1 " << fit_alphaCB_1->GetParameter(0) << "+(" << fit_alphaCB_1->GetParameter(1) << "*@0)+(" << fit_alphaCB_1->GetParameter(2) << "*@0*@0)+(" << fit_alphaCB_1->GetParameter(3) << "*@0*@0*@0)+(" << fit_alphaCB_1->GetParameter(4) << "*@0*@0*@0*@0)+(" << fit_alphaCB_1->GetParameter(5) << "*@0*@0*@0*@0*@0)" << endl;
+    ofsCard << "signalShape n_CB_2 " << fit_nCB_2->GetParameter(0) << endl;
+    ofsCard << "signalShape alpha_CB_2 " << fit_alphaCB_2->GetParameter(0) << "+(" << fit_alphaCB_2->GetParameter(1) << "*@0)+(" << fit_alphaCB_2->GetParameter(2) << "*@0*@0)+(" << fit_alphaCB_2->GetParameter(3) << "*@0*@0*@0)+(" << fit_alphaCB_2->GetParameter(4) << "*@0*@0*@0*@0)+(" << fit_alphaCB_2->GetParameter(5) << "*@0*@0*@0*@0*@0)" << endl;
+    ofsCard << "signalShape mean_CB " << fit_meanCB->GetParameter(0) << "+(" << fit_meanCB->GetParameter(1) << "*@0)+(" << fit_meanCB->GetParameter(2) << "*@0*@0)+(" << fit_meanCB->GetParameter(3) << "*@0*@0*@0)+(" << fit_meanCB->GetParameter(4) << "*@0*@0*@0*@0)+(" << fit_meanCB->GetParameter(5) << "*@0*@0*@0*@0*@0)" << endl;
+    ofsCard << "signalShape sigma_CB " << fit_sigmaCB->GetParameter(0) << "+(" << fit_sigmaCB->GetParameter(1) << "*@0)+(" << fit_sigmaCB->GetParameter(2) << "*@0*@0)+(" << fit_sigmaCB->GetParameter(3) << "*@0*@0*@0)+(" << fit_sigmaCB->GetParameter(4) << "*@0*@0*@0*@0)+(" << fit_sigmaCB->GetParameter(5) << "*@0*@0*@0*@0*@0)" << endl;
+    //ofsCard << "signalShape gamma_BW " << fit_Gamma->GetParameter(0) << "+(" << fit_Gamma->GetParameter(1) << "*@0)+(" << fit_Gamma->GetParameter(2) << "*@0*@0)+(" << fit_Gamma->GetParameter(3) << "*@0*@0*@0)+(" << fit_Gamma->GetParameter(4) << "*@0*@0*@0*@0)+(" << fit_Gamma->GetParameter(5) << "*@0*@0*@0*@0*@0)" << endl;
+    ofsCard << "HighMasssignalShape n_CB_1 " << highn1 << "+(" << fit_nCB_1->GetParameter(6) << "*@0)+(" << fit_nCB_1->GetParameter(7) << "*@0*@0)+(" << fit_nCB_1->GetParameter(8) << "*@0*@0*@0)" <<endl;
+    ofsCard << "HighMasssignalShape alpha_CB_1 " << higha1 << "+(" << fit_alphaCB_1->GetParameter(6) << "*@0)+(" << fit_alphaCB_1->GetParameter(7) << "*@0*@0)+(" << fit_alphaCB_1->GetParameter(8) << "*@0*@0*@0)" << endl;
+    ofsCard << "HighMasssignalShape n_CB_2 " << fit_nCB_2->GetParameter(0) << endl;
+    ofsCard << "HighMasssignalShape alpha_CB_2 " << higha2 << "+(" << fit_alphaCB_2->GetParameter(6) << "*@0)+(" << fit_alphaCB_2->GetParameter(7) << "*@0*@0)+(" << fit_alphaCB_2->GetParameter(8) << "*@0*@0*@0)" << endl;
+    ofsCard << "HighMasssignalShape mean_CB " << highmean << "+(" << fit_meanCB->GetParameter(6) << "*@0)+(" << fit_meanCB->GetParameter(7) << "*@0*@0)+(" << fit_meanCB->GetParameter(8) << "*@0*@0*@0)" << endl;
+    ofsCard << "HighMasssignalShape sigma_CB " << highsigma << "+(" << fit_sigmaCB->GetParameter(6) << "*@0)+(" << fit_sigmaCB->GetParameter(7) << "*@0*@0)+(" << fit_sigmaCB->GetParameter(8) << "*@0*@0*@0)" << endl;
+    ofsCard << "HighMasssignalShape gamma_BW " << highgamma1 << "+(" << highgamma2 << "*@0)+(" << fit_Gamma->GetParameter(6) << "*@0*@0)+(" << fit_Gamma->GetParameter(7) << "*@0*@0*@0)" << endl;
+    ofsCard << endl;
+  }
+
   return;
 }
 
-float WidthValue(float mHStarWidth)
-{
+float WidthValue(float mHStarWidth){
   ostringstream MassString;
   MassString << mHStarWidth;
   
@@ -432,4 +534,30 @@ float WidthValue(float mHStarWidth)
   if(!FindedMass) abort();
 
   return Gamma_TOTCal;
+}
+
+float highparameter(TF1 *generatedfit, int gamma){
+  float highzero;
+
+  if (gamma==0){
+    highzero=generatedfit->GetParameter(0);
+    highzero+=(generatedfit->GetParameter(1)-generatedfit->GetParameter(6))*400;
+    highzero+=(generatedfit->GetParameter(2)-generatedfit->GetParameter(7))*pow(400,2);
+    highzero+=(generatedfit->GetParameter(3)-generatedfit->GetParameter(8))*pow(400,3);
+    highzero+=generatedfit->GetParameter(4)*pow(400,4);
+    highzero+=generatedfit->GetParameter(5)*pow(400,5);
+  } else if (gamma==1){
+    highzero=generatedfit->GetParameter(0);
+    highzero+=(generatedfit->GetParameter(6)-generatedfit->GetParameter(2))*pow(400,2);
+    highzero+=2*(generatedfit->GetParameter(7)-generatedfit->GetParameter(3))*pow(400,3);
+    highzero-=3*(generatedfit->GetParameter(4))*pow(400,4);
+    highzero-=4*(generatedfit->GetParameter(5))*pow(400,5);
+  } else if (gamma==2){
+    highzero=generatedfit->GetParameter(1);
+    highzero+=2*(generatedfit->GetParameter(2)-generatedfit->GetParameter(6))*400;
+    highzero+=3*(generatedfit->GetParameter(3)-generatedfit->GetParameter(7))*pow(400,2);
+    highzero+=4*generatedfit->GetParameter(4)*pow(400,3);
+    highzero+=5*generatedfit->GetParameter(5)*pow(400,4);
+  }
+  return highzero;
 }
