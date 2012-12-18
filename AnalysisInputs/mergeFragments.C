@@ -5,7 +5,7 @@
  * -run with:
  * root -q -b mergeFragments.C+
  * This runs on the 3 final states for 7 and 8 TeV and writes the full config files in 
- * ../CreateDatacards/SM_inputs_?TeV/ .
+ * ../CreateDatacards/SM_inputs_?TeV_tagged/ .
  *
  */
 
@@ -27,19 +27,21 @@ void append(TString file, TString outfile);
 // Run all fs/sqrts in one go
 void mergeFragments() {
 
-  mergeFragments(1, 7, lumi7TeV,false);
-  mergeFragments(2, 7, lumi7TeV,false);
-  mergeFragments(3, 7, lumi7TeV,false);
-  mergeFragments(1, 8, lumi8TeV,false);
-  mergeFragments(2, 8, lumi8TeV,false);
-  mergeFragments(3, 8, lumi8TeV,false);
+  //Nondijet
+  mergeFragments(1, 7, lumi7TeV, false);
+  mergeFragments(2, 7, lumi7TeV, false);
+  mergeFragments(3, 7, lumi7TeV, false);
+  mergeFragments(1, 8, lumi8TeV, false);
+  mergeFragments(2, 8, lumi8TeV, false);
+  mergeFragments(3, 8, lumi8TeV, false);
 
-  mergeFragments(1, 7, lumi7TeV,true);
-  mergeFragments(2, 7, lumi7TeV,true);
-  mergeFragments(3, 7, lumi7TeV,true);
-  mergeFragments(1, 8, lumi8TeV,true);
-  mergeFragments(2, 8, lumi8TeV,true);
-  mergeFragments(3, 8, lumi8TeV,true);
+  //Dijet
+  mergeFragments(1, 7, lumi7TeV, true);
+  mergeFragments(2, 7, lumi7TeV, true);
+  mergeFragments(3, 7, lumi7TeV, true);
+  mergeFragments(1, 8, lumi8TeV, true);
+  mergeFragments(2, 8, lumi8TeV, true);
+  mergeFragments(3, 8, lumi8TeV, true);
   
 }
 
@@ -53,8 +55,7 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
 
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  TString outfile;
-  outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "_tagged/inputs_" +  schannel + "_" + Form("%d",int(dijettag)) + ".txt";
+  TString outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "_tagged/inputs_" +  schannel + "_" + Form("%d",int(dijettag)) + ".txt";
   ofstream of(outfile,ios_base::out);
 
   float lumiUnc = 0;
@@ -82,6 +83,8 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   of.close();
 
   TString sig_untagged = ssqrts + "_" + schannel + ".txt";
+  TString sig_untagged_ratio = ssqrts + "_" + schannel + "_ratio.txt";
+  TString sig_tagged = ssqrts + "_" + schannel + "_" + Form("%d",int(dijettag)) + ".txt";
   TString bkg_untagged = ssqrts + "_" + schannel + ".txt";
   TString bkg_tagged = ssqrts + "_" + schannel + "_" + Form("%d",int(dijettag)) + ".txt";
 
@@ -89,12 +92,13 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   append("CardFragments/zjetRate_" + bkg_tagged, outfile);
   append("CardFragments/signalFunctions_" + sig_untagged, outfile);
   append("CardFragments/signalEfficiency_" + sig_untagged, outfile);
+  append("CardFragments/signalEfficiency_" + sig_untagged_ratio, outfile);
   append("CardFragments/qqzzBackgroundFit_" + bkg_tagged, outfile);
   append("CardFragments/ggzzBackgroundFit_" + bkg_tagged, outfile);
   append("CardFragments/zjetShape_" + bkg_untagged, outfile);  
   append("CardFragments/sys_" + bkg_untagged, outfile);
   append("CardFragments/hypTesting.txt", outfile);
-  append("CardFragments/dijettagging_"+sig_untagged,outfile);
+  append("CardFragments/dijettagging.txt",outfile);
   append("CardFragments/mekd_" + bkg_untagged, outfile);
   append("CardFragments/relerr_" + bkg_untagged, outfile);
 
