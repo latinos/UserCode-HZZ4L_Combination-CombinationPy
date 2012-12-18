@@ -343,11 +343,21 @@ class inputReader:
                 if f[1].lower().startswith("g2"): self.sigeff_g2 = float(f[2])
                 if f[1].lower().startswith("g3"): self.sigeff_g3 = float(f[2])
 
-                if f[1].lower().startswith("tagged_ggh_ratio"): self.tagged_ggH_ratio = float(f[2])
-                if f[1].lower().startswith("tagged_qqh_ratio"): self.tagged_qqH_ratio = float(f[2])
-                if f[1].lower().startswith("tagged_wh_ratio"): self.tagged_WH_ratio = float(f[2])
-                if f[1].lower().startswith("tagged_zh_ratio"): self.tagged_ZH_ratio = float(f[2])
-                if f[1].lower().startswith("tagged_tth_ratio"): self.tagged_ttH_ratio = float(f[2])
+                if f[1].lower().startswith("tagged_ggh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_ggH_ratio = f[2]
+                if f[1].lower().startswith("tagged_qqh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_qqH_ratio = f[2]
+                if f[1].lower().startswith("tagged_wh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_WH_ratio = f[2]
+                if f[1].lower().startswith("tagged_zh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_ZH_ratio = f[2]
+                if f[1].lower().startswith("tagged_tth_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_ttH_ratio = f[2]
 
             if f[0].lower().startswith("qqzzshape"):
 
@@ -714,11 +724,11 @@ class inputReader:
         dict['sigEff_g2'] = float(self.sigeff_g2)
         dict['sigEff_g3'] = float(self.sigeff_g3)
 
-        dict['tagged_ggH_ratio'] = float(self.tagged_ggH_ratio)
-        dict['tagged_qqH_ratio'] = float(self.tagged_qqH_ratio)
-        dict['tagged_WH_ratio'] = float(self.tagged_WH_ratio)
-        dict['tagged_ZH_ratio'] = float(self.tagged_ZH_ratio)
-        dict['tagged_ttH_ratio'] = float(self.tagged_ttH_ratio)
+        dict['tagged_ggH_ratio'] = self.tagged_ggH_ratio
+        dict['tagged_qqH_ratio'] = self.tagged_qqH_ratio
+        dict['tagged_WH_ratio'] = self.tagged_WH_ratio
+        dict['tagged_ZH_ratio'] = self.tagged_ZH_ratio
+        dict['tagged_ttH_ratio'] = self.tagged_ttH_ratio
         dict['QCD_scale_ggH_2j_sys'] = float(self.QCD_scale_ggH_2j_sys)
         dict['QCD_scale_qqH_2j_sys'] = float(self.QCD_scale_qqH_2j_sys)
         

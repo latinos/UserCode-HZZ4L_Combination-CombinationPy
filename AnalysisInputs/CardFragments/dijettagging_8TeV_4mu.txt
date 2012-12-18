@@ -4,12 +4,6 @@ useCMS_zz4l_doVBFtest True
 useCMS_zz4l_Fisher_sys True
 useCMS_zz4l_PToverM_sys True
 
-signalEff tagged_ggH_ratio 0.104449
-signalEff tagged_qqH_ratio 0.578074
-signalEff tagged_ZH_ratio 0.264945
-signalEff tagged_WH_ratio 0.404889
-signalEff tagged_ttH_ratio 0.93249
-
 systematic param QCD_scale_ggH_2j_sys 0.3
 systematic param QCD_scale_qqH_2j_sys 0.1
 
