@@ -82,6 +82,8 @@ class inputReader:
         self.tagged_WH_ratio = -999.9
         self.tagged_ZH_ratio = -999.9
         self.tagged_ttH_ratio = -999.9
+        self.QCD_scale_ggH_2j_sys = -999.9
+        self.QCD_scale_qqH_2j_sys = -999.9
         # qqZZ shape
         self.qqZZshape_a0 = -999.9
         self.qqZZshape_a1 = -999.9
@@ -162,13 +164,6 @@ class inputReader:
         self.useCMS_zz4l_doVBFtest = False
         self.useCMS_zz4l_Fisher_sys = False
         self.useCMS_zz4l_PToverM_sys = False
-        self.useCMS_zz4l_ggH_PToverM_Resummation = False
-        self.useCMS_zz4l_ggH_PToverM_TopMass = False
-        self.useCMS_zz4l_vbf_PToverM_PDF = False
-        self.useCMS_zz4l_vbf_PToverM_Scale = False
-        self.useCMS_zz4l_zz_PToverM_PDF = False
-        self.useCMS_zz4l_zz_PToverM_Scale = False
-        self.useCMS_zz4l_zz_PToverM_SingleZ = False
         
 	# ---  mekd stuffs
 	self.mekd_sig_a0_shape = -999.
@@ -465,6 +460,10 @@ class inputReader:
                         self.CMS_zz4l_n_sig = f[3]
                     if f[2].lower().startswith("cms_zz4l_gamma_sig"):
                         self.CMS_zz4l_gamma_sig = f[3]
+                    if f[2].lower().startswith("qcd_scale_ggh_2j_sys"):
+                        self.QCD_scale_ggH_2j_sys = f[3]
+                    if f[2].lower().startswith("qcd_scale_qqh_2j_sys"):
+                        self.QCD_scale_qqH_2j_sys = f[3]
                         
                 if f[1].lower().startswith("luminosity"):
                     self.useLumiUnc = self.parseBoolString(f[2])
@@ -507,20 +506,6 @@ class inputReader:
                 if f[1].lower().startswith("cms_zz4l_gamma"):
                     self.useCMS_zz4l_gamma = self.parseBoolString(f[2])
                     
-                if f[1].lower().startswith("cms_zz4l_ggh_ptoverm_resummation"):
-                    self.useCMS_zz4l_ggH_PToverM_Resummation = self.parseBoolString(f[2])
-                if f[1].lower().startswith("cms_zz4l_ggh_ptoverm_topmass"):
-                    self.useCMS_zz4l_ggH_PToverM_TopMass = self.parseBoolString(f[2])
-                if f[1].lower().startswith("cms_zz4l_vbf_ptoverm_pdf"):
-                    self.useCMS_zz4l_vbf_PToverM_PDF = self.parseBoolString(f[2])
-                if f[1].lower().startswith("cms_zz4l_vbf_ptoverm_scale"):
-                    self.useCMS_zz4l_vbf_PToverM_Scale = self.parseBoolString(f[2])
-                if f[1].lower().startswith("cms_zz4l_zz_ptoverm_pdf"):
-                    self.useCMS_zz4l_zz_PToverM_PDF = self.parseBoolString(f[2])
-                if f[1].lower().startswith("cms_zz4l_zz_ptoverm_scale"):
-                    self.useCMS_zz4l_zz_PToverM_Scale = self.parseBoolString(f[2])
-                if f[1].lower().startswith("cms_zz4l_zz_ptoverm_singlez"):
-                    self.useCMS_zz4l_zz_PToverM_SingleZ = self.parseBoolString(f[2])
                 
                     
             if f[0].lower().startswith("lumi"):
@@ -734,6 +719,8 @@ class inputReader:
         dict['tagged_WH_ratio'] = float(self.tagged_WH_ratio)
         dict['tagged_ZH_ratio'] = float(self.tagged_ZH_ratio)
         dict['tagged_ttH_ratio'] = float(self.tagged_ttH_ratio)
+        dict['QCD_scale_ggH_2j_sys'] = float(self.QCD_scale_ggH_2j_sys)
+        dict['QCD_scale_qqH_2j_sys'] = float(self.QCD_scale_qqH_2j_sys)
         
         dict['qqZZshape_a0'] = float(self.qqZZshape_a0)
         dict['qqZZshape_a1'] = float(self.qqZZshape_a1)
@@ -818,13 +805,6 @@ class inputReader:
         dict['useCMS_zz4l_Fisher_sys'] = self.useCMS_zz4l_Fisher_sys
         dict['useCMS_zz4l_PToverM_sys'] = self.useCMS_zz4l_PToverM_sys
 
-        dict['useCMS_zz4l_ggH_PToverM_Resummation'] = self.useCMS_zz4l_ggH_PToverM_Resummation
-        dict['useCMS_zz4l_ggH_PToverM_TopMass'] = self.useCMS_zz4l_ggH_PToverM_TopMass
-        dict['useCMS_zz4l_vbf_PToverM_PDF'] = self.useCMS_zz4l_vbf_PToverM_PDF
-        dict['useCMS_zz4l_vbf_PToverM_Scale'] = self.useCMS_zz4l_vbf_PToverM_Scale
-        dict['useCMS_zz4l_zz_PToverM_PDF'] = self.useCMS_zz4l_zz_PToverM_PDF
-        dict['useCMS_zz4l_zz_PToverM_Scale'] = self.useCMS_zz4l_zz_PToverM_Scale
-        dict['useCMS_zz4l_zz_PToverM_SingleZ'] = self.useCMS_zz4l_zz_PToverM_SingleZ
         
 	dict['mekd_sig_a0_shape'] = self.mekd_sig_a0_shape
 	dict['mekd_sig_a1_shape'] = self.mekd_sig_a1_shape

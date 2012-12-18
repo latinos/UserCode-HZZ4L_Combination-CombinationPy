@@ -49,6 +49,9 @@ class systematicsClass:
         self.zjetKappaLow = theInputs['zjetsKappaLow']
         self.zjetKappaHigh = theInputs['zjetsKappaHigh']
 
+        self.QCD_scale_ggH_2j_sys = theInputs['QCD_scale_ggH_2j_sys']
+        self.QCD_scale_qqH_2j_sys = theInputs['QCD_scale_qqH_2j_sys']
+
         self.theoryHighMass = 1
         
         if theInputs['muonTrigCutoff'] > 100 and theInputs['muonTrigUnc_HM'] > 0:
@@ -550,31 +553,64 @@ class systematicsClass:
     def Write_CMS_zz4l_sigMELA(self,theFile,theInputs):
         theFile.write("CMS_zz4l_sigMELA param 0  1  [-3,3]\n")
 
-    def Write_CMS_zz4l_Fisher_JES(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_Fisher_JES param 0  1  [-3,3]\n")
+    def Write_CMS_zz4l_Jet_Split(self,theFile,theInputs,theVBFcat=False):
+        theFile.write("QCD_scale_ggH_2j lnN ")
 
-    def Write_CMS_zz4l_ggH_PToverM_Resummation(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_ggH_PToverM_Resummation param 0  1  [-3,3]\n")
+        if theVBFcat:
+            systLine={'ggH':"{0:.3f} ".format(1+self.QCD_scale_ggH_2j_sys)}
+        else:
+            systLine={'ggH':"{0:.3f} ".format(1-self.QCD_scale_ggH_2j_sys)}
+        systLine['qqH']  = "- "
+        systLine['WH']   = "- " 
+        systLine['ZH']   = "- "
+        systLine['ttH']  = "- "
+        systLine['qqZZ'] = "- "
+        systLine['ggZZ'] = "- "
+        systLine['zjets']= "- " 
+        systLine['ttbar']= "- "
+        systLine['zbb']  = "- "
+        
+        self.Write_Systematics_Line(systLine,theFile,theInputs)
 
-    def Write_CMS_zz4l_ggH_PToverM_TopMass(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_ggH_PToverM_TopMass param 0 1 [-3,3]\n")
+        theFile.write("QCD_scale_qqH_2j lnN ")
 
-    def Write_CMS_zz4l_vbf_PToverM_PDF(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_ggH_PToverM_PDF param 0 1 [-3,3]\n")
+        systLine={'ggH':"- "}
+        if theVBFcat:
+            systLine['qqH']  = "{0:.3f} ".format(1+self.QCD_scale_qqH_2j_sys)
+        else:
+            systLine['qqH']  = "{0:.3f} ".format(1-self.QCD_scale_qqH_2j_sys)
+        systLine['WH']   = "- " 
+        systLine['ZH']   = "- "
+        systLine['ttH']  = "- "
+        systLine['qqZZ'] = "- "
+        systLine['ggZZ'] = "- "
+        systLine['zjets']= "- " 
+        systLine['ttbar']= "- "
+        systLine['zbb']  = "- "
+        
+        self.Write_Systematics_Line(systLine,theFile,theInputs)
 
-    def Write_CMS_zz4l_vbf_PToverM_Scale(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_ggH_PToverM_Scale param 0 1 [-3,3]\n")
+    def Write_CMS_zz4l_Fisher_sys(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqH_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ttH_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_WH_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZH_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqZZ_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ggZZ_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZX_Fisher_sys param 0  1  [-3,3]\n")
 
-    def Write_CMS_zz4l_zz_PToverM_PDF(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_zz_PToverM_PDF param 0 1 [-3,3]\n")
-
-    def Write_CMS_zz4l_zz_PToverM_Scale(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_zz_PToverM_Scale param 0 1 [-3,3]\n")
-
-    def Write_CMS_zz4l_zz_PToverM_SingleZ(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_zz_PToverM_SingleZ param 0 1 [-3,3]\n")
+    def Write_CMS_zz4l_PToverM_sys(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_PToverM_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqH_PToverM_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ttH_PToverM_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_WH_PToverM_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZH_PToverM_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqZZ_PToverM_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ggZZ_PToverM_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZX_PToverM_sys param 0  1  [-3,3]\n")
     
-    def WriteSystematics(self,theFile,theInputs):
+    def WriteSystematics(self,theFile,theInputs, theVBFcat=False):
 
         if theInputs['useLumiUnc']:
             self.Build_lumi(theFile,theInputs)
@@ -641,24 +677,15 @@ class systematicsClass:
         if theInputs['useCMS_zz4l_sigMELA']:
             self.Write_CMS_zz4l_sigMELA(theFile,theInputs)
 
-        if theInputs['useCMS_zz4l_Fisher_sys']:
-            self.Write_CMS_zz4l_Fisher_JES(theFile,theInputs)
+        if theInputs['useCMS_zz4l_doVBFtest']:
+            self.Write_CMS_zz4l_Jet_Split(theFile,theInputs, theVBFcat)
+
+        if (theVBFcat and theInputs['useCMS_zz4l_Fisher_sys']):
+            self.Write_CMS_zz4l_Fisher_sys(theFile,theInputs)
             
-        if theInputs['useCMS_zz4l_PToverM_sys']:
-            if theInputs['CMS_zz4l_ggH_PToverM_Resummation']:
-                self.Write_CMS_zz4l_ggH_PToverM_Resummation(theFile,theInputs)
-            if theInputs['CMS_zz4l_ggH_PToverM_TopMass']:
-                self.Write_CMS_zz4l_ggH_PToverM_TopMass(theFile,theInputs)
-            if theInputs['CMS_zz4l_vbf_PToverM_PDF']:
-                self.Write_CMS_zz4l_vbf_PToverM_PDF(theFile,theInputs)
-            if theInputs['CMS_zz4l_vbf_PToverM_Scale']:
-                self.Write_CMS_zz4l_vbf_PToverM_Scale(theFile,theInputs)
-            if theInputs['CMS_zz4l_zz_PToverM_PDF']:
-                self.Write_CMS_zz4l_zz_PToverM_PDF(theFile,theInputs)
-            if theInputs['CMS_zz4l_zz_PToverM_Scale']:
-                self.Write_CMS_zz4l_zz_PToverM_Scale(theFile,theInputs)
-            if theInputs['CMS_zz4l_zz_PToverM_SingleZ']:
-                self.Write_CMS_zz4l_zz_PToverM_SingleZ(theFile,theInputs)
+        if (not theVBFcat and theInputs['useCMS_zz4l_PToverM_sys']):
+            self.Write_CMS_zz4l_PToverM_sys(theFile,theInputs)
+            
 
     def WriteShapeSystematics(self,theFile,theInputs):
   
