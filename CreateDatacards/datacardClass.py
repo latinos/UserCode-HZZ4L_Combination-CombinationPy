@@ -217,8 +217,11 @@ class datacardClass:
         if(self.bUseCBnoConvolution): bins = 200
         if(self.bIncludingError): bins = 200
 
-        CMS_zz4l_mass = ROOT.RooRealVar("CMS_zz4l_mass","CMS_zz4l_mass",self.low_M,self.high_M)
+        CMS_zz4l_mass_name = "CMS_zz4l_mass"
+        if self.bVBF:
+            CMS_zz4l_mass_name += "_{0}".format(self.VBFcat)
             
+        CMS_zz4l_mass = ROOT.RooRealVar(CMS_zz4l_mass_name,CMS_zz4l_mass_name,self.low_M,self.high_M)    
         CMS_zz4l_mass.setBins(bins,"fft")
 
         self.LUMI = ROOT.RooRealVar("LUMI_{0:.0f}".format(self.sqrts),"LUMI_{0:.0f}".format(self.sqrts),self.lumi)
@@ -227,8 +230,12 @@ class datacardClass:
         self.MH = ROOT.RooRealVar("MH","MH",self.mH)
         self.MH.setConstant(True)
     
-	# bIncludingError 
-	CMS_zz4l_massErr = ROOT.RooRealVar("CMS_zz4l_massErr", "CMS_zz4l_massErr", 0.01*self.low_M/3., 0.01*self.high_M*5 );
+	# bIncludingError
+        CMS_zz4l_massErr_name = "CMS_zz4l_massErr"
+        if self.bVBF:
+            CMS_zz4l_massErr_name += "_{0}".format(self.VBFcat)
+            
+        CMS_zz4l_massErr = ROOT.RooRealVar(CMS_zz4l_massErr_name, CMS_zz4l_massErr_name, 0.01*self.low_M/3., 0.01*self.high_M*5 );
 	CMS_zz4l_massErr.setBins(100);
 
 	# n2, alpha2 are right side parameters of DoubleCB
@@ -953,8 +960,10 @@ class datacardClass:
 
 
         ## --------------------------- MELA 2D PDFS ------------------------- ##
-        
-        discVarName = "melaLD"
+        if not self.bVBF:
+            discVarName = "melaLD"
+        else:
+            discVarName = "melaLD_{0}".format(self.VBFcat)
         D = ROOT.RooRealVar(discVarName,discVarName,0,1)
         D.setBins(30)
     
