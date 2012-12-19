@@ -123,7 +123,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag){
   Double_t CMS_zz4l_mass, melaLD, pseudomelaLD, supermelaLD, CMS_zz4l_massErr;
   Double_t ptoverm = -99, Fisher = -99;
   newTree->Branch(Form("CMS_zz4l_mass_%d",int(VBFtag)),&CMS_zz4l_mass,Form("CMS_zz4l_mass_%d/D",int(VBFtag)));
-  newTree->Branch(Form("CMS_zz4l_massErr_%d",int(VBFtag)),&CMS_zz4l_massErr,From("CMS_zz4l_massErr_%d/D",int(VBFtag)));
+  newTree->Branch(Form("CMS_zz4l_massErr_%d",int(VBFtag)),&CMS_zz4l_massErr,Form("CMS_zz4l_massErr_%d/D",int(VBFtag)));
   newTree->Branch(Form("melaLD_%d",int(VBFtag)),&melaLD,Form("melaLD_%d/D",int(VBFtag)));
   newTree->Branch("pseudoMelaLD",&pseudomelaLD,"pseudoMelaLD/D");
   newTree->Branch("supermelaLD",&supermelaLD,"supermelaLD/D");
