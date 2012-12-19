@@ -1,2 +1,2 @@
-rate zjets 0.078
+rate zjets 0.07
 
