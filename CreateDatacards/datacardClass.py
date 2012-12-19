@@ -218,8 +218,6 @@ class datacardClass:
         if(self.bIncludingError): bins = 200
 
         CMS_zz4l_mass_name = "CMS_zz4l_mass"
-        if self.bVBF:
-            CMS_zz4l_mass_name += "_{0}".format(self.VBFcat)
             
         CMS_zz4l_mass = ROOT.RooRealVar(CMS_zz4l_mass_name,CMS_zz4l_mass_name,self.low_M,self.high_M)    
         CMS_zz4l_mass.setBins(bins,"fft")
@@ -232,8 +230,6 @@ class datacardClass:
     
 	# bIncludingError
         CMS_zz4l_massErr_name = "CMS_zz4l_massErr"
-        if self.bVBF:
-            CMS_zz4l_massErr_name += "_{0}".format(self.VBFcat)
             
         CMS_zz4l_massErr = ROOT.RooRealVar(CMS_zz4l_massErr_name, CMS_zz4l_massErr_name, 0.01*self.low_M/3., 0.01*self.high_M*5 );
 	CMS_zz4l_massErr.setBins(100);
@@ -960,10 +956,7 @@ class datacardClass:
 
 
         ## --------------------------- MELA 2D PDFS ------------------------- ##
-        if not self.bVBF:
-            discVarName = "melaLD"
-        else:
-            discVarName = "melaLD_{0}".format(self.VBFcat)
+        discVarName = "melaLD"
         D = ROOT.RooRealVar(discVarName,discVarName,0,1)
         D.setBins(30)
     
