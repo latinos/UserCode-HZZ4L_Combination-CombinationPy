@@ -46,22 +46,22 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
-const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "graviLD"; // name of KD branch to be used.
-bool doME = true;
-TString meName = "graviME"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "MEtemplates2D_smd_7TeV_ntran_gravi121108v2/"; //it must already exist !
+const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+TString melaName = "pseudoLD"; // name of KD branch to be used.
+const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_NOIntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
+const bool applyInterferenceRew=false;
+string fInterferenceName="./1DinterferenceReweight.root";
+TString melaCutName = melaName; //distinction btw LD and mela needed because 
+                               //we might want both psMELA (for 2D template) and MELA (for cut)
 //-----
 
 
 bool extendToHighMass = false; // Include signal samples above 600 GeV
 float highMzz=(extendToHighMass?1000:800);
 float mBinSize=2.;
-const bool applyInterferenceRew=false;//it doesn't matter for Z+jets
-string fInterferenceName="./1DinterferenceReweight.root";
 
 
 
@@ -88,7 +88,9 @@ float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.320, 0
 		       0.966, 1.000};
 */
 //--
+pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp);
 void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex=0, int mh=125) ;
+TH2F* reweightForInterference(TH2F* temp);
 double calcInterfRew(TH1 *h,double KD );
 void makePlot1D( TH1 *h ,TString label );
 void makePlot2D( TH2 *h ,TString label );
@@ -101,11 +103,208 @@ void generateTemplatesSMD_forCR() ;
 //Following are NOT USED:
 void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0);
 TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp);
-pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp);
-TH2F* reweightForInterference(TH2F* temp);
+
+//=======================================================================
+
+pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
+
+  cout << "reweightForCRunc" << endl;
+
+  TH2F* tempUp = new TH2F(*temp);
+  TH2F* tempDn = new TH2F(*temp);
+
+  pair<TH2F*,TH2F*> histoPair(0,0);
+
+  // ---------------------
+  // functions for scaling
+  // ---------------------
+  
+  double oldTempValue=0;
+  double newTempValue=0;
+  int point=-1;
 
 
-//========================================================
+  //  int numPtmp=0;
+  const int numPtmpPS=5;
+  const int numPtmp=8;
+
+  const int numPoints=makePSTemplate? numPtmpPS : numPtmp;
+  double low[numPoints] ;
+  double high[numPoints] ;
+
+  // ================ binning for pseudoMELA ==============================
+  double lowBinsPS[numPtmpPS]   ={100.,        120.,        140.,         160.,     180.  };
+  double highBinsPS[numPtmpPS]  ={120.,        140.,        160.,         180.,     1002. };
+  // =======================================================================
+
+  // ================ binning for MELA ==============================
+  double lowBins[numPtmp]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
+  double highBins[numPtmp]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1002.};
+  // ======================================================================
+
+
+  // ================ systematics for pseudoMELA ==========================
+  double slopePS_syst[numPtmpPS] ={-3.32705e-01, -1.90814e-01, -9.77189e-01, -3.81680e-01, 0.0 };
+  double yIntrPS_syst[numPtmpPS] ={ 9.05727e-01, 9.95995e-01,  1.40367e+00,  1.12690,      1.0 }; 
+  //  ==================================================================
+
+  // ================ systematics for MELA ==========================
+  double slope_syst[numPtmp] ={4.71836e-01, 1.17671e-01, -3.81680e-01, -1.20481, -1.21944, -2.06928, -1.35337, 0.0 };
+  double yIntr_syst[numPtmp] ={6.83860e-01, 9.38454e-01, 1.12690,      1.24502,  1.72764,  2.11050,  1.52771,  1.0 }; 
+  //==================================================================
+
+  double slope[numPoints], yIntr[numPoints];
+
+  if(makePSTemplate){
+    for(int ib=0;ib<numPoints;ib++){
+      low[ib]=lowBinsPS[ib];
+      high[ib]=highBinsPS[ib];
+      slope[ib]=slopePS_syst[ib];
+      yIntr[ib]=yIntrPS_syst[ib];
+    }
+  }
+  else{
+    for(int ib=0;ib<numPoints;ib++){
+      low[ib]=lowBins[ib];
+      high[ib]=highBins[ib];
+      slope[ib]=slope_syst[ib];
+      yIntr[ib]=yIntr_syst[ib];
+    }
+  }
+
+
+  for(int i=1; i<=temp->GetNbinsX(); i++){
+    point = -1;
+
+    // choose correct scale factor
+    for(int p=0; p<numPoints; p++){
+      //float m=(i*2.+101.); // NA: This is the center of bin i+1 and not of bin i... why?
+      float m=temp->GetBinCenter(i+1); 
+      if( m>=low[p] && m<high[p] ){
+	point = p;
+      }
+    }
+    if(point == -1){
+      cout << "ERROR: could not find correct scale factor"<< endl;
+      return histoPair;
+    }
+
+    for(int j=1; j<=temp->GetNbinsY(); j++){
+
+      oldTempValue = temp->GetBinContent(i,j);
+      newTempValue = oldTempValue*(slope[point]*(double)j/30.+yIntr[point]);
+      tempUp->SetBinContent(i,j,newTempValue);
+      newTempValue = oldTempValue*(-slope[point]*(double)j/30.+2.-yIntr[point]);
+      tempDn->SetBinContent(i,j,newTempValue);
+
+    }// end loop over Y bins
+
+    // -------------- normalize mZZ slice ----------------
+
+    double norm_up=(tempUp->ProjectionY("temp",i,i))->Integral();
+    double norm_dn=(tempDn->ProjectionY("temp",i,i))->Integral();
+
+
+    for(int j=1; j<=temp->GetNbinsY(); j++){
+      
+      tempUp->SetBinContent(i,j,tempUp->GetBinContent(i,j)/norm_up);
+      tempDn->SetBinContent(i,j,tempDn->GetBinContent(i,j)/norm_dn);
+
+    }
+
+    // ---------------------------------------------------
+
+  }// end loop over X bins
+
+  histoPair.first  = tempUp;
+  histoPair.second = tempDn;
+
+  return histoPair;
+
+}
+
+//=======================================================================
+TH2F* reweightForInterference(TH2F* temp){
+
+  cout << "reweightForInterference" << endl;
+
+  // for interference reweighting of MELA
+  TF1* reweightFunc =0;
+
+  if(makePSTemplate){// or makeAltSignal
+  // ===================================================
+  // for interference reweighting of pseudo-MELA
+    reweightFunc = new TF1("reweightFunc","([0]+[1]*(x-110) )*0.5*(1 + TMath::Erf([2]*(x -[3]) ))*0.5*(1 + TMath::Erf([4]*([5]-x) ))  ",100,200);
+    
+    reweightFunc->SetParameter(0,-5.66409e-01);
+    reweightFunc->SetParameter(1, 1.22591e-02);
+    reweightFunc->SetParameter(2, 1.64942e+00);
+    reweightFunc->SetParameter(3, 1.10080e+02);
+    reweightFunc->SetParameter(4, 2.10905e+00);
+    reweightFunc->SetParameter(5, 1.78529e+02);
+    //  ==================================================== 
+  }
+  else{
+    reweightFunc =new TF1("reweightFunc","gaus",100,1000);
+    
+    reweightFunc->SetParameter(0,0.354258);
+    reweightFunc->SetParameter(1,114.909);
+    reweightFunc->SetParameter(2,17.1512);
+  }
+
+  TH2F* newTemp = new TH2F(*temp);
+  
+  // ---------------------
+  // functions for scaling
+  // ---------------------
+  
+  double oldTempValue=0;
+  double newTempValue=0;
+
+  double slope;
+
+  for(int i=1; i<=temp->GetNbinsX(); i++){
+
+    // choose correct scale factor
+
+    // for reweighting MELA
+    if(makePSTemplate || i>8){
+      slope=reweightFunc->Eval((double)((i-1)*2+101));
+    }
+    else      slope=.354;
+     
+
+    /* ==============================================
+    // for reweighting pseudo-MELA
+    slope = reweightFunc->Eval((double)((i-1)*2+101));
+    ============================================== */
+
+    for(int j=1; j<=temp->GetNbinsY(); j++){
+      
+      oldTempValue = temp->GetBinContent(i,j);
+      newTempValue = oldTempValue*(1+slope*((double)j/30.-.5));
+      newTemp->SetBinContent(i,j,newTempValue);
+
+    }// end loop over Y bins
+
+    // -------------- normalize mZZ slice ----------------
+
+    double norm=(newTemp->ProjectionY("temp",i,i))->Integral();
+
+    for(int j=1; j<=temp->GetNbinsY(); j++){
+      
+      newTemp->SetBinContent(i,j,newTemp->GetBinContent(i,j)/norm);
+
+    }
+
+    // ---------------------------------------------------
+
+  }// end loop over X bins
+
+  return newTemp;
+
+}
+
 double calcInterfRew(TH1 *h,double KD ){
   return h->GetBinContent(h->FindBin(KD));
 }
@@ -123,7 +322,7 @@ void makePlot1D( TH1 *h ,TString label ){
   h->GetYaxis()->SetTitleOffset(1.15);
   h->SetLineWidth(2);
   h->Draw("HIST");
-    c1D->SaveAs((destDir+"/can_template1D_SuperMELA_"+label+".eps").Data());
+  c1D->SaveAs(("can_template1D_SuperMELA_"+label+".root").Data());
   delete c1D;
 }
 
@@ -141,7 +340,7 @@ void makePlot2D( TH2 *h ,TString label ){
   h->GetYaxis()->SetLabelSize(0.035);
   h->GetYaxis()->SetTitleOffset(1.15);
   h->Draw("col");
-    c2D->SaveAs((destDir+"/can_template_SMDvsPSD_"+label+".eps").Data());
+  c2D->SaveAs(("can_template_SMDvsPSD_"+label+".root").Data());
   delete c2D;
 }
 
@@ -165,8 +364,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
   //An error is issued on missing files; if a single file is missing in one set it can be safely ignored.
 
   string suffix="_withSMD_doubleCBonly.root";
-    if (doME){ suffix="_withSMD_doubleCBonly_ME.root"; }
-    
+
   if(sampleIndex==0){
     //7TeV
     if(useSqrts==1)bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H"+strM+suffix);
@@ -263,17 +461,12 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   // bkgMC->ls();
 
   float mzz,KD,KD_cut,w=0;
-    double KDME;
-    double sKD;
+  double sKD;
   float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
   float pt4l=0, Y4l=0;
   float psig=0, pbkg=0;
   
   
-  //distinction btw LD and mela needed because we might want 
-  //both psMELA (for 2D template) and MELA (for cut)
-
-  TString melaCutName = melaName;  
   
   bool cutSameVar=false;
   bkgMC->SetBranchAddress(melaName.Data(),&KD);
@@ -286,7 +479,6 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
    // bkgMC->SetBranchAddress(melaName.Data(),&KD_cut);
   }
   
-    bkgMC->SetBranchAddress(meName.Data(),&KDME);
 
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
@@ -390,15 +582,15 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	cout << "Y4l: " << Y4l << endl;
 	*/
 
-//	myMELA->computeKD(mzz,m1,m2,
-//			  costhetastar,
-//			  costheta1,
-//			  costheta2,
-//			  phi,
-//			  phi1,
-//			  KD,psig,pbkg,
-//			  withPt_,pt4l,
-//			  withY_, Y4l);
+	myMELA->computeKD(mzz,m1,m2,
+			  costhetastar,
+			  costheta1,
+			  costheta2,
+			  phi,
+			  phi1,
+			  KD,psig,pbkg,
+			  withPt_,pt4l,
+			  withY_, Y4l);
 	
 	//cout << "LD: " << LD << endl;
 	
@@ -409,10 +601,11 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	w*=calcInterfRew(hInterfRewX,sKD);//reweight in the supermela direction
 	w*=calcInterfRew(hInterfRewY,KD);//reweight in the sig sep KD direction
       }
-        
-        if (doME){ bkgHist->Fill(sKD,KDME,w); }
-        else{ bkgHist->Fill(sKD,KD,w); }
+      bkgHist->Fill(sKD,KD,w);
+      //   bkgHist->Fill(mzz,KD,w);
 
+      bkgHist->Fill(sKD,KD,w);
+      //   bkgHist->Fill(mzz,KD,w);
 
     }
 
@@ -478,11 +671,8 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,  
   float mzz=-1.0,mela=-444.0,w=0;
   double LD=-999.;
   char yVarName[32];
-sprintf(yVarName,"ZZpseudoLD");
-
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("ZZLD",&mela);
-  //  bkgMC->SetBranchAddress(yVarName,&LD);
   bkgMC->SetBranchAddress("superLD",&LD);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
 
@@ -732,207 +922,5 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
   }// end loop over mZZ
 
   return h_mzzD;
-
-}
-
-
-//=======================================================================
-
-pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
-
-  cout << "reweightForCRunc" << endl;
-
-  TH2F* tempUp = new TH2F(*temp);
-  TH2F* tempDn = new TH2F(*temp);
-
-  pair<TH2F*,TH2F*> histoPair(0,0);
-
-  // ---------------------
-  // functions for scaling
-  // ---------------------
-  
-  double oldTempValue=0;
-  double newTempValue=0;
-  int point=-1;
-
-
-  //  int numPtmp=0;
-  const int numPtmpPS=5;
-  const int numPtmp=8;
-
-  const int numPoints=makePSTemplate? numPtmpPS : numPtmp;
-  double low[numPoints] ;
-  double high[numPoints] ;
-
-  // ================ binning for pseudoMELA ==============================
-  double lowBinsPS[numPtmpPS]   ={100.,        120.,        140.,         160.,     180.  };
-  double highBinsPS[numPtmpPS]  ={120.,        140.,        160.,         180.,     1002. };
-  // =======================================================================
-
-  // ================ binning for MELA ==============================
-  double lowBins[numPtmp]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
-  double highBins[numPtmp]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1002.};
-  // ======================================================================
-
-
-  // ================ systematics for pseudoMELA ==========================
-  double slopePS_syst[numPtmpPS] ={-3.32705e-01, -1.90814e-01, -9.77189e-01, -3.81680e-01, 0.0 };
-  double yIntrPS_syst[numPtmpPS] ={ 9.05727e-01, 9.95995e-01,  1.40367e+00,  1.12690,      1.0 }; 
-  //  ==================================================================
-
-  // ================ systematics for MELA ==========================
-  double slope_syst[numPtmp] ={4.71836e-01, 1.17671e-01, -3.81680e-01, -1.20481, -1.21944, -2.06928, -1.35337, 0.0 };
-  double yIntr_syst[numPtmp] ={6.83860e-01, 9.38454e-01, 1.12690,      1.24502,  1.72764,  2.11050,  1.52771,  1.0 }; 
-  //==================================================================
-
-  double slope[numPoints], yIntr[numPoints];
-
-  if(makePSTemplate){
-    for(int ib=0;ib<numPoints;ib++){
-      low[ib]=lowBinsPS[ib];
-      high[ib]=highBinsPS[ib];
-      slope[ib]=slopePS_syst[ib];
-      yIntr[ib]=yIntrPS_syst[ib];
-    }
-  }
-  else{
-    for(int ib=0;ib<numPoints;ib++){
-      low[ib]=lowBins[ib];
-      high[ib]=highBins[ib];
-      slope[ib]=slope_syst[ib];
-      yIntr[ib]=yIntr_syst[ib];
-    }
-  }
-
-
-  for(int i=1; i<=temp->GetNbinsX(); i++){
-    point = -1;
-
-    // choose correct scale factor
-    for(int p=0; p<numPoints; p++){
-      //float m=(i*2.+101.); // NA: This is the center of bin i+1 and not of bin i... why?
-      float m=temp->GetBinCenter(i+1); 
-      if( m>=low[p] && m<high[p] ){
-	point = p;
-      }
-    }
-    if(point == -1){
-      cout << "ERROR: could not find correct scale factor"<< endl;
-      return histoPair;
-    }
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-
-      oldTempValue = temp->GetBinContent(i,j);
-      newTempValue = oldTempValue*(slope[point]*(double)j/30.+yIntr[point]);
-      tempUp->SetBinContent(i,j,newTempValue);
-      newTempValue = oldTempValue*(-slope[point]*(double)j/30.+2.-yIntr[point]);
-      tempDn->SetBinContent(i,j,newTempValue);
-
-    }// end loop over Y bins
-
-    // -------------- normalize mZZ slice ----------------
-
-    double norm_up=(tempUp->ProjectionY("temp",i,i))->Integral();
-    double norm_dn=(tempDn->ProjectionY("temp",i,i))->Integral();
-
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      tempUp->SetBinContent(i,j,tempUp->GetBinContent(i,j)/norm_up);
-      tempDn->SetBinContent(i,j,tempDn->GetBinContent(i,j)/norm_dn);
-
-    }
-
-    // ---------------------------------------------------
-
-  }// end loop over X bins
-
-  histoPair.first  = tempUp;
-  histoPair.second = tempDn;
-
-  return histoPair;
-
-}
-
-//=======================================================================
-TH2F* reweightForInterference(TH2F* temp){
-
-  cout << "reweightForInterference" << endl;
-
-  // for interference reweighting of MELA
-  TF1* reweightFunc =0;
-
-  if(makePSTemplate){// or makeAltSignal
-  // ===================================================
-  // for interference reweighting of pseudo-MELA
-    reweightFunc = new TF1("reweightFunc","([0]+[1]*(x-110) )*0.5*(1 + TMath::Erf([2]*(x -[3]) ))*0.5*(1 + TMath::Erf([4]*([5]-x) ))  ",100,200);
-    
-    reweightFunc->SetParameter(0,-5.66409e-01);
-    reweightFunc->SetParameter(1, 1.22591e-02);
-    reweightFunc->SetParameter(2, 1.64942e+00);
-    reweightFunc->SetParameter(3, 1.10080e+02);
-    reweightFunc->SetParameter(4, 2.10905e+00);
-    reweightFunc->SetParameter(5, 1.78529e+02);
-    //  ==================================================== 
-  }
-  else{
-    reweightFunc =new TF1("reweightFunc","gaus",100,1000);
-    
-    reweightFunc->SetParameter(0,0.354258);
-    reweightFunc->SetParameter(1,114.909);
-    reweightFunc->SetParameter(2,17.1512);
-  }
-
-  TH2F* newTemp = new TH2F(*temp);
-  
-  // ---------------------
-  // functions for scaling
-  // ---------------------
-  
-  double oldTempValue=0;
-  double newTempValue=0;
-
-  double slope;
-
-  for(int i=1; i<=temp->GetNbinsX(); i++){
-
-    // choose correct scale factor
-
-    // for reweighting MELA
-    if(makePSTemplate || i>8){
-      slope=reweightFunc->Eval((double)((i-1)*2+101));
-    }
-    else      slope=.354;
-     
-
-    /* ==============================================
-    // for reweighting pseudo-MELA
-    slope = reweightFunc->Eval((double)((i-1)*2+101));
-    ============================================== */
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      oldTempValue = temp->GetBinContent(i,j);
-      newTempValue = oldTempValue*(1+slope*((double)j/30.-.5));
-      newTemp->SetBinContent(i,j,newTempValue);
-
-    }// end loop over Y bins
-
-    // -------------- normalize mZZ slice ----------------
-
-    double norm=(newTemp->ProjectionY("temp",i,i))->Integral();
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      newTemp->SetBinContent(i,j,newTemp->GetBinContent(i,j)/norm);
-
-    }
-
-    // ---------------------------------------------------
-
-  }// end loop over X bins
-
-  return newTemp;
 
 }

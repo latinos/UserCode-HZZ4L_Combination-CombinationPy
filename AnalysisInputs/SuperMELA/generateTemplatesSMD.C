@@ -46,16 +46,16 @@ Mela* myMELA; //used if recompute is true
 const int mH=125;
 const float mzzCutLow=105;
 const float mzzCutHigh=140;
-const int useSqrts=1;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "graviLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "MEtemplates2D_smd_7TeV_ntran_gravi121108v2/"; //it must already exist !
-bool doME = true;
-TString meName = "graviME"; // name of KD branch to be used: "pseudoLD" or "graviLD"
+const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
+TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
+const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_NOIntRew/"; //it must already exist !
 bool makePSTemplate = true;
 bool makeAltSignal = true;
 const float melaCut=-1.0; //if negative, it is deactivated
 const bool applyInterferenceRew=false;
-string fInterferenceName="./1DinterferenceReweight_125to126_v3.root";
+string fInterferenceName="./1DinterferenceReweight.root";
+TString melaCutName = melaName; //distinction btw LD and mela needed because 
+                               //we might want both psMELA (for 2D template) and MELA (for cut)
 //-----
 
 
@@ -251,7 +251,7 @@ void makePlot1D( TH1 *h ,TString label ){
   h->GetYaxis()->SetTitleOffset(1.15);
   h->SetLineWidth(2);
   h->Draw("HIST");
-    c1D->SaveAs((destDir+"/can_template1D_SuperMELA_"+label+".eps").Data());
+  c1D->SaveAs(("can_template1D_SuperMELA_"+label+".root").Data());
   delete c1D;
 }
 
@@ -269,7 +269,7 @@ void makePlot2D( TH2 *h ,TString label ){
   h->GetYaxis()->SetLabelSize(0.035);
   h->GetYaxis()->SetTitleOffset(1.15);
   h->Draw("col");
-    c2D->SaveAs((destDir+"/can_template_SMDvsPSD_"+label+".eps").Data());
+  c2D->SaveAs(("can_template_SMDvsPSD_"+label+".root").Data());
   delete c2D;
 }
 
@@ -293,7 +293,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
   //An error is issued on missing files; if a single file is missing in one set it can be safely ignored.
 
   string suffix="_withSMD_doubleCBonly.root";
-    if (doME){ suffix="_withSMD_doubleCBonly_ME.root"; }
+
   if(sampleIndex==0){
     //7TeV
     if(useSqrts==1)bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H"+strM+suffix);
@@ -349,10 +349,10 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
-      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGravH"+strM+""+suffix);
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_graviH"+strM+""+suffix);
     }
     else{   //8TeV
-      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGravH"+strM+""+suffix);
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_graviH"+strM+""+suffix);
     }
   }
   else if (sampleIndex==5){
@@ -388,31 +388,24 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   // // bkgMC->ls();
 
   float mzz,KD,KD_cut,w=0;
-    double KDME;
   double sKD;
   float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
   float pt4l=0, Y4l=0;
   float psig=0, pbkg=0;
   
   
-  //distinction btw LD and mela needed because we might want 
-  //both psMELA (for 2D template) and MELA (for cut)
-
-  TString melaCutName = melaName;  
   
   bool cutSameVar=false;
   bkgMC->SetBranchAddress(melaName.Data(),&KD);
-
   if (melaName!=melaCutName) {
     bkgMC->SetBranchAddress(melaCutName.Data(),&KD_cut);
   }
- else {
+  else {
    //    KD_cut=KD;
    cutSameVar=true;
    // bkgMC->SetBranchAddress(melaName.Data(),&KD_cut);
   }
   
-    bkgMC->SetBranchAddress(meName.Data(),&KDME);
 
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
@@ -454,8 +447,8 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   TH1F *hInterfRewX=0,*hInterfRewY=0;
   TFile *fInterfRew=0;
   if(applyInterferenceRew){
-    if((sampleIndex==0||sampleIndex==3||sampleIndex==4)){
-       //       && (channel=="4mu" || channel=="4e")){
+    if((sampleIndex==0||sampleIndex==3||sampleIndex==4)
+       && (channel=="4mu" || channel=="4e")){
 
       string curPath=gDirectory->GetPath();
       //  cout<<"Current Path is "<<curPath.c_str()<<endl;
@@ -478,16 +471,6 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	cout<<"Error from fillTemplate: unrecognized variable name -> "<<melaName.Data()<<endl;
 	hIntNameY+="unknownVar";
       }
-
-      string strSqrt="7TeV";
-      if(useSqrts==2)strSqrt="8TeV";
-      hIntNameX+="_"+strSqrt;
-      hIntNameY+="_"+strSqrt;
-
-      string strChan=channel.Data();
-      hIntNameX+="_"+strChan;
-      hIntNameY+="_"+strChan;
-
       hInterfRewX=(TH1F*)fInterfRew->Get(hIntNameX.c_str());
       hInterfRewY=(TH1F*)fInterfRew->Get(hIntNameY.c_str());
       gDirectory->cd(curPath.c_str());
@@ -524,15 +507,15 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	cout << "Y4l: " << Y4l << endl;
 	*/
 
-//	myMELA->computeKD(mzz,m1,m2,
-//			  costhetastar,
-//			  costheta1,
-//			  costheta2,
-//			  phi,
-//			  phi1,
-//			  KD,psig,pbkg,
-//			  withPt_,pt4l,
-//			  withY_, Y4l);
+	myMELA->computeKD(mzz,m1,m2,
+			  costhetastar,
+			  costheta1,
+			  costheta2,
+			  phi,
+			  phi1,
+			  KD,psig,pbkg,
+			  withPt_,pt4l,
+			  withY_, Y4l);
 	
 	//cout << "LD: " << LD << endl;
 	
@@ -542,8 +525,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	w*=calcInterfRew(hInterfRewX,sKD);//reweight in the supermela direction
 	w*=calcInterfRew(hInterfRewY,KD);//reweight in the sig sep KD direction
       }
-     if (doME){ bkgHist->Fill(sKD,KDME,w); }
-     else{ bkgHist->Fill(sKD,KD,w); }
+      bkgHist->Fill(sKD,KD,w);
       //   bkgHist->Fill(mzz,KD,w);
 
     }
@@ -608,10 +590,10 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
   float mzz=-1.0,mela=-444.0,w=0;
   double LD=-999.;
   char yVarName[32];
-  sprintf(yVarName,"ZZLD");
+
+
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("ZZLD",&mela);
-  //  bkgMC->SetBranchAddress(yVarName,&LD);
   bkgMC->SetBranchAddress("superLD",&LD);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
 
@@ -730,15 +712,10 @@ void makeTemplate(TString channel){
   // alternative signal template
 
   if (makeAltSignal) {
-
-    int altSampleType=100;
-    if( melaName == "pseudoLD")altSampleType=3;
-    else   if( melaName == "graviLD")altSampleType=4;
-    else altSampleType=99;
-    low = fillTemplate(channel,altSampleType,"superLD","sigHistoALT",true);
+    low = fillTemplate(channel,3,"superLD","sigHistoALT",true);
     //    high = fillTemplate(channel,3,false);
     h_mzzD =   (TH2F*)low->Clone("h_mzzD");// mergeTemplates(low,high);
-    h_D = fillKDhisto(channel,altSampleType,mzzCutLow,mzzCutHigh,true);//last two are cuts on mZZ
+    h_D = fillKDhisto(channel,3,mzzCutLow,mzzCutHigh,true);//last two are cuts on mZZ
     // ---------- apply interference reweighting --------
   
     oldTemp = new TH2F(*h_mzzD);
@@ -760,9 +737,9 @@ void makeTemplate(TString channel){
     h_D->Write("h_superD");
     
     //---- systematics for alternative signal
-    h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,altSampleType,"superLD_syst1Up","sigHistoALT_syst1Up",true);
-    h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,altSampleType,"superLD_syst1Down","sigHistoALT_syst1Down",true);
-    h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,altSampleType,"superLD_syst2Up","sigHistoALT_syst2Up",true);
+    h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,3,"superLD_syst1Up","sigHistoALT_syst1Up",true);
+    h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,3,"superLD_syst1Down","sigHistoALT_syst1Down",true);
+    h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,3,"superLD_syst2Up","sigHistoALT_syst2Up",true);
     h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
     h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
     h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
