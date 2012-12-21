@@ -425,12 +425,12 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   }
   
 
-
-  const int nbinsY=(melaName=="pseudoLD"? nbinsYps : nbinsYgrav);
+  bool usePseudoLDbin=melaName.Contains("pseudo");
+  const int nbinsY=(usePseudoLDbin? nbinsYps : nbinsYgrav);
   float binsY[nbinsY+1];
   for(int ib=0;ib<=nbinsY;ib++){
-    if(melaName=="pseudoLD") binsY[ib]=binsYps[ib];
-    if(melaName=="graviLD") binsY[ib]=binsYgrav[ib];
+    if(usePseudoLDbin) binsY[ib]=binsYps[ib];
+    else binsY[ib]=binsYgrav[ib];
   }
   TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
   // TH2F* bkgHist = new TH2F(templateName,templateName,50,0.0,1.0,25,0.0,1.0);
@@ -465,8 +465,8 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
       string hIntNameY=hIntNameX;
       hIntNameX+="superMELA";
-      if(melaName=="pseudoLD")hIntNameY+="pseudoMELA";
-      else  if(melaName=="graviLD")hIntNameY+="graviMELA";
+      if(melaName.Contains("pseudo"))hIntNameY+="pseudoMELA";
+      else  if(melaName.Contains("gravi"))hIntNameY+="graviMELA";
       else{
 	cout<<"Error from fillTemplate: unrecognized variable name -> "<<melaName.Data()<<endl;
 	hIntNameY+="unknownVar";
