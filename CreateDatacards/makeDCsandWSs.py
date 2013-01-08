@@ -5,11 +5,11 @@
 #-----------------------------------------------
 import sys, os, pwd, commands
 import optparse, shlex, re
-import math, warnings
+import math
 from ROOT import *
 import ROOT
 from array import array
-from datacardClass import *
+from mainClass import *
 from inputReader import *
 
 #define function for parsing options
@@ -26,7 +26,6 @@ def parseOptions():
     parser.add_option('-t', '--templateDir', type='string', dest='templateDir', default="templates2D" ,help='directory with 2D template histos')
     parser.add_option('-e', '--massError',   dest='massError',       type='int',    default=0,     help='massError (default:0)')
     parser.add_option('-u', '--mekd',   dest='mekd',       type='int',    default=0,     help='mekd double gaussian inputs (default:0)')
-    parser.add_option("-m", '--forMassMeasurement', dest='forMassMeasurement', type='int', default=0, help='forMassMeasurement (defult:0), larger mass window')
 
     
     # store options and arguments as global variables
@@ -44,6 +43,7 @@ def parseOptions():
     if (opt.inputDir == ''):
         print 'Please pass an input directory! Exiting...'
         sys.exit()
+
 
 
     
@@ -77,21 +77,16 @@ def creationLoop(directory):
 #    stepSizes=[ 0.5, 0.5, 2.0, 5.0, 10.0, 20.0, 50.0 ]
 #    endVal=[ 60, 40, 65, 12, 5, 10, 9 ]
 
-    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0, 290.0, 350.0, 400.0, 600.0 ]
-    stepSizes=[ 0.5, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0 ]
-    endVal=[ 29, 20, 7,  30, 65, 12, 5, 10, 9 ]
-
-#    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0]
-#    stepSizes=[   0.5,   0.1,   0.5,   1.0,   2.0]
-#    endVal=[       29,    20,     7,    30,    11]
+#    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0, 290.0, 350.0, 400.0, 600.0 ]
+#    stepSizes=[ 0.5, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0 ]
+#    endVal=[ 29, 20, 7,  30, 65, 12, 5, 10, 9 ]
 
 
     startMass=[ 125.0 ]
     stepSizes=[ 0.5 ]
-    endVal=[ 3 ]
+    endVal=[ 1 ]
 
-    myClass = datacardClass()
-    myClass.loadIncludes()
+    myClass = mainClass()
     
     myReader4e = inputReader(opt.inputDir+"/inputs_4e.txt")
     myReader4e.readInputs()
@@ -105,9 +100,7 @@ def creationLoop(directory):
     myReader2e2mu.readInputs()
     theInputs2e2mu = myReader2e2mu.getInputs()
 
-    if(opt.mekd == 1):
-        warnings.warn("MEKD will be used instead of MELA!!!")
-            
+    
     a=0
     while (a < len(startMass) ):
 	
@@ -122,9 +115,9 @@ def creationLoop(directory):
             makeDirectory(directory+'/HCG_XSxBR/'+mhs)
 
             print mh
-            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4e,opt.templateDir, opt.massError, opt.mekd, opt.forMassMeasurement)
-            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs4mu,opt.templateDir,opt.massError, opt.mekd, opt.forMassMeasurement)
-            myClass.makeCardsWorkspaces(mh,opt.is2D,directory,theInputs2e2mu,opt.templateDir,opt.massError, opt.mekd, opt.forMassMeasurement)
+            myClass.makeCardsWorkspaces(mh,directory,theInputs4e,opt.templateDir,opt.massError,opt.is2D,opt.mekd)
+            myClass.makeCardsWorkspaces(mh,directory,theInputs4mu,opt.templateDir,opt.massError,opt.is2D,opt.mekd)
+            myClass.makeCardsWorkspaces(mh,directory,theInputs2e2mu,opt.templateDir,opt.massError,opt.is2D,opt.mekd)
                           
             c += 1
             
