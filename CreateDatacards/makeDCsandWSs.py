@@ -91,9 +91,9 @@ def creationLoop(directory):
 #    stepSizes=[ 0.5 ]
 #    endVal=[ 1 ]
  
-    startMass=  [ 110.0 ]
+    startMass=  [ 141.0 ]
     stepSizes=  [  1.0]
-    endVal=     [   31]
+    endVal=     [   20]
 
     myClass = datacardClass()
     myClass.loadIncludes()
