@@ -19,13 +19,13 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  1.46914
 rate ggZZ  0.146023
-rate zjets 3.0 
+rate zjets 0.03
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
 signalShape alpha_CB (-19.1247)+(0.511858*@0)+(-0.00507084*@0*@0)+(2.40314e-05*@0*@0*@0)+(-5.4294e-08*@0*@0*@0*@0)+(4.70018e-11*@0*@0*@0*@0*@0)
 signalShape alpha2_CB (2.83488)+(-0.0208357*@0)+(8.703e-05*@0*@0)
-signalShape n_CB TMath::Max((-80.2755)+(1.92682*@0)+(-0.0163889*@0*@0)+(6.61152e-05*@0*@0*@0)+(-1.29134e-07*@0*@0*@0*@0)+(9.86492e-11*@0*@0*@0*@0*@0),1)
+signalShape n_CB (-80.2755)+(1.92682*@0)+(-0.0163889*@0*@0)+(6.61152e-05*@0*@0*@0)+(-1.29134e-07*@0*@0*@0*@0)+(9.86492e-11*@0*@0*@0*@0*@0)
 signalShape n2_CB (20)
 signalShape mean_CB (7.74041)+(-0.1993*@0)+(0.00199694*@0*@0)+(-1.00463e-05*@0*@0*@0)+(2.46727e-08*@0*@0*@0*@0)+(-2.33501e-11*@0*@0*@0*@0*@0)
 signalShape sigma_CB (-32.5568)+(0.867983*@0)+(-0.00861782*@0*@0)+(4.13108e-05*@0*@0*@0)+(-9.4314e-08*@0*@0*@0*@0)+(8.23655e-11*@0*@0*@0*@0*@0)
@@ -36,6 +36,7 @@ highmasssignalShape n2_CB (20)
 highmasssignalShape mean_CB (82.1279)+(-0.457539*@0)+(0.000816838*@0*@0)+(-4.6665e-07*@0*@0*@0)
 highmasssignalShape sigma_CB (41.2978)+(-0.237919*@0)+(0.000343944*@0*@0)+(-1.18454e-08*@0*@0*@0)
 highmasssignalShape gamma_BW TMath::Max((59.6861)+(-0.59096*@0)+(0.00169122*@0*@0)+(-1.05572e-06*@0*@0*@0),30)
+
 ## signal efficiency ##
 signalEff a1  -4.42615
 signalEff a2  4.61366
@@ -48,42 +49,48 @@ signalEff g1  0.0198211
 signalEff g2  193.483
 signalEff g3  20
 
+## signal efficiency ratios ##
+signalEff tagged_ggH_ratio 0.0549528+(0.000485766*@0)+(-2.10166e-07*@0*@0)
+signalEff tagged_qqH_ratio 0.558534+(-0.000110704*@0)+(6.9275e-08*@0*@0)
+signalEff tagged_ZH_ratio -0.181605+(0.00298109*@0)
+signalEff tagged_WH_ratio 0.119374+(0.00204737*@0)
+signalEff tagged_ttH_ratio 0.905145+(0.000498149*@0)
 
 ### background functions ###
-qqZZshape a0_bkgd   7.22235
-qqZZshape a1_bkgd   186.631
-qqZZshape a2_bkgd   199.887
-qqZZshape a3_bkgd   0.188742
-qqZZshape a4_bkgd   199.328
-qqZZshape a5_bkgd   44.1768
-qqZZshape a6_bkgd   37.8069
-qqZZshape a7_bkgd   0.790323
-qqZZshape a8_bkgd   92.5468
-qqZZshape a9_bkgd   0.524415
-qqZZshape a10_bkgd  2.38621
-qqZZshape a11_bkgd  -13.385
-qqZZshape a12_bkgd  12.9399
-qqZZshape a13_bkgd  0.325621
+qqZZshape a0_bkgd   111.163
+qqZZshape a1_bkgd   11.9998
+qqZZshape a2_bkgd   117.557
+qqZZshape a3_bkgd   0.0425536
+qqZZshape a4_bkgd   185.145
+qqZZshape a5_bkgd   10.2669
+qqZZshape a6_bkgd   29.4708
+qqZZshape a7_bkgd   0.0839434
+qqZZshape a8_bkgd   53.3706
+qqZZshape a9_bkgd   0.0913265
+qqZZshape a10_bkgd  85.5325
+qqZZshape a11_bkgd  -13.5325
+qqZZshape a12_bkgd  51.9443
+qqZZshape a13_bkgd  0.329923
 
 
-ggZZshape a0_bkgd  140.41
-ggZZshape a1_bkgd  31.7174
-ggZZshape a2_bkgd  141.807
-ggZZshape a3_bkgd  0.0319682
-ggZZshape a4_bkgd  184.778
-ggZZshape a5_bkgd  9.69242
-ggZZshape a6_bkgd  36.5453
-ggZZshape a7_bkgd  0.155523
-ggZZshape a8_bkgd  63.538
-ggZZshape a9_bkgd  0.0749434
+ggZZshape a0_bkgd  143.198
+ggZZshape a1_bkgd  42.5313
+ggZZshape a2_bkgd  129.357
+ggZZshape a3_bkgd  0.0316705
+ggZZshape a4_bkgd  185.015
+ggZZshape a5_bkgd  12.0895
+ggZZshape a6_bkgd  36.9175
+ggZZshape a7_bkgd  0.1699
+ggZZshape a8_bkgd  57.0365
+ggZZshape a9_bkgd  0.0678273
 
-zjetsShape mean 143.1
-zjetsShape sigma 19.9
+zjetsShape mean 132.8
+zjetsShape sigma 16.2
 
 
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.5
-systematic zjetKappaHigh  2.0
+systematic zjetKappaHigh  1.9
 systematic param CMS_zz4l_mean_m_sig   0.001
 systematic param CMS_zz4l_sigma_m_sig  0.2
 systematic param CMS_zz4l_mean_e_sig   0.002
@@ -133,25 +140,23 @@ systematic CMS_zz4l_gamma True
 ### for hypothesis testing ###
 doHypTest False
 #altHypLabel _ALT
+
 ### for VBF fraction ###
 useCMS_zz4l_doVBFtest True
-useCMS_zz4l_Fisher_sys False
-useCMS_zz4l_PToverM_sys False
+useCMS_zz4l_Fisher_sys True
+useCMS_zz4l_PToverM_sys True
 
-signalEff tagged_ggH_ratio 0.112823
-signalEff tagged_qqH_ratio 0.545685
-signalEff tagged_ZH_ratio 0.194013
-signalEff tagged_WH_ratio 0.377342
-signalEff tagged_ttH_ratio 0.967912
+systematic param QCD_scale_ggH_2j_sys 0.3
+systematic param QCD_scale_qqH_2j_sys 0.1
 
-### pToverM shapes systematic boolians###
-systematic CMS_zz4l_ggH_PToverM_Resummation False
-systematic CMS_zz4l_ggH_PToverM_TopMass False
-systematic CMS_zz4l_vbf_PToverM_PDF False
-systematic CMS_zz4l_vbf_PToverM_Scale False
-systematic CMS_zz4l_zz_PToverM_PDF False
-systematic CMS_zz4l_zz_PToverM_Scale False
-systematic CMS_zz4l_zz_PToverM_SingleZ False
+
+## signal efficiency ratios ##
+signalEff tagged_ggH_ratio 0.0549528+(0.000485766*@0)+(-2.10166e-07*@0*@0)
+signalEff tagged_qqH_ratio 0.558534+(-0.000110704*@0)+(6.9275e-08*@0*@0)
+signalEff tagged_ZH_ratio -0.181605+(0.00298109*@0)
+signalEff tagged_WH_ratio 0.119374+(0.00204737*@0)
+signalEff tagged_ttH_ratio 0.905145+(0.000498149*@0)
+
 
 
 signalShape mekd_sig_a0  TMath::Max(7.43+(-0.2505)*sqrt(@0-100)+(0.04581)*(@0-100),0)

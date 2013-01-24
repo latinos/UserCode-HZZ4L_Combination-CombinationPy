@@ -23,10 +23,11 @@ for d in $(ls .); do echo $d; cp <path to other HCG>/HCG/$d/* $d; done to cp all
 where massfile can be masses.txt or the like which contains a list of masses to be processed,
 (Remember it only works if you list masses that you created cards for :-) )
 and sqrts 
-== 7 for 7 TeV only (only cp HCG/$masses for 7 TeV cards)
-== 8 for 8 TeV only (only cp HCG/$masses for 8 TeV cards)
+== 7 for 7 TeV only (only cp HCG/$masses for 7 TeV cards without tagging categories)
+== 8 for 8 TeV only (only cp HCG/$masses for 8 TeV cards without tagging categories)
 == 0 for 7+8 TeV (cp -r HCG for the 7 TeV cards and then do 'for i in $(cat <massfile>); do echo $i; cp <path to 8 TeV HCG>/$i/* $i/; done' )
 == -1 for 7+8+2l2tau cards (same idea as for 0)
+== -2 for 7+8TeV with tagging cards (same idea as for 0)
 
 
 ############################# Running in Batch Mode ##################################

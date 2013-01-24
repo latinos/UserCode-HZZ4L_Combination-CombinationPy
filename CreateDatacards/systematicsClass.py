@@ -554,12 +554,12 @@ class systematicsClass:
         theFile.write("CMS_zz4l_sigMELA param 0  1  [-3,3]\n")
 
     def Write_CMS_zz4l_Jet_Split(self,theFile,theInputs,theVBFcat=False):
-        theFile.write("QCD_scale_ggH_2j lnN ")
+        theFile.write("QCDscale_ggH_2j lnN ")
 
         if theVBFcat:
             systLine={'ggH':"{0:.3f} ".format(1+self.QCD_scale_ggH_2j_sys)}
         else:
-            systLine={'ggH':"{0:.3f} ".format(1-self.QCD_scale_ggH_2j_sys)}
+            systLine={'ggH':"- "}
         systLine['qqH']  = "- "
         systLine['WH']   = "- " 
         systLine['ZH']   = "- "
@@ -572,13 +572,13 @@ class systematicsClass:
         
         self.Write_Systematics_Line(systLine,theFile,theInputs)
 
-        theFile.write("QCD_scale_qqH_2j lnN ")
+        theFile.write("QCDscale_qqH_2j lnN ")
 
         systLine={'ggH':"- "}
         if theVBFcat:
             systLine['qqH']  = "{0:.3f} ".format(1+self.QCD_scale_qqH_2j_sys)
         else:
-            systLine['qqH']  = "{0:.3f} ".format(1-self.QCD_scale_qqH_2j_sys)
+            systLine['qqH']  = "- "
         systLine['WH']   = "- " 
         systLine['ZH']   = "- "
         systLine['ttH']  = "- "
@@ -610,7 +610,7 @@ class systematicsClass:
         theFile.write("CMS_zz4l_ggZZ_PToverM_sys param 0  1  [-3,3]\n")
         theFile.write("CMS_zz4l_ZX_PToverM_sys param 0  1  [-3,3]\n")
     
-    def WriteSystematics(self,theFile,theInputs, theVBFcat=False):
+    def WriteSystematics(self,theFile,theInputs, theVBFcat=False, theUse3D=False):
 
         if theInputs['useLumiUnc']:
             self.Build_lumi(theFile,theInputs)
@@ -680,10 +680,10 @@ class systematicsClass:
         if theInputs['useCMS_zz4l_doVBFtest']:
             self.Write_CMS_zz4l_Jet_Split(theFile,theInputs, theVBFcat)
 
-        if (theVBFcat and theInputs['useCMS_zz4l_Fisher_sys']):
+        if (theVBFcat and theUse3D and theInputs['useCMS_zz4l_Fisher_sys']):
             self.Write_CMS_zz4l_Fisher_sys(theFile,theInputs)
             
-        if (not theVBFcat and theInputs['useCMS_zz4l_PToverM_sys']):
+        if (not theVBFcat and theUse3D and theInputs['useCMS_zz4l_PToverM_sys']):
             self.Write_CMS_zz4l_PToverM_sys(theFile,theInputs)
             
 

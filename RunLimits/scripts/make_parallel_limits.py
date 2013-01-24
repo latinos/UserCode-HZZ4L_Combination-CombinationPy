@@ -63,7 +63,7 @@ def submit():
         
         cmd = ""
         if opt.scheduler == "lsf" :
-            cmd = "bsub -q 1nh -o "+str(f[0])+"/lsflog_"+opt.method+".txt makeLimits.lsf.sh "+opt.method+" "+str(f[0])+" "+opt.tool+" "+opt.options
+            cmd = "bsub -q 2nw -o "+str(f[0])+"/lsflog_"+opt.method+".txt makeLimits.lsf.sh "+opt.method+" "+str(f[0])+" "+opt.tool+" "+opt.options
         elif opt.scheduler == "pbs" :
             cmd = "qsub makeLimits.pbs.sh -v MASS="+str(f[0])+",TYPE="+opt.method+",OPTIONS="+opt.options+",TOOL="+opt.tool+" -N \""+opt.method+"_"+str(f[0])+"\""
         processCmd(cmd)

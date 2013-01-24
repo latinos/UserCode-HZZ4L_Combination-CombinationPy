@@ -37,8 +37,8 @@ def parseOptions():
         print 'The input '+opt.is2D+' is unkown for is2D.  Please choose 0 or 1. Exiting...'
         sys.exit()
 
-    if (opt.useJET != 0 and opt.useJET != 1):
-        print 'The input '+opt.useJET+' is unkown for useJET.  Please choose 0 or 1. Exiting...'
+    if (opt.useJET != 0 and opt.useJET != 1 and opt.useJET != 2 and opt.useJET != 3 and opt.useJET != 4):
+        print 'The input '+opt.useJET+' is unkown for useJET.  Please choose 0(no) or 1(yes) (or 2 for 2D-untagged & 3D-tagged or 3 for 2D-tagged & 3D-untagged or 4 for 2D but tagged). Exiting...'
         sys.exit()
 
     if (opt.appendName == ''):
@@ -91,9 +91,9 @@ def creationLoop(directory):
 #    stepSizes=[ 0.5 ]
 #    endVal=[ 1 ]
  
-    startMass=  [ 141.0 ]
-    stepSizes=  [  1.0]
-    endVal=     [   20]
+    startMass=  [ 126.0, 135.0]
+    stepSizes=  [  1.0, 1.0]
+    endVal=     [  1, 1]
 
     myClass = datacardClass()
     myClass.loadIncludes()
@@ -111,7 +111,7 @@ def creationLoop(directory):
         myReader2e2mu.readInputs()
         theInputs2e2mu = myReader2e2mu.getInputs()
 
-    if (opt.useJET == 1):
+    if (opt.useJET == 1 or opt.useJET == 2 or opt.useJET == 3 or opt.useJET == 4):
         myReader4e_0 = inputReader(opt.inputDir+"_tagged/inputs_4e_0.txt")
         myReader4e_0.readInputs()
         theInputs4e_0 = myReader4e_0.getInputs()
@@ -158,13 +158,47 @@ def creationLoop(directory):
             if (opt.useJET == 1):
                 makeDirectory(directory+'_tagged/HCG/'+mhs)
                 makeDirectory(directory+'_tagged/HCG_XSxBR/'+mhs)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_0,opt.templateDir, opt.massError, opt.mekd,0)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_0,opt.templateDir,opt.massError, opt.mekd,0)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_0,opt.templateDir,opt.massError, opt.mekd,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_0,opt.templateDir, opt.massError, opt.mekd,0,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_0,opt.templateDir,opt.massError, opt.mekd,0,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_0,opt.templateDir,opt.massError, opt.mekd,0,1)
                 
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_1,opt.templateDir, opt.massError, opt.mekd,1)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_1,opt.templateDir,opt.massError, opt.mekd,1)
-                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_1,opt.templateDir,opt.massError, opt.mekd,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_1,opt.templateDir, opt.massError, opt.mekd,1,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_1,opt.templateDir,opt.massError, opt.mekd,1,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_1,opt.templateDir,opt.massError, opt.mekd,1,1)
+
+            if (opt.useJET == 2):
+                makeDirectory(directory+'_tagged/HCG/'+mhs)
+                makeDirectory(directory+'_tagged/HCG_XSxBR/'+mhs)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_0,opt.templateDir, opt.massError, opt.mekd,0,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_0,opt.templateDir,opt.massError, opt.mekd,0,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_0,opt.templateDir,opt.massError, opt.mekd,0,0)
+                
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_1,opt.templateDir, opt.massError, opt.mekd,1,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_1,opt.templateDir,opt.massError, opt.mekd,1,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_1,opt.templateDir,opt.massError, opt.mekd,1,1)
+
+            if (opt.useJET == 3):
+                makeDirectory(directory+'_tagged/HCG/'+mhs)
+                makeDirectory(directory+'_tagged/HCG_XSxBR/'+mhs)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_0,opt.templateDir, opt.massError, opt.mekd,0,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_0,opt.templateDir,opt.massError, opt.mekd,0,1)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_0,opt.templateDir,opt.massError, opt.mekd,0,1)
+                
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_1,opt.templateDir, opt.massError, opt.mekd,1,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_1,opt.templateDir,opt.massError, opt.mekd,1,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_1,opt.templateDir,opt.massError, opt.mekd,1,0)
+
+            if (opt.useJET == 4):
+                makeDirectory(directory+'_tagged/HCG/'+mhs)
+                makeDirectory(directory+'_tagged/HCG_XSxBR/'+mhs)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_0,opt.templateDir, opt.massError, opt.mekd,0,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_0,opt.templateDir,opt.massError, opt.mekd,0,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_0,opt.templateDir,opt.massError, opt.mekd,0,0)
+                
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4e_1,opt.templateDir, opt.massError, opt.mekd,1,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs4mu_1,opt.templateDir,opt.massError, opt.mekd,1,0)
+                myClass.makeCardsWorkspaces(mh,opt.is2D,directory+'_tagged',theInputs2e2mu_1,opt.templateDir,opt.massError, opt.mekd,1,0)
+                
             c += 1
             
 
@@ -189,7 +223,8 @@ def makeDCsandWSs():
     subdir = ['HCG','HCG_XSxBR','figs']
 
     for d in subdir:
-        if (opt.useJET == 1):
+        if (opt.useJET == 1 or opt.useJET == 2 or opt.useJET == 3 or opt.useJET == 4):
+            
             makeDirectory(dirName+'_tagged/'+d)
         else:
             makeDirectory(dirName+'/'+d)

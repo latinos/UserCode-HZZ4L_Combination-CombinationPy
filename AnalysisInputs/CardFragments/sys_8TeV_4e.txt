@@ -1,6 +1,6 @@
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.3
-systematic zjetKappaHigh  2.7
+systematic zjetKappaHigh  1.9
 systematic param CMS_zz4l_mean_e_sig   0.002
 systematic param CMS_zz4l_sigma_e_sig  0.2
 systematic param CMS_zz4l_n_sig 0.05
@@ -8,7 +8,7 @@ systematic param CMS_zz4l_gamma_sig 0.05
 
 
 ## 4e systematics ##
-systematic elec_full 0.085 0.055 180
+systematic elec_full 0.11 0.06 150
 systematic elec_trig 0.015
 
 ##### Add Systematic to Cards ####
