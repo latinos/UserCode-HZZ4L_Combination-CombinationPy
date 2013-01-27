@@ -92,7 +92,7 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   append("CardFragments/zjetRate_" + bkg_tagged, outfile);
   append("CardFragments/signalFunctions_" + sig_untagged, outfile);
   append("CardFragments/signalEfficiency_" + sig_untagged, outfile);
-  append("CardFragments/signalEfficiency_" + sig_untagged_ratio, outfile);
+  //append("CardFragments/signalEfficiency_" + sig_untagged_ratio, outfile);
   append("CardFragments/qqzzBackgroundFit_" + bkg_untagged, outfile);
   append("CardFragments/ggzzBackgroundFit_" + bkg_untagged, outfile);
   append("CardFragments/zjetShape_" + bkg_untagged, outfile);  

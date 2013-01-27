@@ -19,7 +19,7 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  14.1221
 rate ggZZ  0.943272
-rate zjets 1.9 
+rate zjets 1.6 
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -39,18 +39,62 @@ highmasssignalShape gamma_BW TMath::Max((-374.291)+(1.52069*@0)+(-0.00153017*@0*
 
 
 
-## signal efficiency ##
-signalEff a1  -4.43686
-signalEff a2  4.60315
-signalEff a3  -55.4535
-signalEff a4  103.292
-signalEff b1  1.86877
-signalEff b2  0.00416829
-signalEff b3  -2.40415e-06
-signalEff g1  0.0293254
-signalEff g2  193.342
-signalEff g3  39.086
 
+## signal efficiency ##
+signalEff a1  -4.43685
+signalEff a2  4.60316
+signalEff a3  -55.447
+signalEff a4  103.291
+signalEff b1  1.86842
+signalEff b2  0.00416757
+signalEff b3  -2.40374e-06
+signalEff g1  0.0293268
+signalEff g2  193.341
+signalEff g3  39.0873
+
+signalEff qqHa1  -4.28017
+signalEff qqHa2  4.74893
+signalEff qqHa3  -310.74
+signalEff qqHa4  335.928
+signalEff qqHb1  1.50623
+signalEff qqHb2  -0.00099529
+signalEff qqHb3  3.78651e-08
+signalEff qqHg1  0.0999999
+signalEff qqHg2  160.956
+signalEff qqHg3  45.7483
+
+signalEff ZHa1  -3.80737
+signalEff ZHa2  5.24294
+signalEff ZHa3  -201.856
+signalEff ZHa4  11.5504
+signalEff ZHb1  -47.1304
+signalEff ZHb2  1.13608
+signalEff ZHb3  -0.00417674
+signalEff ZHg1  0.1
+signalEff ZHg2  174.24
+signalEff ZHg3  20.2128
+
+signalEff WHa1  -4.4361
+signalEff WHa2  4.60103
+signalEff WHa3  -322.414
+signalEff WHa4  230.945
+signalEff WHb1  0.717097
+signalEff WHb2  0.00140767
+signalEff WHb3  4.01034e-05
+signalEff WHg1  0.0999994
+signalEff WHg2  160
+signalEff WHg3  24.283
+
+signalEff ttHa1  -4.44032
+signalEff ttHa2  4.59866
+signalEff ttHa3  -321.939
+signalEff ttHa4  56.3306
+signalEff ttHb1  1.73065
+signalEff ttHb2  -0.000443795
+signalEff ttHb3  9.35812e-06
+signalEff ttHg1  0.0999999
+signalEff ttHg2  207.785
+signalEff ttHg3  20.0836
 
 ### background functions ###
 qqZZshape a0_bkgd   109.538
@@ -136,8 +180,6 @@ signalShape mekd_sig_a3  8.318+(-0.126)*sqrt(@0-100)+(0.04021)*(@0-100)
 qqZZshape mekd_qqZZ_a3  6.384+(0.2569)*sqrt(@0-100)+(-0.0587)*(@0-100)
 signalShape mekd_sig_a4  TMath::Max(1.55+(0.04004)*sqrt(@0-100)+(-0.01475)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4  TMath::Max(3.003+(0.3404)*sqrt(@0-100)+(-0.05792)*(@0-100),0)
-
-
 RelErrShape relerr_zx_ld_mean 0.0294366
 RelErrShape relerr_zx_ld_sigma 0.00493466
 RelErrShape relerr_zx_gs_mean 0.0143977
@@ -153,3 +195,4 @@ RelErrShape relerr_ggH_ld_sigma 0.00175217
 RelErrShape relerr_ggH_gs_mean 0.0304213+(-6.52523e-05*@0)
 RelErrShape relerr_ggH_gs_sigma 0.00765059+(-2.27997e-05*@0)
 RelErrShape relerr_ggH_ld_frac 0.479963 
+

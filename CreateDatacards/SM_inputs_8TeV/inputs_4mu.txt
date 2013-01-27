@@ -6,7 +6,7 @@ model SM
 decay 4mu
 
 ## lumi ##
-lumi 12.21
+lumi 19.62
 systematic lumiUnc 1.044
 
 ## sqrtS ##
@@ -17,9 +17,9 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  57.0531
-rate ggZZ  3.11236
-rate zjets 2.1
+rate qqZZ  91.4642
+rate ggZZ  4.98883
+rate zjets 3.2
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -38,18 +38,62 @@ highmasssignalShape sigma_CB (151.967)+(-0.939938*@0)+(0.00173551*@0*@0)+(-8.266
 highmasssignalShape gamma_BW TMath::Max((-204.695)+(1.06734*@0)+(-0.00151823*@0*@0)+(7.88569e-07*@0*@0*@0),30)
 
 
-## signal efficiency ##
-signalEff a1  -4.43607
-signalEff a2  4.60478
-signalEff a3  -56.9354
-signalEff a4  100.846
-signalEff b1  2.62341
-signalEff b2  0.00445491
-signalEff b3  -2.49356e-06
-signalEff g1  0.0468083
-signalEff g2  188.518
-signalEff g3  36.7868
 
+## signal efficiency ##
+signalEff a1  -4.43812
+signalEff a2  4.60292
+signalEff a3  -55.5913
+signalEff a4  99.6663
+signalEff b1  2.68331
+signalEff b2  0.00451526
+signalEff b3  -2.52777e-06
+signalEff g1  0.0460499
+signalEff g2  188.662
+signalEff g3  36.9465
+
+signalEff qqHa1  -4.41811
+signalEff qqHa2  4.62362
+signalEff qqHa3  -109.979
+signalEff qqHa4  138.452
+signalEff qqHb1  3.34872
+signalEff qqHb2  0.000227761
+signalEff qqHb3  -1.85264e-06
+signalEff qqHg1  3.50091e-05
+signalEff qqHg2  160.231
+signalEff qqHg3  30.2313
+
+signalEff ZHa1  -4.16415
+signalEff ZHa2  4.86493
+signalEff ZHa3  -85.4453
+signalEff ZHa4  176.197
+signalEff ZHb1  13.0345
+signalEff ZHb2  -0.0929992
+signalEff ZHb3  0.000199491
+signalEff ZHg1  0.0996829
+signalEff ZHg2  199.684
+signalEff ZHg3  20.1652
+
+signalEff WHa1  -4.02583
+signalEff WHa2  5.01302
+signalEff WHa3  -124.983
+signalEff WHa4  56.1758
+signalEff WHb1  495.499
+signalEff WHb2  -3.89918
+signalEff WHb3  0.00749854
+signalEff WHg1  0.1
+signalEff WHg2  166.596
+signalEff WHg3  22.0719
+
+signalEff ttHa1  -3.97644
+signalEff ttHa2  5.0926
+signalEff ttHa3  -147.309
+signalEff ttHa4  288.122
+signalEff ttHb1  13.816
+signalEff ttHb2  -0.126345
+signalEff ttHb3  0.000310903
+signalEff ttHg1  0.0999152
+signalEff ttHg2  189.672
+signalEff ttHg3  21.3762
 
 ### background functions ###
 qqZZshape a0_bkgd   104.225
@@ -66,6 +110,7 @@ qqZZshape a10_bkgd  98.7645
 qqZZshape a11_bkgd  -7.05628
 qqZZshape a12_bkgd  10.8437
 qqZZshape a13_bkgd  0.0803183
+
 
 
 ggZZshape a0_bkgd  110.617
@@ -135,7 +180,6 @@ signalShape mekd_sig_a3  8.995+(-0.291)*sqrt(@0-100)+(0.05306)*(@0-100)
 qqZZshape mekd_qqZZ_a3  6.325+(-0.2508)*sqrt(@0-100)+(0.01977)*(@0-100)
 signalShape mekd_sig_a4  TMath::Max(1.198+(0.1424)*sqrt(@0-100)+(-0.03713)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4  TMath::Max(0.8201+(0.3365)*sqrt(@0-100)+(-0.002037)*(@0-100),0)
-
  RelErrShape  relerr_qqzz_ld_frac 0.29 
  RelErrShape  relerr_qqzz_ld_mean 0.0140019 
  RelErrShape  relerr_qqzz_ld_sigma 0.00127166 

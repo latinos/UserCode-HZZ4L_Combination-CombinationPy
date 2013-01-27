@@ -545,7 +545,7 @@ class datacardClass:
             VD = ROOT.RooRealVar(VD_name,VD_name,0,2)
             VD.setBins(50)
             ptoverm_name = "CMS_zz4l_PToverM"
-            ptoverm = ROOT.RooRealVar(ptoverm_name,ptoverm_name,0,4)
+            ptoverm = ROOT.RooRealVar(ptoverm_name,ptoverm_name,0,3)
             ptoverm.setBins(50)
 
             sig2d_ggH_Fisher = ROOT.RooProdPdf()

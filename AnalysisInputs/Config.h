@@ -38,14 +38,17 @@
 //TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR/";
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR_8TeV/";
 
-TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/241112/PRODFSR/";
-TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/241112/PRODFSR_8TeV/";
+//TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/241112/PRODFSR/";
+//TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/241112/PRODFSR_8TeV/";
+
+TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130120/PRODFSR/";
+TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130120/PRODFSR_8TeV/";
 
 // Luminosity, as float and as string to be used in file names, etc.
 double lumi7TeV = 5.051;
-double lumi8TeV = 12.21;
+double lumi8TeV = 19.62;
 TString lumistr7TeV = "5.051";
-TString lumistr8TeV = "12.21";
+TString lumistr8TeV = "19.62";
 
 
 // Location of output root files containing data events

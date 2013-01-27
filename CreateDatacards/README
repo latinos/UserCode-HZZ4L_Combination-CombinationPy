@@ -42,7 +42,7 @@ python makeDCsandWSs.py -i <input directory> -a <output name> -b > output.txt
 
 NEW INSTRUCTIONS:
 cvs co -P -r Stablev4 -d Testv4 UserCode/HZZ4L_Combination/CombinationPy
-cd Testv3/CreateDatacards
+cd Testv4/CreateDatacards
 cmsrel CMSSW_5_2_5
 cd CMSSW_5_2_5/src
 cvs co -r V02-06-00 HiggsAnalysis/CombinedLimit

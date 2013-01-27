@@ -1,12 +1,57 @@
 
 ## signal efficiency ##
-signalEff a1  -4.32199
-signalEff a2  4.71301
-signalEff a3  -113.382
-signalEff a4  173.829
-signalEff b1  0.764507
-signalEff b2  0.00175511
-signalEff b3  -1.01029e-06
-signalEff g1  0.0969598
-signalEff g2  166.418
-signalEff g3  45.1728
+signalEff a1  -4.31998
+signalEff a2  4.71499
+signalEff a3  -113.588
+signalEff a4  174.727
+signalEff b1  0.758092
+signalEff b2  0.00171606
+signalEff b3  -9.83752e-07
+signalEff g1  0.0978917
+signalEff g2  166.896
+signalEff g3  44.6801
+
+signalEff qqHa1  -4.24956
+signalEff qqHa2  4.78032
+signalEff qqHa3  -205.008
+signalEff qqHa4  265.543
+signalEff qqHb1  1.09143
+signalEff qqHb2  -0.000204835
+signalEff qqHb3  -3.77804e-07
+signalEff qqHg1  0.0999976
+signalEff qqHg2  164.112
+signalEff qqHg3  45.1793
+
+signalEff ZHa1  -3.57219
+signalEff ZHa2  5.44222
+signalEff ZHa3  -232.116
+signalEff ZHa4  480.232
+signalEff ZHb1  6.70374
+signalEff ZHb2  -0.0417045
+signalEff ZHb3  7.68385e-05
+signalEff ZHg1  0.0999743
+signalEff ZHg2  210
+signalEff ZHg3  27.0924
+
+signalEff WHa1  -4.43024
+signalEff WHa2  4.61333
+signalEff WHa3  -37.4571
+signalEff WHa4  96.5264
+signalEff WHb1  4.68368
+signalEff WHb2  -0.0311822
+signalEff WHb3  8.19559e-05
+signalEff WHg1  0.0999984
+signalEff WHg2  193.203
+signalEff WHg3  20.5785
+
+signalEff ttHa1  -4.10565
+signalEff ttHa2  4.92816
+signalEff ttHa3  -308.58
+signalEff ttHa4  38.397
+signalEff ttHb1  18.7536
+signalEff ttHb2  -0.271173
+signalEff ttHb3  0.00099252
+signalEff ttHg1  0.1
+signalEff ttHg2  160
+signalEff ttHg3  27.8377
+
