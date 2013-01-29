@@ -36,10 +36,11 @@
 //<----------
 
 //Parameters to choose which samples to examine
-//HCP option is useVBF,useVH = false and usedijet,usenondijet=true
+//HCP option is useggH=true, useVBF,useVH = false and usedijet,usenondijet=true
 bool debug = false;
+bool useggH = false;
 bool useVBF = false;
-bool useVH = false;
+bool useVH = true;
 bool usedijet = true;
 bool usenondijet = true;
 
@@ -61,6 +62,11 @@ void signalFits(){
 
   if (!usedijet && !usenondijet){
     cout << "Neither dijet tagging category was chosen. Please choose one or both." << endl;
+    abort();
+  }
+
+  if (!useggH && !useVBF && !useVH){
+    cout << "Please choose at least one production method: ggH, VBF, VH."<<endl;
     abort();
   }
 
@@ -111,17 +117,30 @@ void signalFits(int channel, int sqrts){
   for (int i=0;i<200;i++){
     masses[i]=-1;
   }
-  for (int i=0; i<nPointsggH; i++){
-    masses[i]=massesggH[i];
+  if (useggH){
+    for (int i=0; i<nPointsggH; i++){
+      masses[i]=massesggH[i];
+    }
+    nPoints=nPointsggH;
+  }else if(!useggH && useVBF){
+    for (int i=0; i<nPointsVBF; i++){
+      masses[i]=massesVBF[i];
+    }
+    nPoints=nPointsVBF;
+  }else if(!useggH && !useVBF && useVH){
+    for (int i=0; i<nPointsVH; i++){
+      masses[i]=massesVH[i];
+    }
+      nPoints=nPointsVH;
   }
-  nPoints=nPointsggH;
+
 
   bool flag=0;
   //If any mass points are in VBF/VH but not in ggH, this will include them
-  if (useVBF){
+  if (useggH && useVBF){
     for (int i=0; i<nPointsVBF; i++){
       flag=1;
-      for (int j=0; j<nPoints, j++){
+      for (int j=0; j<nPoints; j++){
 	if (massesVBF[i]==masses[j]) flag=0;
       }
       if (flag==1){
@@ -130,11 +149,11 @@ void signalFits(int channel, int sqrts){
       }
     }
   }
-  if (useVH){
+  if ((useggH || useVBF) && useVH){
     for (int i=0; i<nPointsVH; i++){
       flag=1;
-      for (int j=0; j<nPoints, j++){
-	if (massesVBF[i]==masses[j]) flag=0;
+      for (int j=0; j<nPoints; j++){
+	if (massesVH[i]==masses[j]) flag=0;
       }
       if (flag==1){
 	masses[nPoints]=massesVH[i];
@@ -173,32 +192,58 @@ void signalFits(int channel, int sqrts){
     if (debug && masses[i]!=126.) continue;
 		
     //Open input file with shapes and retrieve the tree
-    char tmp_finalInPathggH[200],tmp_finalInPathVBF[200],tmp_finalInPathVH[200];
+    char tmp_finalInPathggH[200],tmp_finalInPathVBF[200],tmp_finalInPathZH[200],tmp_finalInPathWH[200],tmp_finalInPathttH[200];
     sprintf(tmp_finalInPathggH,"/HZZ4lTree_H%i.root",masses[i]);
     sprintf(tmp_finalInPathVBF,"/HZZ4lTree_VBFH%i.root",masses[i]);
-    sprintf(tmp_finalInPathVH,"/HZZ4lTree_VH%i.root",masses[i]);
+    sprintf(tmp_finalInPathZH,"/HZZ4lTree_ZH%i.root",masses[i]);
+    sprintf(tmp_finalInPathWH,"/HZZ4lTree_WH%i.root",masses[i]);
+    sprintf(tmp_finalInPathttH,"/HZZ4lTree_ttH%i.root",masses[i]);
     string finalInPathggH = filePath + tmp_finalInPathggH;
-    string finalInPathVBF = filePath + tmp_finalInPathggH;
-    string finalInPathVH = filePath + tmp_finalInPathggH;
+    string finalInPathVBF = filePath + tmp_finalInPathVBF;
+    string finalInPathZH = filePath + tmp_finalInPathZH;
+    string finalInPathWH = filePath + tmp_finalInPathWH;
+    string finalInPathttH = filePath + tmp_finalInPathttH;
 
     TChain *f = new TChain("SelectedTree");
-    if (i<nPointsggH) f->Add(finalInPathggH.c_str());
-    else{
-      cout<<"No ggH sample at this mass point."<<endl;
+    if (useggH){
+      if (i<nPointsggH) f->Add(finalInPathggH.c_str());
+      else{
+	cout<<"No ggH sample at this mass point."<<endl;
+      }
     }
-    if (useVBF){
+    else if (!useggH && useVBF){
+      if (i<nPointsVBF) f->Add(finalInPathVBF.c_str());
+      else{
+	cout<<"No qqH sample at this mass point."<<endl;
+      }
+    }
+    else if (!useggH && !useVBF && useVH){
+      if (i<nPointsVH){
+	f->Add(finalInPathZH.c_str());
+	f->Add(finalInPathWH.c_str());
+	f->Add(finalInPathttH.c_str());
+      }
+      else{
+	cout<<"No VH samples at this mass point."<<endl;
+      }
+    }    
+    if (useggH && useVBF){
       for (int j=0;j<nPointsVBF;j++){
 	if (massesVBF[j]=masses[i]) flagVBF=1;
       }
       if (flagVBF==1) f->Add(finalInPathVBF.c_str());
       if (flagVBF==0) cout<<"No qqH sample at this mass point."<<endl;
     }
-    if (useVH){
+    if ((useggH || useVBF) && useVH){
       for (int j=0;j<nPointsVH;j++){
 	if (massesVH[j]=masses[i]) flagVH=1;
       }
-      if (flagVH==1) f->Add(finalInPathVH.c_str());
-      if (flagVH==0) cout<<"No VH sample at this mass point."<<endl;
+      if (flagVH==1){
+	f->Add(finalInPathZH.c_str());
+	f->Add(finalInPathWH.c_str());
+	f->Add(finalInPathttH.c_str());
+      }
+      if (flagVH==0) cout<<"No VH samples at this mass point."<<endl;
     }
 
     double valueWidth = WidthValue(masses[i]);
@@ -304,6 +349,10 @@ void signalFits(int channel, int sqrts){
     sprintf(tmp2_plotFileTitle,"%i_%iTeV_",masses[i],sqrts);
     string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel;
     TString rootTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel;
+    if (useggH){
+      plotFileTitle+="_ggH";
+      rootTitle+="_ggH";
+    }
     if (useVBF){
       plotFileTitle+="_VBF";
       rootTitle+="_VBF";
@@ -455,6 +504,7 @@ void signalFits(int channel, int sqrts){
   char tmp2_paramPlotFileTitle[200];
   sprintf(tmp2_paramPlotFileTitle,"%iTeV_",sqrts);
   string paramPlotFileTitle = tmp_paramPlotFileTitle + tmp2_paramPlotFileTitle + schannel;
+  if (useggH) paramPlotFileTitle+="_ggH";
   if (useVBF) paramPlotFileTitle+="_VBF";
   if (useVH) paramPlotFileTitle+="_VH";
   string paramgif=paramPlotFileTitle;
