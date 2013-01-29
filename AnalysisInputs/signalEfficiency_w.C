@@ -39,7 +39,7 @@ using namespace ROOT::Math;
 
 TFile* ftot,*fratio;
 
-void signalEfficiency_w(int channel, double sqrts, int process);
+void signalEfficiency_w(int channel, double sqrts, int process, double JES);
 
 
 // Run all final states and sqrts in one go
@@ -48,46 +48,120 @@ void signalEfficiency_w() {
   gSystem->Exec("mkdir -p sigFigs8TeV");
 
   //ggH
-  signalEfficiency_w(1,7,1);
-  signalEfficiency_w(2,7,1);
-  signalEfficiency_w(3,7,1);
-  signalEfficiency_w(1,8,1);
-  signalEfficiency_w(2,8,1);
-  signalEfficiency_w(3,8,1);
+  signalEfficiency_w(1,7,1,0.);
+  signalEfficiency_w(2,7,1,0.);
+  signalEfficiency_w(3,7,1,0.);
+  signalEfficiency_w(1,8,1,0.);
+  signalEfficiency_w(2,8,1,0.);
+  signalEfficiency_w(3,8,1,0.);
   //qqH
-  signalEfficiency_w(1,7,2);
-  signalEfficiency_w(2,7,2);
-  signalEfficiency_w(3,7,2);
-  signalEfficiency_w(1,8,2);
-  signalEfficiency_w(2,8,2);
-  signalEfficiency_w(3,8,2);
+  signalEfficiency_w(1,7,2,0.);
+  signalEfficiency_w(2,7,2,0.);
+  signalEfficiency_w(3,7,2,0.);
+  signalEfficiency_w(1,8,2,0.);
+  signalEfficiency_w(2,8,2,0.);
+  signalEfficiency_w(3,8,2,0.);
   //ZH
-  signalEfficiency_w(1,7,3);
-  signalEfficiency_w(2,7,3);
-  signalEfficiency_w(3,7,3);
-  signalEfficiency_w(1,8,3);
-  signalEfficiency_w(2,8,3);
-  signalEfficiency_w(3,8,3);
+  signalEfficiency_w(1,7,3,0.);
+  signalEfficiency_w(2,7,3,0.);
+  signalEfficiency_w(3,7,3,0.);
+  signalEfficiency_w(1,8,3,0.);
+  signalEfficiency_w(2,8,3,0.);
+  signalEfficiency_w(3,8,3,0.);
   //WH
-  signalEfficiency_w(1,7,4);
-  signalEfficiency_w(2,7,4);
-  signalEfficiency_w(3,7,4);
-  signalEfficiency_w(1,8,4);
-  signalEfficiency_w(2,8,4);
-  signalEfficiency_w(3,8,4);
+  signalEfficiency_w(1,7,4,0.);
+  signalEfficiency_w(2,7,4,0.);
+  signalEfficiency_w(3,7,4,0.);
+  signalEfficiency_w(1,8,4,0.);
+  signalEfficiency_w(2,8,4,0.);
+  signalEfficiency_w(3,8,4,0.);
   //ttH
-  signalEfficiency_w(1,7,5);
-  signalEfficiency_w(2,7,5);
-  signalEfficiency_w(3,7,5);
-  signalEfficiency_w(1,8,5);
-  signalEfficiency_w(2,8,5);
-  signalEfficiency_w(3,8,5);
+  signalEfficiency_w(1,7,5,0.);
+  signalEfficiency_w(2,7,5,0.);
+  signalEfficiency_w(3,7,5,0.);
+  signalEfficiency_w(1,8,5,0.);
+  signalEfficiency_w(2,8,5,0.);
+  signalEfficiency_w(3,8,5,0.);
+  /*
+  //JES Up
+  //ggH
+  signalEfficiency_w(1,7,1,1.);
+  signalEfficiency_w(2,7,1,1.);
+  signalEfficiency_w(3,7,1,1.);
+  signalEfficiency_w(1,8,1,1.);
+  signalEfficiency_w(2,8,1,1.);
+  signalEfficiency_w(3,8,1,1.);
+  //qqH
+  signalEfficiency_w(1,7,2,1.);
+  signalEfficiency_w(2,7,2,1.);
+  signalEfficiency_w(3,7,2,1.);
+  signalEfficiency_w(1,8,2,1.);
+  signalEfficiency_w(2,8,2,1.);
+  signalEfficiency_w(3,8,2,1.);
+  //ZH
+  signalEfficiency_w(1,7,3,1.);
+  signalEfficiency_w(2,7,3,1.);
+  signalEfficiency_w(3,7,3,1.);
+  signalEfficiency_w(1,8,3,1.);
+  signalEfficiency_w(2,8,3,1.);
+  signalEfficiency_w(3,8,3,1.);
+  //WH
+  signalEfficiency_w(1,7,4,1.);
+  signalEfficiency_w(2,7,4,1.);
+  signalEfficiency_w(3,7,4,1.);
+  signalEfficiency_w(1,8,4,1.);
+  signalEfficiency_w(2,8,4,1.);
+  signalEfficiency_w(3,8,4,1.);
+  //ttH
+  signalEfficiency_w(1,7,5,1.);
+  signalEfficiency_w(2,7,5,1.);
+  signalEfficiency_w(3,7,5,1.);
+  signalEfficiency_w(1,8,5,1.);
+  signalEfficiency_w(2,8,5,1.);
+  signalEfficiency_w(3,8,5,1.);
 
+  //JES Down
+  //ggH
+  signalEfficiency_w(1,7,1,-1.);
+  signalEfficiency_w(2,7,1,-1.);
+  signalEfficiency_w(3,7,1,-1.);
+  signalEfficiency_w(1,8,1,-1.);
+  signalEfficiency_w(2,8,1,-1.);
+  signalEfficiency_w(3,8,1,-1.);
+  //qqH
+  signalEfficiency_w(1,7,2,-1.);
+  signalEfficiency_w(2,7,2,-1.);
+  signalEfficiency_w(3,7,2,-1.);
+  signalEfficiency_w(1,8,2,-1.);
+  signalEfficiency_w(2,8,2,-1.);
+  signalEfficiency_w(3,8,2,-1.);
+  //ZH
+  signalEfficiency_w(1,7,3,-1.);
+  signalEfficiency_w(2,7,3,-1.);
+  signalEfficiency_w(3,7,3,-1.);
+  signalEfficiency_w(1,8,3,-1.);
+  signalEfficiency_w(2,8,3,-1.);
+  signalEfficiency_w(3,8,3,-1.);
+  //WH
+  signalEfficiency_w(1,7,4,-1.);
+  signalEfficiency_w(2,7,4,-1.);
+  signalEfficiency_w(3,7,4,-1.);
+  signalEfficiency_w(1,8,4,-1.);
+  signalEfficiency_w(2,8,4,-1.);
+  signalEfficiency_w(3,8,4,-1.);
+  //ttH
+  signalEfficiency_w(1,7,5,-1.);
+  signalEfficiency_w(2,7,5,-1.);
+  signalEfficiency_w(3,7,5,-1.);
+  signalEfficiency_w(1,8,5,-1.);
+  signalEfficiency_w(2,8,5,-1.);
+  signalEfficiency_w(3,8,5,-1.);
+  */
 }
 
 
 // The actual job
-void signalEfficiency_w(int channel, double sqrts, int process) 
+void signalEfficiency_w(int channel, double sqrts, int process, double JES) 
 {
   TString schannel;
   if      (channel == 1) schannel = "4mu";
@@ -103,12 +177,17 @@ void signalEfficiency_w(int channel, double sqrts, int process)
   else if (process == 5) sprocess = "ttH";
   else cout << "Not a valid channel: " << process << endl;
 
+  TString sjes;
+  if      (JES==0.) sjes="";
+  else if (JES>0.)  sjes="_up";
+  else if (JES<0.)  sjes="_down";
+
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  cout << "process = " << sprocess << " schannel = " << schannel << "  sqrts = " << sqrts << endl;
+  cout << "process = " << sprocess << " schannel = " << schannel << "  sqrts = " << sqrts << " JES = " << JES <<endl;
 
-  TString totoutfile = "CardFragments/signalEfficiency_"  + ssqrts + "_" + schannel + ".txt";
-  TString ratiooutfile = "CardFragments/signalEfficiency_" + ssqrts + "_" + schannel + "_ratio.txt";
+  TString totoutfile = "CardFragments/signalEfficiency_"  + ssqrts + "_" + schannel + sjes + ".txt";
+  TString ratiooutfile = "CardFragments/signalEfficiency_" + ssqrts + "_" + schannel + sjes + "_ratio.txt";
   ofstream oftot;
   if (process==1) oftot.open(totoutfile,ios_base::out);
   if (process!=1) oftot.open(totoutfile,ios_base::out | ios_base::app);
@@ -116,8 +195,8 @@ void signalEfficiency_w(int channel, double sqrts, int process)
   if (process==1) ofrat.open(ratiooutfile,ios_base::out);
   if (process!=1) ofrat.open(ratiooutfile,ios_base::out | ios_base::app);
 
-  ftot = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + ".root","RECREATE");
-  fratio = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_ratio.root","RECREATE");
+  ftot = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes + ".root","RECREATE");
+  fratio = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes + "_ratio.root","RECREATE");
 
   gSystem->AddIncludePath("-I$ROOFITSYS/include");
   setTDRStyle(false);
@@ -182,19 +261,23 @@ void signalEfficiency_w(int channel, double sqrts, int process)
   for (int i = 0; i < nPoints; i++){
     if (process==1) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
     else if (process==2) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VBFH" + (long)masses[i] + ".root";
-    else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VH" + (long)masses[i] + ".root";    
+    else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_" + sprocess + (long)masses[i] + ".root";    
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
     float mela, MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
-    int NJets;
+    //int NJets;
     int genProcessId=0;
+    vector<double> *JetPt=0;
+    vector<double> *JetSigma=0;
     t1->SetBranchAddress("MC_weight_norm",&MC_weight_norm);
     t1->SetBranchAddress("MC_weight_powhegWeight",&MC_weight_powhegWeight);
     t1->SetBranchAddress("MC_weight_PUWeight",&MC_weight_PUWeight);
     t1->SetBranchAddress("MC_weight_dataMC",&MC_weight_dataMC);
     t1->SetBranchAddress("ZZLD",&mela);
-    t1->SetBranchAddress("NJets",&NJets);
+    //t1->SetBranchAddress("NJets",&NJets);
     t1->SetBranchAddress("genProcessId",&genProcessId);
+    t1->SetBranchAddress("JetPt",&JetPt);
+    t1->SetBranchAddress("JetSigma",&JetSigma);
     //Initialize counters for non-dijet events
     int numndjEventsRaw = 0;
     float numndjEventsPowheg =0;
@@ -216,6 +299,13 @@ void signalEfficiency_w(int channel, double sqrts, int process)
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
       if ((process==3 && genProcessId!=24) || (process==4 && genProcessId!=26) || (process==5 && (genProcessId!=121 && genProcessId!=122))) continue;
+      int NJets=0;
+      double jetptc=0;
+      for (int j=0; j<JetPt->size();j++){
+	if (JES==0.) jetptc=JetPt->at(j);
+	else if (JES!=0.) jetptc=JetPt->at(j)*(1+JES*JetSigma->at(j));
+	if (jetptc>30.) NJets++;
+      }
       if(NJets < 2){
 	totalndjCtr+=MC_weight_norm; 
 	ndjsumw2 += MC_weight_norm*MC_weight_norm;
@@ -247,7 +337,7 @@ void signalEfficiency_w(int channel, double sqrts, int process)
     // except for the 124,125,126 new samples. As this factor is accounted for in the x-section, we have to 
     // apply it here
     float m = masses[i];
-    if (sqrts==7 && m>=123.9 &&  m<=126.1) {
+    if (process==1 && sqrts==7 && m>=123.9 &&  m<=126.1) {
       float mllCorr = 0.5 + 0.5*erf((m-80.85)/50.42);
       totalndjCtr = totalndjCtr/mllCorr;
       ndjeff_noweight=ndjeff_noweight/mllCorr;
@@ -273,6 +363,7 @@ void signalEfficiency_w(int channel, double sqrts, int process)
     }
     
     totefficiencyVal[i] = totalndjCtr + totaldjCtr;
+    cout<<sprocess<<" "<<m<<" "<<totefficiencyVal[i]<<endl;
     totefficiencyErr[i] = sqrt(ndjsumw2 + djsumw2);
     dijetratioVal[i]=totaldjCtr/totefficiencyVal[i];
     dijetratioErr[i]=sqrt(pow(totalndjCtr,2)*djsumw2 + pow(totaldjCtr,2)*ndjsumw2)/pow(totefficiencyVal[i],2);
@@ -308,7 +399,7 @@ void signalEfficiency_w(int channel, double sqrts, int process)
   TCanvas *ctot = new TCanvas(cname,cname);
   ctot->SetGrid();
 
-  TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel;
+  TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes;
 
   totgrEff->Fit(polyFunctot,"Rt");
   TString xaxisText = "m_{" + schannel + "}";
@@ -321,7 +412,7 @@ void signalEfficiency_w(int channel, double sqrts, int process)
   polyFunctot->Draw("sames");
   ctot->Print(outname+".eps");
   ctot->Print(outname+".png"); // Does not work in batch?
-  //ctot->Print(outname+".root"); 
+  ctot->Print(outname+".pdf"); 
   ftot->cd();
   totgrEff->Write("TotalEfficiency");
   ftot->Close();
@@ -365,7 +456,7 @@ void signalEfficiency_w(int channel, double sqrts, int process)
   TCanvas *crat = new TCanvas(cname,cname);
   crat->SetGrid();
 
-  outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_ratio";
+  outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes + "_ratio";
 
   TF1 *ratiofit;
   if (process==1 || process==2) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
@@ -380,7 +471,7 @@ void signalEfficiency_w(int channel, double sqrts, int process)
   ratgrEff->Draw("AP");
   crat->Print(outname+".eps");
   crat->Print(outname+".png"); // Does not work in batch?
-  //crat->Print(outname+".root");
+  crat->Print(outname+".pdf");
   fratio->cd();
   ratgrEff->Write("Ratio");
   fratio->Close();

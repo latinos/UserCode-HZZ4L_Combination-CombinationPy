@@ -1,7 +1,7 @@
 #ifndef __CINT__
 #include "RooGlobalFunc.h"
 #endif
-/*
+
 #include "RooRealVar.h"
 #include "RooArgSet.h"
 #include "RooAddPdf.h"
@@ -18,7 +18,7 @@
 #include "TF1.h"
 #include "TCanvas.h"
 #include "TString.h"
-*/
+
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -61,8 +61,8 @@ void analyticfits(int sampleIndex, int updown);                   // Smoothing p
 void generateFisherTemplates() {
   gSystem->Load("../CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
 
-  bool debug=false;
-  bool findAlternatives=true;
+  bool debug=true;
+  bool findAlternatives=false;
   templateOptions(debug,findAlternatives);
 }
  
@@ -81,30 +81,42 @@ void buildChain(TChain* bkgMC, int sampleIndex){
   if(!useMichalis){
     TString filePath;
     int nPoints;
-    double* masses[100];
+    int masses[100];
     if (useSqrts==1){
       if (sampleIndex==0){
 	nPoints=nPoints7TeV;
-	masses=mHVal7TeV;
+	for (int i=0;i<nPoints;i++){
+	  masses[i]=masses7TeV[i];
+	}
       } else if (sampleIndex==1){
 	nPoints=nVBFPoints7TeV;
-	masses=mHVBFVal7TeV;
+	for (int i=0;i<nPoints;i++){
+	  masses[i]=VBFmasses7TeV[i];
+	}
       } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
 	nPoints=nVHPoints7TeV;
-	masses=mHVHVal7TeV;
+	for (int i=0;i<nPoints;i++){
+	  masses[i]=VHmasses7TeV[i];
+	}
       }
       filePath = filePath7TeV;
     }
     if (useSqrts==2){
       if (sampleIndex==0){
 	nPoints=nPoints8TeV;
-	masses=mHVal8TeV;
+	for (int i=0;i<nPoints;i++){
+	  masses[i]=masses8TeV[i];
+	}
       } else if (sampleIndex==1){
 	nPoints=nVBFPoints8TeV;
-	masses=mHVBFVal8TeV;
+	for (int i=0;i<nPoints;i++){
+	  masses[i]=VBFmasses8TeV[i];
+	}
       } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
 	nPoints=nVHPoints8TeV;
-	masses=mHVHVal8TeV;
+	for (int i=0;i<nPoints;i++){
+	  masses[i]=VHmasses8TeV[i];
+	}
       }
       filePath = filePath8TeV;
     }
@@ -112,26 +124,26 @@ void buildChain(TChain* bkgMC, int sampleIndex){
       if (sampleIndex==0){
 	nPoints=nPoints7TeV+nPoints8TeV;
 	for (int i=0;i<nPoints7TeV;i++){
-	  masses[i]=mHVal7TeV[i];
+	  masses[i]=masses7TeV[i];
 	}
 	for (int i=0;i<nPoints8TeV;i++){
-	  masses[i+nPoints7TeV]=mHVal8TeV[i];
+	  masses[i+nPoints7TeV]=masses8TeV[i];
 	}
       } else if (sampleIndex==1){
 	nPoints=nVBFPoints7TeV+nVBFPoints8TeV;
 	for (int i=0;i<nVBFPoints7TeV;i++){
-	  masses[i]=mHVBFVal7TeV[i];
+	  masses[i]=VBFmasses7TeV[i];
 	}
 	for (int i=0;i<nVBFPoints8TeV;i++){
-	  masses[i+nVBFPoints7TeV]=mHVBFVal8TeV[i];
+	  masses[i+nVBFPoints7TeV]=VBFmasses8TeV[i];
 	}
       } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
 	nPoints=nVHPoints7TeV+nVHPoints8TeV;
 	for (int i=0;i<nVHPoints7TeV;i++){
-	  masses[i]=mHVHVal7TeV[i];
+	  masses[i]=VHmasses7TeV[i];
 	}
 	for (int i=0;i<nVHPoints8TeV;i++){
-	  masses[i+nVHPoints7TeV]=mHVHVal8TeV[i];
+	  masses[i+nVHPoints7TeV]=VHmasses8TeV[i];
 	}
       }
     }
@@ -147,10 +159,18 @@ void buildChain(TChain* bkgMC, int sampleIndex){
 	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_VBFH%i.root",masses[i]);
 	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_VBFH%i.root",masses[i]);
 	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_VBFH%i.root",masses[i]);
-	}else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
-	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_VH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_VH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_VH%i.root",masses[i]);
+	}else if (sampleIndex==5){
+	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_ZH%i.root",masses[i]);
+	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_ZH%i.root",masses[i]);
+	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_ZH%i.root",masses[i]);
+	}else if (sampleIndex==6){
+	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_WH%i.root",masses[i]);
+	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_WH%i.root",masses[i]);
+	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_WH%i.root",masses[i]);
+	}else if (sampleIndex==7){
+	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_ttH%i.root",masses[i]);
+	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_ttH%i.root",masses[i]);
+	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_ttH%i.root",masses[i]);
 	}
 	if (useSqrts!=0){
 	  finalInPath4mu = filePath + tmp_finalInPath4mu;
@@ -942,9 +962,9 @@ TH2F* rebin_lowstatistics(TH2F* finalhist, int sampleIndex){
   origHist->Sumw2();
 
   //Project Fisher v m4L to 1D Fisher plots for low, high, and full mass range
-  TH1F* lowProj = origHist->ProjectionY("low",1,40);
-  TH1F* highProj = origHist->ProjectionY("high",41,750);
-  TH1F* fullProj = origHist->ProjectionY();
+  TH1F* lowProj = (TH1F*) origHist->ProjectionY("low",1,40);
+  TH1F* highProj = (TH1F*) origHist->ProjectionY("high",41,750);
+  TH1F* fullProj = (TH1F*) origHist->ProjectionY();
   TH1F* origlowProj = new TH1F (*lowProj);
   TH1F* orighighProj = new TH1F (*highProj);
   TH1F* origfullProj = new TH1F (*fullProj);
@@ -1186,7 +1206,7 @@ void analyticfits(int sampleIndex,int updown){
 	  if (abs(z11)==13 && abs(z12)==13 && abs(z21)==13 && abs(z22)==13) channel="4mu";
 	  if ((abs(z11)==11 && abs(z12)==11 && abs(z21)==13 && abs(z22)==13) || (abs(z11)==13 && abs(z12)==13 && abs(z21)==11 && abs(z22)==11)) channel="2e2mu";
 	  if (channel=="4e" || channel=="4mu" || channel=="2e2mu"){
-	    data->add(RooArgSet(Fisher),w*heff);
+	    data->add(RooArgSet(Fisher),mw*mheff);
 	  }
 	}
       }

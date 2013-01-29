@@ -36,24 +36,27 @@
 //<----------
 
 using namespace std;
-void compute(TString name, int sqrts, double lumi, bool VBFtag = false);
-double sumWeights(TString name, double lumi, bool selVBF = false);
+void compute(TString name, int sqrts, double lumi, int VBFtag);
+double sumWeights(TString name, double lumi, int selVBF);
 
 
 // Run both sqrts in one go
 void ZZbackgroundRate() {
 
-  compute(filePath7TeV, 7, lumi7TeV, true);
-  compute(filePath8TeV, 8, lumi8TeV, true);
+  compute(filePath7TeV, 7, lumi7TeV, 1);
+  compute(filePath8TeV, 8, lumi8TeV, 1);
 
-  compute(filePath7TeV, 7, lumi7TeV, false);
-  compute(filePath8TeV, 8, lumi8TeV, false);
+  compute(filePath7TeV, 7, lumi7TeV, 0);
+  compute(filePath8TeV, 8, lumi8TeV, 0);
+
+  compute(filePath7TeV, 7, lumi7TeV, 2);
+  compute(filePath8TeV, 8, lumi8TeV, 2);
 
 }
 
 
 // The actual job
-void compute(TString filePath, int sqrts, double lumi, bool VBFtag){
+void compute(TString filePath, int sqrts, double lumi, int VBFtag){
 
   double qqZZ[3];
   double ggZZ[3];
@@ -119,7 +122,9 @@ void compute(TString filePath, int sqrts, double lumi, bool VBFtag){
   TString schannel[3] = {"4mu","4e","2e2mu"};
   TString ssqrts = (long) sqrts + TString("TeV");
   for (int i=0; i<3; ++i) {
-    TString outfile = "CardFragments/ZZRates_" + ssqrts + "_" + schannel[i] + "_" + Form("%d",int(VBFtag)) + ".txt";
+    TString outfile;
+    if (VBFtag<2) outfile = "CardFragments/ZZRates_" + ssqrts + "_" + schannel[i] + "_" + Form("%d",int(VBFtag)) + ".txt";
+    if (VBFtag==2) outfile = "CardFragments/ZZRates_" + ssqrts + "_" + schannel[i] + ".txt"; 
     ofstream of(outfile,ios_base::out);
     of << "## rates --- format = chan N lumi ##" << endl
        << "## if lumi is blank, lumi for cards used ##" << endl;
@@ -131,14 +136,14 @@ void compute(TString filePath, int sqrts, double lumi, bool VBFtag){
 }
 
 
-double sumWeights(TString name, double lumi, bool selVBF){
+double sumWeights(TString name, double lumi, int selVBF){
   TChain* tree = new TChain("SelectedTree");
   tree->Add((TString)(name));
 
   float MC_weight,ZZMass,mela,Z2Mass,Z1Mass;
   int NJets;
   //std::vector<double> *JetEta = new vector<double>;
-  //std::vector<double> *JetPt = new vector<double>;
+  std::vector<double> *JetPt = new vector<double>;
   //std::vector<double> *JetPhi = new vector<double>;
   //std::vector<double> *JetMass = new vector<double>;
   tree->SetBranchAddress("MC_weight",&MC_weight);  
@@ -146,8 +151,8 @@ double sumWeights(TString name, double lumi, bool selVBF){
   tree->SetBranchAddress("Z1Mass",&Z1Mass);  
   tree->SetBranchAddress("Z2Mass",&Z2Mass);  
   tree->SetBranchAddress("ZZLD",&mela);
-  tree->SetBranchAddress("NJets",&NJets);
-  //tree->SetBranchAddress("JetPt", &JetPt);
+  //tree->SetBranchAddress("NJets",&NJets);
+  tree->SetBranchAddress("JetPt", &JetPt);
   //tree->SetBranchAddress("JetEta", &JetEta);
   //tree->SetBranchAddress("JetMass", &JetMass); 
 
@@ -155,7 +160,11 @@ double sumWeights(TString name, double lumi, bool selVBF){
   //Get Histos for LD
   for(int iEvt=0; iEvt<tree->GetEntries(); iEvt++){
     tree->GetEntry(iEvt);
-    if( (selVBF == true && NJets > 1) || (selVBF == false && NJets < 2))
+    NJets=0;
+    for(int i=0;i<JetPt->size();i++){
+      if(JetPt->at(i)>30.) NJets++;
+    }
+    if( (selVBF == 1 && NJets > 1) || (selVBF == 0 && NJets < 2) || (selVBF==2))
       {
 	totEvents=totEvents+MC_weight;
       }
