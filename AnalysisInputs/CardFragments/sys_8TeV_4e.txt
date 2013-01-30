@@ -8,7 +8,7 @@ systematic param CMS_zz4l_gamma_sig 0.05
 
 
 ## 4e systematics ##
-systematic elec_full 0.085 0.055 180
+systematic elec_full 0.100 0.055 180
 systematic elec_trig 0.015
 
 ##### Add Systematic to Cards ####

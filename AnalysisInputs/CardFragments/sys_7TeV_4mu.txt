@@ -7,7 +7,7 @@ systematic param CMS_zz4l_n_sig 0.01
 systematic param CMS_zz4l_gamma_sig 0.05
 
 ## 4mu systematics ##
-systematic muon_full 0.012
+systematic muon_full 0.040 0.025 180
 systematic muon_trig 0.015
 
 ##### Add Systematic to Cards ####
