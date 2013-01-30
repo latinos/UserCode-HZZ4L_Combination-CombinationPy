@@ -38,9 +38,9 @@
 //Parameters to choose which samples to examine
 //HCP option is useggH=true, useVBF,useVH = false and usedijet,usenondijet=true
 bool debug = false;
-bool useggH = false;
+bool useggH = true;
 bool useVBF = false;
-bool useVH = true;
+bool useVH = false;
 bool usedijet = true;
 bool usenondijet = true;
 
