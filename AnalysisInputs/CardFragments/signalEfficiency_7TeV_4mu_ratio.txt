@@ -1,7 +1,7 @@
 ## signal efficiency ratios ##
 signalEff tagged_ggH_ratio 0.0556877+(0.000470942*@0)+(-1.92825e-07*@0*@0)
-signalEff tagged_qqH_ratio 0.541513+(-1.29773e-05*@0)+(-6.97592e-08*@0*@0)
-signalEff tagged_ZH_ratio -0.0249871+(0.00200429*@0)
-signalEff tagged_WH_ratio 0.211589+(0.00125393*@0)
-signalEff tagged_ttH_ratio 1.02926+(-0.000201917*@0)
+signalEff tagged_qqH_ratio 0.542333+(-1.64433e-05*@0)+(-6.66991e-08*@0*@0)
+signalEff tagged_ZH_ratio 0.167024+(0.000897316*@0)
+signalEff tagged_WH_ratio 0.366828+(0.000379065*@0)
+signalEff tagged_ttH_ratio 1.00259+(-2.46075e-05*@0)
 

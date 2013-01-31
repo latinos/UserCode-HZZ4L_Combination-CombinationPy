@@ -23,8 +23,10 @@ TGraph * removeGlitches2(TGraph *out);
 
 
 // --------- Inputs ------- //
-TString inputFile = "results181012/higgsCombineHZZ4L_ASCLS.root";
-const bool addObsLimit = true;
+TString inputFile = "../CreateDatacards/CMSSW_5_2_5/src/Moriond_low_v1/results/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile2 = "../CreateDatacards/CMSSW_5_2_5/src/Moriond_high_v1/results/higgsCombineHZZ4L_ASCLS.root";
+TString inputFileHCP = "../CreateDatacards/CMSSW_5_2_5/src/HCP_MorLumi/results/higgsCombineHZZ4L_ASCLS.root";
+const bool addObsLimit = false;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
 string method = "FREQ";
@@ -48,7 +50,7 @@ double sqrts = 7.0;
 Double_t lumi = 5.051;
 std::string plotDir = "plots";
 std::string append = "2D_no2l2tau";
-TString LimitType = "2D";
+TString LimitType = "3D";
 // ----------------------- //
 
 
@@ -70,11 +72,14 @@ void plot_Exclusion_7p8()
     }
 
   TFile *inFile = new TFile(inputFile,"READ");
+  TFile *inFile2 = new TFile(inputFile2, "READ");
+  TFile *inFileHCP = new TFile(inputFileHCP,"READ");
   
   // ------------------- Get Values -------------------- //
 
   vector<double> mH, Val_obs, Val_mean, Val_68h, Val_68l, Val_95h, Val_95l, Val_obs95;
   getLimits(inFile,mH,Val_mean,Val_68l,Val_68h,Val_95l,Val_95h,Val_obs,Val_obs95);
+  getLimits(inFile2,mH,Val_mean,Val_68l,Val_68h,Val_95l,Val_95h,Val_obs,Val_obs95);
   vector<double> v_masses, v_means, v_lo68, v_hi68, v_lo95, v_hi95, v_obs;
   vector<double> expExclusion,obsExclusion,expExcl95,obsExcl95;
   for(unsigned int i = 1; i < mH.size(); i++)
@@ -91,8 +96,28 @@ void plot_Exclusion_7p8()
       if( max( Val_95h[i], Val_95l[i])< 1.0)expExcl95.push_back(mH[i]);
       if(Val_obs95[i]<1.0)obsExcl95.push_back(mH[i]);
     }
+
+  vector<double> mH2, Val_obs2, Val_mean2, Val_68h2, Val_68l2, Val_95h2, Val_95l2, Val_obs952;
+  getLimits(inFileHCP,mH2,Val_mean2,Val_68l2,Val_68h2,Val_95l2,Val_95h2,Val_obs2,Val_obs952);
+  //getLimits(inFile2,mH,Val_mean,Val_68l,Val_68h,Val_95l,Val_95h,Val_obs,Val_obs95);
+  vector<double> v_masses2, v_means2, v_lo682, v_hi682, v_lo952, v_hi952, v_obs2;
+  vector<double> expExclusion2,obsExclusion2,expExcl952,obsExcl952;
+  for(unsigned int i = 1; i < mH2.size(); i++)
+    {
+      v_masses2.push_back( mH2[i] );
+      v_means2.push_back( Val_mean2[i] );
+      v_lo682.push_back( min( Val_68l2[i], Val_68h2[i]) );
+      v_hi682.push_back( max( Val_68h2[i], Val_68l2[i]) );
+      v_lo952.push_back( min( Val_95l2[i], Val_95h2[i]) );
+      v_hi952.push_back( max( Val_95h2[i], Val_95l2[i]) );
+      v_obs2.push_back(Val_obs2[i]);
+      if(Val_mean2[i] < 1.0) expExclusion2.push_back(mH2[i]);
+      if(Val_obs2[i] < 1.0 && addObsLimit) obsExclusion2.push_back(mH2[i]);
+      if( max( Val_95h2[i], Val_95l[i])< 1.0)expExcl952.push_back(mH2[i]);
+      if(Val_obs952[i]<1.0)obsExcl952.push_back(mH2[i]);
+    }
   //this is because point at 1TeV is read first->TBC
-  v_masses.push_back( mH[0] );
+  /*v_masses.push_back( mH[0] );
   v_means.push_back( Val_mean[0] );
   v_lo68.push_back( min( Val_68l[0], Val_68h[0]) );
   v_hi68.push_back( max( Val_68h[0], Val_68l[0]) );
@@ -103,7 +128,7 @@ void plot_Exclusion_7p8()
   if(Val_obs[0] < 1.0 && addObsLimit) obsExclusion.push_back(mH[0]);
   if(v_hi95[0] < 1.0)expExcl95.push_back(mH[0]);
   if(Val_obs95[0]<1.0)obsExcl95.push_back(mH[0]);
-
+  */
   // ------------------- For XSxBR --------------------- //
   
   double mHxs;
@@ -180,6 +205,33 @@ void plot_Exclusion_7p8()
     }
   cout << "Excluded " << nExcluded << " sick mass points!" << endl;
 
+  int nMassEff2=0;
+  int nExcluded2=0;
+  const int sizeV2 = v_masses2.size();
+  double a_masses2[sizeV2], a_means2[sizeV2], a_lo682[sizeV2], a_hi682[sizeV2], a_lo952[sizeV2], a_hi952[sizeV2], a_obs2[sizeV2],a_zero2[sizeV2];
+  for(unsigned int m = 0; m < v_masses2.size(); m++)
+    {
+      if(v_hi682.at(m)>=v_hi952.at(m) || v_lo682.at(m)<=v_lo952.at(m))
+	{
+	  cout << "Point at M = " << v_masses2.at(m) << " excluded" << endl;
+	  nExcluded2++;
+	  continue;
+	}
+      
+      a_masses2[nMassEff2] = v_masses2[m];
+      a_means2[nMassEff2] = v_means2[m];
+      a_lo682[nMassEff2] = v_lo682[m];
+      a_hi682[nMassEff2] = v_hi682[m];
+      a_lo952[nMassEff2] = v_lo952[m];
+      a_hi952[nMassEff2] = v_hi952[m];
+      a_obs2[nMassEff2] = v_obs2[m];
+      a_zero2[nMassEff2] = 0;
+
+      nMassEff2++;
+      
+    }
+  cout << "Excluded2 " << nExcluded2 << " sick mass points!" << endl;
+
   // --------------- Excluded Regions --------------- //
   cout<<"*******EXCLUSION*********"<<endl;
   for(int p = 0; p < expExclusion.size(); p++)
@@ -240,6 +292,28 @@ void plot_Exclusion_7p8()
       grshade_95->SetPoint(a,a_masses[a],a_lo95[a]);
       grshade_95->SetPoint(nMassEff+a,a_masses[nMassEff-a-1],a_hi95[nMassEff-a-1]);
     }
+
+  TGraphAsymmErrors* gr2 = new TGraphAsymmErrors(nMassEff2, a_masses2, a_means2);
+  TGraphAsymmErrors* grshade_682 = new TGraphAsymmErrors(2*nMassEff2);
+  TGraphAsymmErrors* grshade_952 = new TGraphAsymmErrors(2*nMassEff2);
+  gr2->SetName("Expected2");gr2->SetTitle("Expected2");
+  grshade_682->SetName("68_2");grshade_682->SetTitle("68_2");
+  grshade_952->SetName("95_2");grshade_952->SetTitle("95_2");
+  TGraph *grObs2 = new TGraph(nMassEff2, a_masses2, a_obs2);
+  grObs2->SetLineWidth(3);
+  grObs2->SetLineColor(kBlack);
+  grObs2->SetMarkerStyle(21);
+  grObs2->SetMarkerSize(0.8);
+ 
+  //cout<<"nMasses: "<<nMassEff<<endl;
+  for (int a = 0; a < nMassEff2; a++)
+    {
+      grshade_682->SetPoint(a,a_masses2[a],a_lo682[a]);
+      grshade_682->SetPoint(sizeV2+a,a_masses2[nMassEff2-a-1],a_hi682[nMassEff2-a-1]);
+      cout<<"setting point "<<sizeV2+a<<endl;
+      grshade_952->SetPoint(a,a_masses2[a],a_lo952[a]);
+      grshade_952->SetPoint(nMassEff2+a,a_masses2[nMassEff2-a-1],a_hi952[nMassEff2-a-1]);
+    }
   //for(int a = 0; a < nMassEff; a++)cout<<"mass: "<<a_masses[a]<<endl;
   //TGraphAsymmErrors* grshade_68m = removeGlitches(grshade_68n);
   //TGraphAsymmErrors* grshade_95m = removeGlitches(grshade_95n);
@@ -262,6 +336,19 @@ void plot_Exclusion_7p8()
   grshade_95->SetLineWidth(3);
   grshade_68->SetLineColor(kBlue);
   grshade_95->SetLineColor(kBlue);
+
+  gr2->SetLineStyle(2);
+  gr2->SetLineWidth(3);
+  gr2->SetLineColor(kBlack);
+  grshade_682->SetFillColor(6);
+  grshade_952->SetFillColor(7);		
+  grshade_682->SetLineStyle(2);
+  grshade_952->SetLineStyle(2);
+  grshade_682->SetLineWidth(3);
+  grshade_952->SetLineWidth(3);
+  grshade_682->SetLineColor(6);
+  grshade_682->SetFillStyle(3013);
+  grshade_952->SetLineColor(7);
 	
 	
   char outfileName[192];
@@ -277,11 +364,13 @@ void plot_Exclusion_7p8()
   //box2->SetBorderSize(0);
   if (addObsLimit){ box2->AddEntry(grObs,"Observed","l"); }
   //box2->AddEntry(gr,LimitType+" Fit Expected Asym. CLs","l");
-  box2->AddEntry(gr,"Expected","l");
+  box2->AddEntry(gr,"Expected Moriond","l");
+  box2->AddEntry(gr2,"Expected HCP at MoriondLumi","l");
   //box2->AddEntry(grshade_68,"68% expectation","f");
   //box2->AddEntry(grshade_95,"95% expectation","f");
   box2->AddEntry(grshade_68,"Expected #pm 1#sigma","lf");
   box2->AddEntry(grshade_95,"Expected #pm 2#sigma","lf");
+  box2->AddEntry(grshade_682,"Expected #pm 1#sigma HCP at MoriondLumi","lf");
   //box2->AddEntry(oneLine,"#sigma / #sigma_{SM}","l");
 
 
@@ -294,7 +383,7 @@ void plot_Exclusion_7p8()
   TPaveText *pt4 = new TPaveText(ptLow,0.8,ptHigh,0.84,"NDC");
   pt4->SetFillColor(0);
   pt4->SetTextFont(42);
-  pt4->AddText("H #rightarrow ZZ #rightarrow 4L"); 
+  pt4->AddText("H #rightarrow ZZ #rightarrow 4L Moriond strategy"); 
 
   //TPaveText *pt2 = new TPaveText(0.69,0.94,0.98,0.99,"NDC");
   TPaveText *pt2 = new TPaveText(ptLow,0.76,ptHigh,0.8,"NDC");
@@ -308,7 +397,7 @@ void plot_Exclusion_7p8()
   pt3->SetFillColor(0);
   pt3->SetTextFont(42);
   char lum2[192];
-  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",12.21);
+  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",19.62);
   pt3->AddText(lum2); 
 
   if(grid) c->SetGrid();
@@ -318,10 +407,12 @@ void plot_Exclusion_7p8()
   gr->Sort();
   //grshade_68->Sort();
   //grshade_95->Sort();
-
+  
   grshade_95->Draw("f");
   grshade_68->Draw("f");
+  grshade_682->Draw("f");
   gr->Draw("C");
+  gr2->Draw("C");
   if(isXSxBR)
     {
       gr_XSBR68->Sort();
@@ -371,8 +462,10 @@ void plot_Exclusion_7p8()
   if (addObsLimit){ box3->AddEntry(grObs,"Observed","l"); }
   //box3->AddEntry(gr,LimitType+" Fit Expected Asym. CLs","l");
   box3->AddEntry(gr,"Expected","l");
+  box3->AddEntry(gr2,"Expected HCP at MoriondLumi","l");
   box3->AddEntry(grshade_68,"Expected #pm 1#sigma","lf");
   box3->AddEntry(grshade_95,"Expected #pm 2#sigma","lf");
+  box3->AddEntry(grshade_682,"Expected #pm 1#sigma HCP at MoriondLumi","lf");
   //box3->AddEntry(oneLine,"#sigma / #sigma_{SM}","l");
   
 
@@ -381,9 +474,14 @@ void plot_Exclusion_7p8()
   if(grid) cl->SetGrid();
   
   TH1F *hrl = cl->DrawFrame(xLow,yLow,xHigh,yHigh-5);
+
   grshade_95->Draw("f");
   grshade_68->Draw("f");
+
+  grshade_682->Draw("f");
   gr->Draw("C");
+  gr2->Draw("C");
+
   if(isXSxBR)
     {
       gr_XSBR68->SetFillColor(kRed);

@@ -19,7 +19,7 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  31.9895
 rate ggZZ  2.06418
-rate zjets 2.349
+rate zjets 2.5375
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -49,56 +49,49 @@ signalEff g1  0.0197508
 signalEff g2  193.528
 signalEff g3  20
 
-signalEff qqHa1  -4.24653
-signalEff qqHa2  4.77912
-signalEff qqHa3  -359.384
-signalEff qqHa4  380.023
-signalEff qqHb1  1.76208
-signalEff qqHb2  -0.00155932
-signalEff qqHb3  3.31501e-07
+signalEff qqHa1  -4.26352
+signalEff qqHa2  4.76169
+signalEff qqHa3  -377.556
+signalEff qqHa4  388.711
+signalEff qqHb1  1.90242
+signalEff qqHb2  -0.00171646
+signalEff qqHb3  3.85912e-07
 signalEff qqHg1  0.1
-signalEff qqHg2  160
-signalEff qqHg3  39.1913
+signalEff qqHg2  162.889
+signalEff qqHg3  37.1306
 
-signalEff ZHa1  -3.6349
-signalEff ZHa2  4.62078
-signalEff ZHa3  -212.761
-signalEff ZHa4  0.0631585
-signalEff ZHb1  108.028
-signalEff ZHb2  -0.284375
-signalEff ZHb3  0.00151027
-signalEff ZHg1  0.00658804
-signalEff ZHg2  164.268
-signalEff ZHg3  41.5112
+signalEff ZHa1  -2.70447
+signalEff ZHa2  6.32965
+signalEff ZHa3  -821.233
+signalEff ZHa4  1.47311
+signalEff ZHb1  80.4809
+signalEff ZHb2  -0.437344
+signalEff ZHb3  0.000595947
+signalEff ZHg1  0.0999999
+signalEff ZHg2  210
+signalEff ZHg3  47.0608
 
-signalEff WHa1  -4.4077
-signalEff WHa2  4.63042
-signalEff WHa3  -81.9418
-signalEff WHa4  118.224
-signalEff WHb1  1.46046
-signalEff WHb2  0.00379139
-signalEff WHb3  -1.31154e-06
-signalEff WHg1  0.0207806
+signalEff WHa1  -4.40653
+signalEff WHa2  4.63141
+signalEff WHa3  -92.265
+signalEff WHa4  126.036
+signalEff WHb1  1.60934
+signalEff WHb2  0.0033249
+signalEff WHb3  -2.56727e-06
+signalEff WHg1  0.0151902
 signalEff WHg2  160
-signalEff WHg3  21.1036
+signalEff WHg3  20
 
-signalEff ttHa1  -4.39123
-signalEff ttHa2  4.64789
-signalEff ttHa3  -232.673
-signalEff ttHa4  2.63052
-signalEff ttHb1  2.8894
-signalEff ttHb2  -0.00823891
-signalEff ttHb3  8.58752e-06
-signalEff ttHg1  0.000758027
-signalEff ttHg2  171.931
-signalEff ttHg3  22.4861
-
-## signal efficiency ratios ##
-signalEff tagged_ggH_ratio 0.0549528+(0.000485766*@0)+(-2.10166e-07*@0*@0)
-signalEff tagged_qqH_ratio 0.551767+(-5.70833e-05*@0)+(-2.11149e-08*@0*@0)
-signalEff tagged_ZH_ratio -0.100967+(0.00233999*@0)
-signalEff tagged_WH_ratio 0.247611+(0.0010693*@0)
-signalEff tagged_ttH_ratio 0.979534+(6.82277e-05*@0)
+signalEff ttHa1  -4.4386
+signalEff ttHa2  4.6007
+signalEff ttHa3  -2.44748e+09
+signalEff ttHa4  1050.85
+signalEff ttHb1  0.875058
+signalEff ttHb2  0.0113423
+signalEff ttHb3  -1.43553e-05
+signalEff ttHg1  0.0763257
+signalEff ttHg2  160
+signalEff ttHg3  20
 
 ### background functions ###
 qqZZshape a0_bkgd   111.163
@@ -195,10 +188,10 @@ systematic param QCD_scale_qqH_2j_sys 0.1
 
 ## signal efficiency ratios ##
 signalEff tagged_ggH_ratio 0.0549528+(0.000485766*@0)+(-2.10166e-07*@0*@0)
-signalEff tagged_qqH_ratio 0.551767+(-5.70833e-05*@0)+(-2.11149e-08*@0*@0)
-signalEff tagged_ZH_ratio -0.100967+(0.00233999*@0)
-signalEff tagged_WH_ratio 0.247611+(0.0010693*@0)
-signalEff tagged_ttH_ratio 0.979534+(6.82277e-05*@0)
+signalEff tagged_qqH_ratio 0.552114+(-5.85421e-05*@0)+(-1.98279e-08*@0*@0)
+signalEff tagged_ZH_ratio 0.145518+(0.000856326*@0)
+signalEff tagged_WH_ratio 0.383761+(0.000311521*@0)
+signalEff tagged_ttH_ratio 0.990159+(2.48157e-06*@0)
 
 
 

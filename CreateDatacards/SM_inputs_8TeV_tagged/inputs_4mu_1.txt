@@ -19,7 +19,7 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  5.45487
 rate ggZZ  0.425036
-rate zjets 0.8
+rate zjets 0.4576
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -94,13 +94,6 @@ signalEff ttHb3  0.000310903
 signalEff ttHg1  0.0999152
 signalEff ttHg2  189.672
 signalEff ttHg3  21.3762
-
-## signal efficiency ratios ##
-signalEff tagged_ggH_ratio 0.0352178+(0.000579588*@0)+(-2.44686e-07*@0*@0)
-signalEff tagged_qqH_ratio 0.579468+(-5.94112e-06*@0)+(-6.37072e-08*@0*@0)
-signalEff tagged_ZH_ratio 0.0624103+(0.00175297*@0)
-signalEff tagged_WH_ratio 0.325974+(0.000669401*@0)
-signalEff tagged_ttH_ratio 0.911136+(0.000191807*@0)
 
 ### background functions ###
 qqZZshape a0_bkgd   104.225

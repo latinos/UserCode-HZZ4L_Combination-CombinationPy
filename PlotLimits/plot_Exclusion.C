@@ -16,13 +16,13 @@
 void getLimits(TFile *f, std::vector<double> &v_mh,std::vector<double> &v_mean,std::vector<double> &v_68l,std::vector<double> &v_68h,std::vector<double> &v_95l,std::vector<double> &v_95h,std::vector<double> &v_obs);
 
 // --------- Inputs ------- //
-TString inputFile = "results_2D_Combined_CorScale/higgsCombineHZZ4L_ASCLS.root";
-const bool addObsLimit = true;
+TString inputFile = "../../plot/higgsCombineHZZ4L_ASCLS_HCP_MorLumi.root";
+const bool addObsLimit = false;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
 string method = "FREQ";
 Double_t xLow = 99.9;
-Double_t xHigh = 601.0;
+Double_t xHigh = 1000.0;
 Double_t yLow = 0.1;
 Double_t yHigh = 25.0;
 TString xTitle = "m_{H} [GeV]";

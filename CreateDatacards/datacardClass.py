@@ -166,13 +166,25 @@ class datacardClass:
         
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
+        highside = 1000.0
         if (self.mH >= 275):
             lowside = 180.0
-        else:
-            lowside = 100.0
+            highside = 650.0
+        if(self.mH >= 350):
+            lowside = 200.0
+            highside = 900.0
+        if(self.mH >= 500):
+            lowside = 250.0
+            highside = 1000.0
+        if(self.mH >= 700):
+            lowside = 350.0
+            highside = 1400.0
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-        self.high_M = min( (self.mH + 15.*self.windowVal), 1000)
+        self.high_M = min( (self.mH + 15.*self.windowVal), highside)
+        if(self.bUseCBnoConvolution):
+            self.low_M = 100.0
+            self.high_M = max(180.0,self.high_M)
 
         #self.low_M = 100.0
         #self.high_M = 800.0
@@ -1097,7 +1109,7 @@ class datacardClass:
             if(self.isAltSig):
                 funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT)
     
-        morphSigVarName = "CMS_zz4l_sigMELA"
+        morphSigVarName = "CMS_zz4l_sigMELA_{0:.0f}".format(self.channel)
         alphaMorphSig = ROOT.RooRealVar(morphSigVarName,morphSigVarName,0,-20,20)
         if(self.sigMorph): alphaMorphSig.setConstant(False)
         else: alphaMorphSig.setConstant(True)
