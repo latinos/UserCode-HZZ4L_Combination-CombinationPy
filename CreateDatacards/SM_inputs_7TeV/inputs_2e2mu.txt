@@ -77,8 +77,10 @@ ggZZshape a7_bkgd  0.1699
 ggZZshape a8_bkgd  57.0365
 ggZZshape a9_bkgd  0.0678273
 
-zjetsShape mean 137.2
-zjetsShape sigma 18.62
+zjetsShape mean 143.1
+zjetsShape sigma 19.9
+#zjetsShape mean 137.2
+#zjetsShape sigma 18.62
 zjetsShape p0 -120670
 zjetsShape p1 2328
 zjetsShape p2 -8.867
