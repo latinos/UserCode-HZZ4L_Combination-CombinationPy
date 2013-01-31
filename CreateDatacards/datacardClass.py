@@ -603,12 +603,35 @@ class datacardClass(object):
         ## Reducible backgrounds
         self.val_meanL = float(self.inputs['zjetsShape_mean'])
         self.val_sigmaL = float(self.inputs['zjetsShape_sigma'])
- 
+        self.val_poly0L = float(self.inputs['zjetsShape_p0'])
+        self.val_poly1L = float(self.inputs['zjetsShape_p1'])
+        self.val_poly2L = float(self.inputs['zjetsShape_p2'])
+        self.val_poly3L = float(self.inputs['zjetsShape_p3'])
+        self.val_poly4L = float(self.inputs['zjetsShape_p4'])
+
+
         name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",self.val_meanL)
         name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",self.val_sigmaL)
-        self.bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",self.CMS_zz4l_mass,self.mlZjet,self.slZjet) 
+        name = "bkg_zjetsLandau_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkg_zjets = ROOT.RooLandau(name,"bkg_zjetsTmpLandau",self.CMS_zz4l_mass,self.mlZjet,self.slZjet)
+
+        name = "p0Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.p0Zjet = ROOT.RooRealVar(name,"p0 Zjet",self.val_poly0L)
+        name = "p1Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.p1Zjet = ROOT.RooRealVar(name,"p1 Zjet",self.val_poly1L)
+        name = "p2Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.p2Zjet = ROOT.RooRealVar(name,"p2 Zjet",self.val_poly2L)
+        name = "p3Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.p3Zjet = ROOT.RooRealVar(name,"p3 Zjet",self.val_poly3L)
+        name = "p4Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.p4Zjet = ROOT.RooRealVar(name,"p4 Zjet",self.val_poly4L)
+        name = "bkg_zjetsPoly_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkg_zjetsPoly = ROOT.RooPolynomial(name,"bkg_zjetsTmpPoly",self.CMS_zz4l_mass,RooArgList(self.p0Zjet,self.p1Zjet,self.p2Zjet,self.p3Zjet,self.p4Zjet))
+        name = "bkg_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        #self.bkg_zjets = ROOT.RooProdPdf(name,"bkg_zjetsTmp",self.bkg_zjetsLandau,self.bkg_zjetsPoly)
+        
 
         ## ----------------- for massErr ------------------ ##
         self.makeMassErr()
@@ -663,6 +686,7 @@ class datacardClass(object):
         super(ROOT.RooqqZZPdf_v2,self.bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
         super(ROOT.RooggZZPdf_v2,self.bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
         super(ROOT.RooLandau,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+        #super(ROOT.RooProdPdf,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
         zzframe_s.Draw()
         figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
         czz.SaveAs(figName)
@@ -1006,6 +1030,16 @@ class datacardClass(object):
             self.w.importClassCode(RooRelBWHighMass.Class(),True)
 
         getattr(self.w,'import')(self.data_obs,ROOT.RooFit.Rename("data_obs")) ### Should this be renamed?
+
+
+        getattr(self.w,'import')(self.rfvSigRate_ggH, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_VBF, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_WH, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_ZH, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_ttH, ROOT.RooFit.RecycleConflictNodes())
+        
+                                                
+
     
         if(self.bUseCBnoConvolution) :
             if not self.bIncludingError:
@@ -1077,7 +1111,8 @@ class datacardClass(object):
             getattr(self.w,'import')(self.bkg_ggzzErr, ROOT.RooFit.RecycleConflictNodes())
             getattr(self.w,'import')(self.bkg_zjetsErr, ROOT.RooFit.RecycleConflictNodes())
             
-            
+
+
         self.w.writeToFile(self.name_ShapeWS)
         self.w.writeToFile(self.name_ShapeWSXSBR)
         

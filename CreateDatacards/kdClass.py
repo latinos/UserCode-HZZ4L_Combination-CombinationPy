@@ -300,6 +300,8 @@ class kdClass(datacardClass):
         else:
             templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
 
+        print "Using {0} as ZX KD template".format(templateBkgName)
+
         bkgTempFileZX = ROOT.TFile(templateBkgName)
         self.bkgTemplateZX = bkgTempFileZX.Get("h_mzzD")
         self.bkgTemplateZX_Up = bkgTempFileZX.Get("h_mzzD_up")
@@ -407,7 +409,12 @@ class kdClass(datacardClass):
             self.w.importClassCode(RooRelBWHighMass.Class(),True)
 
                 
-                
+        getattr(self.w,'import')(self.rfvSigRate_ggH, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_VBF, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_WH, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_ZH, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_ttH, ROOT.RooFit.RecycleConflictNodes())
+        
         getattr(self.w,'import')(self.data_obs,ROOT.RooFit.Rename("data_obs")) ### Should this be renamed?
       
                 

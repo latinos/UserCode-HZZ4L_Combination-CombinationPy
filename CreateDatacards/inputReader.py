@@ -76,6 +76,14 @@ class inputReader:
         self.sigeff_g1 = -999.9
         self.sigeff_g2 = -999.9
         self.sigeff_g3 = -999.9
+        # signal efficiency ratios for jet tagging catagoies
+        self.tagged_ggH_ratio = -999.9
+        self.tagged_qqH_ratio = -999.9
+        self.tagged_WH_ratio = -999.9
+        self.tagged_ZH_ratio = -999.9
+        self.tagged_ttH_ratio = -999.9
+        self.QCD_scale_ggH_2j_sys = -999.9
+        self.QCD_scale_qqH_2j_sys = -999.9
         # qqZZ shape
         self.qqZZshape_a0 = -999.9
         self.qqZZshape_a1 = -999.9
@@ -105,6 +113,11 @@ class inputReader:
         # zjets shape
         self.zjetsShape_mean = -999.9
         self.zjetsShape_sigma = -999.9
+        self.zjetsShape_p0 = -999.9
+        self.zjetsShape_p1 = -999.9
+        self.zjetsShape_p2 = -999.9
+        self.zjetsShape_p3 = -999.9
+        self.zjetsShape_p4 = -999.9
         # systematics 
         self.zjetsKappaLow = -999.9
         self.zjetsKappaHigh = -999.9
@@ -151,6 +164,11 @@ class inputReader:
         self.useCMS_zz4l_gamma = False
         self.doHypTest = False
         self.altHypLabel = ""
+
+        # --- VBF systematics
+        self.useCMS_zz4l_doVBFtest = False
+        self.useCMS_zz4l_Fisher_sys = False
+        self.useCMS_zz4l_PToverM_sys = False
         
 	# ---  mekd stuffs
 	self.mekd_sig_a0_shape = -999.
@@ -330,6 +348,22 @@ class inputReader:
                 if f[1].lower().startswith("g2"): self.sigeff_g2 = float(f[2])
                 if f[1].lower().startswith("g3"): self.sigeff_g3 = float(f[2])
 
+                if f[1].lower().startswith("tagged_ggh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_ggH_ratio = f[2]
+                if f[1].lower().startswith("tagged_qqh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_qqH_ratio = f[2]
+                if f[1].lower().startswith("tagged_wh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_WH_ratio = f[2]
+                if f[1].lower().startswith("tagged_zh_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_ZH_ratio = f[2]
+                if f[1].lower().startswith("tagged_tth_ratio"):
+                    if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
+                    else: self.tagged_ttH_ratio = f[2]
+
             if f[0].lower().startswith("qqzzshape"):
 
                 if f[1].lower().startswith("a0"): self.qqZZshape_a0 = float(f[2])
@@ -397,7 +431,11 @@ class inputReader:
 
                 if f[1].lower().startswith("mean"):  self.zjetsShape_mean = f[2]
                 if f[1].lower().startswith("sigma"): self.zjetsShape_sigma = f[2]
-                
+                if f[1].lower().startswith("p0"):    self.zjetsShape_p0 = f[2]
+                if f[1].lower().startswith("p1"):    self.zjetsShape_p1 = f[2]
+                if f[1].lower().startswith("p2"):    self.zjetsShape_p2 = f[2]
+                if f[1].lower().startswith("p3"):    self.zjetsShape_p3 = f[2]
+                if f[1].lower().startswith("p4"):    self.zjetsShape_p4 = f[2]
 
             if f[0].lower().startswith("systematic"):
                 
@@ -441,6 +479,10 @@ class inputReader:
                         self.CMS_zz4l_n_sig = f[3]
                     if f[2].lower().startswith("cms_zz4l_gamma_sig"):
                         self.CMS_zz4l_gamma_sig = f[3]
+                    if f[2].lower().startswith("qcd_scale_ggh_2j_sys"):
+                        self.QCD_scale_ggH_2j_sys = f[3]
+                    if f[2].lower().startswith("qcd_scale_qqh_2j_sys"):
+                        self.QCD_scale_qqH_2j_sys = f[3]
                         
                 if f[1].lower().startswith("luminosity"):
                     self.useLumiUnc = self.parseBoolString(f[2])
@@ -482,6 +524,7 @@ class inputReader:
                     self.useCMS_zz4l_n = self.parseBoolString(f[2])
                 if f[1].lower().startswith("cms_zz4l_gamma"):
                     self.useCMS_zz4l_gamma = self.parseBoolString(f[2])
+                    
                 
                     
             if f[0].lower().startswith("lumi"):
@@ -494,6 +537,13 @@ class inputReader:
                 self.doHypTest = self.parseBoolString(f[1])
             if f[0].lower().startswith("althyplabel"):
                 self.altHypLabel = f[1]
+
+            if f[0].lower().startswith("usecms_zz4l_dovbftest"):
+                self.useCMS_zz4l_doVBFtest = self.parseBoolString(f[1])
+            if f[0].lower().startswith("usecms_zz4l_fisher_sys"):
+                self.useCMS_zz4l_Fisher_sys = self.parseBoolString(f[1])
+            if f[0].lower().startswith("usecms_zz4l_ptoverm_sys"):
+                self.useCMS_zz4l_PToverM_sys = self.parseBoolString(f[1])
 
     def getInputs(self):
 
@@ -584,6 +634,11 @@ class inputReader:
 
         if not self.goodEntry(self.zjetsShape_mean): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean")
         if not self.goodEntry(self.zjetsShape_sigma): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma")
+        if not self.goodEntry(self.zjetsShape_p0): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p0")
+        if not self.goodEntry(self.zjetsShape_p1): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p1")
+        if not self.goodEntry(self.zjetsShape_p2): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p2")
+        if not self.goodEntry(self.zjetsShape_p3): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p3")
+        if not self.goodEntry(self.zjetsShape_p4): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p4")
         
         if not self.goodEntry(self.zjetsKappaLow): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaLow")
         if not self.goodEntry(self.zjetsKappaHigh): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaHigh")
@@ -620,6 +675,8 @@ class inputReader:
 
         if self.doHypTest:
             print "!!! HYPTOTHESIS TESTING !!!"
+        if self.useCMS_zz4l_doVBFtest:
+            print "!!! VBF TESTING !!!"
   
         if self.doHypTest and not self.all_chan:
             raise RuntimeError,"You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs !"
@@ -680,6 +737,14 @@ class inputReader:
         dict['sigEff_g1'] = float(self.sigeff_g1)
         dict['sigEff_g2'] = float(self.sigeff_g2)
         dict['sigEff_g3'] = float(self.sigeff_g3)
+
+        dict['tagged_ggH_ratio'] = self.tagged_ggH_ratio
+        dict['tagged_qqH_ratio'] = self.tagged_qqH_ratio
+        dict['tagged_WH_ratio'] = self.tagged_WH_ratio
+        dict['tagged_ZH_ratio'] = self.tagged_ZH_ratio
+        dict['tagged_ttH_ratio'] = self.tagged_ttH_ratio
+        dict['QCD_scale_ggH_2j_sys'] = float(self.QCD_scale_ggH_2j_sys)
+        dict['QCD_scale_qqH_2j_sys'] = float(self.QCD_scale_qqH_2j_sys)
         
         dict['qqZZshape_a0'] = float(self.qqZZshape_a0)
         dict['qqZZshape_a1'] = float(self.qqZZshape_a1)
@@ -709,6 +774,12 @@ class inputReader:
 
         dict['zjetsShape_mean'] = float(self.zjetsShape_mean)
         dict['zjetsShape_sigma'] = float(self.zjetsShape_sigma)
+
+        dict['zjetsShape_p0'] = float(self.zjetsShape_p0)
+        dict['zjetsShape_p1'] = float(self.zjetsShape_p1)
+        dict['zjetsShape_p2'] = float(self.zjetsShape_p2)
+        dict['zjetsShape_p3'] = float(self.zjetsShape_p3)
+        dict['zjetsShape_p4'] = float(self.zjetsShape_p4)
 
         dict['zjetsKappaLow'] = float(self.zjetsKappaLow)
         dict['zjetsKappaHigh'] = float(self.zjetsKappaHigh)
@@ -759,6 +830,11 @@ class inputReader:
 
         dict['doHypTest'] = self.doHypTest
         dict['altHypLabel'] = str(self.altHypLabel)
+
+        dict['useCMS_zz4l_doVBFtest'] = self.useCMS_zz4l_doVBFtest
+        dict['useCMS_zz4l_Fisher_sys'] = self.useCMS_zz4l_Fisher_sys
+        dict['useCMS_zz4l_PToverM_sys'] = self.useCMS_zz4l_PToverM_sys
+
         
 	dict['mekd_sig_a0_shape'] = self.mekd_sig_a0_shape
 	dict['mekd_sig_a1_shape'] = self.mekd_sig_a1_shape
