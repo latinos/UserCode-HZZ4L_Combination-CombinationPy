@@ -166,25 +166,13 @@ class datacardClass:
         
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
-        highside = 1000.0
         if (self.mH >= 275):
             lowside = 180.0
-            highside = 650.0
-        if(self.mH >= 350):
-            lowside = 200.0
-            highside = 900.0
-        if(self.mH >= 500):
-            lowside = 250.0
-            highside = 1000.0
-        if(self.mH >= 700):
-            lowside = 350.0
-            highside = 1400.0
+        else:
+            lowside = 100.0
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-        self.high_M = min( (self.mH + 15.*self.windowVal), highside)
-        if(self.bUseCBnoConvolution):
-            self.low_M = 100.0
-            self.high_M = max(180.0,self.high_M)
+        self.high_M = min( (self.mH + 15.*self.windowVal), 1000)
 
         #self.low_M = 100.0
         #self.high_M = 800.0
@@ -1109,7 +1097,7 @@ class datacardClass:
             if(self.isAltSig):
                 funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT)
     
-        morphSigVarName = "CMS_zz4l_sigMELA_{0:.0f}".format(self.channel)
+        morphSigVarName = "CMS_zz4l_sigMELA"
         alphaMorphSig = ROOT.RooRealVar(morphSigVarName,morphSigVarName,0,-20,20)
         if(self.sigMorph): alphaMorphSig.setConstant(False)
         else: alphaMorphSig.setConstant(True)
@@ -1442,21 +1430,55 @@ class datacardClass:
         ## Reducible backgrounds
         val_meanL = float(theInputs['zjetsShape_mean'])
         val_sigmaL = float(theInputs['zjetsShape_sigma'])
-
+        val_poly0L = float(theInputs['zjetsShape_p0']) 
+        val_poly1L = float(theInputs['zjetsShape_p1'])
+        val_poly2L = float(theInputs['zjetsShape_p2'])
+        val_poly3L = float(theInputs['zjetsShape_p3'])
+        val_poly4L = float(theInputs['zjetsShape_p4'])
+        
         if not self.bVBF:
             name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
             name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet) 
+            bkg_zjetsLandau = ROOT.RooLandau("bkg_zjetsTmpLandau","bkg_zjetsTmpLandau",CMS_zz4l_mass,mlZjet,slZjet)
+            
+            name = "p0Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            p0Zjet = ROOT.RooRealVar(name,"p0 Zjet",val_poly0L)
+            name = "p1Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            p1Zjet = ROOT.RooRealVar(name,"p1 Zjet",val_poly1L)
+            name = "p2Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            p2Zjet = ROOT.RooRealVar(name,"p2 Zjet",val_poly2L)
+            name = "p3Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            p3Zjet = ROOT.RooRealVar(name,"p3 Zjet",val_poly3L)
+            name = "p4Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            p4Zjet = ROOT.RooRealVar(name,"p4 Zjet",val_poly4L)
+            bkg_zjetsPoly = ROOT.RooPolynomial("bkg_zjetsTmpPoly","bkg_zjetsTmpPoly",CMS_zz4l_mass,RooArgList())
+
+            bkg_zjets = ROOT.RooProdPdf("bkg_zjetsTmp","bkg_zjetsTmp",bkg_zjetsLandau,bkg_zjetsPoly)
+
         else:
             name = "mlZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
             name = "slZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet)
+            bkg_zjetsLandau = ROOT.RooLandau("bkg_zjetsTmpLandau","bkg_zjetsTmpLandau",CMS_zz4l_mass,mlZjet,slZjet)
 
- 
+            name = "p0Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            p0Zjet = ROOT.RooRealVar(name,"p0 Zjet",val_poly0L)
+            name = "p1Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            p1Zjet = ROOT.RooRealVar(name,"p1 Zjet",val_poly1L)
+            name = "p2Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            p2Zjet = ROOT.RooRealVar(name,"p2 Zjet",val_poly2L)
+            name = "p3Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            p3Zjet = ROOT.RooRealVar(name,"p3 Zjet",val_poly3L)
+            name = "p4Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            p4Zjet = ROOT.RooRealVar(name,"p4 Zjet",val_poly4L)
+            bkg_zjetsPoly = ROOT.RooPolynomial("bkg_zjetsTmpPoly","bkg_zjetsTmpPoly",CMS_zz4l_mass,RooArgList())
+            
+            bkg_zjets = ROOT.RooProdPdf("bkg_zjetsTmp","bkg_zjetsTmp",bkg_zjetsLandau,bkg_zjetsPoly)
+            
+            
 	bkg_qqzzErr = ROOT.RooProdPdf("bkg_qqzzErr","bkg_qqzzErr", ROOT.RooArgSet(bkg_qqzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
 	bkg_ggzzErr = ROOT.RooProdPdf("bkg_ggzzErr","bkg_ggzzErr", ROOT.RooArgSet(bkg_ggzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
 	bkg_zjetsErr = ROOT.RooProdPdf("bkg_zjetsErr","bkg_zjetsErr", ROOT.RooArgSet(bkg_zjets), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
@@ -1845,23 +1867,23 @@ class datacardClass:
 
         ## ----------------------- PLOTS FOR SANITY CHECKS -------------------------- ##
 
-        #canv_name = "czz_{0}".format(self.mH)
-        #czz = ROOT.TCanvas( canv_name, canv_name, 750, 700 )
-        #czz.cd()
-        #zzframe_s = CMS_zz4l_mass.frame(45)
-        #if self.bUseCBnoConvolution: super(RooDoubleCB,signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        #elif self.isHighMass : super(ROOT.RooFFTConvPdf,sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        #else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        #super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
-        #super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
-        #super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
-        #zzframe_s.Draw()
-        #if not self.bVBF:
-        #    figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
-        #else:
-        #    figName = "{0}/figs/mzz_{1}_{2}_{3}.png".format(self.outputDir, self.mH, self.appendName,self.VBFcat)
-        #czz.SaveAs(figName)
-        #del czz
+        canv_name = "czz_{0}".format(self.mH)
+        czz = ROOT.TCanvas( canv_name, canv_name, 750, 700 )
+        czz.cd()
+        zzframe_s = CMS_zz4l_mass.frame(45)
+        if self.bUseCBnoConvolution: super(RooDoubleCB,signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        elif self.isHighMass : super(ROOT.RooFFTConvPdf,sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
+        super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
+        super(ROOT.RooProdPdf,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+        zzframe_s.Draw()
+        if not self.bVBF:
+            figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
+        else:
+            figName = "{0}/figs/mzz_{1}_{2}_{3}.png".format(self.outputDir, self.mH, self.appendName,self.VBFcat)
+        czz.SaveAs(figName)
+        del czz
         
         ## ------------------- LUMI -------------------- ##
         
