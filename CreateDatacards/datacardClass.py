@@ -615,7 +615,7 @@ class datacardClass(object):
         name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",self.val_sigmaL)
         name = "bkg_zjetsLandau_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkg_zjetsLandau = ROOT.RooLandau(name,"bkg_zjetsTmpLandau",self.CMS_zz4l_mass,self.mlZjet,self.slZjet)
+        self.bkg_zjets = ROOT.RooLandau(name,"bkg_zjetsTmpLandau",self.CMS_zz4l_mass,self.mlZjet,self.slZjet)
 
         name = "p0Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.p0Zjet = ROOT.RooRealVar(name,"p0 Zjet",self.val_poly0L)
@@ -630,7 +630,7 @@ class datacardClass(object):
         name = "bkg_zjetsPoly_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.bkg_zjetsPoly = ROOT.RooPolynomial(name,"bkg_zjetsTmpPoly",self.CMS_zz4l_mass,RooArgList(self.p0Zjet,self.p1Zjet,self.p2Zjet,self.p3Zjet,self.p4Zjet))
         name = "bkg_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkg_zjets = ROOT.RooProdPdf(name,"bkg_zjetsTmp",self.bkg_zjetsLandau,self.bkg_zjetsPoly)
+        #self.bkg_zjets = ROOT.RooProdPdf(name,"bkg_zjetsTmp",self.bkg_zjetsLandau,self.bkg_zjetsPoly)
         
 
         ## ----------------- for massErr ------------------ ##
@@ -685,8 +685,8 @@ class datacardClass(object):
         else : super(ROOT.RooFFTConvPdf,self.sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
         super(ROOT.RooqqZZPdf_v2,self.bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
         super(ROOT.RooggZZPdf_v2,self.bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
-        #super(ROOT.RooLandau,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
-        super(ROOT.RooProdPdf,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+        super(ROOT.RooLandau,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+        #super(ROOT.RooProdPdf,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
         zzframe_s.Draw()
         figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
         czz.SaveAs(figName)
