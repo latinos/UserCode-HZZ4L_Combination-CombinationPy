@@ -252,6 +252,7 @@ class datacardClass:
             rdhXsBrFuncV_1 = self.makeXsBrFunction(0,self.MH)
         else:
             rdhXsBrFuncV_1 = self.makeXsBrFunction(1,self.MH)
+
         if not self.bVBF:
             rhfname = "rhfXsBr_{0}_{1:.0f}_{2:.0f}".format("ggH",self.channel,self.sqrts)
             rhfXsBrFuncV_1 = ROOT.RooHistFunc(rhfname,rhfname, ROOT.RooArgSet(self.MH), rdhXsBrFuncV_1, 1)
@@ -2141,29 +2142,15 @@ class datacardClass:
 
         #rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
 
-        print "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
         
         rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
 
-                
         print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
 
 
-        print self.bVBF
-        print self.lumi
-        print rrvNormSig.getVal()
-        print integral_VBF
-        print one.getVal()
-
-        print "IIIIIIIIIIIIIIIIIIIIIIII"
-        
         rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_VBF,self.getVariable(rfvTag_Ratio_qqH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
-        
-        print "IIIIIIIIIIIIIIIIIIIIII"
-        
+
         rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_WH,self.getVariable(rfvTag_Ratio_WH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
-        
-        print "JJJJJJJJJJJJJJJJJJJJJJJJJJJ"
         
         rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ZH,self.getVariable(rfvTag_Ratio_ZH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
         
