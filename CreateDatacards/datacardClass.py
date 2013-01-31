@@ -137,9 +137,9 @@ class datacardClass(object):
 
         self.myCSW = HiggsCSandWidth()
         self.widthHVal =  self.myCSW.HiggsWidth(0,self.mH)
+        self.isHighMass = False
         if(self.widthHVal < 0.12):
             self.bUseCBnoConvolution = True
-            self.isHighMass = False
         if self.mH >= 390:
             if self.inputs['useHighMassReweightedShapes']:
                 self.isHighMass = True
