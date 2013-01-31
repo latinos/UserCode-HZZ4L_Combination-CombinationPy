@@ -19,7 +19,7 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  5.45487
 rate ggZZ  0.425036
-rate zjets 0.4576
+rate zjets 0.75
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -124,13 +124,18 @@ ggZZshape a7_bkgd  0.165642
 ggZZshape a8_bkgd  63.6489
 ggZZshape a9_bkgd  0.0785973
 
-zjetsShape mean 141.1
-zjetsShape sigma 16.7
+zjetsShape mean 122.6
+zjetsShape sigma 17.84
+zjetsShape p0 -152429
+zjetsShape p1 2432.9
+zjetsShape p2 -10.620
+zjetsShape p3 0.018370
+zjetsShape p4 -1.11716e-05
 
 
 ### channel dependent systematics ###
-systematic zjetKappaLow   0.4
-systematic zjetKappaHigh  1.8
+systematic zjetKappaLow   0.6
+systematic zjetKappaHigh  1.4
 systematic param CMS_zz4l_mean_m_sig   0.001
 systematic param CMS_zz4l_sigma_m_sig  0.2
 systematic param CMS_zz4l_n_sig 0.01
