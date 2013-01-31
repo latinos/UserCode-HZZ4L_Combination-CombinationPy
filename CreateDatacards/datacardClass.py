@@ -167,13 +167,25 @@ class datacardClass:
         
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
+        highside = 1000.0
         if (self.mH >= 275):
             lowside = 180.0
-        else:
-            lowside = 100.0
+            highside = 650.0
+        if(self.mH >= 350):
+            lowside = 200.0
+            highside = 900.0
+        if(self.mH >= 500):
+            lowside = 250.0
+            highside = 1000.0
+        if(self.mH >= 700):
+            lowside = 350.0
+            highside = 1400.0
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-        self.high_M = min( (self.mH + 15.*self.windowVal), 1000)
+        self.high_M = min( (self.mH + 15.*self.windowVal), highside)
+        if(self.bUseCBnoConvolution):
+            self.low_M = 100.0
+            self.high_M = max(180.0,self.high_M)
 
         #self.low_M = 100.0
         #self.high_M = 800.0
@@ -252,7 +264,6 @@ class datacardClass:
             rdhXsBrFuncV_1 = self.makeXsBrFunction(0,self.MH)
         else:
             rdhXsBrFuncV_1 = self.makeXsBrFunction(1,self.MH)
-
         if not self.bVBF:
             rhfname = "rhfXsBr_{0}_{1:.0f}_{2:.0f}".format("ggH",self.channel,self.sqrts)
             rhfXsBrFuncV_1 = ROOT.RooHistFunc(rhfname,rhfname, ROOT.RooArgSet(self.MH), rdhXsBrFuncV_1, 1)
@@ -523,10 +534,6 @@ class datacardClass:
 
         name = "CMS_zz4l_sigmaB_sig_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
 	rfv_sigmaB_mean = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(CMS_zz4l_mass, CMS_zz4l_sigma_m_sig))
-
-
-        print "HERRRRRRRRRRRRRRRRRRRRRRRRE"
-        print theInputs['sigma_CB_shape']
 
 	name = "CMS_zz4l_massErrS_kappa_{0:.0f}".format(self.channel);
 	rfv_sigma_kappa = ROOT.RooFormulaVar(name, "@0*0 + 1.4", ROOT.RooArgList(self.MH)); #the kappa should be parametrized as a function of MH  --> TBD
@@ -952,21 +959,20 @@ class datacardClass:
             discVarName = "mekdLD"
         else:
             discVarName = "melaLD"
-
+    
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
-                
+        
         sigTempFile = ROOT.TFile(templateSigName)
         sigTemplate = sigTempFile.Get("h_mzzD")
         sigTemplate_Up = sigTempFile.Get("h_mzzD_up")
         sigTemplate_Down = sigTempFile.Get("h_mzzD_dn")
 
-        #Set Bins
         dBins = sigTemplate.GetYaxis().GetNbins()
         dLow = sigTemplate.GetYaxis().GetXmin()
         dHigh = sigTemplate.GetYaxis().GetXmax()
-        D = ROOT.RooRealVar(discVarName,discVarName,dLow,dHigh)
+        D = ROOT.RooRealFar(discVarName,discVarName,dLow,dHigh)
         D.setBins(dBins)
-        print "discVarName ", discVarName, " dLow " , dLow, " dHigh ", dHigh, " dBins ", dBins
+        print "discVarName ", discVarName, " dLow ", dLow, " dHigh ", dHigh, " dBins ", dBins
         
         TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         if(self.bVBF):
@@ -1113,7 +1119,7 @@ class datacardClass:
             if(self.isAltSig):
                 funcList_ggH_ALT.add(sigTemplatePdf_ggH_ALT)
     
-        morphSigVarName = "CMS_zz4l_sigMELA"
+        morphSigVarName = "CMS_zz4l_sigMELA_{0:.0f}".format(self.channel)
         alphaMorphSig = ROOT.RooRealVar(morphSigVarName,morphSigVarName,0,-20,20)
         if(self.sigMorph): alphaMorphSig.setConstant(False)
         else: alphaMorphSig.setConstant(True)
@@ -1446,55 +1452,21 @@ class datacardClass:
         ## Reducible backgrounds
         val_meanL = float(theInputs['zjetsShape_mean'])
         val_sigmaL = float(theInputs['zjetsShape_sigma'])
-        val_poly0L = float(theInputs['zjetsShape_p0']) 
-        val_poly1L = float(theInputs['zjetsShape_p1'])
-        val_poly2L = float(theInputs['zjetsShape_p2'])
-        val_poly3L = float(theInputs['zjetsShape_p3'])
-        val_poly4L = float(theInputs['zjetsShape_p4'])
-        
+
         if not self.bVBF:
             name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
             name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjetsLandau = ROOT.RooLandau("bkg_zjetsTmpLandau","bkg_zjetsTmpLandau",CMS_zz4l_mass,mlZjet,slZjet)
-            
-            name = "p0Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p0Zjet = ROOT.RooRealVar(name,"p0 Zjet",val_poly0L)
-            name = "p1Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p1Zjet = ROOT.RooRealVar(name,"p1 Zjet",val_poly1L)
-            name = "p2Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p2Zjet = ROOT.RooRealVar(name,"p2 Zjet",val_poly2L)
-            name = "p3Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p3Zjet = ROOT.RooRealVar(name,"p3 Zjet",val_poly3L)
-            name = "p4Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p4Zjet = ROOT.RooRealVar(name,"p4 Zjet",val_poly4L)
-            bkg_zjetsPoly = ROOT.RooPolynomial("bkg_zjetsTmpPoly","bkg_zjetsTmpPoly",CMS_zz4l_mass,RooArgList())
-
-            bkg_zjets = ROOT.RooProdPdf("bkg_zjetsTmp","bkg_zjetsTmp",bkg_zjetsLandau,bkg_zjetsPoly)
-
+            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet) 
         else:
             name = "mlZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
             name = "slZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjetsLandau = ROOT.RooLandau("bkg_zjetsTmpLandau","bkg_zjetsTmpLandau",CMS_zz4l_mass,mlZjet,slZjet)
+            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet)
 
-            name = "p0Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            p0Zjet = ROOT.RooRealVar(name,"p0 Zjet",val_poly0L)
-            name = "p1Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            p1Zjet = ROOT.RooRealVar(name,"p1 Zjet",val_poly1L)
-            name = "p2Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            p2Zjet = ROOT.RooRealVar(name,"p2 Zjet",val_poly2L)
-            name = "p3Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            p3Zjet = ROOT.RooRealVar(name,"p3 Zjet",val_poly3L)
-            name = "p4Zjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            p4Zjet = ROOT.RooRealVar(name,"p4 Zjet",val_poly4L)
-            bkg_zjetsPoly = ROOT.RooPolynomial("bkg_zjetsTmpPoly","bkg_zjetsTmpPoly",CMS_zz4l_mass,RooArgList())
-            
-            bkg_zjets = ROOT.RooProdPdf("bkg_zjetsTmp","bkg_zjetsTmp",bkg_zjetsLandau,bkg_zjetsPoly)
-            
-            
+ 
 	bkg_qqzzErr = ROOT.RooProdPdf("bkg_qqzzErr","bkg_qqzzErr", ROOT.RooArgSet(bkg_qqzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
 	bkg_ggzzErr = ROOT.RooProdPdf("bkg_ggzzErr","bkg_ggzzErr", ROOT.RooArgSet(bkg_ggzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
 	bkg_zjetsErr = ROOT.RooProdPdf("bkg_zjetsErr","bkg_zjetsErr", ROOT.RooArgSet(bkg_zjets), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
@@ -1740,15 +1712,8 @@ class datacardClass:
             bkg2d_ZX_PtOverM = ROOT.RooProdPdf("bkg2d_ZX_PtOverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat),"bkg2d_ZX_PtOverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat),ROOT.RooArgSet(self.getVariable(bkg_zjetsErr,bkg_zjets,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(PtTemplateMorphPdf_ZX),ROOT.RooArgSet(ptoverm)))
             
       ## ----------------- 2D BACKGROUND SHAPES --------------- ##
-
-        ### NEW MEKD
-        if self.useMEKDTemplates :
-            templateBkgName = "{0}/Dbackground_ZX_{1}.root".format(self.templateDir ,self.appendName)
-        else:
-            templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
-            
-        print templateBkgName, " file used for ZX"
         
+        templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         bkgTempFile = ROOT.TFile(templateBkgName)
         bkgTemplate = bkgTempFile.Get("h_mzzD")
         bkgTemplate_Up = bkgTempFile.Get("h_mzzD_up")
@@ -1889,24 +1854,24 @@ class datacardClass:
         
 
         ## ----------------------- PLOTS FOR SANITY CHECKS -------------------------- ##
-        if(DEBUG):
-            canv_name = "czz_{0}".format(self.mH)
-            czz = ROOT.TCanvas( canv_name, canv_name, 750, 700 )
-            czz.cd()
-            zzframe_s = CMS_zz4l_mass.frame(45)
-            if self.bUseCBnoConvolution: super(RooDoubleCB,signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-            elif self.isHighMass : super(ROOT.RooFFTConvPdf,sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-            else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-            super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
-            super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
-            super(ROOT.RooProdPdf,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
-            zzframe_s.Draw()
-            if not self.bVBF:
-                figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
-            else:
-                figName = "{0}/figs/mzz_{1}_{2}_{3}.png".format(self.outputDir, self.mH, self.appendName,self.VBFcat)
-            czz.SaveAs(figName)
-            del czz
+
+        #canv_name = "czz_{0}".format(self.mH)
+        #czz = ROOT.TCanvas( canv_name, canv_name, 750, 700 )
+        #czz.cd()
+        #zzframe_s = CMS_zz4l_mass.frame(45)
+        #if self.bUseCBnoConvolution: super(RooDoubleCB,signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        #elif self.isHighMass : super(ROOT.RooFFTConvPdf,sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        #else : super(ROOT.RooFFTConvPdf,sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+        #super(ROOT.RooqqZZPdf_v2,bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
+        #super(ROOT.RooggZZPdf_v2,bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
+        #super(ROOT.RooLandau,bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+        #zzframe_s.Draw()
+        #if not self.bVBF:
+        #    figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
+        #else:
+        #    figName = "{0}/figs/mzz_{1}_{2}_{3}.png".format(self.outputDir, self.mH, self.appendName,self.VBFcat)
+        #czz.SaveAs(figName)
+        #del czz
         
         ## ------------------- LUMI -------------------- ##
         
@@ -2142,15 +2107,15 @@ class datacardClass:
 
         #rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
 
-        
         rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
-
+        
         print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
-
-
+        
         rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_VBF,self.getVariable(rfvTag_Ratio_qqH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
-
+        
+        
         rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_WH,self.getVariable(rfvTag_Ratio_WH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
+        
         
         rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ZH,self.getVariable(rfvTag_Ratio_ZH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
         
