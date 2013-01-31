@@ -21,6 +21,7 @@ rate qqZZ  159.955
 rate ggZZ  11.7732
 rate zjets 7.1 
 
+usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
 signalShape n_CB -5.10049+(0.117582*@0)+(-0.000373453*@0*@0)+(-1.84701e-07*@0*@0*@0)+(8.52694e-10*@0*@0*@0*@0)+(1.14917e-12*@0*@0*@0*@0*@0)
 signalShape alpha_CB 8.2816+(-0.119819*@0)+(0.000575309*@0*@0)+(-2.39423e-07*@0*@0*@0)+(-4.0018e-09*@0*@0*@0*@0)+(6.60491e-12*@0*@0*@0*@0*@0)
@@ -77,8 +78,13 @@ ggZZshape a7_bkgd  0.161765
 ggZZshape a8_bkgd  39.1879
 ggZZshape a9_bkgd  0.0564257
 
-zjetsShape mean 146.4
-zjetsShape sigma 19.6
+zjetsShape mean 137.2
+zjetsShape sigma 18.62
+zjetsShape p0 -120670
+zjetsShape p1 2328
+zjetsShape p2 -8.867
+zjetsShape p3 0.0125
+zjetsShape p4 -6.058e-06
 
 
 ### channel dependent systematics ###
