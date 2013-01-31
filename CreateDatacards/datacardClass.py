@@ -117,7 +117,8 @@ class datacardClass:
         self.bkgMorph = theInputs['useCMS_zz4l_bkgMELA']
         self.templateDir = theTemplateDir
 	self.bIncludingError=theIncludingError
-	self.bMEKD = theMEKD
+	self.bMEKD = False
+        self.useMEKDTemplates = theMEKD
         self.bVBF = False
         if(theInputs['useCMS_zz4l_doVBFtest']):
             self.bVBF = True
@@ -521,6 +522,10 @@ class datacardClass:
 
         name = "CMS_zz4l_sigmaB_sig_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
 	rfv_sigmaB_mean = ROOT.RooFormulaVar(name,"("+theInputs['sigma_CB_shape']+")"+"*(1+@1)", ROOT.RooArgList(CMS_zz4l_mass, CMS_zz4l_sigma_m_sig))
+
+
+        print "HERRRRRRRRRRRRRRRRRRRRRRRRE"
+        print theInputs['sigma_CB_shape']
 
 	name = "CMS_zz4l_massErrS_kappa_{0:.0f}".format(self.channel);
 	rfv_sigma_kappa = ROOT.RooFormulaVar(name, "@0*0 + 1.4", ROOT.RooArgList(self.MH)); #the kappa should be parametrized as a function of MH  --> TBD
@@ -941,16 +946,26 @@ class datacardClass:
 
 
         ## --------------------------- MELA 2D PDFS ------------------------- ##
-        discVarName = "melaLD"
-        D = ROOT.RooRealVar(discVarName,discVarName,0,1)
-        D.setBins(30)
-    
+        discVarName = ""
+        if self.useMEKDTemplates:
+            discVarName = "mekdLD"
+        else:
+            discVarName = "melaLD"
+
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
-        
+                
         sigTempFile = ROOT.TFile(templateSigName)
         sigTemplate = sigTempFile.Get("h_mzzD")
         sigTemplate_Up = sigTempFile.Get("h_mzzD_up")
         sigTemplate_Down = sigTempFile.Get("h_mzzD_dn")
+
+        #Set Bins
+        dBins = sigTemplate.GetYaxis().GetNbins()
+        dLow = sigTemplate.GetYaxis().GetXmin()
+        dHigh = sigTemplate.GetYaxis().GetXmax()
+        D = ROOT.RooRealVar(discVarName,discVarName,dLow,dHigh)
+        D.setBins(dBins)
+        print "discVarName ", discVarName, " dLow " , dLow, " dHigh ", dHigh, " dBins ", dBins
         
         TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         if(self.bVBF):
@@ -1724,8 +1739,15 @@ class datacardClass:
             bkg2d_ZX_PtOverM = ROOT.RooProdPdf("bkg2d_ZX_PtOverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat),"bkg2d_ZX_PtOverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat),ROOT.RooArgSet(self.getVariable(bkg_zjetsErr,bkg_zjets,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(PtTemplateMorphPdf_ZX),ROOT.RooArgSet(ptoverm)))
             
       ## ----------------- 2D BACKGROUND SHAPES --------------- ##
+
+        ### NEW MEKD
+        if self.useMEKDTemplates :
+            templateBkgName = "{0}/Dbackground_ZX_{1}.root".format(self.templateDir ,self.appendName)
+        else:
+            templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
+            
+        print templateBkgName, " file used for ZX"
         
-        templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         bkgTempFile = ROOT.TFile(templateBkgName)
         bkgTemplate = bkgTempFile.Get("h_mzzD")
         bkgTemplate_Up = bkgTempFile.Get("h_mzzD_up")
@@ -2119,15 +2141,29 @@ class datacardClass:
 
         #rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
 
-        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+        print "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
         
+        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+
+                
         print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
+
+
+        print self.bVBF
+        print self.lumi
+        print rrvNormSig.getVal()
+        print integral_VBF
+        print one.getVal()
+
+        print "IIIIIIIIIIIIIIIIIIIIIIII"
         
         rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_VBF,self.getVariable(rfvTag_Ratio_qqH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
         
+        print "IIIIIIIIIIIIIIIIIIIIII"
         
         rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_WH,self.getVariable(rfvTag_Ratio_WH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
         
+        print "JJJJJJJJJJJJJJJJJJJJJJJJJJJ"
         
         rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ZH,self.getVariable(rfvTag_Ratio_ZH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
         
