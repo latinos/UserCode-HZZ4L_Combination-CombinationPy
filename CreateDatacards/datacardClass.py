@@ -167,25 +167,14 @@ class datacardClass:
         
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
-        highside = 1000.0
+        
         if (self.mH >= 275):
             lowside = 180.0
-            highside = 650.0
-        if(self.mH >= 350):
-            lowside = 200.0
-            highside = 900.0
-        if(self.mH >= 500):
-            lowside = 250.0
-            highside = 1000.0
-        if(self.mH >= 700):
-            lowside = 350.0
-            highside = 1400.0
+        else:
+            lowside = 100.0
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
-        self.high_M = min( (self.mH + 15.*self.windowVal), highside)
-        if(self.bUseCBnoConvolution):
-            self.low_M = 100.0
-            self.high_M = max(180.0,self.high_M)
+        self.high_M = min( (self.mH + 15.*self.windowVal), 1000)
 
         #self.low_M = 100.0
         #self.high_M = 800.0
@@ -970,7 +959,7 @@ class datacardClass:
         dBins = sigTemplate.GetYaxis().GetNbins()
         dLow = sigTemplate.GetYaxis().GetXmin()
         dHigh = sigTemplate.GetYaxis().GetXmax()
-        D = ROOT.RooRealFar(discVarName,discVarName,dLow,dHigh)
+        D = ROOT.RooRealVar(discVarName,discVarName,dLow,dHigh)
         D.setBins(dBins)
         print "discVarName ", discVarName, " dLow ", dLow, " dHigh ", dHigh, " dBins ", dBins
         
@@ -1712,8 +1701,13 @@ class datacardClass:
             bkg2d_ZX_PtOverM = ROOT.RooProdPdf("bkg2d_ZX_PtOverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat),"bkg2d_ZX_PtOverM_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat),ROOT.RooArgSet(self.getVariable(bkg_zjetsErr,bkg_zjets,self.bIncludingError)),ROOT.RooFit.Conditional(ROOT.RooArgSet(PtTemplateMorphPdf_ZX),ROOT.RooArgSet(ptoverm)))
             
       ## ----------------- 2D BACKGROUND SHAPES --------------- ##
+        if self.useMEKDTemplates:
+            templateBkgName = "{0}/Dbackground_ZX_{1}.root".format(self.templateDir, self.appendName)
+        else:
+            templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
+            
+        print templateBkgName, "file used for ZX"
         
-        templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         bkgTempFile = ROOT.TFile(templateBkgName)
         bkgTemplate = bkgTempFile.Get("h_mzzD")
         bkgTemplate_Up = bkgTempFile.Get("h_mzzD_up")
