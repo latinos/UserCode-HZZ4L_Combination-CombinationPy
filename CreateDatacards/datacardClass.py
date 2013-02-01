@@ -167,11 +167,20 @@ class datacardClass:
         
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
+        highside = 1000.0
         
         if (self.mH >= 275):
             lowside = 180.0
-        else:
-            lowside = 100.0
+            highside = 650.0
+        if (self.mH >= 350):
+            lowside = 200.0
+            highside = 900.0
+        if (self.mH >= 500):
+            lowside = 250.0
+            highside = 1000.0
+        if (self.mH >= 700):
+            lowside = 350.0
+            highside = 1400.0
         
         self.low_M = max( (self.mH - 20.*self.windowVal), lowside)
         self.high_M = min( (self.mH + 15.*self.windowVal), 1000)
