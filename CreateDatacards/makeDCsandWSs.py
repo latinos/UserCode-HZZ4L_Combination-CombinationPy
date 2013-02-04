@@ -86,13 +86,13 @@ def creationLoop(directory):
 #    stepSizes=[  2.0,   5.0,   10.0] #,  20.0,  50.0 ]
 #    endVal   =[   65,    12,    5] #,     10,    9 ]
 
-#    startMass=[ 126.0 ]
-#    stepSizes=[ 0.5 ]
-#    endVal=[ 1 ]
+    startMass=[ 126.0 ]
+    stepSizes=[ 0.5 ]
+    endVal=[ 1 ]
 
-    startMass=  [ 110.0]
-    stepSizes=  [  1.0]
-    endVal=     [  51]
+#    startMass=  [ 110.0]
+#    stepSizes=  [  1.0]
+#    endVal=     [  51]
 
 
     myClass = datacardClass()
