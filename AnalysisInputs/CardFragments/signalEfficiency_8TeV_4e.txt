@@ -1,13 +1,13 @@
 ## signal efficiency ##
-signalEff a1  -4.32136
-signalEff a2  4.71368
-signalEff a3  -112.897
-signalEff a4  173.9
-signalEff b1  0.759472
-signalEff b2  0.00174003
-signalEff b3  -9.99642e-07
-signalEff g1  0.0976052
-signalEff g2  166.942
-signalEff g3  44.863
+signalEff a1  -4.29679
+signalEff a2  4.73717
+signalEff a3  -121.419
+signalEff a4  186.884
+signalEff b1  0.932993
+signalEff b2  0.000864595
+signalEff b3  -2.66795e-07
+signalEff g1  0.0969405
+signalEff g2  164.776
+signalEff g3  46.5494
 
 
