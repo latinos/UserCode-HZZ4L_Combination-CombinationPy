@@ -17,7 +17,7 @@ class kdClass(datacardClass):
 
         self.discVarName = ""
         if self.useMEKD:
-            self.discVarName = "mekdLD"
+            self.discVarName = "mekdLLD"
         else:
             self.discVarName = "melaLD"
         print "discVarName ",self.discVarName

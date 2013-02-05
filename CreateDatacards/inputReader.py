@@ -634,11 +634,11 @@ class inputReader:
 
         if not self.goodEntry(self.zjetsShape_mean): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean")
         if not self.goodEntry(self.zjetsShape_sigma): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma")
-        if not self.goodEntry(self.zjetsShape_p0): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p0")
-        if not self.goodEntry(self.zjetsShape_p1): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p1")
-        if not self.goodEntry(self.zjetsShape_p2): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p2")
-        if not self.goodEntry(self.zjetsShape_p3): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p3")
-        if not self.goodEntry(self.zjetsShape_p4): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p4")
+        #if not self.goodEntry(self.zjetsShape_p0): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p0")
+        #if not self.goodEntry(self.zjetsShape_p1): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p1")
+        #if not self.goodEntry(self.zjetsShape_p2): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p2")
+        #if not self.goodEntry(self.zjetsShape_p3): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p3")
+        #if not self.goodEntry(self.zjetsShape_p4): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p4")
         
         if not self.goodEntry(self.zjetsKappaLow): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaLow")
         if not self.goodEntry(self.zjetsKappaHigh): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaHigh")

@@ -677,20 +677,21 @@ class datacardClass(object):
 
  
         ## ----------------------- PLOTS FOR SANITY CHECKS -------------------------- ##
-        czz = ROOT.TCanvas( "czz", "czz", 750, 700 )
-        czz.cd()
-        zzframe_s = self.CMS_zz4l_mass.frame(45)
-        if self.bUseCBnoConvolution: super(RooDoubleCB,self.signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        elif self.isHighMass : super(ROOT.RooFFTConvPdf,self.sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        else : super(ROOT.RooFFTConvPdf,self.sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
-        super(ROOT.RooqqZZPdf_v2,self.bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
-        super(ROOT.RooggZZPdf_v2,self.bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
-        super(ROOT.RooLandau,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
-        #super(ROOT.RooProdPdf,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
-        zzframe_s.Draw()
-        figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
-        czz.SaveAs(figName)
-        del czz
+        if(self.DEBUG):
+            czz = ROOT.TCanvas( "czz", "czz", 750, 700 )
+            czz.cd()
+            zzframe_s = self.CMS_zz4l_mass.frame(45)
+            if self.bUseCBnoConvolution: super(RooDoubleCB,self.signalCB_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+            elif self.isHighMass : super(ROOT.RooFFTConvPdf,self.sig_ggH_HM).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+            else : super(ROOT.RooFFTConvPdf,self.sig_ggH).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(1) )
+            super(ROOT.RooqqZZPdf_v2,self.bkg_qqzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(4) )
+            super(ROOT.RooggZZPdf_v2,self.bkg_ggzz).plotOn(zzframe_s, ROOT.RooFit.LineStyle(1), ROOT.RooFit.LineColor(6) )
+            super(ROOT.RooLandau,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+            #super(ROOT.RooProdPdf,self.bkg_zjets).plotOn(zzframe_s, ROOT.RooFit.LineStyle(2), ROOT.RooFit.LineColor(6) )
+            zzframe_s.Draw()
+            figName = "{0}/figs/mzz_{1}_{2}.png".format(self.outputDir, self.mH, self.appendName)
+            czz.SaveAs(figName)
+            del czz
         
         ## ------------------- LUMI -------------------- ##
         self.rrvLumi = ROOT.RooRealVar("cmshzz4l_lumi","cmshzz4l_lumi",self.lumi)  
@@ -818,6 +819,14 @@ class datacardClass(object):
         integral_WH  = 0.0
         integral_ZH  = 0.0
         integral_ttH = 0.0
+
+        print "HEEEEEEEEEEEEEEEEERRE"
+        print "1   ", self.isHighMass
+        print "2   ",self.sig_ggH_HM.createIntegral( ROOT.RooArgSet(self.CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
+        print "3   ",self.signalBW_ggH_HM.getVal()
+        print "4   ",self.CMS_zz4l_mean_BW.getVal(),"  ",self.rfv_gamma_BW.getVal()
+        print "HEEEEEEEEEEEEEEEERRE"
+
         
         if self.isHighMass :
             integral_ggH = self.sig_ggH_HM.createIntegral( ROOT.RooArgSet(self.CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
