@@ -17,15 +17,9 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-<<<<<<< inputs_4mu.txt
-rate qqZZ  100.664
-rate ggZZ  5.4628
-rate zjets 3.0
-=======
 rate qqZZ  91.3803
 rate ggZZ  5.95568
 rate zjets 3.0
->>>>>>> 1.21
 
 ## signal functions --- no spaces! ##
 signalShape n_CB 2.55275+(-0.0260187*@0)+(0.000236887*@0*@0)+(-3.70709e-07*@0*@0*@0)+(-2.00124e-09*@0*@0*@0*@0)+(4.67661e-12*@0*@0*@0*@0*@0)
