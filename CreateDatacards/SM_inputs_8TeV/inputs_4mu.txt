@@ -17,9 +17,15 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  100.649
-rate ggZZ  5.46405
+<<<<<<< inputs_4mu.txt
+rate qqZZ  100.664
+rate ggZZ  5.4628
 rate zjets 3.0
+=======
+rate qqZZ  91.3803
+rate ggZZ  5.95568
+rate zjets 3.0
+>>>>>>> 1.21
 
 ## signal functions --- no spaces! ##
 signalShape n_CB 2.55275+(-0.0260187*@0)+(0.000236887*@0*@0)+(-3.70709e-07*@0*@0*@0)+(-2.00124e-09*@0*@0*@0*@0)+(4.67661e-12*@0*@0*@0*@0*@0)
@@ -36,93 +42,56 @@ HighMasssignalShape mean_CB -36.3933+(0.151667*@0)+(-0.000191185*@0*@0)+(7.24693
 HighMasssignalShape sigma_CB 20.1189+(-0.160897*@0)+(0.00032309*@0*@0)+(-7.20023e-08*@0*@0*@0)
 HighMasssignalShape gamma_BW -255.891+(1.07402*@0)+(-0.00116444*@0*@0)+(5.94677e-07*@0*@0*@0)
 
-
 ## signal efficiency ##
-signalEff a1  -4.42264
-signalEff a2  4.61817
-signalEff a3  -57.9249
-signalEff a4  105.098
-signalEff b1  2.95542
-signalEff b2  0.00224211
-signalEff b3  -6.43001e-07
-signalEff g1  0.0254007
-signalEff g2  188.374
-signalEff g3  20.0067
+signalEff a1  -4.42421
+signalEff a2  4.61644
+signalEff a3  -58.8907
+signalEff a4  105.41
+signalEff b1  3.00848
+signalEff b2  0.00227164
+signalEff b3  -6.47599e-07
+signalEff g1  0.0253553
+signalEff g2  188.204
+signalEff g3  20.0005
 
-signalEff qqHa1  -4.39851
-signalEff qqHa2  4.64384
-signalEff qqHa3  -141.548
-signalEff qqHa4  164.012
-signalEff qqHb1  3.36718
-signalEff qqHb2  -0.000725987
-signalEff qqHb3  -9.96523e-07
-signalEff qqHg1  2.55897e-06
-signalEff qqHg2  160.279
-signalEff qqHg3  49.3178
-
-signalEff ZHa1  -4.28051
-signalEff ZHa2  4.73124
-signalEff ZHa3  -219.392
-signalEff ZHa4  0.0036024
-signalEff ZHb1  6.08875
-signalEff ZHb2  -0.0713457
-signalEff ZHb3  0.000333369
-signalEff ZHg1  0.0999653
-signalEff ZHg2  181.645
-signalEff ZHg3  20.5103
-
-signalEff WHa1  -4.24677
-signalEff WHa2  4.78004
-signalEff WHa3  -286.269
-signalEff WHa4  3.02423
-signalEff WHb1  5.02033
-signalEff WHb2  -0.0740071
-signalEff WHb3  0.000314214
-signalEff WHg1  0.0994966
-signalEff WHg2  194.76
-signalEff WHg3  38.6188
-
-signalEff ttHa1  -4.22017
-signalEff ttHa2  4.80688
-signalEff ttHa3  -170.944
-signalEff ttHa4  74.3408
-signalEff ttHb1  8.41491
-signalEff ttHb2  -0.140933
-signalEff ttHb3  0.000653197
-signalEff ttHg1  0.0793491
-signalEff ttHg2  209.995
-signalEff ttHg3  29.7973
 
 ### background functions ###
-qqZZshape a0_bkgd   103.633
-qqZZshape a1_bkgd   10.3082
-qqZZshape a2_bkgd   119.92
-qqZZshape a3_bkgd   0.044149
-qqZZshape a4_bkgd   185.147
-qqZZshape a5_bkgd   8.4865
-qqZZshape a6_bkgd   40.6169
-qqZZshape a7_bkgd   0.100624
-qqZZshape a8_bkgd   51.7848
-qqZZshape a9_bkgd   0.041854
-qqZZshape a10_bkgd  98.8426
-qqZZshape a11_bkgd  -7.10591
-qqZZshape a12_bkgd  21.4045
-qqZZshape a13_bkgd  0.0831317
+qqZZshape a0_bkgd   103.632
+qqZZshape a1_bkgd   10.3
+qqZZshape a2_bkgd   119.978
+qqZZshape a3_bkgd   0.0441064
+qqZZshape a4_bkgd   185.157
+qqZZshape a5_bkgd   8.52824
+qqZZshape a6_bkgd   40.6098
+qqZZshape a7_bkgd   0.100681
+qqZZshape a8_bkgd   51.6818
+qqZZshape a9_bkgd   0.0418686
+qqZZshape a10_bkgd  98.8603
+qqZZshape a11_bkgd  -6.9554
+qqZZshape a12_bkgd  20.6039
+qqZZshape a13_bkgd  0.084616
 
 
-ggZZshape a0_bkgd  110.625
-ggZZshape a1_bkgd  49.1139
-ggZZshape a2_bkgd  145.679
-ggZZshape a3_bkgd  0.0300691
-ggZZshape a4_bkgd  185.769
-ggZZshape a5_bkgd  10.4122
-ggZZshape a6_bkgd  37.9854
-ggZZshape a7_bkgd  0.165635
-ggZZshape a8_bkgd  64.2228
-ggZZshape a9_bkgd  0.0786053
+ggZZshape a0_bkgd  111.289
+ggZZshape a1_bkgd  49.5873
+ggZZshape a2_bkgd  146.085
+ggZZshape a3_bkgd  0.0301507
+ggZZshape a4_bkgd  185.857
+ggZZshape a5_bkgd  10.5173
+ggZZshape a6_bkgd  37.9824
+ggZZshape a7_bkgd  0.165863
+ggZZshape a8_bkgd  63.8607
+ggZZshape a9_bkgd  0.0778634
 
 zjetsShape mean 140.3
 zjetsShape sigma 21.7
+#zjetsShape mean 137.2
+#zjetsShape sigma 18.62
+zjetsShape p0 -120670
+zjetsShape p1 2328
+zjetsShape p2 -8.867
+zjetsShape p3 0.0125
+zjetsShape p4 -6.058e-06
 
 
 ### channel dependent systematics ###
