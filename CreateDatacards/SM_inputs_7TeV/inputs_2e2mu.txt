@@ -21,6 +21,7 @@ rate qqZZ  33.4587
 rate ggZZ  2.2102
 rate zjets 2.9
 
+
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
 signalShape alpha_CB (-19.1247)+(0.511858*@0)+(-0.00507084*@0*@0)+(2.40314e-05*@0*@0*@0)+(-5.4294e-08*@0*@0*@0*@0)+(4.70018e-11*@0*@0*@0*@0*@0)
@@ -36,6 +37,7 @@ highmasssignalShape n2_CB (20)
 highmasssignalShape mean_CB (82.1279)+(-0.457539*@0)+(0.000816838*@0*@0)+(-4.6665e-07*@0*@0*@0)
 highmasssignalShape sigma_CB (41.2978)+(-0.237919*@0)+(0.000343944*@0*@0)+(-1.18454e-08*@0*@0*@0)
 highmasssignalShape gamma_BW TMath::Max((59.6861)+(-0.59096*@0)+(0.00169122*@0*@0)+(-1.05572e-06*@0*@0*@0),30)
+
 ## signal efficiency ##
 signalEff a1  -4.42615
 signalEff a2  4.61366
@@ -47,7 +49,6 @@ signalEff b3  -2.24931e-06
 signalEff g1  0.0198211
 signalEff g2  193.483
 signalEff g3  20
-
 
 ### background functions ###
 qqZZshape a0_bkgd   111.163
@@ -64,7 +65,6 @@ qqZZshape a10_bkgd  85.5325
 qqZZshape a11_bkgd  -13.5325
 qqZZshape a12_bkgd  51.9443
 qqZZshape a13_bkgd  0.329923
-
 
 ggZZshape a0_bkgd  143.198
 ggZZshape a1_bkgd  42.5313
@@ -86,7 +86,6 @@ zjetsShape p1 2328
 zjetsShape p2 -8.867
 zjetsShape p3 0.0125
 zjetsShape p4 -6.058e-06
-
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.6
 systematic zjetKappaHigh  1.4
@@ -158,14 +157,14 @@ RelErrShape relerr_zx_ld_sigma 0.00440845
 RelErrShape relerr_zx_gs_mean 0.0133473
 RelErrShape relerr_zx_gs_sigma 0.00397736
 RelErrShape relerr_zx_ld_frac 0.546106
- RelErrShape  relerr_qqzz_ld_frac 0.630003 
- RelErrShape  relerr_qqzz_ld_mean 0.0144034+(-2.1102e-05*@0)
- RelErrShape  relerr_qqzz_ld_sigma 0.0198207+(-0.000273488*@0)+(1.01742e-06*@0*@0)
- RelErrShape  relerr_qqzz_gs_mean 0.0315695+(-8.56245e-05*@0)
- RelErrShape  relerr_qqzz_gs_sigma 0.00606524+(-1.64997e-05*@0)
- RelErrShape  relerr_ggH_ld_mean 0.0126009+(-1.22923e-05*@0)
- RelErrShape  relerr_ggH_ld_sigma 0.00496475+(-5.32893e-05*@0)+(1.95969e-07*@0*@0)
- RelErrShape  relerr_ggH_gs_mean 0.02767+(-6.79398e-05*@0)
- RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
- RelErrShape  relerr_ggH_ld_frac 0.63 
+RelErrShape  relerr_qqzz_ld_frac 0.630003 
+RelErrShape  relerr_qqzz_ld_mean 0.0144034+(-2.1102e-05*@0)
+RelErrShape  relerr_qqzz_ld_sigma 0.0198207+(-0.000273488*@0)+(1.01742e-06*@0*@0)
+RelErrShape  relerr_qqzz_gs_mean 0.0315695+(-8.56245e-05*@0)
+RelErrShape  relerr_qqzz_gs_sigma 0.00606524+(-1.64997e-05*@0)
+RelErrShape  relerr_ggH_ld_mean 0.0126009+(-1.22923e-05*@0)
+RelErrShape  relerr_ggH_ld_sigma 0.00496475+(-5.32893e-05*@0)+(1.95969e-07*@0*@0)
+RelErrShape  relerr_ggH_gs_mean 0.02767+(-6.79398e-05*@0)
+RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
+RelErrShape  relerr_ggH_ld_frac 0.63 
 

@@ -19,8 +19,11 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  91.3803
 rate ggZZ  5.95568
+
 rate zjets 3.0
 
+
+usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
 signalShape n_CB 2.55275+(-0.0260187*@0)+(0.000236887*@0*@0)+(-3.70709e-07*@0*@0*@0)+(-2.00124e-09*@0*@0*@0*@0)+(4.67661e-12*@0*@0*@0*@0*@0)
 signalShape alpha_CB 5.97951+(-0.0689875*@0)+(0.00030141*@0*@0)+(-9.51438e-08*@0*@0*@0)+(-1.85016e-09*@0*@0*@0*@0)+(2.77402e-12*@0*@0*@0*@0*@0)
@@ -36,17 +39,18 @@ HighMasssignalShape mean_CB -36.3933+(0.151667*@0)+(-0.000191185*@0*@0)+(7.24693
 HighMasssignalShape sigma_CB 20.1189+(-0.160897*@0)+(0.00032309*@0*@0)+(-7.20023e-08*@0*@0*@0)
 HighMasssignalShape gamma_BW -255.891+(1.07402*@0)+(-0.00116444*@0*@0)+(5.94677e-07*@0*@0*@0)
 
+
 ## signal efficiency ##
-signalEff a1  -4.42421
-signalEff a2  4.61644
-signalEff a3  -58.8907
-signalEff a4  105.41
-signalEff b1  3.00848
-signalEff b2  0.00227164
-signalEff b3  -6.47599e-07
-signalEff g1  0.0253553
-signalEff g2  188.204
-signalEff g3  20.0005
+signalEff a1  -4.43607
+signalEff a2  4.60478
+signalEff a3  -56.9354
+signalEff a4  100.846
+signalEff b1  2.62341
+signalEff b2  0.00445491
+signalEff b3  -2.49356e-06
+signalEff g1  0.0468083
+signalEff g2  188.518
+signalEff g3  36.7868
 
 
 ### background functions ###
@@ -65,7 +69,6 @@ qqZZshape a11_bkgd  -6.9554
 qqZZshape a12_bkgd  20.6039
 qqZZshape a13_bkgd  0.084616
 
-
 ggZZshape a0_bkgd  111.289
 ggZZshape a1_bkgd  49.5873
 ggZZshape a2_bkgd  146.085
@@ -77,6 +80,7 @@ ggZZshape a7_bkgd  0.165863
 ggZZshape a8_bkgd  63.8607
 ggZZshape a9_bkgd  0.0778634
 
+
 zjetsShape mean 140.3
 zjetsShape sigma 21.7
 #zjetsShape mean 137.2
@@ -86,7 +90,6 @@ zjetsShape p1 2328
 zjetsShape p2 -8.867
 zjetsShape p3 0.0125
 zjetsShape p4 -6.058e-06
-
 
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.6
@@ -144,18 +147,19 @@ qqZZshape mekd_qqZZ_a4 TMath::Max(0.6548+(0.1017)*(@0-100)+(-0.002465)*(@0-100)*
 
 
 
- RelErrShape  relerr_qqzz_ld_frac 0.29 
- RelErrShape  relerr_qqzz_ld_mean 0.0140019 
- RelErrShape  relerr_qqzz_ld_sigma 0.00127166 
- RelErrShape  relerr_qqzz_gs_mean 0.0102596 
- RelErrShape  relerr_qqzz_gs_sigma 1.17662 
- RelErrShape  relerr_ggH_ld_mean 0.0118 
- RelErrShape  relerr_ggH_ld_sigma 0.00160008 
- RelErrShape  relerr_ggH_gs_mean 0.00970265 
- RelErrShape  relerr_ggH_gs_sigma 1.2 
- RelErrShape  relerr_ggH_ld_frac 0.290006 
- RelErrShape  relerr_zx_ld_frac 0.29 
- RelErrShape  relerr_zx_ld_mean 0.0140019 
- RelErrShape  relerr_zx_ld_sigma 0.00127166 
- RelErrShape  relerr_zx_gs_mean 0.0102596 
- RelErrShape  relerr_zx_gs_sigma 1.17662 
+ 
+RelErrShape  relerr_qqzz_ld_frac 0.29 
+RelErrShape  relerr_qqzz_ld_mean 0.0140019 
+RelErrShape  relerr_qqzz_ld_sigma 0.00127166 
+RelErrShape  relerr_qqzz_gs_mean 0.0102596 
+RelErrShape  relerr_qqzz_gs_sigma 1.17662 
+RelErrShape  relerr_ggH_ld_mean 0.0118 
+RelErrShape  relerr_ggH_ld_sigma 0.00160008 
+RelErrShape  relerr_ggH_gs_mean 0.00970265 
+RelErrShape  relerr_ggH_gs_sigma 1.2 
+RelErrShape  relerr_ggH_ld_frac 0.290006 
+RelErrShape  relerr_zx_ld_frac 0.29 
+RelErrShape  relerr_zx_ld_mean 0.0140019 
+RelErrShape  relerr_zx_ld_sigma 0.00127166 
+RelErrShape  relerr_zx_gs_mean 0.0102596 
+RelErrShape  relerr_zx_gs_sigma 1.17662 

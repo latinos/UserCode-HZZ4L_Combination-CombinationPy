@@ -21,6 +21,8 @@ rate qqZZ  59.7302
 rate ggZZ  4.31223
 rate zjets 5.0
 
+
+usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
 signalShape n_CB -27.104+(0.565471*@0)+(-0.00262929*@0*@0)+(1.03084e-06*@0*@0*@0)+(1.48574e-08*@0*@0*@0*@0)+(-2.17346e-11*@0*@0*@0*@0*@0)
 signalShape alpha_CB 4.61486+(-0.0681766*@0)+(0.00035979*@0*@0)+(-2.5359e-07*@0*@0*@0)+(-2.2759e-09*@0*@0*@0*@0)+(4.03714e-12*@0*@0*@0*@0*@0)
@@ -37,16 +39,16 @@ HighMasssignalShape sigma_CB -25.6272+(0.0650079*@0)+(-4.54344e-05*@0*@0)+(1.191
 HighMasssignalShape gamma_BW -404.531+(1.90201*@0)+(-0.00261186*@0*@0)+(1.36161e-06*@0*@0*@0)
 
 ## signal efficiency ##
-signalEff a1  -4.29679
-signalEff a2  4.73717
-signalEff a3  -121.419
-signalEff a4  186.884
-signalEff b1  0.932993
-signalEff b2  0.000864595
-signalEff b3  -2.66795e-07
-signalEff g1  0.0969405
-signalEff g2  164.776
-signalEff g3  46.5494
+signalEff a1  -4.32136
+signalEff a2  4.71368
+signalEff a3  -112.897
+signalEff a4  173.9
+signalEff b1  0.759472
+signalEff b2  0.00174003
+signalEff b3  -9.99642e-07
+signalEff g1  0.0976052
+signalEff g2  166.942
+signalEff g3  44.863
 
 ### background functions ###
 qqZZshape a0_bkgd   112.259
@@ -63,7 +65,6 @@ qqZZshape a10_bkgd  98.2954
 qqZZshape a11_bkgd  -7.05043
 qqZZshape a12_bkgd  9.12814
 qqZZshape a13_bkgd  0.115251
-
 
 ggZZshape a0_bkgd  126.705
 ggZZshape a1_bkgd  52.2078
@@ -85,8 +86,6 @@ zjetsShape p1 785.6
 zjetsShape p2 -3.514
 zjetsShape p3 0.005410
 zjetsShape p4 -2.762e-06
-
-
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.6
 systematic zjetKappaHigh  1.4
@@ -140,10 +139,7 @@ signalShape mekd_sig_a3 TMath::Max(9.321+(0.02013)*(@0-100)+(-0.0007674)*(@0-100
 qqZZshape mekd_qqZZ_a3 TMath::Max(6.823+(-0.09065)*(@0-100)+(0.002733)*(@0-100)*(@0-100),0)
 signalShape mekd_sig_a4 TMath::Max(1.271+(-0.02567)*(@0-100)+(0.0006759)*(@0-100)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4 TMath::Max(2.495+(0.1665)*(@0-100)+(-0.004267)*(@0-100)*(@0-100),0)
-<<<<<<< inputs_4e.txt
-=======
 
->>>>>>> 1.23
 RelErrShape relerr_zx_ld_mean 0.0294366
 RelErrShape relerr_zx_ld_sigma 0.00493466
 RelErrShape relerr_zx_gs_mean 0.0143977
