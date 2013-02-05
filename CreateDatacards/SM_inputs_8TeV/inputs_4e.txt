@@ -17,8 +17,8 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  66.4203
-rate ggZZ  4.00074
+rate qqZZ  59.7302
+rate ggZZ  4.31223
 rate zjets 5.0
 
 usehighmassreweightedshapes
@@ -38,17 +38,16 @@ HighMasssignalShape sigma_CB -25.6272+(0.0650079*@0)+(-4.54344e-05*@0*@0)+(1.191
 HighMasssignalShape gamma_BW -404.531+(1.90201*@0)+(-0.00261186*@0*@0)+(1.36161e-06*@0*@0*@0)
 
 ## signal efficiency ##
-signalEff a1  -4.29679
-signalEff a2  4.73717
-signalEff a3  -121.419
-signalEff a4  186.884
-signalEff b1  0.932993
-signalEff b2  0.000864595
-signalEff b3  -2.66795e-07
-signalEff g1  0.0969405
-signalEff g2  164.776
-signalEff g3  46.5494
-
+signalEff a1  -4.32136
+signalEff a2  4.71368
+signalEff a3  -112.897
+signalEff a4  173.9
+signalEff b1  0.759472
+signalEff b2  0.00174003
+signalEff b3  -9.99642e-07
+signalEff g1  0.0976052
+signalEff g2  166.942
+signalEff g3  44.863
 
 ### background functions ###
 qqZZshape a0_bkgd   112.259
