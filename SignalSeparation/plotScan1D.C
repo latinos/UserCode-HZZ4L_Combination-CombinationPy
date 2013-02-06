@@ -1,7 +1,7 @@
 void plotScan1D(){
 
 
-  TFile *f=new TFile("higgsCombine1D.MultiDimFit.mH125.root");
+  TFile *f=new TFile("higgsCombine1D.MultiDimFit.mH126.root");
   TTree *t=(TTree*)f->Get("limit");
   t->Draw("2*deltaNLL:x", "deltaNLL > 0","PL");
 

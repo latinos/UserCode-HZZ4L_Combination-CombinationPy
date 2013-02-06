@@ -170,7 +170,7 @@ void plotScan(){
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);
 
-  TFile *f=new TFile("higgsCombineTest2D.MultiDimFit.mH125.root","READ");
+  TFile *f=new TFile("higgsCombineTest2D.MultiDimFit.mH126.root","READ");
   TTree *t=(TTree*)f->Get("limit");
   TGraph *gr_BestFit=(TGraph*) bestFit(t, "x", "r");
   // double dummyX=0.5,dummyY=1.0;
