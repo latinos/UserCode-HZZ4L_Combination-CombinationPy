@@ -25,8 +25,8 @@ Documentation: RunLimits/README
 
 ### Q U I C K   S T A R T   R E C I P E
 ## Getting setup...
-cmsrel CMSSW_5_2_5
-cd CMSSW_5_2_5/src/
+cmsrel CMSSW_6_1_0
+cd CMSSW_6_1_0/src/
 cvs co -r HEAD HiggsAnalysis/CombinedLimit
 cmsenv
 scram b -j12
