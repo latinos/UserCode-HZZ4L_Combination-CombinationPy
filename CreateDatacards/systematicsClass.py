@@ -51,6 +51,7 @@ class systematicsClass:
 
         self.QCD_scale_ggH_2j_sys = theInputs['QCD_scale_ggH_2j_sys']
         self.QCD_scale_qqH_2j_sys = theInputs['QCD_scale_qqH_2j_sys']
+        #self.QCD_scale_qqZZ_2j_sys = theInputs['QCD_scale_qqZZ_2j_sys']
 
         self.theoryHighMass = 1
         
@@ -590,15 +591,33 @@ class systematicsClass:
         
         self.Write_Systematics_Line(systLine,theFile,theInputs)
 
+        #theFile.write("QCDscale_qqZZ_2j lnN ")
+
+        #systLine={'ggH':"- "}
+        #systLine['qqH']  = "- "
+        #systLine['WH']   = "- " 
+        #systLine['ZH']   = "- "
+        #systLine['ttH']  = "- "
+        #if theVBFcat:
+        #    systLine['qqZZ'] = "{0.3f} ".format(1+self.QCD_scale_qqZZ_2j_sys)
+        #else:
+        #    systLine['qqZZ'] = "- "
+        #systLine['ggZZ'] = "- "
+        #systLine['zjets']= "- " 
+        #systLine['ttbar']= "- "
+        #systLine['zbb']  = "- "
+        #
+        #self.Write_Systematics_Line(systLine,theFile,theInputs)
+
     def Write_CMS_zz4l_Fisher_sys(self,theFile,theInputs):
         theFile.write("CMS_zz4l_ggH_Fisher_sys param 0  1  [-3,3]\n")
         theFile.write("CMS_zz4l_qqH_Fisher_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ttH_Fisher_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_WH_Fisher_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ZH_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ttH_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_WH_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ZH_Fisher_sys param 0  1  [-3,3]\n")
         theFile.write("CMS_zz4l_qqZZ_Fisher_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ggZZ_Fisher_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ZX_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ggZZ_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ZX_Fisher_sys param 0  1  [-3,3]\n")
 
     def Write_CMS_zz4l_PToverM_sys(self,theFile,theInputs):
         theFile.write("CMS_zz4l_ggH_PToverM_sys param 0  1  [-3,3]\n")

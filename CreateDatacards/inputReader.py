@@ -84,6 +84,7 @@ class inputReader:
         self.tagged_ttH_ratio = -999.9
         self.QCD_scale_ggH_2j_sys = -999.9
         self.QCD_scale_qqH_2j_sys = -999.9
+        #self.QCD_scale_qqZZ_2j_sys = -999.9
         # qqZZ shape
         self.qqZZshape_a0 = -999.9
         self.qqZZshape_a1 = -999.9
@@ -474,6 +475,8 @@ class inputReader:
                         self.QCD_scale_ggH_2j_sys = f[3]
                     if f[2].lower().startswith("qcd_scale_qqh_2j_sys"):
                         self.QCD_scale_qqH_2j_sys = f[3]
+                   # if f[2].lower().startswith("qcd_scale_qqh_2j_sys"):
+                    #    self.QCD_scale_qqZZ_2j_sys = f[3]
                         
                 if f[1].lower().startswith("luminosity"):
                     self.useLumiUnc = self.parseBoolString(f[2])
@@ -731,6 +734,7 @@ class inputReader:
         dict['tagged_ttH_ratio'] = self.tagged_ttH_ratio
         dict['QCD_scale_ggH_2j_sys'] = float(self.QCD_scale_ggH_2j_sys)
         dict['QCD_scale_qqH_2j_sys'] = float(self.QCD_scale_qqH_2j_sys)
+        #dict['QCD_scale_qqZZ_2j_sys'] = float(self.QCD_scale_qqZZ_2j_sys)
         
         dict['qqZZshape_a0'] = float(self.qqZZshape_a0)
         dict['qqZZshape_a1'] = float(self.qqZZshape_a1)
