@@ -1,17 +1,17 @@
 ### background functions ###
-qqZZshape a0_bkgd   111.587
-qqZZshape a1_bkgd   16.6576
-qqZZshape a2_bkgd   156.353
-qqZZshape a3_bkgd   0.0472706
-qqZZshape a4_bkgd   187.549
-qqZZshape a5_bkgd   11.6944
-qqZZshape a6_bkgd   87.5566
-qqZZshape a7_bkgd   0.0812068
-qqZZshape a8_bkgd   49.0463
-qqZZshape a9_bkgd   0.105841
-qqZZshape a10_bkgd  99.7671
-qqZZshape a11_bkgd  -10.7856
-qqZZshape a12_bkgd  7663.48
-qqZZshape a13_bkgd  0.0535603
+qqZZshape a0_bkgd   93.2842
+qqZZshape a1_bkgd   54.5656
+qqZZshape a2_bkgd   139.325
+qqZZshape a3_bkgd   0.0446491
+qqZZshape a4_bkgd   188.325
+qqZZshape a5_bkgd   11.3152
+qqZZshape a6_bkgd   44.362
+qqZZshape a7_bkgd   0.122248
+qqZZshape a8_bkgd   88.2627
+qqZZshape a9_bkgd   0.0242815
+qqZZshape a10_bkgd  96.3066
+qqZZshape a11_bkgd  -9.36582
+qqZZshape a12_bkgd  16.4894
+qqZZshape a13_bkgd  0.044656
 
 

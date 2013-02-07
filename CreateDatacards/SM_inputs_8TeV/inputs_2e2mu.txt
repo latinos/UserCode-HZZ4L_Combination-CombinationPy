@@ -17,10 +17,9 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  146.09
-rate ggZZ  10.0949
+rate qqZZ  146.224
+rate ggZZ  10.5675
 rate zjets 7.1 
-
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -38,55 +37,95 @@ HighMasssignalShape mean_CB -9.24009+(0.00880279*@0)+(4.92243e-05*@0*@0)+(-5.136
 HighMasssignalShape sigma_CB 51.8452+(-0.297107*@0)+(0.000504812*@0*@0)+(-1.4969e-07*@0*@0*@0)
 HighMasssignalShape gamma_BW -304.629+(1.34669*@0)+(-0.00164932*@0*@0)+(8.57908e-07*@0*@0*@0)
 
+
 ## signal efficiency ##
-signalEff a1  -4.4154
-signalEff a2  4.62392
-signalEff a3  -67.4727
-signalEff a4  116.002
-signalEff b1  1.92014
-signalEff b2  0.00306835
-signalEff b3  -1.73776e-06
-signalEff g1  0.0290227
-signalEff g2  185.823
-signalEff g3  25.7481
+signalEff a1  -4.40203
+signalEff a2  4.6367
+signalEff a3  -73.3644
+signalEff a4  123.19
+signalEff b1  1.95391
+signalEff b2  0.00149841
+signalEff b3  -4.45075e-07
+signalEff g1  0.0192592
+signalEff g2  184.301
+signalEff g3  20
+
+signalEff qqHa1  -4.3008
+signalEff qqHa2  4.72641
+signalEff qqHa3  -214.365
+signalEff qqHa4  246.956
+signalEff qqHb1  1.61318
+signalEff qqHb2  -0.000453672
+signalEff qqHb3  -4.45164e-07
+signalEff qqHg1  0.0729142
+signalEff qqHg2  160.649
+signalEff qqHg3  30.4464
+
+signalEff ZHa1  -4.33802
+signalEff ZHa2  4.67234
+signalEff ZHa3  -232.21
+signalEff ZHa4  3.96439
+signalEff ZHb1  5.21706
+signalEff ZHb2  -0.0664207
+signalEff ZHb3  0.000355577
+signalEff ZHg1  0.0999981
+signalEff ZHg2  173.115
+signalEff ZHg3  20.0623
+
+signalEff WHa1  -4.46167
+signalEff WHa2  4.55891
+signalEff WHa3  111.165
+signalEff WHa4  1.8144
+signalEff WHb1  3.81025
+signalEff WHb2  -0.0420832
+signalEff WHb3  0.000267698
+signalEff WHg1  0.0991486
+signalEff WHg2  172.747
+signalEff WHg3  21.43
+
+signalEff ttHa1  -4.37932
+signalEff ttHa2  4.63403
+signalEff ttHa3  -313.433
+signalEff ttHa4  1.31988
+signalEff ttHb1  4.43086
+signalEff ttHb2  -0.0748916
+signalEff ttHb3  0.000413575
+signalEff ttHg1  0.0982795
+signalEff ttHg2  177.939
+signalEff ttHg3  25.3055
 
 ### background functions ###
-qqZZshape a0_bkgd   109.209
-qqZZshape a1_bkgd   13.0458
-qqZZshape a2_bkgd   123.914
-qqZZshape a3_bkgd   0.0417442
-qqZZshape a4_bkgd   185.5
-qqZZshape a5_bkgd   9.73375
-qqZZshape a6_bkgd   29.8252
-qqZZshape a7_bkgd   0.0861834
-qqZZshape a8_bkgd   55.741
-qqZZshape a9_bkgd   0.0944677
-qqZZshape a10_bkgd  85.0254
-qqZZshape a11_bkgd  -13.341
-qqZZshape a12_bkgd  109.726
-qqZZshape a13_bkgd  0.282522
+qqZZshape a0_bkgd   109.695
+qqZZshape a1_bkgd   13.0794
+qqZZshape a2_bkgd   124.316
+qqZZshape a3_bkgd   0.0420547
+qqZZshape a4_bkgd   185.492
+qqZZshape a5_bkgd   9.91774
+qqZZshape a6_bkgd   29.6644
+qqZZshape a7_bkgd   0.0855014
+qqZZshape a8_bkgd   55.2868
+qqZZshape a9_bkgd   0.093308
+qqZZshape a10_bkgd  85.0873
+qqZZshape a11_bkgd  -13.3414
+qqZZshape a12_bkgd  118.494
+qqZZshape a13_bkgd  0.290709
 
 
-ggZZshape a0_bkgd  156.114
-ggZZshape a1_bkgd  52.2474
-ggZZshape a2_bkgd  129.471
-ggZZshape a3_bkgd  0.0356993
-ggZZshape a4_bkgd  185.634
-ggZZshape a5_bkgd  9.40872
-ggZZshape a6_bkgd  45.7894
-ggZZshape a7_bkgd  0.161765
-ggZZshape a8_bkgd  39.1879
-ggZZshape a9_bkgd  0.0564257
+ggZZshape a0_bkgd  153.532
+ggZZshape a1_bkgd  53.0043
+ggZZshape a2_bkgd  132.018
+ggZZshape a3_bkgd  0.0351321
+ggZZshape a4_bkgd  185.018
+ggZZshape a5_bkgd  9.17563
+ggZZshape a6_bkgd  42.9089
+ggZZshape a7_bkgd  0.16253
+ggZZshape a8_bkgd  50.601
+ggZZshape a9_bkgd  0.0624475
 
 zjetsShape mean 146.4
 zjetsShape sigma 19.6
-#zjetsShape mean 137.2
-#zjetsShape sigma 18.62
-zjetsShape p0 -120670
-zjetsShape p1 2328
-zjetsShape p2 -8.867
-zjetsShape p3 0.0125
-zjetsShape p4 -6.058e-06
+
+
 ### channel dependent systematics ###
 systematic zjetKappaLow   0.6
 systematic zjetKappaHigh  1.4
@@ -151,20 +190,19 @@ qqZZshape mekd_qqZZ_a3 TMath::Max(5.916+(-0.03402)*(@0-100)+(0.002453)*(@0-100)*
 signalShape mekd_sig_a4 TMath::Max(0.6122+(0.01281)*(@0-100)+(-0.0002555)*(@0-100)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4 TMath::Max(0.3059+(0.1554)*(@0-100)+(-0.003453)*(@0-100)*(@0-100),0)
 
-
 RelErrShape relerr_zx_ld_mean 0.0291404
 RelErrShape relerr_zx_ld_sigma 0.00440845
 RelErrShape relerr_zx_gs_mean 0.0133473
 RelErrShape relerr_zx_gs_sigma 0.00397736
 RelErrShape relerr_zx_ld_frac 0.546106
-RelErrShape  relerr_qqzz_ld_frac 0.630003 
-RelErrShape  relerr_qqzz_ld_mean 0.0144034+(-2.1102e-05*@0)
-RelErrShape  relerr_qqzz_ld_sigma 0.0198207+(-0.000273488*@0)+(1.01742e-06*@0*@0)
-RelErrShape  relerr_qqzz_gs_mean 0.0315695+(-8.56245e-05*@0)
-RelErrShape  relerr_qqzz_gs_sigma 0.00606524+(-1.64997e-05*@0)
-RelErrShape  relerr_ggH_ld_mean 0.0126009+(-1.22923e-05*@0)
-RelErrShape  relerr_ggH_ld_sigma 0.00496475+(-5.32893e-05*@0)+(1.95969e-07*@0*@0)
-RelErrShape  relerr_ggH_gs_mean 0.02767+(-6.79398e-05*@0)
-RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
-RelErrShape  relerr_ggH_ld_frac 0.63 
+ RelErrShape  relerr_qqzz_ld_frac 0.630003 
+ RelErrShape  relerr_qqzz_ld_mean 0.0144034+(-2.1102e-05*@0)
+ RelErrShape  relerr_qqzz_ld_sigma 0.0198207+(-0.000273488*@0)+(1.01742e-06*@0*@0)
+ RelErrShape  relerr_qqzz_gs_mean 0.0315695+(-8.56245e-05*@0)
+ RelErrShape  relerr_qqzz_gs_sigma 0.00606524+(-1.64997e-05*@0)
+ RelErrShape  relerr_ggH_ld_mean 0.0126009+(-1.22923e-05*@0)
+ RelErrShape  relerr_ggH_ld_sigma 0.00496475+(-5.32893e-05*@0)+(1.95969e-07*@0*@0)
+ RelErrShape  relerr_ggH_gs_mean 0.02767+(-6.79398e-05*@0)
+ RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
+ RelErrShape  relerr_ggH_ld_frac 0.63 
 
