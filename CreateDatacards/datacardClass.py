@@ -940,13 +940,12 @@ class datacardClass(object):
         ## SET RATES TO 1 
         ## DC RATES WILL BE MULTIPLIED
         ## BY RATES IMPORTED TO WS
-        if( self.is2D != 0):
-            sigRate_ggH_Shape = 1
-            sigRate_VBF_Shape = 1
-            sigRate_WH_Shape = 1
-            sigRate_ZH_Shape = 1
-            sigRate_ttH_Shape = 1
-
+        sigRate_ggH_Shape = 1
+        sigRate_VBF_Shape = 1
+        sigRate_WH_Shape = 1
+        sigRate_ZH_Shape = 1
+        sigRate_ttH_Shape = 1
+        
         
         ## If the channel is not declared in inputs, set rate = 0
         if not self.ggH_chan and not self.all_chan :  sigRate_ggH_Shape = 0
