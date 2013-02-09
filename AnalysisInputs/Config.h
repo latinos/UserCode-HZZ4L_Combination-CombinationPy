@@ -38,18 +38,13 @@
 //TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR/";
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/261012/PRODFSR_8TeV/";
 
-//TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/241112/PRODFSR/";
-//TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/241112/PRODFSR_8TeV/";
-
-//TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130120/v2/PRODFSR/";
-//TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130120/v2/PRODFSR_8TeV/";
-
 TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130205/PRODFSR/";
 TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130205/PRODFSR_8TeV/";
 
 // Luminosity, as float and as string to be used in file names, etc.
 double lumi7TeV = 5.051;
 double lumi8TeV = 19.63;
+
 TString lumistr7TeV = "5.051";
 TString lumistr8TeV = "19.63";
 
@@ -90,13 +85,17 @@ int VBFmasses8TeV[nVBFPoints8TeV]   = {116,117,118,119,120,121,122,123,124,125,1
 double mHVBFVal8TeV[nVBFPoints8TeV] = {116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,135,140,145,150,160,170,180,190,200,220,250,275,300,325,350,375,400,425,450,475,500,525,550,575,600,650,700,750,800,850,900,950,1000};
 
 //The number and values of mass points for which you have VH trees, for 7 and 8 TeV
-const int nVHPoints7TeV = 5;
-int VHmasses7TeV[nVHPoints7TeV]   = {115,120,130,135,140};
-double mHVHVal7TeV[nVHPoints7TeV] = {115,120,130,135,140};
+const int nVHPoints7TeV = 24;
+int VHmasses7TeV[nVHPoints7TeV]   = {115,120,130,135,140,150,160,170,180,190,200,210,220,250,325,350,375,425,450,475,525,550,575,600};
+double mHVHVal7TeV[nVHPoints7TeV] = {115,120,130,135,140,150,160,170,180,190,200,210,220,250,325,350,375,425,450,475,525,550,575,600};
 
-const int nVHPoints8TeV = 8;
-int VHmasses8TeV[nVHPoints8TeV]   = {115,120,125,126,127,130,135,140};
-double mHVHVal8TeV[nVHPoints8TeV] = {115,120,125,126,127,130,135,140};
+const int nVHPoints8TeV = 31;
+int VHmasses8TeV[nVHPoints8TeV]   = {115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,135,140,145,150,160,170,180,190,200,210,220,230,250,275,300};
+double mHVHVal8TeV[nVHPoints8TeV] = {115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,135,140,145,150,160,170,180,190,200,210,220,230,250,275,300};
+
+//const int nVHPoints8TeV = 4;
+//int VHmasses8TeV[nVHPoints8TeV] = {124,125,126,127};
+//double mHVHVal8TeV[nVHPoints8TeV] = {124,125,126,127};
 
 //--------------------
 
