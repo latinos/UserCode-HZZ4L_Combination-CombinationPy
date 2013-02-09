@@ -27,6 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "TTree.h"
 #include "TText.h"
 #include "TStyle.h"
@@ -59,7 +60,7 @@ bool onlyICHEPStat = false;
 Mela* myMELA;
 #endif
 
-void convertTreeForDatacards(TString inFile, TString outfile, bool VBFtag);
+void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool VBFtag);
 
 // Run all final states and sqrts in one go
 void prepareData() {
@@ -101,29 +102,35 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
   int neventOut=0;
   Int_t run;
   float mzz, pseudomela, mela, mzzErr;
+  float ZZVAKD, p0plus_VAJHU, bkg_VAMCFMNorm;
   float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
+  float ZZVAKD2;
   float pt4l, Y4l, fisher;
-  int NJets;
+  //int NJets;
+  std::vector<double> *JetPt;
 
   treedata->SetBranchAddress("RunNumber",&run);
   treedata->SetBranchAddress("ZZMass",&mzz);
   treedata->SetBranchAddress("ZZMassErr",&mzzErr);
-  treedata->SetBranchAddress("ZZpseudoLD",&pseudomela); 
-  treedata->SetBranchAddress("ZZLD",&mela); 
+  //treedata->SetBranchAddress("ZZpseudoLD",&pseudomela); 
+  treedata->SetBranchAddress("p0plus_VAJHU",&p0plus_VAJHU);
+  treedata->SetBranchAddress("bkg_VAMCFMNorm",&bkg_VAMCFMNorm);
+  treedata->SetBranchAddress("ZZVAKD",&ZZVAKD);
+  //treedata->SetBranchAddress("ZZLD",&mela); 
   treedata->SetBranchAddress("Z1Mass",&m1);
   treedata->SetBranchAddress("Z2Mass",&m2);
-  treedata->SetBranchAddress("helcosthetaZ1",&costheta1);
-  treedata->SetBranchAddress("helcosthetaZ2",&costheta2);
-  treedata->SetBranchAddress("costhetastar",&costhetastar);
-  treedata->SetBranchAddress("helphi",&phi);
-  treedata->SetBranchAddress("phistarZ1",&phi1);
+  //treedata->SetBranchAddress("helcosthetaZ1",&costheta1);
+  //treedata->SetBranchAddress("helcosthetaZ2",&costheta2);
+  //treedata->SetBranchAddress("costhetastar",&costhetastar);
+  //treedata->SetBranchAddress("helphi",&phi);
+  //treedata->SetBranchAddress("phistarZ1",&phi1);
   
   treedata->SetBranchAddress("ZZPt",&pt4l);
-  treedata->SetBranchAddress("ZZRapidity",&Y4l);
+  //treedata->SetBranchAddress("ZZRapidity",&Y4l);
   treedata->SetBranchAddress("Fisher",&fisher);
 
-  treedata->SetBranchAddress("NJets",&NJets);
-
+  treedata->SetBranchAddress("JetPt", &JetPt);
+   
   TFile* newFile  = new TFile(outfile, "RECREATE");
   newFile->cd();
   TTree* newTree = new TTree("data_obs","data_obs"); 
@@ -131,29 +138,59 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
   Double_t ptoverm = -99, Fisher = -99;
   newTree->Branch("CMS_zz4l_mass",&CMS_zz4l_mass,"CMS_zz4l_mass/D");
   newTree->Branch("CMS_zz4l_massErr",&CMS_zz4l_massErr,"CMS_zz4l_massErr/D");
+  //newTree->Branch("melaLD",&melaLD,"melaLD/D");
+  //newTree->Branch("pseudoMelaLD",&pseudomelaLD,"pseudoMelaLD/D");
+  //newTree->Branch("supermelaLD",&supermelaLD,"supermelaLD/D");
   newTree->Branch("melaLD",&melaLD,"melaLD/D");
-  newTree->Branch("pseudoMelaLD",&pseudomelaLD,"pseudoMelaLD/D");
-  newTree->Branch("supermelaLD",&supermelaLD,"supermelaLD/D");
+  //newTree->Branch("p0plus_VAJHU",&p0plus_VAJHU,"p0plus_VAJHU/D");
+  //newTree->Branch("bkg_VAMCFMNorm",&bkg_VAMCFMNorm,"bkg_VAMCFMNorm/D");
+  newTree->Branch("ZZVAKD",&ZZVAKD2,"ZZVAKD/D");
   newTree->Branch("CMS_zz4l_Fisher",&Fisher,"CMS_zz4l_Fisher/D");
   newTree->Branch("CMS_zz4l_PToverM",&ptoverm,"CMS_zz4l_PToverM/D");
+
+
   cout << inFile << " entries: " << treedata->GetEntries() << endl;
   for(int iEvt=0; iEvt<treedata->GetEntries(); iEvt++){
     //    if(iEvt%5000==0) cout << "event: " << iEvt << endl;
     treedata->GetEntry(iEvt);
 
-    //    cout << run << endl;
+    //cout << run << endl;
     
     if (onlyICHEPStat && run>=198049) continue;
 
-    if ((useJET && VBFtag && NJets!=2) || (useJET && !VBFtag && NJets==2)) continue;
+    int NJets_30 = 0;
+    //cout << "Got here" << endl;
+    if( JetPt->size() > 0 ) cout << "Size JetPt: "<< JetPt->size() << endl;
+    //cout << "Got here" << endl;
+    for (int i = 0; i < JetPt->size(); i++)
+      {
+        //cout << "Got here" << endl;
+	cout << JetPt->at(i) << endl;
+	if(JetPt->at(i) >= 30.0)
+	  {
+	    NJets_30++;
+	  }
+      }
+    //cout << "Got HERE" << endl;
+    if( JetPt->size() > 0) cout << "Size NJets_30: " << NJets_30 << endl;
+
+    if ((useJET && VBFtag && NJets_30 < 2) || (useJET && !VBFtag && NJets_30 >= 2)) continue;
 
     CMS_zz4l_mass = mzz;
     CMS_zz4l_massErr = mzzErr;
-    pseudomelaLD = pseudomela;
-    melaLD = mela;
-    supermelaLD = 0;
-    if(useJET && !VBFtag) ptoverm = pt4l/mzz;
-    if(useJET && VBFtag) Fisher = fisher;
+    //pseudomelaLD = pseudomela;
+    //melaLD = mela;
+    //supermelaLD = 0;
+    melaLD=p0plus_VAJHU/(p0plus_VAJHU+bkg_VAMCFMNorm);
+    if(useJET && !VBFtag) 
+      {
+	ptoverm = pt4l/mzz;
+      }
+    if(useJET && VBFtag) 
+      {
+	Fisher = fisher;
+	cout << "Got HERE" << endl;
+      }
 
 
 #ifdef LINKMELA
