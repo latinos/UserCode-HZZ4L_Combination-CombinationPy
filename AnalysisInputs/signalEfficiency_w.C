@@ -314,10 +314,10 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
     float djsumw_init2=0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
-      if(process==3 || process==4 || process==5){
-	VHtotal+=MC_weight_norm;
-	VHsumw2+=MC_weight_norm*MC_weight_norm;
-      }
+      //if(process==3 || process==4 || process==5){
+      //VHtotal+=MC_weight_norm;
+      //VHsumw2+=MC_weight_norm*MC_weight_norm;
+      //}
       if ((process==3 && genProcessId!=24) || (process==4 && genProcessId!=26) || (process==5 && (genProcessId!=121 && genProcessId!=122))) continue;
       int NJets=0;
       double jetptc=0;
@@ -382,11 +382,13 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
 	   << endl;
     }
     
-    if (process==1 || process==2) totefficiencyVal[i] = totalndjCtr + totaldjCtr;
-    if (process==3 || process==4 || process==5) totefficiencyVal[i] = (totalndjCtr + totaldjCtr)/VHtotal;
+    //if (process==1 || process==2)
+    totefficiencyVal[i] = totalndjCtr + totaldjCtr;
+    //if (process==3 || process==4 || process==5) totefficiencyVal[i] = (totalndjCtr + totaldjCtr)/VHtotal;
     cout<<sprocess<<" "<<m<<" "<<totefficiencyVal[i]<<endl;
-    if (process==1 || process==2) totefficiencyErr[i] = sqrt(ndjsumw2 + djsumw2);
-    if (process==3 || process==4 || process==5) totefficiencyErr[i] = sqrt(VHsumw2);
+    //if (process==1 || process==2)
+    totefficiencyErr[i] = sqrt(ndjsumw2 + djsumw2);
+    //if (process==3 || process==4 || process==5) totefficiencyErr[i] = sqrt(VHsumw2);
     dijetratioVal[i]=totaldjCtr/(totalndjCtr + totaldjCtr);
     dijetratioErr[i]=sqrt(pow(totalndjCtr,2)*djsumw2 + pow(totaldjCtr,2)*ndjsumw2)/pow((totalndjCtr+totaldjCtr),2);
   
