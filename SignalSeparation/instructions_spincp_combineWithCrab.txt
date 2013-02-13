@@ -1,0 +1,29 @@
+YOUR_CARD=<name_of_your_txt_card>
+
+text2workspace.py -m 126 ${YOUR_CARD} -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs --PO=muFloating -o floatMu.root
+
+cp -s $(which combine) .
+
+### open hzz4l_SpinCP_CRAB.cfg. Set how many jobs you want. 
+### Set total_number_of_events to the same value of number_of_jobs . Set the queue . 
+### Set ui_working_dir to be the current dir (absolute path only!!!) + crabOutput/
+
+### open hzz4l_SpinCP_CRAB.sh and tune variable NTOYS (-->number of toys for each parallel job)
+
+crab -cfg hzz4l_SpinCP_CRAB.cfg -create -submit
+
+### wait for the jobs on LSF to finish... 
+
+cd crabOutput/res/
+
+for tarfile in $( /bin/ls out_files*tgz ); do tar -xzf $tarfile ; done
+
+IND=0
+
+for outfile in $( /bin/ls hzz4l_SpinCP_CRAB_*.root); do root -q -b $outfile "${CMSSW_BASE}/src/HiggsAnalysis/CombinedLimit/test/plotting/hypoTestResultTree.cxx(\"qmu.FloatMu.root\",126,1,\"x\")" ; let IND=IND+1 ; mv qmu.FloatMu.root qmu.FloatMu.${IND}.root ; done
+
+hadd qmu.FloatMu.TOT.root qmu.FloatMu.*.root
+
+cp qmu.FloatMu.TOT.root ../../qmu.root
+
+### use qmu.root as input to extractSignificanceStats_CRAB.C for gettign the significance
