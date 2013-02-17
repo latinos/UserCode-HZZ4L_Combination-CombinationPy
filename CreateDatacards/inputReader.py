@@ -114,11 +114,6 @@ class inputReader:
         # zjets shape
         self.zjetsShape_mean = -999.9
         self.zjetsShape_sigma = -999.9
-        self.zjetsShape_p0 = -999.9
-        self.zjetsShape_p1 = -999.9
-        self.zjetsShape_p2 = -999.9
-        self.zjetsShape_p3 = -999.9
-        self.zjetsShape_p4 = -999.9
         # systematics 
         self.zjetsKappaLow = -999.9
         self.zjetsKappaHigh = -999.9
@@ -430,13 +425,8 @@ class inputReader:
                
             if f[0].lower().startswith("zjetsshape"):
 
-                if f[1].lower().startswith("mean"):  self.zjetsShape_mean = float(f[2])
-                if f[1].lower().startswith("sigma"): self.zjetsShape_sigma = float(f[2])
-                if f[1].lower().startswith("p0"): self.zjetsShape_p0 = float(f[2])
-                if f[1].lower().startswith("p1"): self.zjetsShape_p1 = float(f[2])
-                if f[1].lower().startswith("p2"): self.zjetsShape_p2 = float(f[2])
-                if f[1].lower().startswith("p3"): self.zjetsShape_p3 = float(f[2])
-                if f[1].lower().startswith("p4"): self.zjetsShape_p4 = float(f[2])
+                if f[1].lower().startswith("mean"):  self.zjetsShape_mean = f[2]
+                if f[1].lower().startswith("sigma"): self.zjetsShape_sigma = f[2]
                 
 
             if f[0].lower().startswith("systematic"):
@@ -638,11 +628,6 @@ class inputReader:
 
         if not self.goodEntry(self.zjetsShape_mean): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean")
         if not self.goodEntry(self.zjetsShape_sigma): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma")
-        if not self.goodEntry(self.zjetsShape_p0): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsShape_p0")
-        if not self.goodEntry(self.zjetsShape_p1): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsShape_p1")
-        if not self.goodEntry(self.zjetsShape_p2): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsShape_p2")
-        if not self.goodEntry(self.zjetsShape_p3): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsShape_p3")
-        if not self.goodEntry(self.zjetsShape_p4): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsShape_p4")
         
         if not self.goodEntry(self.zjetsKappaLow): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaLow")
         if not self.goodEntry(self.zjetsKappaHigh): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaHigh")
@@ -779,11 +764,6 @@ class inputReader:
 
         dict['zjetsShape_mean'] = float(self.zjetsShape_mean)
         dict['zjetsShape_sigma'] = float(self.zjetsShape_sigma)
-        dict['zjetsShape_p0'] = float(self.zjetsShape_p0)
-        dict['zjetsShape_p1'] = float(self.zjetsShape_p1)
-        dict['zjetsShape_p2'] = float(self.zjetsShape_p2)
-        dict['zjetsShape_p3'] = float(self.zjetsShape_p3)
-        dict['zjetsShape_p4'] = float(self.zjetsShape_p4)
 
         dict['zjetsKappaLow'] = float(self.zjetsKappaLow)
         dict['zjetsKappaHigh'] = float(self.zjetsKappaHigh)

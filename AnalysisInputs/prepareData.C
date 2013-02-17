@@ -111,7 +111,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
 
   treedata->SetBranchAddress("RunNumber",&run);
   treedata->SetBranchAddress("ZZMass",&mzz);
-  treedata->SetBranchAddress("ZZMassErr",&mzzErr);
+  treedata->SetBranchAddress("ZZMassErrCorr",&mzzErr);
   //treedata->SetBranchAddress("ZZpseudoLD",&pseudomela); 
   treedata->SetBranchAddress("p0plus_VAJHU",&p0plus_VAJHU);
   treedata->SetBranchAddress("bkg_VAMCFMNorm",&bkg_VAMCFMNorm);

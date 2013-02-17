@@ -718,7 +718,8 @@ class systematicsClass:
         if( self.channel == self.ID_4mu):
 
             if theInputs['useCMS_zz4l_mean']:
-                theFile.write("CMS_zz4l_mean_m_sig param 0.0 {0} \n".format(meanCB_m_errPerCent))
+                theFile.write("CMS_zz4l_mean_m_sig param 0.0 1.0 \n")
+                theFile.write("## CMS_zz4l_mean_m_sig = {0} \n".format(meanCB_m_errPerCent))
             if theInputs['useCMS_zz4l_sigma']:
                 theFile.write("CMS_zz4l_sigma_m_sig param 0.0 {0} \n".format(sigmaCB_m_errPerCent))
             if theInputs['useCMS_zz4l_n']:
@@ -730,7 +731,8 @@ class systematicsClass:
         if( self.channel == self.ID_4e):
 
             if theInputs['useCMS_zz4l_mean']:
-                theFile.write("CMS_zz4l_mean_e_sig param 0.0 {0} \n".format(meanCB_e_errPerCent))
+                theFile.write("CMS_zz4l_mean_e_sig param 0.0 1.0 \n")
+                theFile.write("## CMS_zz4l_mean_e_sig = {0} \n".format(meanCB_e_errPerCent))
             if theInputs['useCMS_zz4l_sigma']:
                 theFile.write("CMS_zz4l_sigma_e_sig param 0.0 {0} \n".format(sigmaCB_e_errPerCent))
             if theInputs['useCMS_zz4l_n']:
@@ -742,8 +744,10 @@ class systematicsClass:
         if( self.channel == self.ID_2e2mu):
 
             if theInputs['useCMS_zz4l_mean']:
-                theFile.write("CMS_zz4l_mean_m_sig param 0.0 {0} \n".format(meanCB_m_errPerCent))
-                theFile.write("CMS_zz4l_mean_e_sig param 0.0 {0} \n".format(meanCB_e_errPerCent))
+                theFile.write("CMS_zz4l_mean_m_sig param 0.0 1.0 \n")
+                theFile.write("## CMS_zz4l_mean_m_sig = {0} \n".format(meanCB_m_errPerCent))
+                theFile.write("CMS_zz4l_mean_e_sig param 0.0 1.0 \n".format(meanCB_e_errPerCent))
+                theFile.write("## CMS_zz4l_mean_e_sig = {0} \n".format(meanCB_e_errPerCent))
             if theInputs['useCMS_zz4l_sigma']:
                 theFile.write("CMS_zz4l_sigma_m_sig param 0.0 {0} \n".format(sigmaCB_m_errPerCent))
                 theFile.write("CMS_zz4l_sigma_e_sig param 0.0 {0} \n".format(sigmaCB_e_errPerCent))

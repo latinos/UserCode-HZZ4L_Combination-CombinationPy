@@ -123,15 +123,8 @@ ggZZshape a7_bkgd  0.174845
 ggZZshape a8_bkgd  58.5056
 ggZZshape a9_bkgd  0.0712558
 
-zjetsShape mean 157.6
-zjetsShape sigma 27.28
-zjetsShape p0 163998
-zjetsShape p1 -537.51
-zjetsShape p2 0.58019
-zjetsShape p3 -0.00018271
-zjetsShape p4 0.0
-
-
+zjetsShape mean 148.9
+zjetsShape sigma 20.2
 
 
 ### channel dependent systematics ###

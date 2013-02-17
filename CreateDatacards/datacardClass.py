@@ -304,11 +304,14 @@ class datacardClass:
         ## -------- Variable Definitions -------- ##
         name = "CMS_zz4l_mean_e_sig"
         CMS_zz4l_mean_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_sig",0.0,-10.0,10.0)
+        name = "CMS_zz4l_mean_e_err_{0}_{1:.0f}".format(self.channel,self.sqrts)
+        CMS_zz4l_mean_e_err = ROOT.RooRealVar(name,"CMS_zz4l_mean_e_err",float(theInputs['CMS_zz4l_mean_e_sig']),-0.99,0.99)
         name = "CMS_zz4l_sigma_e_sig"
-        CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
-        
+        CMS_zz4l_sigma_e_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_e_sig",3.0,0.0,30.0)
         name = "CMS_zz4l_mean_m_sig"
         CMS_zz4l_mean_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_mean_sig",0.0,-10.0,10.0)
+        name = "CMS_zz4l_mean_m_err_{0}_{1:.0f}".format(self.channel,self.sqrts)
+        CMS_zz4l_mean_m_err = ROOT.RooRealVar(name,"CMS_zz4l_mean_m_err",float(theInputs['CMS_zz4l_mean_m_sig']),-0.99,0.99)
         name = "CMS_zz4l_sigma_m_sig"
         CMS_zz4l_sigma_m_sig = ROOT.RooRealVar(name,"CMS_zz4l_sigma_sig",3.0,0.0,30.0)
             
@@ -335,8 +338,10 @@ class datacardClass:
         CMS_zz4l_mean_BW.setVal( mean_BW_d )
         CMS_zz4l_gamma.setVal(0)
         CMS_zz4l_mean_e_sig.setVal(0)
+        CMS_zz4l_mean_e_err.setConstant(kTRUE)
         CMS_zz4l_sigma_e_sig.setVal(0)
         CMS_zz4l_mean_m_sig.setVal(0)
+        CMS_zz4l_mean_m_err.setConstant(kTRUE)
         CMS_zz4l_sigma_m_sig.setVal(0)
         CMS_zz4l_alpha.setVal(0)
         CMS_zz4l_n.setVal(0)
@@ -353,8 +358,10 @@ class datacardClass:
         print "mean_BW ", CMS_zz4l_mean_BW.getVal()
         print "gamma_BW ", CMS_zz4l_gamma.getVal()
         print "mean_e_sig ", CMS_zz4l_mean_e_sig.getVal()
+        print "mean_e_err ", CMS_zz4l_mean_e_err.getVal()
         print "sigma_e ", CMS_zz4l_sigma_e_sig.getVal()
         print "mean_m_sig ",CMS_zz4l_mean_m_sig.getVal()
+        print "mean_m_err ", CMS_zz4l_mean_m_err.getVal()
         print "sigma_m ", CMS_zz4l_sigma_m_sig.getVal()
         print "alpha ", CMS_zz4l_alpha.getVal()
         print "n ", CMS_zz4l_n.getVal()
@@ -414,14 +421,14 @@ class datacardClass:
             name = "CMS_zz4l_mean_sig_{0:.0f}_{1:.0f}_{2}_centralValue".format(self.channel,self.sqrts,self.VBFcat)
             
         if (self.channel == self.ID_4mu) :
-            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig))
-            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig))
+            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+@0*@1*@2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_m_err))
+            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1*@2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_m_err))
         elif (self.channel == self.ID_4e) :
-            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_e_sig))
-            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1", ROOT.RooArgList(self.MH, CMS_zz4l_mean_e_sig))
+            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+@0*@1*@2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_e_sig,CMS_zz4l_mean_e_err))
+            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+@0*@1*@2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_e_sig,CMS_zz4l_mean_e_err))
         elif (self.channel == self.ID_2e2mu) :
-            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+ (@0*@1 + @0*@2)/2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig))
-            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+ (@0*@1 + @0*@2)/2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig))
+            if self.isHighMass : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape_HM']+")"+"+ (@0*@1*@3 + @0*@2*@4)/2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig,CMS_zz4l_mean_m_err,CMS_zz4l_mean_e_err))
+            else : rfv_mean_CB = ROOT.RooFormulaVar(name,"("+theInputs['mean_CB_shape']+")"+"+ (@0*@1*@3 + @0*@2*@4)/2", ROOT.RooArgList(self.MH, CMS_zz4l_mean_m_sig,CMS_zz4l_mean_e_sig,CMS_zz4l_mean_m_err,CMS_zz4l_mean_e_err))
         
 
         if not self.bVBF:
@@ -1415,48 +1422,19 @@ class datacardClass:
         ## Reducible backgrounds
         val_meanL = float(theInputs['zjetsShape_mean'])
         val_sigmaL = float(theInputs['zjetsShape_sigma'])
-        val_poly1L = (float(theInputs['zjetsShape_p1'])/float(theInputs['zjetsShape_p0']))
-        val_poly2L = (float(theInputs['zjetsShape_p2'])/float(theInputs['zjetsShape_p0']))
-        val_poly3L = (float(theInputs['zjetsShape_p3'])/float(theInputs['zjetsShape_p0']))
-        val_poly4L = (float(theInputs['zjetsShape_p4'])/float(theInputs['zjetsShape_p0']))
 
         if not self.bVBF:
             name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
             name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjetsLandau = ROOT.RooLandau("bkg_zjetsTmpLandau","bkg_zjetsTmpLandau",CMS_zz4l_mass,mlZjet,slZjet)
-
-            name = "p1Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p1Zjet = ROOT.RooRealVar(name,"p1 Zjet",val_poly1L)
-            name = "p2Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p2Zjet = ROOT.RooRealVar(name,"p2 Zjet",val_poly2L)
-            name = "p3Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p3Zjet = ROOT.RooRealVar(name,"p3 Zjet",val_poly3L)
-            name = "p4Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            p4Zjet = ROOT.RooRealVar(name,"p4 Zjet",val_poly4L)
-            bkg_zjetsPoly = ROOT.RooPolynomial("bkg_zjetsTempPoly","bkg_zjetsTmpPoly",CMS_zz4l_mass, RooArgList(p1Zjet,p2Zjet,p3Zjet,p4Zjet))
-
-            bkg_zjets = ROOT.RooProdPdf("bkg_zjetsTmp","bkg_zjetsTmp",bkg_zjetsLandau,bkg_zjetsPoly)
-            
+            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet) 
         else:
             name = "mlZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
             name = "slZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
             slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjetsLandau = ROOT.RooLandau("bkg_zjetsTmpLandau","bkg_zjetsTmpLandau",CMS_zz4l_mass,mlZjet,slZjet)
-
-            name = "p1Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
-            p1Zjet = ROOT.RooRealVar(name,"p1 Zjet",val_poly1L)
-            name = "p2Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
-            p2Zjet = ROOT.RooRealVar(name,"p2 Zjet",val_poly2L)
-            name = "p3Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
-            p3Zjet = ROOT.RooRealVar(name,"p3 Zjet",val_poly3L)
-            name = "p4Zjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
-            p4Zjet = ROOT.RooRealVar(name,"p4 Zjet",val_poly4L)
-            bkg_zjetsPoly = ROOT.RooPolynomial("bkg_zjetsTempPoly","bkg_zjetsTmpPoly",CMS_zz4l_mass, RooArgList(p1Zjet,p2Zjet,p3Zjet,p4Zjet))
-
-            bkg_zjets = ROOT.RooProdPdf("bkg_zjetsTmp","bkg_zjetsTmp",bkg_zjetsLandau,bkg_zjetsPoly)
+            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet)
 
  
 	bkg_qqzzErr = ROOT.RooProdPdf("bkg_qqzzErr","bkg_qqzzErr", ROOT.RooArgSet(bkg_qqzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrB), ROOT.RooArgSet(CMS_zz4l_massErr)));
@@ -2133,7 +2111,6 @@ class datacardClass:
         normalizationBackground_qqzz = bkg_qqzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrange") ).getVal()
         normalizationBackground_ggzz = bkg_ggzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrange") ).getVal()
         normalizationBackground_zjets = bkg_zjets.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrange") ).getVal()
-        print "fullrange: ",normalizationBackground_zjets
         
         sclFactorBkg_qqzz = self.lumi*bkgRate_qqzz/normalizationBackground_qqzz
         sclFactorBkg_ggzz = self.lumi*bkgRate_ggzz/normalizationBackground_ggzz
@@ -2142,7 +2119,6 @@ class datacardClass:
         bkgRate_qqzz_Shape = sclFactorBkg_qqzz * bkg_qqzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         bkgRate_ggzz_Shape = sclFactorBkg_ggzz * bkg_ggzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         bkgRate_zjets_Shape = sclFactorBkg_zjets * bkg_zjets.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
-        print "shape: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("shape")).getVal()
         
         if(DEBUG):
             print "Shape signal rate: ",sigRate_ggH_Shape,", background rate: ",bkgRate_qqzz_Shape,", ",bkgRate_zjets_Shape," in ",low_M," - ",high_M

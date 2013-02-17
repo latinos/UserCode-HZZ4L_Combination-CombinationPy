@@ -122,15 +122,8 @@ ggZZshape a7_bkgd  0.16253
 ggZZshape a8_bkgd  50.601
 ggZZshape a9_bkgd  0.0624475
 
-zjetsShape mean 154.0
-zjetsShape sigma 24.30
-zjetsShape p0 63666
-zjetsShape p1 -180.48
-zjetsShape p2 0.062977
-zjetsShape p3 0.00017987
-zjetsShape p4 -9.7152e-08
-
-
+zjetsShape mean 146.4
+zjetsShape sigma 19.6
 
 
 ### channel dependent systematics ###
@@ -138,7 +131,7 @@ systematic zjetKappaLow   0.6
 systematic zjetKappaHigh  1.4
 systematic param CMS_zz4l_mean_m_sig   0.001
 systematic param CMS_zz4l_sigma_m_sig  0.2
-systematic param CMS_zz4l_mean_e_sig   0.003
+systematic param CMS_zz4l_mean_e_sig   0.002
 systematic param CMS_zz4l_sigma_e_sig  0.2
 systematic param CMS_zz4l_n_sig 0.05
 systematic param CMS_zz4l_gamma_sig 0.05
