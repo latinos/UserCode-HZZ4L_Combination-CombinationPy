@@ -4,7 +4,7 @@
  * usage: 
  * -set input paths variables in Config.h
  * -run with:
- * root -q -b ../loadMELA.C generateTemplatesSMD.C+
+ * root -q -b ../loadMELA.C generateTemplatesSMD_V3.C+
  * 2D templates are written to "destDir"
  *
  */
@@ -22,81 +22,18 @@
 #include <Riostream.h>
 #include <utility>
 
-#if !defined(__CINT__) || defined(__MAKECINT__)
-#include <TSystem.h>
-#include <TROOT.h>
-#include "ZZMatrixElement/MELA/interface/Mela.h"
-#endif
+// #if !defined(__CINT__) || defined(__MAKECINT__)
+// #include <TSystem.h>
+// #include <TROOT.h>
+// #include "ZZMatrixElement/MELA/interface/Mela.h"
+// #endif
 
 
 //----------> SET INPUT VARIABLES in Config.h
 #include "ConfigSMD.h"
 //<----------
 
-//--- Flags to control re-computation of KD
-bool recompute_ = false;       // Recompute KD (instead of taking it from the tree); when true, the following flags apply:
-bool usePowhegTemplate=false;  // false use analytic bg
-bool withPt_ = false;          // Include pT in KD
-bool withY_  = false;          //    "    Y  "  "
-int sqrts    = 7;              // sqrts, used only for withPt_/withY_
-Mela* myMELA; //used if recompute is true
-
-////////////////////////////////////
-//--- Really important params --- //
-const int mH=125;
-const float mzzCutLow=105;
-const float mzzCutHigh=140;
-const int useSqrts=2;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "pseudoLD"; // name of KD branch to be used: "pseudoLD" or "graviLD"
-const TString destDir = "../../CreateDatacards/templates2D_smd_8TeV_20121105_NOIntRew/"; //it must already exist !
-bool makePSTemplate = true;
-bool makeAltSignal = true;
-const float melaCut=-1.0; //if negative, it is deactivated
-const bool applyInterferenceRew=false;
-string fInterferenceName="./1DinterferenceReweight.root";
-TString melaCutName = melaName; //distinction btw LD and mela needed because 
-                               //we might want both psMELA (for 2D template) and MELA (for cut)
-//-----
-
-
-bool extendToHighMass = false; // Include signal samples above 600 GeV
-float highMzz=(extendToHighMass?1000:800);
-float mBinSize=2.;
-string str_mh="7TeV";
-
-
-//-- binning of 2D template
-/*const int nbinsX=17;
-float binsX[nbinsX+1]={0.000, 0.030, 0.060, 0.100, 0.200, 0.300, 0.400, 0.500, 0.550, 0.600, 
-		       0.650, 0.700, 0.750, 0.800, 0.850, 0.900, 0.950, 1.000};
-const int nbinsY=19;
-float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350, 0.400, 0.450, 0.500, 
-		       0.550, 0.600, 0.650, 0.700, 0.750, 0.800, 0.850, 0.900, 0.950, 1.000};
-
-*/
-
-const int nbinsX=21;
-float binsX[nbinsX+1]={0.000, 0.030, 0.060, 0.100, 0.200, 0.300, 0.400, 0.500, 0.550, 0.600, 
-		       0.633, 0.666, 0.700, 0.733, 0.766, 0.800, 0.833, 0.866, 0.900, 0.933,
-		       0.966, 1.000};
-const int nbinsYps=25;
-float binsYps[nbinsYps+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.333, 0.366, 0.400, 
-		       0.433, 0.466, 0.500, 0.533, 0.566, 0.600, 0.633, 0.666, 0.700, 0.733, 
-		       0.766, 0.800, 0.850, 0.900, 0.950, 1.000};
-
-const int nbinsYgrav=29;
-float binsYgrav[nbinsYgrav+1]={0.000, 0.100, 0.150, 0.175 , 0.200, 0.225, 0.250, 0.275, 0.300, 0.325, 
-		       0.350, 0.375, 0.400, 0.425 , 0.450, 0.475, 0.500, 0.525, 0.575, 0.600, 
-		       0.633, 0.666, 0.700, 0.733 , 0.766, 0.800, 0.850, 0.900, 0.950, 1.000};
-
-// const int nbinsY=31;
-// float binsY[nbinsY+1]={0.000, 0.100, 0.150, 0.200, 0.233, 0.266, 0.300, 0.320, 0.340, 0.360,
-// 		       0.380, 0.400, 0.420, 0.440, 0.460, 0.480, 0.500, 0.533, 0.566, 0.600,
-// 		       0.633, 0.666, 0.700, 0.733, 0.766, 0.800, 0.833, 0.866, 0.900, 0.933,
-// 		       0.966, 1.000};
-
 //--
-pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp);
 void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex=0, int mh=125) ;
 double calcInterfRew(TH1 *h,double KD );
 void makePlot1D( TH1 *h ,TString label );
@@ -105,200 +42,36 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,TString superMelaNam
 TH1F *fillKDhisto(TString channel="4mu", int sampleIndex=0,float mzzLow=0.0,float mzzHigh=99999.0,  bool smooth=false);
 TH2F *mirrorTemplate(TH2F* h2nom,TH2F *h2syst);
 void makeTemplate(TString channel="4mu");
-void storeLDDistribution();
-void generateTemplatesSMD() ;
-
-//Following are NOT USED:
-void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0);
-TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp);
-TH2F* reweightForInterference(TH2F* temp);
-double calcInterfRew(double sKD,int sample,int var);
-
-//=======================================================================
-
-pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
-
-  cout << "reweightForCRunc" << endl;
-
-  TH2F* tempUp = new TH2F(*temp);
-  TH2F* tempDn = new TH2F(*temp);
-
-  pair<TH2F*,TH2F*> histoPair(0,0);
-
-  // ---------------------
-  // functions for scaling
-  // ---------------------
-  
-  double oldTempValue=0;
-  double newTempValue=0;
-  int point=-1;
-
-
-  //  int numPtmp=0;
-  const int numPtmpPS=5;
-  const int numPtmp=8;
-
-  const int numPoints=makePSTemplate? numPtmpPS : numPtmp;
-  double low[numPoints] ;
-  double high[numPoints] ;
-
-  // ================ binning for pseudoMELA ==============================
-  double lowBinsPS[numPtmpPS]   ={100.,        120.,        140.,         160.,     180.  };
-  double highBinsPS[numPtmpPS]  ={120.,        140.,        160.,         180.,     1002. };
-  // =======================================================================
-
-  // ================ binning for MELA ==============================
-  double lowBins[numPtmp]   ={100.,        120.,        140.,         160.,     180.,     220.,     260.,     300. }; 
-  double highBins[numPtmp]  ={120.,        140.,        160.,         180.,     220.,     260.,     300.,     1002.};
-  // ======================================================================
-
-
-  // ================ systematics for pseudoMELA ==========================
-  double slopePS_syst[numPtmpPS] ={-3.32705e-01, -1.90814e-01, -9.77189e-01, -3.81680e-01, 0.0 };
-  double yIntrPS_syst[numPtmpPS] ={ 9.05727e-01, 9.95995e-01,  1.40367e+00,  1.12690,      1.0 }; 
-  //  ==================================================================
-
-  // ================ systematics for MELA ==========================
-  double slope_syst[numPtmp] ={4.71836e-01, 1.17671e-01, -3.81680e-01, -1.20481, -1.21944, -2.06928, -1.35337, 0.0 };
-  double yIntr_syst[numPtmp] ={6.83860e-01, 9.38454e-01, 1.12690,      1.24502,  1.72764,  2.11050,  1.52771,  1.0 }; 
-  //==================================================================
-
-  double slope[numPoints], yIntr[numPoints];
-
-  if(makePSTemplate){
-    for(int ib=0;ib<numPoints;ib++){
-      low[ib]=lowBinsPS[ib];
-      high[ib]=highBinsPS[ib];
-      slope[ib]=slopePS_syst[ib];
-      yIntr[ib]=yIntrPS_syst[ib];
-    }
-  }
-  else{
-    for(int ib=0;ib<numPoints;ib++){
-      low[ib]=lowBins[ib];
-      high[ib]=highBins[ib];
-      slope[ib]=slope_syst[ib];
-      yIntr[ib]=yIntr_syst[ib];
-    }
-  }
-
-
-  for(int i=1; i<=temp->GetNbinsX(); i++){
-    point = -1;
-
-    // choose correct scale factor
-    for(int p=0; p<numPoints; p++){
-      //float m=(i*2.+101.); // NA: This is the center of bin i+1 and not of bin i... why?
-      float m=temp->GetBinCenter(i+1); 
-      if( m>=low[p] && m<high[p] ){
-	point = p;
-      }
-    }
-    if(point == -1){
-      cout << "ERROR: could not find correct scale factor"<< endl;
-      return histoPair;
-    }
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-
-      oldTempValue = temp->GetBinContent(i,j);
-      newTempValue = oldTempValue*(slope[point]*(double)j/30.+yIntr[point]);
-      tempUp->SetBinContent(i,j,newTempValue);
-      newTempValue = oldTempValue*(-slope[point]*(double)j/30.+2.-yIntr[point]);
-      tempDn->SetBinContent(i,j,newTempValue);
-
-    }// end loop over Y bins
-
-    // -------------- normalize mZZ slice ----------------
-
-    double norm_up=(tempUp->ProjectionY("temp",i,i))->Integral();
-    double norm_dn=(tempDn->ProjectionY("temp",i,i))->Integral();
-
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      tempUp->SetBinContent(i,j,tempUp->GetBinContent(i,j)/norm_up);
-      tempDn->SetBinContent(i,j,tempDn->GetBinContent(i,j)/norm_dn);
-
-    }
-
-    // ---------------------------------------------------
-
-  }// end loop over X bins
-
-  histoPair.first  = tempUp;
-  histoPair.second = tempDn;
-
-  return histoPair;
-
-}
-
-//=======================================================================
-double calcInterfRew(TH1 *h,double KD ){
-  return h->GetBinContent(h->FindBin(KD));
-}
-
-void makePlot1D( TH1 *h ,TString label ){
-
-  gStyle->SetOptStat(1);
-  
-  TCanvas *c1D=new TCanvas("c1d",("CANVAS "+label).Data());
-  c1D->cd();
-  h->SetXTitle("superMELA");
-  h->SetYTitle("Norm. to unity");
-  h->GetXaxis()->SetLabelSize(0.035);
-  h->GetYaxis()->SetLabelSize(0.035);
-  h->GetYaxis()->SetTitleOffset(1.15);
-  h->SetLineWidth(2);
-  h->Draw("HIST");
-  c1D->SaveAs(("can_template1D_SuperMELA_"+label+".root").Data());
-  delete c1D;
-}
-
-
-void makePlot2D( TH2 *h ,TString label ){
-
-  gStyle->SetOptStat(0);
-  gStyle->SetPalette(1);
-  
-  TCanvas *c2D=new TCanvas("c2d",("CANVAS "+label).Data());
-  c2D->cd();
-  h->SetXTitle("superMELA");
-  h->SetYTitle("pseudoMELA");
-  h->GetXaxis()->SetLabelSize(0.035);
-  h->GetYaxis()->SetLabelSize(0.035);
-  h->GetYaxis()->SetTitleOffset(1.15);
-  h->Draw("col");
-  c2D->SaveAs(("can_template_SMDvsPSD_"+label+".root").Data());
-  delete c2D;
-}
+void generateTemplatesSMD_V3(int altSignal_=3, TString destDirTag="0-");
 
 //=======================================================================
 
 void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int mh) {
 
-  //  TString sample[4]={"H*","ZZTo*","ggZZ*","H*Pse"};
-  //  TString sampleName[4]={"signal","qqZZ","ggZZ","signal_PS"};
-
+ 
   if(useSqrts!=1 &&useSqrts!=2){
     cout<<"Error ! cannot build templates for superMELA mixing 7 and 8 TeV samples. Sqrt(s) set is "<<useSqrts<<endl;
     return;
   }
  
-  TString chPath =channel;// (channel=="2e2mu"?"2mu2e":channel); // Adapt to different naming convention...
+  if (channel=="2e2mu")
+    channel="2mu2e";
+  TString chPath =channel;
 
   char mch[32];
   sprintf(mch,"%d",int(mh));
   string strM=mch;
   //An error is issued on missing files; if a single file is missing in one set it can be safely ignored.
 
-  string suffix="_withSMD_doubleCBonly.root";
+   string suffix=".root";
+   //  string suffix="_withSMD_doubleCBonly_withProbabilities.root";
 
   if(sampleIndex==0){
     //7TeV
-    if(useSqrts==1)bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H"+strM+suffix);
-    else     bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H"+strM+suffix);
-    
+    if(useSqrts==1)bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2H"+strM+suffix);
+    else     bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2H"+strM+suffix);
+    /*if(useSqrts==1)bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenH"+strM+suffix);
+      else     bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenH"+strM+suffix);*/
 
   } else if (sampleIndex==1){
      if(useSqrts==1){
@@ -338,24 +111,72 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal"<<endl;
-      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuPseH"+strM+""+suffix);
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2PseH126"+suffix);
+      //bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenPseH126"+suffix);
     }
     else{   //8TeV
    cout<<"Readign in 8 TeV for Alt Sig"<<endl;
-      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuPseH"+strM+""+suffix);
+   bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2PseH126"+suffix);
+   //bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenPseH126"+suffix);
     }
   }
   else if(sampleIndex==4){ //this is for another alternative signal samples
 
      if(useSqrts==1){   //7TeV
-      cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
-      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_graviH"+strM+""+suffix);
+      cout<<"Readign in 7 TeV for Alt signal (4)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2GravH126"+suffix);
     }
     else{   //8TeV
-      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_graviH"+strM+""+suffix);
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2GravH126"+suffix);
     }
   }
-  else if (sampleIndex==5){
+
+  else if(sampleIndex==5){ //this is for another alternative signal samples
+
+     if(useSqrts==1){   //7TeV
+      cout<<"Readign in 7 TeV for Alt signal (5)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2ScaHH126"+suffix);
+    }
+    else{   //8TeV
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2ScaHH126"+suffix);
+    }
+  }
+  else if(sampleIndex==6){ //this is for another alternative signal samples
+
+     if(useSqrts==1){   //7TeV
+      cout<<"Readign in 7 TeV for Alt signal (6)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Vec1PH126"+suffix);
+    }
+    else{   //8TeV
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Vec1PH126"+suffix);
+    }
+  }
+  else if(sampleIndex==7){ //this is for another alternative signal samples
+
+     if(useSqrts==1){   //7TeV
+      cout<<"Readign in 7 TeV for Alt signal (7)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Vec1MH126"+suffix);
+    }
+    else{   //8TeV
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Vec1MH126"+suffix);
+    }
+  }
+  else if(sampleIndex==8){ //this is for another alternative signal samples
+
+     if(useSqrts==1){   //7TeV
+      cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2qqGravH126"+suffix);
+    }
+    else{   //8TeV
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2qqGravH126"+suffix);
+    }
+  }
+  else{
+    std::cout<<"ERROR from buildChainSingleMass: Unrecognized sample code = "<<sampleIndex<<std::endl;
+
+  }
+  /******
+  else if (sampleIndex==5){//not used anymore, refer to generateTemplates_forCR_V3.C
      if(useSqrts==1){
       cout<<"Readign in 7 TeV for Z+X data control regions"<<endl;
     //7TeV
@@ -371,7 +192,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
     }
 
   }
-    
+  *************/
 }
 
 
@@ -382,54 +203,93 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
 
   //  buildChain(bkgMC, channel, sampleIndex);
-  bool use8TeV=false;
+  // bool use8TeV=false;
   buildChainSingleMass(bkgMC, channel, sampleIndex,mH);
   cout << "Chain for " << channel << " " << sampleIndex << "  "<<(useSqrts==2 ? "8TeV" : "7TeV") << " ===>" << bkgMC->GetEntries() << endl;
   // // bkgMC->ls();
 
-  float mzz,KD,KD_cut,w=0;
+  float mzz,KD,KD_forSel,w=0;
   double sKD;
-  float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
-  float pt4l=0, Y4l=0;
-  float psig=0, pbkg=0;
-  
-  
-  
-  bool cutSameVar=false;
-  bkgMC->SetBranchAddress(melaName.Data(),&KD);
-  if (melaName!=melaCutName) {
-    bkgMC->SetBranchAddress(melaCutName.Data(),&KD_cut);
-  }
-  else {
-   //    KD_cut=KD;
-   cutSameVar=true;
-   // bkgMC->SetBranchAddress(melaName.Data(),&KD_cut);
-  }
-  
-
+  float  pbkg=0;
+  float p0plus,p0plusN, p0minus,p2minimal;
+  float psigM4l, pbkgM4l;
+  float psigM4l_ScaleUp, pbkgM4l_ScaleUp,psigM4l_ScaleDown, pbkgM4l_ScaleDown,psigM4l_ResUp, pbkgM4l_ResUp;
+  float p0plusVA,p0hplusVA,p0minusVA,p1plusVA,p1minusVA,p2minimalVA,p2minimalVA_qq,pbkgVA;
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
-  //  bkgMC->SetBranchAddress("superLD",&sKD);
-  bkgMC->SetBranchAddress(superMelaName,&sKD);
+   
 
-  if (recompute_) {
-    bkgMC->SetBranchAddress("Z1Mass",&m1);
-    bkgMC->SetBranchAddress("Z2Mass",&m2);
-    bkgMC->SetBranchAddress("helcosthetaZ1",&costheta1);
-    bkgMC->SetBranchAddress("helcosthetaZ2",&costheta2);
-    bkgMC->SetBranchAddress("costhetastar",&costhetastar);
-    bkgMC->SetBranchAddress("helphi",&phi);
-    bkgMC->SetBranchAddress("phistarZ1",&phi1);
-    bkgMC->SetBranchAddress("ZZPt",&pt4l);
-    bkgMC->SetBranchAddress("ZZRapidity",&Y4l);
+  /*
+  char psigm4l_name[32], pbkgm4l_name[32];
+  if(superMelaName.Contains("syst1Up")){
+    sprintf(psigm4l_name,"p0plus_m4l_ScaleUp");
+    sprintf(pbkgm4l_name,"bkg_m4l_ScaleUp");
   }
-  
+  else  if(superMelaName.Contains("syst1Down")){
+    sprintf(psigm4l_name,"p0plus_m4l_ScaleDown");
+    sprintf(pbkgm4l_name,"bkg_m4l_ScaleDown");
+  }
+  else  if(superMelaName.Contains("syst2Up")){
+    sprintf(psigm4l_name,"p0plus_m4l_ResUp");
+    sprintf(pbkgm4l_name,"bkg_m4l_ResUp");
+  }
+  else{//use central value
+    sprintf(psigm4l_name,"p0plus_m4l");
+    sprintf(pbkgm4l_name,"bkg_m4l");
+  }
+  cout<<"PsigM4L="<<psigm4l_name<<"  PbkgM4L="<<pbkgm4l_name<<endl;
+  */
 
-  bool usePseudoLDbin=melaName.Contains("pseudo");
-  const int nbinsY=(usePseudoLDbin? nbinsYps : nbinsYgrav);
+  //  bkgMC->SetBranchAddress(psigm4l_name,&psigM4l);
+  bkgMC->SetBranchAddress("p0plus_m4l",&psigM4l);
+  bkgMC->SetBranchAddress("bkg_m4l",&pbkgM4l);
+  bkgMC->SetBranchAddress("p0plus_m4l_ScaleUp",&psigM4l_ScaleUp);
+  bkgMC->SetBranchAddress("bkg_m4l_ScaleUp",&pbkgM4l_ScaleUp);
+  bkgMC->SetBranchAddress("p0plus_m4l_ScaleDown",&psigM4l_ScaleDown);
+  bkgMC->SetBranchAddress("bkg_m4l_ScaleDown",&pbkgM4l_ScaleDown);
+  bkgMC->SetBranchAddress("p0plus_m4l_ResUp",&psigM4l_ResUp);
+  bkgMC->SetBranchAddress("bkg_m4l_ResUp",&pbkgM4l_ResUp);
+
+  bkgMC->SetBranchAddress("p0plus_melaNorm",&p0plusN);
+  bkgMC->SetBranchAddress("p0plus_mela",&p0plus);
+  bkgMC->SetBranchAddress("p0minus_mela",&p0minus);
+  bkgMC->SetBranchAddress("p2_mela",&p2minimal);
+  bkgMC->SetBranchAddress("bkg_mela",&pbkg);
+
+  bkgMC->SetBranchAddress("p0plus_VAJHU",&p0plusVA);
+  bkgMC->SetBranchAddress("p0minus_VAJHU",&p0minusVA);
+  bkgMC->SetBranchAddress("p0hplus_VAJHU",&p0hplusVA);
+  bkgMC->SetBranchAddress("p1plus_VAJHU",&p1plusVA);
+  bkgMC->SetBranchAddress("p1_VAJHU",&p1minusVA);
+  bkgMC->SetBranchAddress("p2_VAJHU",&p2minimalVA);
+  bkgMC->SetBranchAddress("p2qqb_VAJHU",&p2minimalVA_qq);
+  bkgMC->SetBranchAddress("bkg_VAMCFMNorm",&pbkgVA);
+
+
+  //  bkgMC->SetBranchAddress("",&);
+
+
+  //  bool cutSameVar=false;
+  // bkgMC->SetBranchAddress(melaName.Data(),&KD);
+  //  if (melaName!=melaCutName) {
+  //  bkgMC->SetBranchAddress(melaCutName.Data(),&KD_forSel);
+  // }
+  // else {
+  ///////    KD_forSel=KD;
+  //  cutSameVar=true;
+  ////// // bkgMC->SetBranchAddress(melaName.Data(),&KD_forSel);
+  // }
+
+
+ //  bkgMC->SetBranchAddress("superLD",&sKD);
+  //bkgMC->SetBranchAddress(superMelaName,&sKD);
+
+
+  //  bool usePseudoLDbin=melaName.Contains("pseudo");
+  const int nbinsY=(altSignal==3? nbinsYps : nbinsYgrav);
   float binsY[nbinsY+1];
   for(int ib=0;ib<=nbinsY;ib++){
-    if(usePseudoLDbin) binsY[ib]=binsYps[ib];
+    if(altSignal==3) binsY[ib]=binsYps[ib];
     else binsY[ib]=binsYgrav[ib];
   }
   TH2F* bkgHist = new TH2F(templateName,templateName,nbinsX,binsX,nbinsY,binsY);
@@ -443,98 +303,65 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   bkgHist->Sumw2();
 
 
-  //if asked to applyinterf reweighting, load the TH1
-  TH1F *hInterfRewX=0,*hInterfRewY=0;
-  TFile *fInterfRew=0;
-  if(applyInterferenceRew){
-    if((sampleIndex==0||sampleIndex==3||sampleIndex==4)
-       && (channel=="4mu" || channel=="4e")){
-
-      string curPath=gDirectory->GetPath();
-      //  cout<<"Current Path is "<<curPath.c_str()<<endl;
-      fInterfRew=new TFile( fInterferenceName.c_str());
-      string hIntNameX="";
-
-      if(sampleIndex==0)hIntNameX+="scalar_";
-      else if(sampleIndex==3)hIntNameX+="pseudoscalar_";
-      else if(sampleIndex==4)hIntNameX+="graviton_";
-      else{
-	cout<<"Error from fillTemplate: unrecognized sample -> "<<sampleIndex<<endl;
-	hIntNameX+="unknownSample_";
-      }
-
-      string hIntNameY=hIntNameX;
-      hIntNameX+="superMELA";
-      if(melaName.Contains("pseudo"))hIntNameY+="pseudoMELA";
-      else  if(melaName.Contains("gravi"))hIntNameY+="graviMELA";
-      else{
-	cout<<"Error from fillTemplate: unrecognized variable name -> "<<melaName.Data()<<endl;
-	hIntNameY+="unknownVar";
-      }
-      hInterfRewX=(TH1F*)fInterfRew->Get(hIntNameX.c_str());
-      hInterfRewY=(TH1F*)fInterfRew->Get(hIntNameY.c_str());
-      gDirectory->cd(curPath.c_str());
-      //      cout<<"Current Path is "<<gDirectory->GetPath()<<endl;
-    }
-  }
-
   // fill histogram
 	
   for(int i=0; i<bkgMC->GetEntries(); i++){
 
     bkgMC->GetEntry(i);
 
-    // if(i%5000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-    if(cutSameVar)KD_cut=KD;
+    //calculate discriminants from individual probabilities (ANALYTICAL APPROACH):
+    KD= p0plusN / (p0plusN+pbkg); // traditional MELA analytical
+    //  sKD = p0plusN*psigM4l / (p0plusN*psigM4l + pbkg*pbkgM4l)  ;
+    // float pseudoKD = p0plus/ (p0plus + p0minus);
+    //float graviKD =  p0plus   / (p0plus + 1.2*p2minimal);
 
-    bool cutPassed= (melaCut>0.0) ? (KD_cut>melaCut) : true;
+
+    // // using VA
+
+    sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
+    float sKD_ScaleUp= double(p0plusVA)*psigM4l_ScaleUp    / (double(p0plusVA)*psigM4l_ScaleUp + double(pbkgVA)*pbkgM4l_ScaleUp)  ;
+    float sKD_ScaleDown= double(p0plusVA)*psigM4l_ScaleDown    / (double(p0plusVA)*psigM4l_ScaleDown + double(pbkgVA)*pbkgM4l_ScaleDown)  ;
+    float sKD_ResUp= double(p0plusVA)*psigM4l_ResUp    / (double(p0plusVA)*psigM4l_ResUp + double(pbkgVA)*pbkgM4l_ResUp)  ;
+    if(superMelaName=="superLD_syst1Up")sKD = sKD_ScaleUp;
+    if(superMelaName=="superLD_syst1Down")sKD = sKD_ScaleDown;
+    if(superMelaName=="superLD_syst2Up")sKD = sKD_ResUp;
+    
+
+    float pseudoKD = p0plusVA / (p0plusVA   + p0minusVA);
+    float p0hKD = p0plusVA / (p0plusVA   + p0hplusVA);
+    float p1plusKD = p0plusVA / (p0plusVA   + p1plusVA);
+    float p1minusKD = p0plusVA / (p0plusVA   + p1minusVA);
+    float graviKD =  p0plusVA   / (p0plusVA + p2minimalVA);
+    float qqgraviKD =  p0plusVA   / (p0plusVA + p2minimalVA_qq);
+    if(altSignal==3) KD=pseudoKD;
+    else if(altSignal==4)KD=graviKD;
+    else if(altSignal==5)KD=p0hKD;
+    else if(altSignal==6)KD=p1plusKD;
+    else if(altSignal==7)KD=p1minusKD;
+    else if(altSignal==8)KD=qqgraviKD;
+    
+
+    //    if(cutSameVar)
+    KD_forSel=KD;
+
+    bool cutPassed= (kdCut>0.0) ? (KD_forSel>kdCut) : true;
     if(w<.0015 && cutPassed &&sKD>=0.0&& mzz>mzzCutLow&&mzz<mzzCutHigh){
-      
 
-      if(recompute_){
-
-	/*
-	cout << "===========================" << endl;
-	cout << "mzz: " << mzz << endl;
-	cout << "m1: " << m1 << endl;
-	cout << "m2: " << m2 << endl;
-	cout << "costheta1: " << costheta1 << endl;
-	cout << "costheta2: " << costheta2 << endl;
-	cout << "costhetastar: " << costhetastar << endl;
-	cout << "phi: " << phi << endl;
-	cout << "phi1: " << phi1 << endl;
-	cout << "pt4l: " << pt4l << endl;
-	cout << "Y4l: " << Y4l << endl;
-	*/
-
-	myMELA->computeKD(mzz,m1,m2,
-			  costhetastar,
-			  costheta1,
-			  costheta2,
-			  phi,
-			  phi1,
-			  KD,psig,pbkg,
-			  withPt_,pt4l,
-			  withY_, Y4l);
-	
-	//cout << "LD: " << LD << endl;
-	
-      }
-
-      if(hInterfRewX!=0&&hInterfRewY!=0){
-	w*=calcInterfRew(hInterfRewX,sKD);//reweight in the supermela direction
-	w*=calcInterfRew(hInterfRewY,KD);//reweight in the sig sep KD direction
-      }
       bkgHist->Fill(sKD,KD,w);
       //   bkgHist->Fill(mzz,KD,w);
 
-    }
+    }//end if cuts passed
 
-  }
+  //    if(channel=="4mu"&&sampleIndex==0&&useSqrts==2&&superMelaName=="superLD"){
+    // double       sKD_v2=-1.0;
+    // cout<<"MZZ="<<mzz<<" pseudoKD="<<KD<<"  SuperMELA="<<sKD<<"  SuperMELA_V2="<<sKD_v2 <<"  PSigm4l="<<psigM4l<<"  PBkgm4l="<<pbkgM4l<<"   PSigVA="<< p0plusVA<<"  PBkgVA="<<pbkgVA <<endl;
+    //}
 
-  int nXbins=bkgHist->GetNbinsX();
-  int nYbins=bkgHist->GetNbinsY();
-    
+    // if(i%5000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
+  
+
+  }//end loop on entries
+
 
 // smooth 
 
@@ -575,7 +402,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   */
 
 
-  cout<<"Finishing fillTemplate for sample "<<sampleIndex<<endl;
+  cout<<"Finishing fillTemplate for sample "<<sampleIndex<<"   "<<channel.Data()<<endl;
   return bkgHist;
   
 }
@@ -588,15 +415,22 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
   TChain* bkgMC = new TChain("SelectedTree");
   buildChainSingleMass(bkgMC, channel, sampleIndex,mH);
   float mzz=-1.0,mela=-444.0,w=0;
-  double LD=-999.;
-  char yVarName[32];
+  double KD=-999., sKD=-999.;
+  //char yVarName[32];
 
-
+  float psig=0, pbkg=0;
+  float p0plus, p0minus,p2minimal, psigM4l, pbkgM4l;
+ float p0plusVA,pbkgVA;
   bkgMC->SetBranchAddress("ZZMass",&mzz);
-  bkgMC->SetBranchAddress("ZZLD",&mela);
-  bkgMC->SetBranchAddress("superLD",&LD);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
+  bkgMC->SetBranchAddress("ZZLD",&mela);
+  //bkgMC->SetBranchAddress("superLD",&KD);
 
+  bkgMC->SetBranchAddress("p0plus_m4l",&psigM4l);
+  bkgMC->SetBranchAddress("bkg_m4l",&pbkgM4l);
+
+  bkgMC->SetBranchAddress("p0plus_VAJHU",&p0plusVA);
+  bkgMC->SetBranchAddress("bkg_VAMCFMNorm",&pbkgVA);
 
   char hTitle[128];
   sprintf(hTitle,"Distribution of superMELA KD with M_{4l} in [%d, %d]",int(mzzLow),int(mzzHigh));
@@ -607,16 +441,16 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
  // cout<<"Looping on tree netries (fillKDHisto) "<<bkgMC->GetEntries()<<endl;
   for(int i=0; i<bkgMC->GetEntries(); i++){
     bkgMC->GetEntry(i);
+
+    //calculate discriminants from individual probabilities
+    sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
+
     //   if(i%200==0)cout<<"Entry "<<i<<"  mzz="<<mzz<<"  weight="<<w<<"  LD="<<LD<<endl;
-    bool cutPassed= (melaCut>0.0) ? (mela>melaCut) : true;
+    bool cutPassed= (kdCut>0.0) ? (mela>kdCut) : true;
     if(w<.0015 && cutPassed &&mzz>mzzLow&&mzz<mzzHigh){
-      outHist->Fill(LD,w);
+      outHist->Fill(sKD,w);
     }
   }
-
-
-
- 
 
 // smooth 
 
@@ -626,8 +460,6 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
     }// for(int j=1; j<=nYbins; j++){
     
     if(smooth) outHist->Smooth(1,"R"); 
-
-
 
 
  //normalize to unity as this is supposed to be a pdf
@@ -643,7 +475,7 @@ void makeTemplate(TString channel){
   //  sprintf(temp,"../datafiles/Dsignal_%s.root",channel.Data());
   TFile* fsig = new TFile(destDir + "Dsignal_" + channel + ".root","RECREATE");
   TFile* fAltsig = 0;
-  if (makeAltSignal) {
+  if (altSignal>=3) {
     // sprintf(temp,"../datafiles/Dsignal_ALT_%s.root",channel.Data());
     fAltsig = new TFile(destDir + "Dsignal_ALT_" + channel + ".root","RECREATE");
   }
@@ -693,6 +525,7 @@ void makeTemplate(TString channel){
   oldTemp->Write("oldTemp");
   h_D->Write("h_superD");
   //---- systematics for default signal
+  cout<<"Processing templates for systematics Ch: "<<channel.Data()<<"  Sample: 0"<<endl;
   h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,0,"superLD_syst1Up","sigHisto_syst1Up",true);
   h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,0,"superLD_syst1Down","sigHisto_syst1Down",true);
   h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,0,"superLD_syst2Up","sigHisto_syst2Up",true);
@@ -711,11 +544,12 @@ void makeTemplate(TString channel){
   // ========================================
   // alternative signal template
 
-  if (makeAltSignal) {
-    low = fillTemplate(channel,3,"superLD","sigHistoALT",true);
-    //    high = fillTemplate(channel,3,false);
+  if (altSignal>=3) {
+
+    low = fillTemplate(channel,altSignal,"superLD","sigHistoALT",true);
+    //    high = fillTemplate(channel,altSignal,false);
     h_mzzD =   (TH2F*)low->Clone("h_mzzD");// mergeTemplates(low,high);
-    h_D = fillKDhisto(channel,3,mzzCutLow,mzzCutHigh,true);//last two are cuts on mZZ
+    h_D = fillKDhisto(channel,altSignal,mzzCutLow,mzzCutHigh,true);//last two are cuts on mZZ
     // ---------- apply interference reweighting --------
   
     oldTemp = new TH2F(*h_mzzD);
@@ -728,8 +562,10 @@ void makeTemplate(TString channel){
     cout << "h_mzzD: " << h_mzzD << endl;
 
   // --------------------------------------------------
-    makePlot1D( h_D,strSqrt+"_PSMH"+str_mh+"To"+channel );
-    makePlot2D( h_mzzD,strSqrt+"_PSMH"+str_mh+"To"+channel );
+    string sampleLabel="PS";
+    if(altSignal==4)sampleLabel="Grav";
+    makePlot1D( h_D,strSqrt+"_"+sampleLabel+"MH"+str_mh+"To"+channel );
+    makePlot2D( h_mzzD,strSqrt+"_"+sampleLabel+"MH"+str_mh+"To"+channel );
   
     fAltsig->cd();
     h_mzzD->Write("h_superDpsD");
@@ -737,9 +573,9 @@ void makeTemplate(TString channel){
     h_D->Write("h_superD");
     
     //---- systematics for alternative signal
-    h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,3,"superLD_syst1Up","sigHistoALT_syst1Up",true);
-    h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,3,"superLD_syst1Down","sigHistoALT_syst1Down",true);
-    h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,3,"superLD_syst2Up","sigHistoALT_syst2Up",true);
+    h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst1Up","sigHistoALT_syst1Up",true);
+    h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst1Down","sigHistoALT_syst1Down",true);
+    h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst2Up","sigHistoALT_syst2Up",true);
     h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
     h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
     h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
@@ -780,6 +616,7 @@ void makeTemplate(TString channel){
   oldTemp->Write("oldTemp");
   h_D->Write("h_superD");
   //---- systematics for qqZZ
+ cout<<"Processing templates for systematics Ch: "<<channel.Data()<<"  Sample: 1 (qqZZ bkg)"<<endl;
   h_mzzD_syst1Up=fillTemplate(channel,1,"superLD_syst1Up","bkgHisto_syst1Up",true);
   h_mzzD_syst1Down=fillTemplate(channel,1,"superLD_syst1Down","bkgHisto_syst1Down",true);
   h_mzzD_syst2Up=fillTemplate(channel,1,"superLD_syst2Up","bkgHisto_syst2Up",true);
@@ -819,6 +656,7 @@ void makeTemplate(TString channel){
   oldTemp->Write("oldTemp");
   h_D->Write("h_superD");
   //---- systematics for ggZZ
+ cout<<"Processing templates for systematics Ch: "<<channel.Data()<<"  Sample: 2 (ggZZ bkgd)"<<endl;
   h_mzzD_syst1Up=fillTemplate(channel,2,"superLD_syst1Up","bkgHisto_syst1Up",true);
   h_mzzD_syst1Down=fillTemplate(channel,2,"superLD_syst1Down","bkgHisto_syst1Down",true);
   h_mzzD_syst2Up=fillTemplate(channel,2,"superLD_syst2Up","bkgHisto_syst2Up",true);
@@ -834,26 +672,87 @@ void makeTemplate(TString channel){
 
 }
 
+
 //=======================================================================
+double calcInterfRew(TH1 *h,double KD ){
+  return h->GetBinContent(h->FindBin(KD));
+}
 
-void storeLDDistribution(){
+void makePlot1D( TH1 *h ,TString label ){
 
-  makeTemplate("4mu");
-   makeTemplate("4e");
-   makeTemplate("2e2mu");
-
+  gStyle->SetOptStat(1);
+  
+  TCanvas *c1D=new TCanvas("c1d",("CANVAS "+label).Data());
+  c1D->cd();
+  h->SetXTitle("superMELA");
+  h->SetYTitle("Norm. to unity");
+  h->GetXaxis()->SetLabelSize(0.035);
+  h->GetYaxis()->SetLabelSize(0.035);
+  h->GetYaxis()->SetTitleOffset(1.15);
+  h->SetLineWidth(2);
+  h->Draw("HIST");
+  c1D->SaveAs((destDir+"can_template1D_SuperMELA_"+label+".png").Data());
+  delete c1D;
 }
 
 
-void generateTemplatesSMD() {
+void makePlot2D( TH2 *h ,TString label ){
+
+  gStyle->SetOptStat(0);
+  gStyle->SetPalette(1);
+  
+  char yAxisTitle[64];
+  if(altSignal<3)sprintf(yAxisTitle,"KD");
+  else   if(altSignal==3)sprintf(yAxisTitle,"PseudoKD");
+  else   if(altSignal==4)sprintf(yAxisTitle,"GraviKD");
+  else   if(altSignal==5)sprintf(yAxisTitle,"P0hplusKD");
+  else   if(altSignal==6)sprintf(yAxisTitle,"P1plusKD");
+  else   if(altSignal==7)sprintf(yAxisTitle,"P1minusKD");
+  else   if(altSignal==8)sprintf(yAxisTitle,"qqP2minusKD");
+  else sprintf(yAxisTitle,"MYDummyKD");
+
+
+  TCanvas *c2D=new TCanvas("c2d",("CANVAS "+label).Data());
+  c2D->cd();
+  h->SetXTitle("superMELA");
+  h->SetYTitle(yAxisTitle);
+  h->GetXaxis()->SetLabelSize(0.035);
+  h->GetYaxis()->SetLabelSize(0.035);
+  h->GetYaxis()->SetTitleOffset(1.15);
+  h->Draw("col");
+  char canNameStr[256];
+  sprintf(canNameStr,"%s/can_template_SMDvs%s_%s.png",destDir.Data(),yAxisTitle,label.Data());
+  c2D->SaveAs(canNameStr);
+  delete c2D;
+}
+
+//=======================================================================
+
+void generateTemplatesSMD_V3(int altSignal_, TString destDirTag){
 
   stringstream ss1;
   ss1<<mH;
   str_mh=ss1.str();
 
+  altSignal = altSignal_;
 
-  storeLDDistribution();
+  useSqrts=1;
+  destDir=destDirBase+"_7TeV_"+destDirTag+"/";  
+    
+  makeTemplate("4mu");
+  makeTemplate("4e");
+  makeTemplate("2e2mu");
+
+  useSqrts=2;
+  destDir=destDirBase+"_8TeV_"+destDirTag+"/";  
+    
+  makeTemplate("4mu");
+  makeTemplate("4e");
+  makeTemplate("2e2mu");
+
 }
+
+//=======================================================================
 
 TH2F *mirrorTemplate(TH2F* h2nom,TH2F *h2syst){
 
@@ -875,338 +774,4 @@ TH2F *mirrorTemplate(TH2F* h2nom,TH2F *h2syst){
   double totArea=h2res->Integral();
   h2res->Scale(1.0/totArea);
   return h2res;
-}
-
-// NOT USED
-void buildChain(TChain* bkgMC, TString channel, int sampleIndex) {
-
-  //  TString sample[4]={"H*","ZZTo*","ggZZ*","H*Pse"};
-  //  TString sampleName[4]={"signal","qqZZ","ggZZ","signal_PS"};
-
-  TString chPath = (channel=="2e2mu"?"2mu2e":channel); // Adapt to different naming convention...
-  int mySqrts=useSqrts;
-
-  if(recompute_ && (withPt_||withY_) &&useSqrts==0){
-    cout<<"ERROR: use either 7 or 8 TeV to run Pt/Y templates"<<endl;
-    if(sqrts==7)mySqrts=1;
-    else mySqrts=2;
-    cout<<"Setting data sets to "<<sqrts<<"TeV. Please check this is correct!"<<endl;
-  }
-  if(sampleIndex==0){
-    //7TeV
-    if(mySqrts<2){
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
-      //    bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root"); // Skip: Special sample with a different composition
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H130.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H140.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H150.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H160.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H170.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H180.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H190.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H200.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H210.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H220.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H250.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H275.root"); // Missing in 240612
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H300.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H325.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H350.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H400.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H425.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H450.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H475.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H525.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H550.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H575.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H600.root");
-      if (extendToHighMass) {
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H650.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H700.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H750.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H800.root");  // Sample to be debugged, unexpected efficiency in 2e2mu
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H850.root");  // Missing in 310812
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H900.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H950.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root"); // Missing in 310812
-      }
-    }
-    if(mySqrts%2==0){
-      //8TeV
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H115.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H116.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H117.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H118.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H119.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H120.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H121.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H122.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H123.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H124.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H125.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H126.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H127.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H128.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H129.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H130.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H145.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H150.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H180.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H200.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H250.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H300.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H325.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H350.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H400.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H450.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H500.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H550.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H600.root");
-      if (extendToHighMass) {
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H650.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H700.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H750.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H800.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H850.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H900.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H950.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H1000.root");
-      }
-    }
-    
-  } else if (sampleIndex==1){
-    //7TeV
-    if(mySqrts<2){
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau.root");
-    }
-    //8TeV
-    if(mySqrts%2==0){
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2mu.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2e2tau.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo2mu2tau.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4e.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4mu.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ZZTo4tau.root");
-    }
-  } else if (sampleIndex==2){
-    //7TeV
-    if(useSqrts<2){
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
-    }
-    //8TeV
-    if(mySqrts%2==0){
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ2l2l.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_ggZZ4l.root");
-    }
-    
-  } else if(sampleIndex==3){ //this is for alternative signal samples
-    abort(); // Standard location of these files still being arranged.
-    //       sprintf(temp,"CJLSTtree_Jun25_2012/JHUsignal/HZZ%sTree_%s.root",channel,sample[sampleIndex].c_str());
-    //       bkgMC->Add(temp);
-  }
-    
-}
-
-
-TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
-
-  int nYbins=lowTemp->GetNbinsY();
-  if (highTemp->GetNbinsY()!=nYbins) {
-    cout << "ERROR: mergeTemplates: incorrect binning " << endl;
-    abort();
-  }
-
-  TH2F* h_mzzD = new TH2F("h_mzzD","h_mzzD",int((highMzz-100.)/mBinSize +0.5),100,highMzz,nYbins,0,1);
-
-  // copy lowmass into h_mzzD
-  for(int i=1; i<=lowTemp->GetNbinsX(); ++i){
-    for(int j=1; j<=nYbins; ++j){
-      h_mzzD->SetBinContent(i,j, lowTemp->GetBinContent(i,j)  );
-    }// end loop over D
-  }// end loop over mZZ
-
-  // copy high mass into h_mzzD
-  for(int i=1; i<=highTemp->GetNbinsX(); ++i){
-    for(int j=1; j<=nYbins; ++j){
-      h_mzzD->SetBinContent(i+lowTemp->GetNbinsX(),j, highTemp->GetBinContent(i,j)  );
-    }// end loop over D
-  }// end loop over mZZ
-
-  return h_mzzD;
-
-}
-
-
-TH2F* reweightForInterference(TH2F* temp){
-
-  cout << "reweightForInterference" << endl;
-
-  // for interference reweighting of MELA
-  TF1* reweightFunc =0;
-
-  if(makePSTemplate){// or makeAltSignal
-  // ===================================================
-  // for interference reweighting of pseudo-MELA
-    reweightFunc = new TF1("reweightFunc","([0]+[1]*(x-110) )*0.5*(1 + TMath::Erf([2]*(x -[3]) ))*0.5*(1 + TMath::Erf([4]*([5]-x) ))  ",100,200);
-    
-    reweightFunc->SetParameter(0,-5.66409e-01);
-    reweightFunc->SetParameter(1, 1.22591e-02);
-    reweightFunc->SetParameter(2, 1.64942e+00);
-    reweightFunc->SetParameter(3, 1.10080e+02);
-    reweightFunc->SetParameter(4, 2.10905e+00);
-    reweightFunc->SetParameter(5, 1.78529e+02);
-    //  ==================================================== 
-  }
-  else{
-    reweightFunc =new TF1("reweightFunc","gaus",100,1000);
-    
-    reweightFunc->SetParameter(0,0.354258);
-    reweightFunc->SetParameter(1,114.909);
-    reweightFunc->SetParameter(2,17.1512);
-  }
-
-  TH2F* newTemp = new TH2F(*temp);
-  
-  // ---------------------
-  // functions for scaling
-  // ---------------------
-  
-  double oldTempValue=0;
-  double newTempValue=0;
-
-  double slope;
-
-  for(int i=1; i<=temp->GetNbinsX(); i++){
-
-    // choose correct scale factor
-
-    // for reweighting MELA
-    if(makePSTemplate || i>8){
-      slope=reweightFunc->Eval((double)((i-1)*2+101));
-    }
-    else      slope=.354;
-     
-
-    /* ==============================================
-    // for reweighting pseudo-MELA
-    slope = reweightFunc->Eval((double)((i-1)*2+101));
-    ============================================== */
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      oldTempValue = temp->GetBinContent(i,j);
-      newTempValue = oldTempValue*(1+slope*((double)j/30.-.5));
-      newTemp->SetBinContent(i,j,newTempValue);
-
-    }// end loop over Y bins
-
-    // -------------- normalize mZZ slice ----------------
-
-    double norm=(newTemp->ProjectionY("temp",i,i))->Integral();
-
-    for(int j=1; j<=temp->GetNbinsY(); j++){
-      
-      newTemp->SetBinContent(i,j,newTemp->GetBinContent(i,j)/norm);
-
-    }
-
-    // ---------------------------------------------------
-
-  }// end loop over X bins
-
-  return newTemp;
-
-}//end reweightForInterference
-
-
-double calcInterfRew(double KD, int sample, int var ){
-
-  const int nBins=30;
-  double Bins[nBins+1];
-  double factor[nBins];
-
-  /*
-  if(sample==0){
-    if(var==0){
-      //Dumping for scalar_superMELA  :
-      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
-      factor= { 1.18507, 0.977561, 0.898954, 1.0435, 0.890893, 0.76997, 0.896865, 0.846479, 0.975199, 0.94788, 0.844742, 0.970861, 0.898826, 1.00451, 0.813552, 0.877781, 0.942754, 0.857228, 0.863034, 0.952789, 0.916475, 0.936719, 0.927974, 0.956584, 0.918833, 0.979569, 0.917289, 1.02654, 1.06457, 1.12997 };
-    }
-    else if(var==1){
-      //Dumping for scalar_pseudoMELA  :
-      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
-      factor= { 1, 1.85465e-07, 0.846479, 0.835627, 0.889097, 0.902255, 0.892185, 0.878248, 1.03515, 1.30822, 1.22188, 1.12075, 1.12748, 1.04155, 1.03368, 0.94484, 1.00269, 0.964909, 0.940151, 1.00931, 0.987935, 0.927407, 0.949474, 0.923974, 0.996851, 0.915705, 0.928214, 0.946008, 0.987219, 0.791668 };
-    }
-    else  if(var==2){
-
-      //Dumping for scalar_graviMELA  :
-      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
-      factor= { 1, 1, 1, 0.809676, 1.31195, 1.13282, 1.0584, 1.08631, 1.02131, 1.03716, 0.959399, 0.964773, 0.951227, 0.968359, 0.994594, 0.976843, 1.04356, 0.861451, 0.845938, 0.881647, 0.751582, 0.833845, 0.517293, 0.575697, 0.310376, 0.129323, 0.290977, 1.23643e-07, 3.7093e-07, 1 };
-    }//end if sample==0 && var==2
-    else{
-      cout<<"Error from calcInterfRew: unrecognized variable code -> "<<var<<endl;
-      return -1.0;
-    }
-  }//end if sample ==0
-  else if(sample==3){//pseudoscalar
-
-    if(var==0){
-      // Dumping for pseudoscalar_superMELA  :      
-      Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
-      factor= { 1.11692, 1.01568, 1.20127, 1.04203, 0.789698, 1.12008, 0.935091, 1.13462, 0.99315, 1.0311, 0.990105, 1.16179, 1.05755, 1.13522, 1.18579, 1.1183, 1.04438, 1.07369, 1.14562, 0.972329, 1.02917, 0.948788, 0.939518, 1.02371, 1.05294, 1.00586, 1.14736, 1.10839, 1.08941, 0.845083 };
-    }
-
-    else if(var==1){
-      //Dumping for pseudoscalar_pseudoMELA  :
-      Bins = { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
-      factor  = { 1, 3.43992e-08, 0.455281, 0.337961, 0.484623, 0.662933, 0.650089, 0.770638, 0.845899, 1.01266, 1.00212, 0.956241, 0.981294, 0.971407, 1.06882, 1.00874, 1.05898, 1.08788, 1.14322, 1.18842, 1.17966, 1.27968, 1.32324, 1.31198, 1.49439, 1.57816, 1.85038, 1.66081, 3.12822, 4.63325 };
-    }
-    else{
-      cout<<"Error from calcInterfRew: unrecognized variable code -> "<<var<<endl;
-      return -1.0;
-    }
-
-  }//end if sample ==3
-
-  else if(sample==4){
-    if(var==0){
-//Dumping for graviton_superMELA  :
- Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
- factor= { 1.2036, 1.23627, 1.02094, 1.36825, 1.23446, 1.16269, 1.14297, 0.995302, 1.21108, 1.33055, 1.31517, 1.20833, 1.32014, 1.24692, 1.17514, 1.19437, 1.19661, 1.23652, 1.13617, 1.08, 1.12737, 1.16577, 1.09831, 1.09137, 1.0812, 1.11734, 1.10762, 1.02292, 0.969734, 0.690127 };
-    }
-
-    else if(var==2){
-//Dumping for graviton_graviMELA  :
- Bins= { 0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1};
- factor= { 1, 1, 1.34623e-07, 0.592906, 0.765474, 0.94111, 1.01566, 0.967397, 1.00456, 1.05396, 1.02374, 1.0825, 0.995793, 0.990325, 1.05201, 0.914272, 0.98233, 0.832845, 0.758665, 0.937174, 1.33124, 1.05876, 0.992474, 1.27703, 2.07517, 2.07517, 4.15034, 1, 1, 1 };
-    }
-   else{
-      cout<<"Error from calcInterfRew: unrecognized variable code -> "<<var<<endl;
-      return -1.0;
-    }
-  }//end if sample==4
- else{
-   cout<<"Error from calcInterfRew: unrecognized sample -> "<<sample<<endl;
-   return -1.0;
-
- }
-  */
-
-//find bin
- int mybin=-1;
- for(int ib=0;ib<nBins;ib++){
-   if(Bins[ib]<KD&&Bins[ib+1]>=KD){
-     mybin=ib;
-     break;
-   }
- }
-
- return factor[mybin];
-
 }
