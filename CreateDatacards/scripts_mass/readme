@@ -1,0 +1,17 @@
+check out MoriondInputsV8 
+
+check out HZZ4L_Combination/CombinationPy/CreateDatacards/scripts_mass
+
+ln -s scripts_mass/* .         # link all scripts to current dir "CreateDatacards"
+
+cp -rf CMSdata CMSdata_bak
+
+root -l -b -q newTreeWithAbsError.C  # making CMS_zz4l_massRelErr
+
+sh run.sh   # creating  1D, 2D, 2D, 3D cards
+
+sh run2.sh  # run combination tool for likelihood scan 
+
+
+# and then merging out put with plot.sh 
+# then making plots 
