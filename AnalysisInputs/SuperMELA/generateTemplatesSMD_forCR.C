@@ -4,7 +4,7 @@
  * usage: 
  * -set input paths variables in Config.h
  * -run with:
- * root -q -b ../loadMELA.C generateTemplatesSMD_forCR_V3.C+
+ * root -q -b ../loadMELA.C generateTemplatesSMD_forCR.C+
  * 2D templates are written to "destDir"
  *
  */
@@ -42,7 +42,7 @@ void makePlot2D( TH2 *h ,TString label );
 TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,TString superMelaName="superLD",TString templateName="bkgHisto",  bool smooth=false);
 TH1F *fillKDhisto(TString channel="4mu", int sampleIndex=0,float mzzLow=0.0,float mzzHigh=99999.0,  bool smooth=false);
 void makeTemplate(TString channel="4mu");
-void generateTemplatesSMD_forCR_V3(int altSignal_=3,TString destDirTag="0-") ;
+void generateTemplatesSMD_forCR(int altSignal_=3,TString destDirTag="0-") ;
 
 //=======================================================================
 double calcInterfRew(TH1 *h,double KD ){
@@ -479,7 +479,7 @@ void makeTemplate(TString channel){
 
 //=======================================================================
 
-void generateTemplatesSMD_forCR_V3(int altSignal_, TString destDirTag){
+void generateTemplatesSMD_forCR(int altSignal_, TString destDirTag){
 
   altSignal = altSignal_;
 

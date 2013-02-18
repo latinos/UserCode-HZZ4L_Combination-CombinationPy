@@ -42,7 +42,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,TString superMelaNam
 TH1F *fillKDhisto(TString channel="4mu", int sampleIndex=0,float mzzLow=0.0,float mzzHigh=99999.0,  bool smooth=false);
 TH2F *mirrorTemplate(TH2F* h2nom,TH2F *h2syst);
 void makeTemplate(TString channel="4mu");
-void generateTemplatesSMD_V3(int altSignal_=3, TString destDirTag="0-");
+void generateTemplatesSMD(int altSignal_=3, TString destDirTag="0-");
 
 //=======================================================================
 
@@ -728,7 +728,7 @@ void makePlot2D( TH2 *h ,TString label ){
 
 //=======================================================================
 
-void generateTemplatesSMD_V3(int altSignal_, TString destDirTag){
+void generateTemplatesSMD(int altSignal_, TString destDirTag){
 
   stringstream ss1;
   ss1<<mH;
