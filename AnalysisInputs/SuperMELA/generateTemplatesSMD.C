@@ -365,23 +365,24 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
 // smooth 
 
-
-  // bkgHist->Smooth();
-  for(int i=1; i<=bkgHist->GetNbinsX(); i++){
-    for(int j=1; j<=bkgHist->GetNbinsY(); j++){
-      if(bkgHist->GetBinContent(i,j)<0.000001)
-	bkgHist->SetBinContent(i,j,0.000001);
-    }// for(int j=1; j<=nYbins; j++){
-  }// for(int i=1; i<=nXbins; i++){
-  
   if(smooth)   bkgHist->Smooth(1,"k5b"); //options:  "k3a", "k5a" , "k5b" 
-  
-
 
   // normalize TH2
   double totArea=bkgHist->Integral();
   bkgHist->Scale(1.0/totArea);
   
+  // bkgHist->Smooth();
+  for(int i=1; i<=bkgHist->GetNbinsX(); i++){
+    for(int j=1; j<=bkgHist->GetNbinsY(); j++){
+      if(bkgHist->GetBinContent(i,j)<0.000001*bkgHist->GetMean())
+	bkgHist->SetBinContent(i,j,0.000001*bkgHist->GetMean());
+    }// for(int j=1; j<=nYbins; j++){
+  }// for(int i=1; i<=nXbins; i++){
+
+  // normalize TH2
+  totArea=bkgHist->Integral();
+  bkgHist->Scale(1.0/totArea);
+
   /*
   //normalize in slices
   double norm;
