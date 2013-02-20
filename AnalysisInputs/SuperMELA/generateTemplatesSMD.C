@@ -374,8 +374,8 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   // bkgHist->Smooth();
   for(int i=1; i<=bkgHist->GetNbinsX(); i++){
     for(int j=1; j<=bkgHist->GetNbinsY(); j++){
-      if(bkgHist->GetBinContent(i,j)<0.000001*bkgHist->GetMean())
-	bkgHist->SetBinContent(i,j,0.000001*bkgHist->GetMean());
+      if(bkgHist->GetBinContent(i,j)<0.00000001)
+	bkgHist->SetBinContent(i,j,0.00000001);
     }// for(int j=1; j<=nYbins; j++){
   }// for(int i=1; i<=nXbins; i++){
 
