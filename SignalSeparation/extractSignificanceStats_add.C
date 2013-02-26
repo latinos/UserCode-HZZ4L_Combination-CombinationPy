@@ -23,7 +23,86 @@
 
 void setTDRStyle();
 
-int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString nameALT="0m"){
+int extractSignificanceStats_add(bool unblind=true, 
+				 TString legALT="0_{h}^{+}", 
+				 TString nameALT="0hp",
+				 TString CJLSTinputFile="cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root",
+				 TString UFLinputFile="UFLresults/mu_float/sepExample_ggSpin0M_qmu.root" 
+				 );
+
+
+void plotAll(){
+
+  cout << "======================================" << endl;
+  cout << "0+ vs 0- " << endl;
+  cout << "======================================" << endl;
+
+  extractSignificanceStats_add(true,
+			       "0^{-}",
+			       "0m",
+			       "cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root",
+			       "UFLresults/mu_float/sepExample_ggSpin0M_qmu.root");
+
+  cout << "======================================" << endl;
+  cout << "0+ vs 0h+ " << endl;
+  cout << "======================================" << endl;
+
+  extractSignificanceStats_add(true,
+			       "0_{h}^{+}",
+			       "0hp",
+			       "cards_0h+_8TeV_prefitMu/HCG/126/qmu_*.root",
+			       "UFLresults/mu_float/sepExample_ggSpin0Ph_qmu.root");
+
+  cout << "======================================" << endl;
+  cout << "0+ vs 1- " << endl;
+  cout << "======================================" << endl;
+
+  extractSignificanceStats_add(true,
+			       "1^{-}",
+			       "1m",
+			       "cards_1-_8TeV_prefitMu/HCG/126/qmu_*.root",
+			       "UFLresults/mu_float/sepExample_qqSpin1M_qmu.root");
+
+  cout << "======================================" << endl;
+  cout << "0+ vs 1+ " << endl;
+  cout << "======================================" << endl;
+
+
+  extractSignificanceStats_add(true,
+			       "1^{+}",
+			       "1p",
+			       "cards_1+_8TeV_prefitMu/HCG/126/qmu_*.root",
+			       "UFLresults/mu_float/sepExample_qqSpin1P_qmu.root");
+
+  cout << "======================================" << endl;
+  cout << "0+ vs gg2m+ " << endl;
+  cout << "======================================" << endl;
+
+  extractSignificanceStats_add(true,
+			       "2_{m}^{+} (gg)",
+			       "gg2mp",
+			       "cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root",
+			       "UFLresults/mu_float/sepExample_ggSpin2Pm_qmu.root");
+
+  cout << "======================================" << endl;
+  cout << "0+ vs qq2m+ " << endl;
+  cout << "======================================" << endl;
+
+  extractSignificanceStats_add(true,
+			       "2_{m}^{+} (q#bar{q})",
+			       "qq2mp",
+			       "cards_qq2m+_8TeV_prefitMu/HCG/126/qmu_*.root",
+			       "UFLresults/mu_float/sepExample_qqSpin2Pm_qmu.root");
+
+
+}
+
+int extractSignificanceStats_add(bool unblind,
+				 TString legALT,
+				 TString nameALT,
+				 TString CJLSTinputFile,
+				 TString UFLinputFile
+				 ){
 
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);
@@ -39,8 +118,8 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
   //TTree *t=(TTree*)fq->Get("q");
   TChain* t = new TChain("q");
   //t->Add("fixedMu/qmu_*.root");
-  t->Add("/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin0M_qmu.root");
-  t->Add("prefitMu/qmu_*.root");
+  t->Add(UFLinputFile);
+  t->Add(CJLSTinputFile);
 
   float q,m,w;
   int type;
@@ -73,7 +152,7 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
     else{
       counterData++;
       hObs->Fill(-q);
-      cout<<"DATA -q ="<<(-q)<<endl;
+      //cout<<"DATA -q ="<<(-q)<<endl;
       v_Obs.push_back(-q);
     }
   }//end loop on tree entries
@@ -186,7 +265,8 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
 
   float sepH= 2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
   cout<<"Separation from histograms = "<<sepH<<" with coverage "<<coverage<<endl;
-  double observedQ=(v_Obs.at(0)+v_Obs.at(counterData-1))/2.;
+  //double observedQ=(v_Obs.at(0)+v_Obs.at(counterData-1))/2.;
+  double observedQ=min(v_Obs.at(0),v_Obs.at(counterData-1));
 
   if(unblind){
     if(v_Obs.size()<1){
@@ -291,7 +371,7 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
   hSM2->Draw("sames");
 
   TArrow *obsArrow=0;
-  cout<<"DATA average q "<<observedQ<<endl;
+  cout<<"DATA minimum q "<<observedQ<<endl;
   if(unblind)obsArrow=new TArrow(observedQ,hSM->GetMaximum()/5.0,observedQ,0.0,0.05,"|->");
   else obsArrow=new TArrow(0.0,hSM->GetMaximum()/5.0,0.0,0.0,0.05,"|->");
   obsArrow->SetLineColor(kRed);
@@ -339,10 +419,10 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
 
  leg->Draw();
 
-  c1->SaveAs("sigsep_"+nameALT+".eps");
-  c1->SaveAs("sigsep_"+nameALT+".png");
-  c1->SaveAs("sigsep_"+nameALT+".root");
-  c1->SaveAs("sigsep_"+nameALT+".C");
+  c1->SaveAs("sigsep_combined_"+nameALT+".eps");
+  c1->SaveAs("sigsep_combined_"+nameALT+".png");
+  c1->SaveAs("sigsep_combined_"+nameALT+".root");
+  c1->SaveAs("sigsep_combined_"+nameALT+".C");
 
   return 0;
 }//end main
