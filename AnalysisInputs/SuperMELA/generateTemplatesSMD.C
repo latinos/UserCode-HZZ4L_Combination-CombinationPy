@@ -17,6 +17,8 @@
 #include "TF1.h"
 #include "TCanvas.h"
 #include "TString.h"
+#include "TPaveText.h"
+#include "TText.h"
 #include <sstream>
 #include <vector>
 #include <Riostream.h>
@@ -32,7 +34,7 @@
 //----------> SET INPUT VARIABLES in Config.h
 #include "ConfigSMD.h"
 //<----------
-
+TString canvasHypName;
 //--
 void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex=0, int mh=125) ;
 double calcInterfRew(TH1 *h,double KD );
@@ -704,25 +706,64 @@ void makePlot2D( TH2 *h ,TString label ){
   
   char yAxisTitle[64];
   if(altSignal<3)sprintf(yAxisTitle,"KD");
-  else   if(altSignal==3)sprintf(yAxisTitle,"PseudoKD");
-  else   if(altSignal==4)sprintf(yAxisTitle,"GraviKD");
-  else   if(altSignal==5)sprintf(yAxisTitle,"P0hplusKD");
-  else   if(altSignal==6)sprintf(yAxisTitle,"P1plusKD");
-  else   if(altSignal==7)sprintf(yAxisTitle,"P1minusKD");
-  else   if(altSignal==8)sprintf(yAxisTitle,"qqP2minusKD");
+  else   if(altSignal==3)sprintf(yAxisTitle,"D_{0-}");
+  else   if(altSignal==4)sprintf(yAxisTitle,"D_{2^{+}_{m}(gg)}");
+  else   if(altSignal==5)sprintf(yAxisTitle,"D_{0^{+}_{h}}");
+  else   if(altSignal==6)sprintf(yAxisTitle,"D_{1^{+}}");
+  else   if(altSignal==7)sprintf(yAxisTitle,"D_{1^{-}}");
+  else   if(altSignal==8)sprintf(yAxisTitle,"D_{2^{+}_{m}(qq)}");
   else sprintf(yAxisTitle,"MYDummyKD");
 
 
   TCanvas *c2D=new TCanvas("c2d",("CANVAS "+label).Data());
   c2D->cd();
-  h->SetXTitle("superMELA");
+  c2D->SetFillColor(0);
+  c2D->SetBorderMode(0);
+  c2D->SetBorderSize(2);
+  c2D->SetTickx(1);
+  c2D->SetTicky(1);
+  c2D->SetLeftMargin(0.15);
+  c2D->SetRightMargin(0.05);
+  c2D->SetTopMargin(0.05);
+  c2D->SetBottomMargin(0.15);
+  c2D->SetFrameFillStyle(0);
+  c2D->SetFrameBorderMode(0);
+  c2D->SetFrameFillStyle(0);
+  c2D->SetFrameBorderMode(0);
+
+  h->SetXTitle("D_{bkg}");
   h->SetYTitle(yAxisTitle);
-  h->GetXaxis()->SetLabelSize(0.035);
-  h->GetYaxis()->SetLabelSize(0.035);
-  h->GetYaxis()->SetTitleOffset(1.15);
+
+  h->GetXaxis()->SetLabelFont(42);
+  h->GetXaxis()->SetLabelOffset(0.007);
+  h->GetXaxis()->SetLabelSize(0.045);
+  h->GetXaxis()->SetTitleSize(0.05);
+  h->GetXaxis()->SetTitleOffset(1.4);
+  h->GetXaxis()->SetTitleFont(42); 
+
+  h->GetYaxis()->SetLabelFont(42);
+  h->GetYaxis()->SetLabelOffset(0.007);
+  h->GetYaxis()->SetLabelSize(0.045);
+  h->GetYaxis()->SetTitleSize(0.05);
+  h->GetYaxis()->SetTitleOffset(1.1);
+  h->GetYaxis()->SetTitleFont(42); 
+
+  //h->GetYaxis()->SetTitleOffset(1.15);
+  h->SetTitle("");
   h->Draw("col");
+
+  TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
+  pt->SetBorderSize(0);
+  pt->SetTextAlign(12);
+  pt->SetFillStyle(0);
+  pt->SetTextFont(42);
+  pt->SetTextSize(0.05);
+  TText *text = pt->AddText(0.01,0.5,"CMS Simulation");
+  pt->Draw();   
+
+
   char canNameStr[256];
-  sprintf(canNameStr,"%s/can_template_SMDvs%s_%s.png",destDir.Data(),yAxisTitle,label.Data());
+  sprintf(canNameStr,"%s/can_template_SMDvs%s_%s.png",destDir.Data(),canvasHypName.Data(),label.Data());
   c2D->SaveAs(canNameStr);
   delete c2D;
 }
@@ -730,6 +771,8 @@ void makePlot2D( TH2 *h ,TString label ){
 //=======================================================================
 
 void generateTemplatesSMD(int altSignal_, TString destDirTag){
+  
+  canvasHypName=destDirTag;
 
   stringstream ss1;
   ss1<<mH;
@@ -738,14 +781,14 @@ void generateTemplatesSMD(int altSignal_, TString destDirTag){
   altSignal = altSignal_;
 
   useSqrts=1;
-  destDir=destDirBase+"_7TeV_"+destDirTag+"/";  
+  destDir=destDirBase+"_"+destDirTag+"_7TeV"+"/";  
     
   makeTemplate("4mu");
   makeTemplate("4e");
   makeTemplate("2e2mu");
 
   useSqrts=2;
-  destDir=destDirBase+"_8TeV_"+destDirTag+"/";  
+  destDir=destDirBase+"_"+destDirTag+"_8TeV/";  
     
   makeTemplate("4mu");
   makeTemplate("4e");
