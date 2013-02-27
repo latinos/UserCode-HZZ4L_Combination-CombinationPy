@@ -22,25 +22,187 @@
 #include "Math/DistFunc.h"
 
 void setTDRStyle();
+void run(int);
 
-int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString nameALT="0m"){
+TH1F* hPS_A;
+TH1F* hSM_A;
+TH1F* hObs_A;
+double obsQ_A;
+TH1F* hPS_B;
+TH1F* hSM_B;
+TH1F* hObs_B;
+double obsQ_B;
+TString inputA;
+TString inputB;
+bool unblind;
+
+int extractSignificanceStats(TString legALT="0^{-}", TString nameALT="0m", TString input1="qmu_*", TString input2="/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin0M_qmu.root"){
 
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);
   setTDRStyle();
 
+  inputA=input1;
+  inputB=input2;
+  unblind = true;
 
+  cout<<endl<<"RUNNING FRAMEWROK A"<<endl;
+  run(1);
+  cout<<endl<<"RUNNING FRAMEWROK B"<<endl;
+  run(2);
+  cout<<endl<<"PLOTTING"<<endl;
   const float lumi7TeV=5.051;
   const float lumi8TeV=12.21;
 
-  //char fileName[128];
-  //sprintf(fileName,"qmu.root");
-  //TFile *fq=new TFile(fileName,"READ");
-  //TTree *t=(TTree*)fq->Get("q");
-  TChain* t = new TChain("q");
-  t->Add("fixedMu/qmu_*.root");
-  //t->Add("prefitMu/qmu_*.root");
+  //Plotting
+  gStyle->SetOptStat(0);
+  TCanvas *c1=new TCanvas("c","c",500,500);
+  c1->cd();
+  hSM_A->Rebin(50);
+  hPS_A->Rebin(50);
+  hSM_A->SetXTitle(" -2 #times ln(L_{JP}/L_{0+})");
+  hSM_A->SetYTitle("Pseudoexperiments");
+  hPS_A->SetXTitle(" -2 #times ln(L_{JP}/L_{0+})");
+  hPS_A->SetYTitle("Pseudoexperiments");
+  hSM_A->SetLineColor(kRed+2);
+  hSM_A->SetLineStyle(2);
+  hSM_A->SetFillColor(798);
+  hSM_A->SetLineWidth(2);
+  hPS_A->SetFillColor(kAzure+7);
+  hPS_A->SetLineColor(kBlue);
+  hPS_A->SetLineWidth(1);
+  hPS_A->SetFillStyle(3001);
 
+  hObs_A->SetLineColor(kRed);
+  hObs_A->SetLineWidth(2);
+
+  TGraph *grObs=new TGraph();//dummy, just for the legend
+  grObs->SetLineColor(kRed);
+  grObs->SetLineWidth(1);
+  
+  hSM_A->GetXaxis()->SetRangeUser(-30.0,30.0);
+  hSM_A->GetXaxis()->SetLabelFont(42);
+  hSM_A->GetXaxis()->SetLabelOffset(0.007);
+  hSM_A->GetXaxis()->SetLabelSize(0.045);
+  hSM_A->GetXaxis()->SetTitleSize(0.05);
+  hSM_A->GetXaxis()->SetTitleOffset(1.15);
+  hSM_A->GetXaxis()->SetTitleFont(42);
+  hSM_A->GetYaxis()->SetLabelFont(42);
+  hSM_A->GetYaxis()->SetLabelOffset(0.007);
+  hSM_A->GetYaxis()->SetLabelSize(0.045);
+  hSM_A->GetYaxis()->SetTitleSize(0.05);
+  hSM_A->GetYaxis()->SetTitleOffset(1.8);
+  hSM_A->GetYaxis()->SetTitleFont(42); 
+  //TGaxis::SetMaxDigits(2); 
+  hSM_A->Scale(1./hSM_A->Integral("width"));
+  hPS_A->Scale(1./hPS_A->Integral("width"));
+  float maxhSM_A=hSM_A->GetBinContent(hSM_A->GetMaximumBin());
+  float maxhPS_A=hPS_A->GetBinContent(hPS_A->GetMaximumBin());
+  if(maxhPS_A>maxhSM_A){
+    hSM_A->SetMaximum(maxhPS_A*1.3);
+    hPS_A->SetMaximum(maxhPS_A*1.3);
+  }
+  else{
+    hSM_A->SetMaximum(maxhSM_A*1.3);
+    hPS_A->SetMaximum(maxhSM_A*1.3);
+  }
+
+
+  hSM_A->Draw();
+  hPS_A->Draw("sames");
+
+  TArrow *obsArrow=0;
+  if(unblind)obsArrow=new TArrow(obsQ_A,hSM_A->GetMaximum()/5.0,obsQ_A,0.0,0.05,"|->");
+  else obsArrow=new TArrow(0.0,hSM_A->GetMaximum()/5.0,0.0,0.0,0.05,"|->");
+  obsArrow->SetLineColor(kRed);
+  obsArrow->SetLineWidth(4.0);
+  if(unblind)  obsArrow->Draw();
+
+  //TLegend *leg = new TLegend(0.63,0.73,0.92,0.93);
+  TLegend *leg = new TLegend(0.63,0.73,0.88,0.93);
+  leg->SetFillColor(0);
+  leg->SetLineColor(0);
+  leg->SetBorderSize(0);
+  leg->SetFillStyle(0);
+  leg->SetTextFont(42);
+
+  leg->AddEntry(hSM_A, "0^{+} framework A","f");
+  leg->AddEntry(hPS_A, legALT+" framework A","f");
+  if(unblind) leg->AddEntry(hObs_A,"Observed framework A","L");
+  //  if(unblind) leg->AddEntry(hObs,"  Simulated data","L");
+
+  c1->SetFillColor(0);
+  c1->SetBorderMode(0);
+  c1->SetBorderSize(2);
+  c1->SetTickx(1);
+  c1->SetTicky(1);
+  c1->SetLeftMargin(0.18);
+  c1->SetRightMargin(0.05);
+  c1->SetTopMargin(0.05);
+  c1->SetBottomMargin(0.15);
+  c1->SetFrameFillStyle(0);
+  c1->SetFrameBorderMode(0);
+  c1->SetFrameFillStyle(0);
+  c1->SetFrameBorderMode(0);
+
+  TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
+  pt->SetBorderSize(0);
+  pt->SetTextAlign(12);
+  pt->SetFillStyle(0);
+  pt->SetTextFont(42);
+  pt->SetTextSize(0.03);
+  TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
+  text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 19.6 fb^{-1}");
+  pt->Draw();   
+
+  TArrow* UFLArrow=new TArrow(obsQ_B,hSM_A->GetMaximum()/5.0,obsQ_B,0.0,0.05,"|->");
+  hSM_B->Rebin(50);
+  hPS_B->Rebin(50);
+
+  hPS_B->SetLineColor(kBlack);
+  hPS_B->SetFillStyle(0);
+  hSM_B->SetLineColor(kBlack);
+  hSM_B->SetLineStyle(2);
+  hSM_B->SetFillStyle(0);
+  UFLArrow->SetLineColor(kGreen);
+  UFLArrow->SetLineWidth(4);
+  hObs_B->SetLineColor(kGreen);
+  hObs_B->SetLineWidth(2);
+  c1->cd();
+  hPS_B->Scale(1./hPS_B->Integral("width"));
+  hSM_B->Scale(1./hSM_B->Integral("width"));
+  hPS_B->Draw("same");
+  hSM_B->Draw("same");
+  UFLArrow->Draw("same");
+
+  TH1F* hObs2=new TH1F();
+  hObs2->SetLineColor(kGreen);
+  hObs2->SetLineWidth(3);
+  leg->AddEntry(hSM_B, "0^{+} framework B","l");
+  leg->AddEntry(hPS_B, legALT+" framework B","l");
+  if(unblind) leg->AddEntry(hObs_B,"Observed framework B","L");
+  leg->Draw();
+
+  c1->SaveAs("sigsep_compare_"+nameALT+".eps");
+  c1->SaveAs("sigsep_compare_"+nameALT+".png");
+  c1->SaveAs("sigsep_compare_"+nameALT+".root");
+  c1->SaveAs("sigsep_compare_"+nameALT+".C");
+
+  return 0;
+}//end main
+
+void run(int framework){
+ TChain* t = new TChain("q");
+ if(framework==1){
+   t->Add(inputA);
+ }
+ else if(framework==2){
+   t->Add(inputB);
+ }
+ else{
+   cout<<"wrong framework! Aborting..."<<endl;
+   abort();
+ }
   float q,m,w;
   int type;
   t->SetBranchAddress("q",&q);
@@ -58,7 +220,7 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
   for(int i=0;i<t->GetEntries();i++){
     t->GetEntry(i);
 
-    if(i==0)cout<<"MASS in the TREE = "<<m<<endl<<endl;
+    //if(i==0)cout<<"MASS in the TREE = "<<m<<endl<<endl;
 
     q*=2.0;
     if(type<0){ //SM hypothesis 
@@ -71,11 +233,11 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
     }
     else{
       hObs->Fill(-q);
-      cout<<"DATA -q ="<<(-q)<<endl;
+      //cout<<"DATA -q ="<<(-q)<<endl;
       v_Obs.push_back(-q);
     }
   }//end loop on tree entries
-  cout<<"Finished to loop, sorting vectors "<<v_SM.size()<<" "<<v_PS.size()<<" "<<v_Obs.size()<<endl;
+  //cout<<"Finished to loop, sorting vectors "<<v_SM.size()<<" "<<v_PS.size()<<" "<<v_Obs.size()<<endl;
   sort(v_SM.begin(),v_SM.end());//sort in ascending order
   sort(v_PS.begin(),v_PS.end()); 
   sort(v_Obs.begin(),v_Obs.end());
@@ -86,20 +248,18 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
   if(v_PS.at(0)>v_SM.at(ntoysSM-1)){
     cout<<"Swapped distributions !!! The alternative model shouldstay on the negative side of the significance."<<endl;
     cout<<"Please edit the code and change the sign of q when filling histos and vectors in the loop on tree entries"<<endl;
-    return 1;
   }
 
   if((int(v_SM.size())!= ntoysSM)||(int(v_PS.size())!= ntoysPS)){
     cout<<"Mismatch in size of vectors and #entries of historgams ! v_SM.size()="<< v_SM.size() <<"  ntoysSM="<<ntoysSM<<endl;
-    return 1;
   }
 
   float medianSM=v_SM.at(int(ntoysSM/2));
   float medianPS=v_PS.at(int(ntoysPS/2));
   cout<<"Toys generated "<<ntoysSM<<"\t"<<ntoysPS<<endl;
-  cout<<"Mean of SM/PS hypothesis: "<<hSM->GetMean()<<"\t"<<hPS->GetMean()<<endl;
-  cout<<"RMS  of SM/PS hypothesis: "<<hSM->GetRMS()<<"\t"<<hPS->GetRMS()<<endl;
-  cout<<"Median of SM/PS hypothesis: "<<medianSM<<"\t"<<medianPS<<endl;
+  //cout<<"Mean of SM/PS hypothesis: "<<hSM->GetMean()<<"\t"<<hPS->GetMean()<<endl;
+  //cout<<"RMS  of SM/PS hypothesis: "<<hSM->GetRMS()<<"\t"<<hPS->GetRMS()<<endl;
+  //cout<<"Median of SM/PS hypothesis: "<<medianSM<<"\t"<<medianPS<<endl;
 
   const float step=0.05;
   float coverage=0.0;
@@ -107,26 +267,15 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
   float cut=v_PS.at(0)-step;
   float crosspoint=-99.0;
   int startSM=ntoysSM-1, startPS=0;
-  cout<<"Starting to loop with cut at "<<cut<<endl;
-
-  //apply a cut on the vectors with the results of toys,
-  //for each cut check the area in the tail for PS and SM
-  //and calculate the difference.
-  //Find the value of cut that minimizes the difference.
- 
+  //cout<<"Starting to loop with cut at "<<cut<<endl;
 
   while(cut<=v_SM.at(ntoysSM-1)+step){
-    //    if(int(cut*100)%100==0)
-    // cout<<"Cutting at "<<cut<<endl;
     float cutSM=-1.0,cutPS=-1.0;
-
     for(int iSM=startSM;iSM>=0;iSM--){      
-      //entries in v_SM and v_PS are sorted
       if(v_SM.at(iSM)<cut){//gotcha
 	cutSM=ntoysSM-iSM;
 	break;
       }
-      //      //      else cout<<"SM "<<v_SM.at(iSM)<<" > "<<cut<<endl;
     }
 
     for(int iPS=startPS;iPS<ntoysPS;iPS++){
@@ -134,31 +283,24 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
 	cutPS=iPS;
 	break;
       }
-      ////      else cout<<v_PS.at(iPS)<<" < "<<cut<<endl;
-  
     }
 
     if(cutSM>=0&&cutPS>=0){
       float fracSM=(ntoysSM-cutSM)/ntoysSM;
       float fracPS=(ntoysPS-cutPS)/ntoysPS;
-      // //   cout<<"FracSM: "<<fracSM<<"   FracPS: "<<fracPS<<endl;
       if(fabs(fracSM-fracPS)<diff){
 	diff=fabs(fracSM-fracPS);
 	coverage=fabs(fracSM+fracPS)/2.0;
 	crosspoint=cut;
-	//cout<<"New coverage="<<coverage<<" at xpoint="<<crosspoint<<" with diff "<<diff<<"  FracSM="<<fracSM<<"  FracPS="<<fracPS<<endl;
       }
-      ////      else cout<<"Diff is too high: "<<fabs(fracSM-fracPS)<<"   fracSM="<<fracSM<<"  fracPS="<<fracPS<<endl;
-    }//end if both cuutSM and cutPS are >=0
-    //// else cout<<"For cut="<<cut <<" Negative cutSM/cutPS: "<<cutSM<<"  "<<cutPS<<endl;
-
+    }
     cut+=step;
   }//end while loop
  
-  cout<<"Finished loop on vector elements, min diff is "<<diff<<", looped until cut_fin="<<cut<<endl;
-  cout<<"q value where SM and ALT distributions have same area on opposite sides: "<<crosspoint<<"  Coverage="<<coverage<<endl;
+  //cout<<"Finished loop on vector elements, min diff is "<<diff<<", looped until cut_fin="<<cut<<endl;
+  //cout<<"q value where SM and ALT distributions have same area on opposite sides: "<<crosspoint<<"  Coverage="<<coverage<<endl;
   float separation=2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
-  cout<<"Separation from tail prob: "<<separation<<endl<<endl<<endl;
+  //cout<<"Separation from tail prob: "<<separation<<endl<<endl<<endl;
   
 
   float integralSM=hSM->Integral();
@@ -166,8 +308,6 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
  
   float tailSM=hSM->Integral(1,hSM->FindBin(medianPS))/integralSM;
   float tailPS=hPS->Integral(hPS->FindBin(medianSM),hPS->GetNbinsX())/integralPS;
-  //cout<<"Median point prob SM: "<<tailSM<<"  ("<<ROOT::Math::normal_quantile_c(tailSM,1.0) <<" sigma)"<<endl;
-  //cout<<"Median point prob PS: "<<tailPS<<"  ("<<ROOT::Math::normal_quantile_c(tailPS,1.0) <<" sigma)"<<endl;
 
   diff=10.0;
   coverage=0.0;
@@ -191,6 +331,7 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
       unblind=false;
     }
     else{
+      cout<<"q value in DATA:"<<v_Obs.at(0)<<endl;
       float obsTailSM=hSM->Integral(1,hSM->FindBin(v_Obs.at(0)))/integralSM;
       float obsTailPS=hPS->Integral(hPS->FindBin(v_Obs.at(0)),hPS->GetNbinsX())/integralPS;
       cout<<"P(SM < Obs): "<<obsTailSM<<"  ("<<ROOT::Math::normal_quantile_c(obsTailSM,1.0) <<" sigma)"<<endl;
@@ -199,169 +340,65 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
       float obsCLsRatio = obsTailPS / (1.0 - obsTailSM);
       cout<<"CLs criterion P(PS > Obs) / P(SM > Obs) : "<<obsCLsRatio<<endl;//"  ("<<ROOT::Math::normal_quantile_c(obsCLsRatio,1.0) <<" sigma)"<<endl;
     }
-  
-
-    /*
-    cout << "\n\nOBSERVED SIGNIFICANCE" << endl;
-    cout << "observation: " << v_Obs[0] << endl;
-    cout << "bin: " << hObs->GetMaximumBin() << endl;
-    cout << " --------------- " << endl;
-    double obsPval_SM = 1-hSM->Integral(0,hObs->GetMaximumBin())/integralSM;
-    cout << "pvalue SM: " << obsPval_SM << endl;
-    cout << "signif SM: " << ROOT::Math::normal_quantile_c(obsPval_SM,1.0) << endl;
-    double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/integralPS;
-    cout << "pvalue PS: " << obsPval_PS << endl;
-    cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl<<endl<<endl;
-    */
-
   }//end if unblinding
-
-  //Plotting
-  gStyle->SetOptStat(0);
-  TCanvas *c1=new TCanvas("c","c",500,500);
-  c1->cd();
-  hSM->Rebin(50);
-  hPS->Rebin(50);
-  hSM->SetXTitle(" -2 #times ln(L_{ALT}/L_{0+})");
-  hSM->SetYTitle("Pseudoexperiments");
-  hPS->SetXTitle(" -2 #times ln(L_{ALT}/L_{0+})");
-  hPS->SetYTitle("Pseudoexperiments");
-  hSM->SetLineColor(kRed+2);
-  hSM->SetLineStyle(2);
-  hSM->SetFillColor(798);
-  hSM->SetLineWidth(2);
-  //hSM->SetFillStyle(3605);
-  //TColor *col = gROOT->GetColor(927);
-  //col->SetAlpha(0.01);
-  //TColor *col=new TColor(1000,72,164,255,"bluish",1);
-  //hPS->SetLineColor(927);
-  //hPS->SetFillColor(1000);
-  hPS->SetFillColor(kAzure+7);
-  hPS->SetLineColor(kBlue);
-  hPS->SetLineWidth(1);
-  hPS->SetFillStyle(3001);
-  //hPS->SetFillStyle(3695);
-
-  hObs->SetLineColor(kRed);
-  hObs->SetLineWidth(2);
-
-  TGraph *grObs=new TGraph();//dummy, just for the legend
-  grObs->SetLineColor(kRed);
-  grObs->SetLineWidth(1);
-  
-  hSM->GetXaxis()->SetRangeUser(-30.0,30.0);
-  hSM->GetXaxis()->SetLabelFont(42);
-  hSM->GetXaxis()->SetLabelOffset(0.007);
-  hSM->GetXaxis()->SetLabelSize(0.045);
-  hSM->GetXaxis()->SetTitleSize(0.05);
-  hSM->GetXaxis()->SetTitleOffset(1.15);
-  hSM->GetXaxis()->SetTitleFont(42);
-  hSM->GetYaxis()->SetLabelFont(42);
-  hSM->GetYaxis()->SetLabelOffset(0.007);
-  hSM->GetYaxis()->SetLabelSize(0.045);
-  hSM->GetYaxis()->SetTitleSize(0.05);
-  hSM->GetYaxis()->SetTitleOffset(1.8);
-  hSM->GetYaxis()->SetTitleFont(42); 
-  //TGaxis::SetMaxDigits(2); 
-  hSM->Scale(1./hSM->Integral("width"));
-  hPS->Scale(1./hPS->Integral("width"));
-  float maxhSM=hSM->GetBinContent(hSM->GetMaximumBin());
-  float maxhPS=hPS->GetBinContent(hPS->GetMaximumBin());
-  if(maxhPS>maxhSM){
-    hSM->SetMaximum(maxhPS*1.3);
-    hPS->SetMaximum(maxhPS*1.3);
+  if(framework==1){
+    hPS_A = (TH1F*) hPS->Clone("hPS_A");
+    hSM_A = (TH1F*) hSM->Clone("hSM_A");
+    obsQ_A= v_Obs.at(0);
+    hObs_A= (TH1F*) hObs->Clone("hObs_A");
+  }
+  else if(framework==2){
+    hPS_B = (TH1F*) hPS->Clone("hPS_B");
+    hSM_B = (TH1F*) hSM->Clone("hSM_B");
+    obsQ_B= v_Obs.at(0);
+    hObs_B= (TH1F*) hObs->Clone("hObs_B");
   }
   else{
-    hSM->SetMaximum(maxhSM*1.3);
-    hPS->SetMaximum(maxhSM*1.3);
+   cout<<"wrong framework! Aborting..."<<endl;
+   abort();
   }
+}
 
+void plotAll(){
+  //prefitmu
+  cout<<"    #########  PREFIT MU, 0- ##########"<<endl;
+  //extractSignificanceStats( "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin0M_2_qmu.root");
+  //OLD UFL RESULTS
+  extractSignificanceStats("0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin0M_qmu.root");
 
-  hSM->Draw();
-  hPS->Draw("sames");
+  cout<<"    #########  PREFIT MU, 0h+ ##########"<<endl;
+  extractSignificanceStats( "0^{+}_{h}", "prefitMu_0hp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0h+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin0Ph_2_qmu.root");
 
-  TArrow *obsArrow=0;
-  if(unblind)obsArrow=new TArrow(v_Obs.at(0),hSM->GetMaximum()/5.0,v_Obs.at(0),0.0,0.05,"|->");
-  else obsArrow=new TArrow(0.0,hSM->GetMaximum()/5.0,0.0,0.0,0.05,"|->");
-  obsArrow->SetLineColor(kRed);
-  obsArrow->SetLineWidth(2.0);
-  if(unblind)  obsArrow->Draw();
+  cout<<"    #########  PREFIT MU, 1+ ##########"<<endl;
+  extractSignificanceStats( "1^{+}", "prefitMu_1p", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin1P_2_qmu.root");
+  cout<<"    #########  PREFIT MU, 1- ##########"<<endl;
+  extractSignificanceStats( "1^{-}", "prefitMu_1m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin1M_2_qmu.root");
+  
+  cout<<"    #########  PREFIT MU, gg 2+m ##########"<<endl;
+  //extractSignificanceStats( "2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin2Pm_2_qmu.root"); //OLD UFL RESULTS
+  extractSignificanceStats("2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin2Pm_qmu.root");
 
-  //TLegend *leg = new TLegend(0.63,0.73,0.92,0.93);
-  TLegend *leg = new TLegend(0.63,0.73,0.88,0.93);
-  leg->SetFillColor(0);
-  leg->SetLineColor(0);
-  leg->SetBorderSize(0);
-  leg->SetFillStyle(0);
-  leg->SetTextFont(42);
+  cout<<"    #########  PREFIT MU, qq 2+m ##########"<<endl;
+  extractSignificanceStats( "2^{+}_{m}(qq)", "prefitMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin2Pm_2_qmu.root");
 
-  leg->AddEntry(hSM, "0^{+} CJLST","f");
-  leg->AddEntry(hPS, legALT+" CJLST","f");
-  if(unblind) leg->AddEntry(hObs,"Observed CJLST","L");
-  //  if(unblind) leg->AddEntry(hObs,"  Simulated data","L");
+  //mu=1
+  cout<<"    #########  MU=1, 0- ##########"<<endl;
+  extractSignificanceStats( "0^{-}", "fixedMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin0M_qmu.root");
+  cout<<"    #########  MU=1, 0h+ ##########"<<endl;
+  extractSignificanceStats( "0^{+}_{h}", "fixedMu_0hp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0h+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin0Ph_qmu.root");
 
-  c1->SetFillColor(0);
-   c1->SetBorderMode(0);
-   c1->SetBorderSize(2);
-   c1->SetTickx(1);
-   c1->SetTicky(1);
-   c1->SetLeftMargin(0.18);
-   c1->SetRightMargin(0.05);
-   c1->SetTopMargin(0.05);
-   c1->SetBottomMargin(0.15);
-   c1->SetFrameFillStyle(0);
-   c1->SetFrameBorderMode(0);
-   c1->SetFrameFillStyle(0);
-   c1->SetFrameBorderMode(0);
+  cout<<"    #########  MU=1, 1+ ##########"<<endl;
+  extractSignificanceStats( "1^{+}", "fixedMu_1p", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin1P_qmu.root");
+  cout<<"    #########  MU=1, 1- ##########"<<endl;
+  extractSignificanceStats( "1^{-}", "fixedMu_1m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1-_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin1M_qmu.root");
 
- TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
-  pt->SetBorderSize(0);
-  pt->SetTextAlign(12);
-  pt->SetFillStyle(0);
-  pt->SetTextFont(42);
-  pt->SetTextSize(0.03);
-  TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
-  text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 19.6 fb^{-1}");
-  //text = pt->AddText(0.3,0.6,"#sqrt{s} = 8 TeV, L = 19.6 fb^{-1}");
-  pt->Draw();   
+  cout<<"    #########  MU=1, gg 2+m ##########"<<endl;
+  extractSignificanceStats( "2^{+}_{m}(gg)", "fixedMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin2Pm_qmu.root");
+  cout<<"    #########  MU=1, qq 2+m ##########"<<endl;
+  extractSignificanceStats( "2^{+}_{m}(qq)", "fixedMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin2Pm_qmu.root");
+  
 
-
-  TFile *UFLresults= new TFile("/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu1/sigsep_sepExample_ggSpin0M_plot.root","READ");
-  TCanvas *UFLcanv= (TCanvas*) UFLresults->Get("c1");
-  TH1F* hUFLPS = (TH1F*)UFLcanv->GetPrimitive("hPS");
-  TH1F* hUFLSM = (TH1F*)UFLcanv->GetPrimitive("hSM");
-  //TArrow* UFLArrow=new TArrow(10.974,hSM->GetMaximum()/5.0,10.974,0.0,0.05,"|->");
-  TArrow* UFLArrow=new TArrow(10.955,hSM->GetMaximum()/5.0,10.955,0.0,0.05,"|->");
-
-  hUFLPS->SetLineColor(kBlack);
-  hUFLPS->SetFillStyle(0);
-  hUFLSM->SetLineColor(kBlack);
-  hUFLSM->SetLineStyle(2);
-  hUFLSM->SetFillStyle(0);
-  UFLArrow->SetLineColor(kGreen);
-  UFLArrow->SetLineWidth(3);
-  c1->cd();
-  hUFLPS->Scale(1./hUFLPS->Integral("width"));
-  hUFLSM->Scale(1./hUFLSM->Integral("width"));
-  hUFLPS->Draw("same");
-  hUFLSM->Draw("same");
-  UFLArrow->Draw("same");
-
-  TH1F* hObs2=new TH1F();
-  hObs2->SetLineColor(kGreen);
-  hObs2->SetLineWidth(3);
-  leg->AddEntry(hUFLSM, "0^{+} UFL","l");
-  leg->AddEntry(hUFLPS, legALT+" UFL","l");
-  if(unblind) leg->AddEntry(hObs2,"Observed UFL","L");
-  leg->Draw();
-
-  c1->SaveAs("sigsep_"+nameALT+".eps");
-  c1->SaveAs("sigsep_"+nameALT+".png");
-  c1->SaveAs("sigsep_"+nameALT+".root");
-  c1->SaveAs("sigsep_"+nameALT+".C");
-
-  return 0;
-}//end main
+}
 
 void setTDRStyle() {
   TStyle *tdrStyle = new TStyle("tdrStyle","Style for P-TDR");

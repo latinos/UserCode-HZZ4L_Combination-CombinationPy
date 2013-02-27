@@ -22,104 +22,21 @@
 #include "Math/DistFunc.h"
 
 void setTDRStyle();
+void plotAll();
 
-int extractSignificanceStats_add(bool unblind=true, 
-				 TString legALT="0_{h}^{+}", 
-				 TString nameALT="0hp",
-				 TString CJLSTinputFile="cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root",
-				 TString UFLinputFile="UFLresults/mu_float/sepExample_ggSpin0M_qmu.root" 
-				 );
+int extractSignificanceStats(bool average=false, TString legALT="0^{-}", TString nameALT="0m", TString inputA="qmu_*.root", TString inputB="/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin0M_qmu.root"){
 
-
-void plotAll(){
-
-  cout << "======================================" << endl;
-  cout << "0+ vs 0- " << endl;
-  cout << "======================================" << endl;
-
-  extractSignificanceStats_add(true,
-			       "0^{-}",
-			       "0m",
-			       "cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root",
-			       "UFLresults/mu_float/sepExample_ggSpin0M_qmu.root");
-
-  cout << "======================================" << endl;
-  cout << "0+ vs 0h+ " << endl;
-  cout << "======================================" << endl;
-
-  extractSignificanceStats_add(true,
-			       "0_{h}^{+}",
-			       "0hp",
-			       "cards_0h+_8TeV_prefitMu/HCG/126/qmu_*.root",
-			       "UFLresults/mu_float/sepExample_ggSpin0Ph_qmu.root");
-
-  cout << "======================================" << endl;
-  cout << "0+ vs 1- " << endl;
-  cout << "======================================" << endl;
-
-  extractSignificanceStats_add(true,
-			       "1^{-}",
-			       "1m",
-			       "cards_1-_8TeV_prefitMu/HCG/126/qmu_*.root",
-			       "UFLresults/mu_float/sepExample_qqSpin1M_qmu.root");
-
-  cout << "======================================" << endl;
-  cout << "0+ vs 1+ " << endl;
-  cout << "======================================" << endl;
-
-
-  extractSignificanceStats_add(true,
-			       "1^{+}",
-			       "1p",
-			       "cards_1+_8TeV_prefitMu/HCG/126/qmu_*.root",
-			       "UFLresults/mu_float/sepExample_qqSpin1P_qmu.root");
-
-  cout << "======================================" << endl;
-  cout << "0+ vs gg2m+ " << endl;
-  cout << "======================================" << endl;
-
-  extractSignificanceStats_add(true,
-			       "2_{m}^{+} (gg)",
-			       "gg2mp",
-			       "cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root",
-			       "UFLresults/mu_float/sepExample_ggSpin2Pm_qmu.root");
-
-  cout << "======================================" << endl;
-  cout << "0+ vs qq2m+ " << endl;
-  cout << "======================================" << endl;
-
-  extractSignificanceStats_add(true,
-			       "2_{m}^{+} (q#bar{q})",
-			       "qq2mp",
-			       "cards_qq2m+_8TeV_prefitMu/HCG/126/qmu_*.root",
-			       "UFLresults/mu_float/sepExample_qqSpin2Pm_qmu.root");
-
-
-}
-
-int extractSignificanceStats_add(bool unblind,
-				 TString legALT,
-				 TString nameALT,
-				 TString CJLSTinputFile,
-				 TString UFLinputFile
-				 ){
-
+  bool unblind = true;
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);
   setTDRStyle();
 
-
   const float lumi7TeV=5.051;
   const float lumi8TeV=12.21;
 
-  //char fileName[128];
-  //sprintf(fileName,"qmu.root");
-  //TFile *fq=new TFile(fileName,"READ");
-  //TTree *t=(TTree*)fq->Get("q");
   TChain* t = new TChain("q");
-  //t->Add("fixedMu/qmu_*.root");
-  t->Add(UFLinputFile);
-  t->Add(CJLSTinputFile);
+  t->Add(inputA);
+  t->Add(inputB);
 
   float q,m,w;
   int type;
@@ -156,14 +73,13 @@ int extractSignificanceStats_add(bool unblind,
       v_Obs.push_back(-q);
     }
   }//end loop on tree entries
-  cout<<"Finished to loop, sorting vectors "<<v_SM.size()<<" "<<v_PS.size()<<" "<<v_Obs.size()<<endl;
+  //cout<<"Finished to loop, sorting vectors "<<v_SM.size()<<" "<<v_PS.size()<<" "<<v_Obs.size()<<endl;
   sort(v_SM.begin(),v_SM.end());//sort in ascending order
   sort(v_PS.begin(),v_PS.end()); 
   sort(v_Obs.begin(),v_Obs.end());
   int ntoysSM= hSM->GetEntries();
   int ntoysPS= hPS->GetEntries();
 
-  //we assume that SM is on the right and PS on the left of zero
   if(v_PS.at(0)>v_SM.at(ntoysSM-1)){
     cout<<"Swapped distributions !!! The alternative model shouldstay on the negative side of the significance."<<endl;
     cout<<"Please edit the code and change the sign of q when filling histos and vectors in the loop on tree entries"<<endl;
@@ -178,9 +94,9 @@ int extractSignificanceStats_add(bool unblind,
   float medianSM=v_SM.at(int(ntoysSM/2));
   float medianPS=v_PS.at(int(ntoysPS/2));
   cout<<"Toys generated "<<ntoysSM<<"\t"<<ntoysPS<<endl;
-  cout<<"Mean of SM/PS hypothesis: "<<hSM->GetMean()<<"\t"<<hPS->GetMean()<<endl;
-  cout<<"RMS  of SM/PS hypothesis: "<<hSM->GetRMS()<<"\t"<<hPS->GetRMS()<<endl;
-  cout<<"Median of SM/PS hypothesis: "<<medianSM<<"\t"<<medianPS<<endl;
+  //cout<<"Mean of SM/PS hypothesis: "<<hSM->GetMean()<<"\t"<<hPS->GetMean()<<endl;
+  //cout<<"RMS  of SM/PS hypothesis: "<<hSM->GetRMS()<<"\t"<<hPS->GetRMS()<<endl;
+  //cout<<"Median of SM/PS hypothesis: "<<medianSM<<"\t"<<medianPS<<endl;
 
   const float step=0.05;
   float coverage=0.0;
@@ -188,26 +104,16 @@ int extractSignificanceStats_add(bool unblind,
   float cut=v_PS.at(0)-step;
   float crosspoint=-99.0;
   int startSM=ntoysSM-1, startPS=0;
-  cout<<"Starting to loop with cut at "<<cut<<endl;
-
-  //apply a cut on the vectors with the results of toys,
-  //for each cut check the area in the tail for PS and SM
-  //and calculate the difference.
-  //Find the value of cut that minimizes the difference.
- 
+  //cout<<"Starting to loop with cut at "<<cut<<endl;
 
   while(cut<=v_SM.at(ntoysSM-1)+step){
-    //    if(int(cut*100)%100==0)
-    // cout<<"Cutting at "<<cut<<endl;
     float cutSM=-1.0,cutPS=-1.0;
 
     for(int iSM=startSM;iSM>=0;iSM--){      
-      //entries in v_SM and v_PS are sorted
       if(v_SM.at(iSM)<cut){//gotcha
 	cutSM=ntoysSM-iSM;
 	break;
       }
-      //      //      else cout<<"SM "<<v_SM.at(iSM)<<" > "<<cut<<endl;
     }
 
     for(int iPS=startPS;iPS<ntoysPS;iPS++){
@@ -215,31 +121,24 @@ int extractSignificanceStats_add(bool unblind,
 	cutPS=iPS;
 	break;
       }
-      ////      else cout<<v_PS.at(iPS)<<" < "<<cut<<endl;
-  
     }
 
     if(cutSM>=0&&cutPS>=0){
       float fracSM=(ntoysSM-cutSM)/ntoysSM;
       float fracPS=(ntoysPS-cutPS)/ntoysPS;
-      // //   cout<<"FracSM: "<<fracSM<<"   FracPS: "<<fracPS<<endl;
       if(fabs(fracSM-fracPS)<diff){
 	diff=fabs(fracSM-fracPS);
 	coverage=fabs(fracSM+fracPS)/2.0;
 	crosspoint=cut;
-	//cout<<"New coverage="<<coverage<<" at xpoint="<<crosspoint<<" with diff "<<diff<<"  FracSM="<<fracSM<<"  FracPS="<<fracPS<<endl;
       }
-      ////      else cout<<"Diff is too high: "<<fabs(fracSM-fracPS)<<"   fracSM="<<fracSM<<"  fracPS="<<fracPS<<endl;
-    }//end if both cuutSM and cutPS are >=0
-    //// else cout<<"For cut="<<cut <<" Negative cutSM/cutPS: "<<cutSM<<"  "<<cutPS<<endl;
-
+    }
     cut+=step;
   }//end while loop
  
-  cout<<"Finished loop on vector elements, min diff is "<<diff<<", looped until cut_fin="<<cut<<endl;
-  cout<<"q value where SM and ALT distributions have same area on opposite sides: "<<crosspoint<<"  Coverage="<<coverage<<endl;
+  //cout<<"Finished loop on vector elements, min diff is "<<diff<<", looped until cut_fin="<<cut<<endl;
+  //cout<<"q value where SM and ALT distributions have same area on opposite sides: "<<crosspoint<<"  Coverage="<<coverage<<endl;
   float separation=2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
-  cout<<"Separation from tail prob: "<<separation<<endl<<endl<<endl;
+  //cout<<"Separation from tail prob: "<<separation<<endl<<endl<<endl;
   
 
   float integralSM=hSM->Integral();
@@ -265,8 +164,12 @@ int extractSignificanceStats_add(bool unblind,
 
   float sepH= 2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
   cout<<"Separation from histograms = "<<sepH<<" with coverage "<<coverage<<endl;
-  //double observedQ=(v_Obs.at(0)+v_Obs.at(counterData-1))/2.;
-  double observedQ=min(v_Obs.at(0),v_Obs.at(counterData-1));
+  double observedQ=-99;
+  if(average)
+    observedQ=(v_Obs.at(0)+v_Obs.at(counterData-1))/2.;
+  else
+    observedQ=TMath::Min(v_Obs.at(0),v_Obs.at(counterData-1));
+  cout<<"q value in DATA: framework A "<<v_Obs.at(0)<<" framework B "<<v_Obs.at(counterData-1)<<"  Combined most conservative "<<observedQ<<endl;
 
   if(unblind){
     if(v_Obs.size()<1){
@@ -282,22 +185,7 @@ int extractSignificanceStats_add(bool unblind,
       float obsCLsRatio = obsTailPS / (1.0 - obsTailSM);
       cout<<"CLs criterion P(PS > Obs) / P(SM > Obs) : "<<obsCLsRatio<<endl;//"  ("<<ROOT::Math::normal_quantile_c(obsCLsRatio,1.0) <<" sigma)"<<endl;
     }
-  
-
-    /*
-    cout << "\n\nOBSERVED SIGNIFICANCE" << endl;
-    cout << "observation: " << v_Obs[0] << endl;
-    cout << "bin: " << hObs->GetMaximumBin() << endl;
-    cout << " --------------- " << endl;
-    double obsPval_SM = 1-hSM->Integral(0,hObs->GetMaximumBin())/integralSM;
-    cout << "pvalue SM: " << obsPval_SM << endl;
-    cout << "signif SM: " << ROOT::Math::normal_quantile_c(obsPval_SM,1.0) << endl;
-    double obsPval_PS =  hPS->Integral(0,hObs->GetMaximumBin())/integralPS;
-    cout << "pvalue PS: " << obsPval_PS << endl;
-    cout << "signif PS: " << ROOT::Math::normal_quantile_c(obsPval_PS,1.0) << endl<<endl<<endl;
-    */
-
-  }//end if unblinding
+   }//end if unblinding
 
   //Plotting
   gStyle->SetOptStat(0);
@@ -313,17 +201,10 @@ int extractSignificanceStats_add(bool unblind,
   hSM->SetLineStyle(2);
   hSM->SetFillColor(798);
   hSM->SetLineWidth(2);
-  //hSM->SetFillStyle(3605);
-  //TColor *col = gROOT->GetColor(927);
-  //col->SetAlpha(0.01);
-  //TColor *col=new TColor(1000,72,164,255,"bluish",1);
-  //hPS->SetLineColor(927);
-  //hPS->SetFillColor(1000);
   hPS->SetFillColor(kAzure+7);
   hPS->SetLineColor(kBlue);
   hPS->SetLineWidth(1);
   hPS->SetFillStyle(3001);
-  //hPS->SetFillStyle(3695);
 
   hObs->SetLineColor(kRed);
   hObs->SetLineWidth(2);
@@ -371,14 +252,12 @@ int extractSignificanceStats_add(bool unblind,
   hSM2->Draw("sames");
 
   TArrow *obsArrow=0;
-  cout<<"DATA minimum q "<<observedQ<<endl;
   if(unblind)obsArrow=new TArrow(observedQ,hSM->GetMaximum()/5.0,observedQ,0.0,0.05,"|->");
   else obsArrow=new TArrow(0.0,hSM->GetMaximum()/5.0,0.0,0.0,0.05,"|->");
   obsArrow->SetLineColor(kRed);
   obsArrow->SetLineWidth(2.0);
   if(unblind)  obsArrow->Draw();
 
-  //TLegend *leg = new TLegend(0.63,0.73,0.92,0.93);
   TLegend *leg = new TLegend(0.63,0.73,0.88,0.93);
   leg->SetFillColor(0);
   leg->SetLineColor(0);
@@ -389,7 +268,6 @@ int extractSignificanceStats_add(bool unblind,
   leg->AddEntry(hSM, "0^{+}","f");
   leg->AddEntry(hPS, legALT,"f");
   if(unblind) leg->AddEntry(hObs,"CMS data","L");
-  //  if(unblind) leg->AddEntry(hObs,"  Simulated data","L");
 
   c1->SetFillColor(0);
    c1->SetBorderMode(0);
@@ -413,19 +291,59 @@ int extractSignificanceStats_add(bool unblind,
   pt->SetTextSize(0.03);
   TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
   text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 19.6 fb^{-1}");
-  //text = pt->AddText(0.3,0.6,"#sqrt{s} = 8 TeV, L = 19.6 fb^{-1}");
   pt->Draw();   
 
 
  leg->Draw();
 
-  c1->SaveAs("sigsep_combined_"+nameALT+".eps");
-  c1->SaveAs("sigsep_combined_"+nameALT+".png");
-  c1->SaveAs("sigsep_combined_"+nameALT+".root");
-  c1->SaveAs("sigsep_combined_"+nameALT+".C");
+  c1->SaveAs("sigsep_combine_"+nameALT+".eps");
+  c1->SaveAs("sigsep_combine_"+nameALT+".png");
+  c1->SaveAs("sigsep_combine_"+nameALT+".root");
+  c1->SaveAs("sigsep_combine_"+nameALT+".C");
 
   return 0;
 }//end main
+
+
+void plotAll(){
+  cout<<"PREFIT MU +++++++++++++++++++"<<endl;
+  //prefitmu
+  cout<<"    #########  PREFIT MU, 0- ##########"<<endl;
+  //extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin0M_2_qmu.root");
+  //OLD UFL RESULTS
+extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin0M_qmu.root");
+  cout<<"    #########  PREFIT MU, 0h+ ##########"<<endl;
+  extractSignificanceStats(false, "0^{+}_{h}", "prefitMu_0hp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0h+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin0Ph_2_qmu.root");
+
+  cout<<"    #########  PREFIT MU, 1+ ##########"<<endl;
+  extractSignificanceStats(false, "1^{+}", "prefitMu_1p", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin1P_2_qmu.root");
+  cout<<"    #########  PREFIT MU, 1- ##########"<<endl;
+  extractSignificanceStats(false, "1^{-}", "prefitMu_1m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin1M_2_qmu.root");
+
+  cout<<"    #########  PREFIT MU, gg 2+m ##########"<<endl;
+  //extractSignificanceStats(false, "2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin2Pm_2_qmu.root");
+  //OLD UFL RESULTS
+  extractSignificanceStats(false, "2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin2Pm_qmu.root");
+  cout<<"    #########  PREFIT MU, qq 2+m ##########"<<endl;
+  extractSignificanceStats(false, "2^{+}_{m}(qq)", "prefitMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin2Pm_2_qmu.root");
+
+  //mu=1
+  cout<<"    #########  MU=1, 0- ##########"<<endl;
+  extractSignificanceStats(false, "0^{-}", "fixedMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin0M_qmu.root");
+  cout<<"    #########  MU=1, 0h+ ##########"<<endl;
+  extractSignificanceStats(false, "0^{+}_{h}", "fixedMu_0hp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0h+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin0Ph_qmu.root");
+
+  cout<<"    #########  MU=1, 1+ ##########"<<endl;
+  extractSignificanceStats(false, "1^{+}", "fixedMu_1p", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin1P_qmu.root");
+  cout<<"    #########  MU=1, 1- ##########"<<endl;
+  extractSignificanceStats(false, "1^{-}", "fixedMu_1m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1-_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin1M_qmu.root");
+
+  cout<<"    #########  MU=1, gg 2+m ##########"<<endl;
+  extractSignificanceStats(false, "2^{+}_{m}(gg)", "fixedMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin2Pm_qmu.root");
+  cout<<"    #########  MU=1, qq 2+m ##########"<<endl;
+  extractSignificanceStats(false, "2^{+}_{m}(qq)", "fixedMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin2Pm_qmu.root");
+  
+}
 
 void setTDRStyle() {
   TStyle *tdrStyle = new TStyle("tdrStyle","Style for P-TDR");
