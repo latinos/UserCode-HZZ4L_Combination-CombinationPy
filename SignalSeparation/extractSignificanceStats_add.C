@@ -193,9 +193,10 @@ int extractSignificanceStats(bool average=false, TString legALT="0^{-}", TString
   c1->cd();
   hSM->Rebin(50);
   hPS->Rebin(50);
-  hSM->SetXTitle(" -2 #times ln(L_{JP}/L_{0+})");
+  TString xtitle=" -2 #times ln(L_{"+legALT+"} / L_{0^{+}})";
+  hSM->SetXTitle(xtitle);
   hSM->SetYTitle("Pseudoexperiments");
-  hPS->SetXTitle(" -2 #times ln(L_{JP}/L_{0+})");
+  hPS->SetXTitle(xtitle);
   hPS->SetYTitle("Pseudoexperiments");
   hSM->SetLineColor(kRed+2);
   hSM->SetLineStyle(2);
@@ -309,9 +310,9 @@ void plotAll(){
   cout<<"PREFIT MU +++++++++++++++++++"<<endl;
   //prefitmu
   cout<<"    #########  PREFIT MU, 0- ##########"<<endl;
-  //extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin0M_2_qmu.root");
+  extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin0M_2_qmu.root");
   //OLD UFL RESULTS
-extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin0M_qmu.root");
+  //extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin0M_qmu.root");
   cout<<"    #########  PREFIT MU, 0h+ ##########"<<endl;
   extractSignificanceStats(false, "0^{+}_{h}", "prefitMu_0hp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0h+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin0Ph_2_qmu.root");
 
@@ -319,14 +320,14 @@ extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbo
   extractSignificanceStats(false, "1^{+}", "prefitMu_1p", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin1P_2_qmu.root");
   cout<<"    #########  PREFIT MU, 1- ##########"<<endl;
   extractSignificanceStats(false, "1^{-}", "prefitMu_1m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_1-_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin1M_2_qmu.root");
-
+  
   cout<<"    #########  PREFIT MU, gg 2+m ##########"<<endl;
-  //extractSignificanceStats(false, "2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin2Pm_2_qmu.root");
+  extractSignificanceStats(false, "2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_ggSpin2Pm_2_qmu.root");
   //OLD UFL RESULTS
-  extractSignificanceStats(false, "2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin2Pm_qmu.root");
+  //extractSignificanceStats(false, "2^{+}_{m}(gg)", "prefitMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLresults/mu_float/sepExample_ggSpin2Pm_qmu.root");
   cout<<"    #########  PREFIT MU, qq 2+m ##########"<<endl;
-  extractSignificanceStats(false, "2^{+}_{m}(qq)", "prefitMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin2Pm_2_qmu.root");
-
+  extractSignificanceStats(false, "2^{+}_{m}(q#bar{q})", "prefitMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_prefitMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu_float/sepExample_qqSpin2Pm_2_qmu.root");
+  /*
   //mu=1
   cout<<"    #########  MU=1, 0- ##########"<<endl;
   extractSignificanceStats(false, "0^{-}", "fixedMu_0m", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_0-_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin0M_qmu.root");
@@ -341,7 +342,7 @@ extractSignificanceStats(false, "0^{-}", "prefitMu_0m", "/afs/cern.ch/user/s/sbo
   cout<<"    #########  MU=1, gg 2+m ##########"<<endl;
   extractSignificanceStats(false, "2^{+}_{m}(gg)", "fixedMu_gg2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_gg2m+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_ggSpin2Pm_qmu.root");
   cout<<"    #########  MU=1, qq 2+m ##########"<<endl;
-  extractSignificanceStats(false, "2^{+}_{m}(qq)", "fixedMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin2Pm_qmu.root");
+  extractSignificanceStats(false, "2^{+}_{m}(q#bar{q})", "fixedMu_qq2mp", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/CMSSW_6_1_1/src/andrewFinalResults/cards_qq2m+_8TeV_fixedMu/HCG/126/qmu_*.root", "/afs/cern.ch/user/s/sbologne/workspace/superME_alessioCode/UFLFinalResults/mu1/sepExample_qqSpin2Pm_qmu.root");*/
   
 }
 
