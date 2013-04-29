@@ -19,7 +19,6 @@
 #include <algorithm>
 #include "TCutG.h"
 #include "TFile.h"
-#include "TChain.h"
 #include "TH2.h"
 #include "TPad.h"
 #include "TF1.h"
@@ -83,10 +82,10 @@ void signalEfficiency_w() {
   signalEfficiency_w(1,8,5,0.);
   signalEfficiency_w(2,8,5,0.);
   signalEfficiency_w(3,8,5,0.);
-
+  /*
   //JES Up
   //ggH
-  /*signalEfficiency_w(1,7,1,1.);
+  signalEfficiency_w(1,7,1,1.);
   signalEfficiency_w(2,7,1,1.);
   signalEfficiency_w(3,7,1,1.);
   signalEfficiency_w(1,8,1,1.);
@@ -260,23 +259,11 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
   TString infile;
 
   for (int i = 0; i < nPoints; i++){
-    TChain *t1 = new TChain("SelectedTree");
-    if (process==1){
-      infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
-      t1->Add(infile);
-    }
-    else if (process==2){
-      infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VBFH" + (long)masses[i] + ".root";
-      t1->Add(infile);
-    }
-    else if (process==3 || process==4 || process==5){
-      infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_ZH" + (long)masses[i] + ".root";
-      t1->Add(infile);
-      infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_WH" + (long)masses[i] + ".root";
-      t1->Add(infile);
-      infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_ttH" + (long)masses[i] + ".root";
-      t1->Add(infile);
-    } 
+    if (process==1) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
+    else if (process==2) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VBFH" + (long)masses[i] + ".root";
+    else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_" + sprocess + (long)masses[i] + ".root";    
+    TFile *f = TFile::Open(infile) ;
+    TTree *t1 = (TTree*) f->Get("SelectedTree");
     float mela, MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
     //int NJets;
     int genProcessId=0;
@@ -291,9 +278,6 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
     t1->SetBranchAddress("genProcessId",&genProcessId);
     t1->SetBranchAddress("JetPt",&JetPt);
     t1->SetBranchAddress("JetSigma",&JetSigma);
-    //To deal with VH efficiencies
-    float VHtotal = 0;
-    float VHsumw2 = 0;
     //Initialize counters for non-dijet events
     int numndjEventsRaw = 0;
     float numndjEventsPowheg =0;
@@ -314,10 +298,6 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
     float djsumw_init2=0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
-      //if(process==3 || process==4 || process==5){
-      //VHtotal+=MC_weight_norm;
-      //VHsumw2+=MC_weight_norm*MC_weight_norm;
-      //}
       if ((process==3 && genProcessId!=24) || (process==4 && genProcessId!=26) || (process==5 && (genProcessId!=121 && genProcessId!=122))) continue;
       int NJets=0;
       double jetptc=0;
@@ -382,16 +362,13 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
 	   << endl;
     }
     
-    //if (process==1 || process==2)
     totefficiencyVal[i] = totalndjCtr + totaldjCtr;
-    //if (process==3 || process==4 || process==5) totefficiencyVal[i] = (totalndjCtr + totaldjCtr)/VHtotal;
     cout<<sprocess<<" "<<m<<" "<<totefficiencyVal[i]<<endl;
-    //if (process==1 || process==2)
     totefficiencyErr[i] = sqrt(ndjsumw2 + djsumw2);
-    //if (process==3 || process==4 || process==5) totefficiencyErr[i] = sqrt(VHsumw2);
-    dijetratioVal[i]=totaldjCtr/(totalndjCtr + totaldjCtr);
-    dijetratioErr[i]=sqrt(pow(totalndjCtr,2)*djsumw2 + pow(totaldjCtr,2)*ndjsumw2)/pow((totalndjCtr+totaldjCtr),2);
+    dijetratioVal[i]=totaldjCtr/totefficiencyVal[i];
+    dijetratioErr[i]=sqrt(pow(totalndjCtr,2)*djsumw2 + pow(totaldjCtr,2)*ndjsumw2)/pow(totefficiencyVal[i],2);
   
+    f->Close();
   }
 	
 
@@ -422,7 +399,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
   TCanvas *ctot = new TCanvas(cname,cname);
   ctot->SetGrid();
 
-  TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes;
+  TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes;
 
   totgrEff->Fit(polyFunctot,"Rt");
   TString xaxisText = "m_{" + schannel + "}";
@@ -479,11 +456,11 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
   TCanvas *crat = new TCanvas(cname,cname);
   crat->SetGrid();
 
-  outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes + "_ratio";
+  outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes + "_ratio";
 
   TF1 *ratiofit;
   if (process==1 || process==2) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
-  if (process==3 || process==4 || process==5 ) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
+  if (process==3 || process==4 || process==5 ) ratiofit = new TF1("ratiofit","([0]+[1]*x)",110.,xMax);
 
   ratgrEff->Fit(ratiofit,"Rt");
   ratgrEff->GetXaxis()->SetTitle(xaxisText);
@@ -503,14 +480,14 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
   cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << endl;
   cout << "   a1 = " << ratiofit->GetParameter(0) << endl;
   cout << "   a2 = " << ratiofit->GetParameter(1) << endl;
-  /*if (process==1 || process==2)*/ cout << "   a3 = " << ratiofit->GetParameter(2) << endl;
+  if (process==1 || process==2) cout << "   a3 = " << ratiofit->GetParameter(2) << endl;
   cout << "---------------------------" << endl << endl;
 
   if (process==1) ofrat << "## signal efficiency ratios ##" << endl;
   ofrat << "signalEff tagged_" << sprocess << "_ratio " << ratiofit->GetParameter(0) << "+(" << ratiofit->GetParameter(1) << "*@0)";
-  /*if (process==1 || process==2)*/ ofrat << "+(" << ratiofit->GetParameter(2) << "*@0*@0)" << endl;
-  /*else if (process==3 || process==4 )*/ ofrat << endl;
-  if (process==5) ofrat << endl;
+  if (process==1 || process==2) ofrat << "+(" << ratiofit->GetParameter(2) << "*@0*@0)" << endl;
+  else if (process==3 || process==4 ) ofrat << endl;
+  else if (process==5) ofrat << endl << endl;
   ofrat.close();
 
   // deviations

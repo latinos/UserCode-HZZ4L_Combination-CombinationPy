@@ -39,6 +39,11 @@ class inputReader:
         self.zjets_chan = False
         self.ttbar_chan = False
         self.zbb_chan = False
+        self.ggH_SM_chan = True
+        self.qqH_SM_chan = True
+        self.WH_SM_chan = True
+        self.ZH_SM_chan = True
+        self.ttH_SM_chan = True
         # rates
         self.qqZZ_rate = -999.9
         self.ggZZ_rate = -999.9
@@ -682,6 +687,11 @@ class inputReader:
         dict['WH'] = self.WH_chan
         dict['ZH'] = self.ZH_chan
         dict['ttH'] = self.ttH_chan
+        dict['ggH_SM'] = self.ggH_chan
+        dict['qqH_SM'] = self.qqH_chan
+        dict['WH_SM'] = self.WH_chan
+        dict['ZH_SM'] = self.ZH_chan
+        dict['ttH_SM'] = self.ttH_chan
         dict['qqZZ'] = self.qqZZ_chan
         dict['ggZZ'] = self.ggZZ_chan
         dict['zjets'] = self.zjets_chan

@@ -134,10 +134,11 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
   TFile* newFile  = new TFile(outfile, "RECREATE");
   newFile->cd();
   TTree* newTree = new TTree("data_obs","data_obs"); 
-  Double_t CMS_zz4l_mass, melaLD, pseudomelaLD, supermelaLD, CMS_zz4l_massErr;
+  Double_t CMS_zz4l_mass, melaLD, pseudomelaLD, supermelaLD, CMS_zz4l_massErr, CMS_zz4l_massRelErr;
   Double_t ptoverm = -99, Fisher = -99;
   newTree->Branch("CMS_zz4l_mass",&CMS_zz4l_mass,"CMS_zz4l_mass/D");
   newTree->Branch("CMS_zz4l_massErr",&CMS_zz4l_massErr,"CMS_zz4l_massErr/D");
+  newTree->Branch("CMS_zz4l_massRelErr",&CMS_zz4l_massRelErr,"CMS_zz4l_massRelErr/D");
   //newTree->Branch("melaLD",&melaLD,"melaLD/D");
   //newTree->Branch("pseudoMelaLD",&pseudomelaLD,"pseudoMelaLD/D");
   //newTree->Branch("supermelaLD",&supermelaLD,"supermelaLD/D");
@@ -178,6 +179,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
 
     CMS_zz4l_mass = mzz;
     CMS_zz4l_massErr = mzzErr;
+    CMS_zz4k_massRelErr = mzzErr/mzz;
     //pseudomelaLD = pseudomela;
     //melaLD = mela;
     //supermelaLD = 0;
