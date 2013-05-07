@@ -52,25 +52,30 @@ void makeTemplate(int updown,bool debug);                         // Makes templ
 TH2F* fillTemplate(int sampleIndex, bool isLowMass, int updown);  // Takes input MC to make Fisher v m4L TH2F
 TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp);              // Merges low and high mass TH2F plots
 TH2F* smoothtemplates(TH2F* inputdata, int sampleIndex);          // Smooths Fisher v m4L plots
-TH2F* rebin(TH2F* rebinnedhist);                                  // Smoothing procedure for ggH,qqH
+TH2F* rebin(TH2F* rebinnedhist, int sampleIndex);                 // Smoothing procedure for ggH,qqH
 TH2F* rebin_lowstatistics(TH2F* rebinnedhist, int sampleIndex);   // Smoothing procedure for ggZZ,qqZZ,ZH,WH
 void analyticfits(int sampleIndex, int updown);                   // Smoothing procedure for Z+X,ttH
+TH2F* altshapes(TH2F* originalHist, int channel, int altnum);     // Generates alternative shapes for Fisher, (channel,altnum): (0,1)=ggHAMCNLO, (0,2)=ggHMG, (1,1)=qqHd6t, (2,1)=qqZZMG
+float altscale(float Fisher, int channel, int altnum);            // Find scale for alternative shapes given a Fisher value, channel and altnum same as altshapes()
+TH2F* mirrortemplates(int sampleIndex);                           // Generates mirror alternative shapes for Fisher when no second alternative exists
 
 //---------------------------------------------------
 
 void generateFisherTemplates() {
   gSystem->Load("../CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
 
-  bool debug=true;
-  bool findAlternatives=false;
+  bool debug=false;
+  bool findAlternatives=true;
   templateOptions(debug,findAlternatives);
 }
  
 void templateOptions(bool debug, bool findAlternatives){
   makeTemplate(0,debug);
-  if (findAlternatives && useMichalis){
-    makeTemplate(1,debug);
-    makeTemplate(-1,debug);
+  if (findAlternatives){
+    //makeTemplate(1,debug);
+    //makeTemplate(-1,debug);
+    makeTemplate(2,debug);
+    makeTemplate(3,debug);
   }
 }
 
@@ -147,7 +152,11 @@ void buildChain(TChain* bkgMC, int sampleIndex){
 	}
       }
     }
-    if (sampleIndex!=2 && sampleIndex!=3 && sampleIndex!=4){
+    if (sampleIndex!=2 && sampleIndex!=3 && sampleIndex!=4 && sampleIndex!=-2){
+      if (nPoints==0){
+	cout<<"nPoints not set in Config.h"<<endl;
+	abort();
+      }
       for (int i=0; i<nPoints; i++){
 	char tmp_finalInPath4mu[200],tmp_finalInPath4e[200],tmp_finalInPath2mu2e[200];
 	string finalInPath4mu,finalInPath4e,finalInPath2mu2e;
@@ -255,6 +264,11 @@ void buildChain(TChain* bkgMC, int sampleIndex){
 	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
 	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
       }
+    }
+    else if (sampleIndex==-2){
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZJetsTo4L.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZJetsTo4L.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZJetsTo4L.root");
     }
   }
   if (useMichalis){
@@ -528,135 +542,168 @@ void buildChain(TChain* bkgMC, int sampleIndex){
 void makeTemplate(int updown, bool debug){
 
   TString jes;
-  if (updown==1){
+  if(updown==1){
     jes="_up";
   }
   else if(updown==-1){
     jes="_down";
   }
+  else if(updown==2){
+    jes="_alt";
+  }
+  else if(updown==3){
+    jes="_alt2";
+  }
 
   TString debugname;
   if (debug) debugname="_unnormalized";
 
-  fqqH = new TFile(destDir + "qqH_fishertemplate"+jes+debugname+".root","RECREATE");
-  fggH = new TFile(destDir + "ggH_fishertemplate"+jes+debugname+".root","RECREATE");
-  fqqZZ = new TFile(destDir + "qqZZ_fishertemplate"+jes+debugname+".root","RECREATE");
-  fggZZ = new TFile(destDir + "ggZZ_fishertemplate"+jes+debugname+".root","RECREATE");
-  fZX = new TFile(destDir + "Z+X_fishertemplate"+jes+debugname+".root","RECREATE");
-  fZH = new TFile(destDir + "ZH_fishertemplate"+jes+debugname+".root","RECREATE");
-  fWH = new TFile(destDir + "WH_fishertemplate"+jes+debugname+".root","RECREATE");
-  fttH = new TFile(destDir + "ttH_fishertemplate"+jes+debugname+".root","RECREATE");
+  if(updown==0 || updown==1 || updown==-1){
+    fqqH = new TFile(destDir + "qqH_fishertemplate"+jes+debugname+".root","RECREATE");
+    fggH = new TFile(destDir + "ggH_fishertemplate"+jes+debugname+".root","RECREATE");
+    fqqZZ = new TFile(destDir + "qqZZ_fishertemplate"+jes+debugname+".root","RECREATE");
+    fggZZ = new TFile(destDir + "ggZZ_fishertemplate"+jes+debugname+".root","RECREATE");
+    fZX = new TFile(destDir + "Z+X_fishertemplate"+jes+debugname+".root","RECREATE");
+    fZH = new TFile(destDir + "ZH_fishertemplate"+jes+debugname+".root","RECREATE");
+    fWH = new TFile(destDir + "WH_fishertemplate"+jes+debugname+".root","RECREATE");
+    fttH = new TFile(destDir + "ttH_fishertemplate"+jes+debugname+".root","RECREATE");
+  } else{
+    fqqH = new TFile(destDir + "qqH_fishertemplate"+jes+debugname+".root","RECREATE");
+    fggH = new TFile(destDir + "ggH_fishertemplate"+jes+debugname+".root","RECREATE");
+    fqqZZ = new TFile(destDir + "qqZZ_fishertemplate"+jes+debugname+".root","RECREATE");
+  }
   
   TH2F* low,*high,*H_Fisher;
   
   
   // =========================
   // ggH
-  
+    
   low = fillTemplate(0,true,updown);
   high = fillTemplate(0,false,updown);
   H_Fisher = mergeTemplates(low,high);
   
-  if (!debug) smoothtemplates(H_Fisher,0);
+  if (!debug && updown<2) smoothtemplates(H_Fisher,0);
+  if (!debug && updown==2) smoothtemplates(H_Fisher,-1);
+  if (!debug && updown==3) smoothtemplates(H_Fisher,-2);
 
   fggH->cd();
   H_Fisher->Write("H_Fisher");
   fggH->Close();
   
+  
   // ==========================
   // qqH
+    
+  if(updown<3){
+    low = fillTemplate(1,true,updown);
+    high = fillTemplate(1,false,updown);
+    H_Fisher = mergeTemplates(low,high);
+  }
 
-  low = fillTemplate(1,true,updown);
-  high = fillTemplate(1,false,updown);
-  H_Fisher = mergeTemplates(low,high);
+  if (!debug && updown<2) smoothtemplates(H_Fisher,1);
+  if (!debug && updown==2) smoothtemplates(H_Fisher,-3);
+  if (!debug && updown==3) H_Fisher = mirrortemplates(1);
   
-  if (!debug) smoothtemplates(H_Fisher,1);
-
   fqqH->cd();
   H_Fisher->Write("H_Fisher");
   fqqH->Close();
-
+  
   // ==========================
   // qqZZ
-
-  low = fillTemplate(2,true,updown);
-  high = fillTemplate(2,false,updown);
-  H_Fisher = mergeTemplates(low,high);
-
-  if (!debug) smoothtemplates(H_Fisher,2);
+    
+  if(updown<2){
+    low = fillTemplate(2,true,updown);
+    high = fillTemplate(2,false,updown);
+  }
+  if(updown==2){
+    low = fillTemplate(-2,true,0);
+    high = fillTemplate(-2,false,0);
+  }
+  if (updown<3) H_Fisher = mergeTemplates(low,high);
+  
+  if (!debug && updown<3) smoothtemplates(H_Fisher,2);
+  if (!debug && updown==3) H_Fisher = mirrortemplates(2);
 
   fqqZZ->cd();
   H_Fisher->Write("H_Fisher");
   fqqZZ->Close();
-
+  
+  if (updown!=2 && updown!=3){
+    
   // ==========================
   // ggZZ
-
-  low = fillTemplate(3,true,updown);
-  high = fillTemplate(3,false,updown);
-  H_Fisher = mergeTemplates(low,high);
-
-  if (!debug) smoothtemplates(H_Fisher,3);
-
-  fggZZ->cd();
-  H_Fisher->Write("H_Fisher");
-  fggZZ->Close();
-  
-  // ==========================
-  // Z+X
-
-  if (debug){
-    low = fillTemplate(4,true,updown);
-    high = fillTemplate(4,false,updown);
+      
+    low = fillTemplate(3,true,updown);
+    high = fillTemplate(3,false,updown);
     H_Fisher = mergeTemplates(low,high);
     
-    fZX->cd();
-    H_Fisher = mergeTemplates(low,high);
-    fZX->Close();
-  }
-  else{
-    analyticfits(4,updown);
-  }
+    if (!debug) smoothtemplates(H_Fisher,3);
+    
+    fggZZ->cd();
+    H_Fisher->Write("H_Fisher");
+    fggZZ->Close();
+    
+  // ==========================
+  // Z+X
+    
+    if (debug){
+      low = fillTemplate(4,true,updown);
+      high = fillTemplate(4,false,updown);
+      H_Fisher = mergeTemplates(low,high);
+      
+      fZX->cd();
+      H_Fisher = mergeTemplates(low,high);
+      fZX->Close();
+    }
+    else{
+      analyticfits(4,updown);
+    }
   
   // ==========================
   // ZH
-  low = fillTemplate(5,true,updown);
-  high = fillTemplate(5,false,updown);
-  H_Fisher = mergeTemplates(low,high);
 
-  if (!debug) smoothtemplates(H_Fisher,5);
-
-  fZH->cd();
-  H_Fisher->Write("H_Fisher");
-  fZH->Close();
-
+    low = fillTemplate(5,true,updown);
+    high = fillTemplate(5,false,updown);
+    H_Fisher = mergeTemplates(low,high);
+    
+    if (!debug) smoothtemplates(H_Fisher,5);
+    
+    fZH->cd();
+    H_Fisher->Write("H_Fisher");
+    fZH->Close();
+    
   // ==========================
   // WH
-  low = fillTemplate(6,true,updown);
-  high = fillTemplate(6,false,updown);
-  H_Fisher = mergeTemplates(low,high);
-
-  if (!debug) smoothtemplates(H_Fisher,6);
-
-  fWH->cd();
-  H_Fisher->Write("H_Fisher");
-  fWH->Close();
+      
+    low = fillTemplate(6,true,updown);
+    high = fillTemplate(6,false,updown);
+    H_Fisher = mergeTemplates(low,high);
+    
+    if (!debug) smoothtemplates(H_Fisher,6);
+    
+    fWH->cd();
+    H_Fisher->Write("H_Fisher");
+    fWH->Close();
   
   // ==========================
   // ttH
 
-  if (debug){
-    low = fillTemplate(7,true,updown);
-    high = fillTemplate(7,false,updown);
-    H_Fisher = mergeTemplates(low,high);
-    
-    fttH->cd();
-    H_Fisher->Write("H_Fisher");
-    fttH->Close();
-  }
-  else{
-    analyticfits(7,updown);
-  }
+    if (debug){
+      low = fillTemplate(7,true,updown);
+      high = fillTemplate(7,false,updown);
+      H_Fisher = mergeTemplates(low,high);
+      
+      fttH->cd();
+      H_Fisher->Write("H_Fisher");
+      fttH->Close();
+    }
+    else{
+      analyticfits(7,updown);
+    }
+   
+  } //End of updown!=3
+
 }
 
 //---------------------------------------------------
@@ -667,25 +714,36 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
   if (useMichalis) bkgMC = new TChain("FourLeptonTreeProducer/tree");
   buildChain(bkgMC,sampleIndex);
 
-  cout << "Chain for " << sampleIndex << " " << isLowMass << " " << bkgMC->GetEntries() << endl;
+  cout << "Chain for " << sampleIndex << " " << isLowMass << " " << updown << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
   //bkgMC->Sumw2();
 
   double mmass,mdeta,mmJJ,mw,mFisher,mheff,mprocessID;
-  float mass,deta,mJJ,w,Fisher,processID;
+  float mass,deta,mJJ,w,Fisher;
+  int processID;
   double lz2chg,lz2mass,lminllmass; // To deal with Z+X background
   double z11,z12,z21,z22;
   int njets;
   string channel;
+  vector<double> *JetPt=0;
+  vector<double> *JetSigma=0;
 
   if(!useMichalis){
     bkgMC->SetBranchAddress("ZZMass",&mass);
-    bkgMC->SetBranchAddress("NJets",&njets);
+    //bkgMC->SetBranchAddress("NJets",&njets);
     bkgMC->SetBranchAddress("DiJetDEta",&deta);
-    bkgMC->SetBranchAddress("DiJetMass",&mJJ);
+    if(updown==0 || updown==2 || updown==3){
+      bkgMC->SetBranchAddress("DiJetMass",&mJJ);
+    }else if(updown==1){
+      bkgMC->SetBranchAddress("DiJetMassPlus",&mJJ);
+    }else if(updown==-1){
+      bkgMC->SetBranchAddress("DiJetMassMinus",&mJJ);
+    }
     bkgMC->SetBranchAddress("MC_weight",&w);
     bkgMC->SetBranchAddress("genProcessId",&processID);
+    bkgMC->SetBranchAddress("JetPt",&JetPt);
+    bkgMC->SetBranchAddress("JetSigma",&JetSigma);
     lz2chg=1;
     lz2mass=13;
     lminllmass=5;
@@ -693,7 +751,7 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
     if (sampleIndex!=4){
       bkgMC->SetBranchAddress("H_Mass",&mmass);
       bkgMC->SetBranchAddress("H_NJets",&njets);
-      if(updown==0){
+      if(updown==0 || updown==2 || updown==3){
 	bkgMC->SetBranchAddress("H_DEta",&mdeta);
 	bkgMC->SetBranchAddress("H_MJJ",&mmJJ);
       }
@@ -721,7 +779,7 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
     else{
       bkgMC->SetBranchAddress("HLoose_Mass",&mmass);
       bkgMC->SetBranchAddress("HLoose_NJets",&njets);
-      if(updown==0){
+      if(updown==0 || updown==2 || updown==3){
 	bkgMC->SetBranchAddress("HLoose_DEta",&mdeta);
 	bkgMC->SetBranchAddress("HLoose_MJJ",&mmJJ);
       }
@@ -759,14 +817,24 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
   for(int i=0; i<bkgMC->GetEntries(); i++){
     bkgMC->GetEntry(i);
     if (i%50000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-    //if (i%5000==0) cout<< mass <<" "<<deta<<" "<<mJJ<<" "<<njets<<endl;
-    if (mass<100 || deta<=-99 || mJJ<=-99 || njets<2) continue;
+    //if (sampleIndex>=5 && i%5000==0) cout << i << " " << processID << " " << mass << " " << deta << " " << mJJ << " " << njets << endl;
+    if (mass<100 || deta<=-99 || mJJ<=-99) continue;
     if (lz2chg==0 || lz2mass<=12 || lminllmass<=4) continue;
     if(!useMichalis){
+      int NJets=0;
+      double jetptc=0;
+      for (int j=0; j<JetPt->size();j++){
+        if (updown==0 || updown==2 || updown==3) jetptc=JetPt->at(j);
+        else if (updown==1) jetptc=JetPt->at(j)*(1+JetSigma->at(j));
+        else if (updown==-1) jetptc=JetPt->at(j)*(1-JetSigma->at(j));
+        if (jetptc>30.) NJets++;
+      }
+      if (NJets<2) continue;
       if ((sampleIndex==5 && processID!=24) || (sampleIndex==6 && processID!=26) || (sampleIndex==7 && processID!=121)) continue;
       Fisher=0.09407*fabs(deta)+0.00041581*mJJ;
       bkgHist->Fill(mass,Fisher,w);
     }else if(useMichalis){
+      if (njets<2) continue;
       if ((sampleIndex==5 && mprocessID!=24) || (sampleIndex==6 && mprocessID!=26) || (sampleIndex==7 && mprocessID!=121)) continue;
       mFisher=0.09407*fabs(mdeta)+0.00041581*mmJJ;
       if (abs(z11)==11 && abs(z12)==11 && abs(z21)==11 && abs(z22)==11) channel="4e";
@@ -814,8 +882,8 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
 //---------------------------------------------------
 
 TH2F* smoothtemplates(TH2F* inputdata, int sampleIndex){
-  if(sampleIndex==0 || sampleIndex==1){
-    rebin(inputdata);
+  if(sampleIndex==0 || sampleIndex==1 || sampleIndex==-1 || sampleIndex==-2 || sampleIndex==-3){
+    rebin(inputdata,sampleIndex);
   }
   else if(sampleIndex==2 || sampleIndex==3 || sampleIndex==5 || sampleIndex==6){
     rebin_lowstatistics(inputdata,sampleIndex);
@@ -826,7 +894,7 @@ TH2F* smoothtemplates(TH2F* inputdata, int sampleIndex){
 
 //---------------------------------------------------
 
-TH2F* rebin(TH2F* rebinnedHist){
+TH2F* rebin(TH2F* rebinnedHist, int usealt){
 
   int nXbins=rebinnedHist->GetNbinsX();
   int nYbins=rebinnedHist->GetNbinsY();
@@ -934,6 +1002,10 @@ TH2F* rebin(TH2F* rebinnedHist){
 
   rebinnedHist->Sumw2();
 
+  if (usealt==-1) altshapes(rebinnedHist,0,1);
+  if (usealt==-2) altshapes(rebinnedHist,0,2);
+  if (usealt==-3) altshapes(rebinnedHist,1,1);
+
   //Renormalize
   for(int i=1; i<=nXbins; i++){
     tempProj = (TH1F*) rebinnedHist->ProjectionY("tempProj",i,i);
@@ -944,7 +1016,6 @@ TH2F* rebin(TH2F* rebinnedHist){
       }
     }
   }
-
 
   return rebinnedHist;
 }
@@ -1105,15 +1176,26 @@ void analyticfits(int sampleIndex,int updown){
   bkgMC->ls();
 
   double mdeta,mmJJ,mw,mmass,mtempFisher,mheff,lz2chg,lz2mass,lminllmass,mprocessID;
-  float deta,mJJ,w,mass,tempFisher,processID;
+  float deta,mJJ,w,mass,tempFisher;
+  int processID;
   double z11,z12,z21,z22;
   int njets;
+  vector<double> *JetPt=0;
+  vector<double> *JetSigma=0;
 
   if(!useMichalis){
     bkgMC->SetBranchAddress("ZZMass",&mass);
-    bkgMC->SetBranchAddress("NJets",&njets);
+    //bkgMC->SetBranchAddress("NJets",&njets);
     bkgMC->SetBranchAddress("DiJetDEta",&deta);
-    bkgMC->SetBranchAddress("DiJetMass",&mJJ);
+    if(updown==0){
+      bkgMC->SetBranchAddress("DiJetMass",&mJJ);
+    }else if(updown==1){
+      bkgMC->SetBranchAddress("DiJetMassPlus",&mJJ);
+    }else if(updown==-1){
+      bkgMC->SetBranchAddress("DiJetMassMinus",&mJJ);
+    }
+    bkgMC->SetBranchAddress("JetPt",&JetPt);
+    bkgMC->SetBranchAddress("JetSigma",&JetSigma);
     bkgMC->SetBranchAddress("MC_weight",&w);
     bkgMC->SetBranchAddress("genProcessId",&processID);
     lz2chg=1;
@@ -1190,28 +1272,37 @@ void analyticfits(int sampleIndex,int updown){
   for(int i=0; i<bkgMC->GetEntries(); i++){
     bkgMC->GetEntry(i);
     if(i%50000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-      if(!useMichalis){
-	if(mass>100 && lz2chg!=0 && lz2mass>12 && lminllmass>4 && njets>=2){
+    if(!useMichalis){
+      int NJets=0;
+      double jetptc=0;
+      for (int j=0; j<JetPt->size();j++){
+	if (updown==0) jetptc=JetPt->at(j);
+	else if (updown==1) jetptc=JetPt->at(j)*(1+JetSigma->at(j));
+	else if (updown==-1) jetptc=JetPt->at(j)*(1-JetSigma->at(j));
+	if (jetptc>30.) NJets++;
+      }
+      if(mass>100 && lz2chg!=0 && lz2mass>12 && lminllmass>4 && NJets>=2){
 	if (sampleIndex==7 && processID!=121) continue;
 	tempFisher=0.09407*fabs(deta)+0.00041581*mJJ;
 	Fisher=tempFisher;
 	data->add(RooArgSet(Fisher),w);
       }
-      if(useMichalis){
-	if(mmass>100 && lz2chg!=0 && lz2mass>12 && lminllmass>4 && njets>=2){
-	  if (sampleIndex==7 && mprocessID!=121) continue;
-	  mtempFisher=0.09407*fabs(mdeta)+0.00041581*mmJJ;
-	  Fisher=mtempFisher;
-	  if (abs(z11)==11 && abs(z12)==11 && abs(z21)==11 && abs(z22)==11) channel="4e";
-	  if (abs(z11)==13 && abs(z12)==13 && abs(z21)==13 && abs(z22)==13) channel="4mu";
-	  if ((abs(z11)==11 && abs(z12)==11 && abs(z21)==13 && abs(z22)==13) || (abs(z11)==13 && abs(z12)==13 && abs(z21)==11 && abs(z22)==11)) channel="2e2mu";
-	  if (channel=="4e" || channel=="4mu" || channel=="2e2mu"){
-	    data->add(RooArgSet(Fisher),mw*mheff);
-	  }
+    }
+    if(useMichalis){
+      if(mmass>100 && lz2chg!=0 && lz2mass>12 && lminllmass>4 && njets>=2){
+	if (sampleIndex==7 && mprocessID!=121) continue;
+	mtempFisher=0.09407*fabs(mdeta)+0.00041581*mmJJ;
+	Fisher=mtempFisher;
+	if (abs(z11)==11 && abs(z12)==11 && abs(z21)==11 && abs(z22)==11) channel="4e";
+	if (abs(z11)==13 && abs(z12)==13 && abs(z21)==13 && abs(z22)==13) channel="4mu";
+	if ((abs(z11)==11 && abs(z12)==11 && abs(z21)==13 && abs(z22)==13) || (abs(z11)==13 && abs(z12)==13 && abs(z21)==11 && abs(z22)==11)) channel="2e2mu";
+	if (channel=="4e" || channel=="4mu" || channel=="2e2mu"){
+	  data->add(RooArgSet(Fisher),mw*mheff);
 	}
       }
     }
   }
+
 
   //Fit is a Landau + Gaussian
   RooGaussian* gaus1 = new RooGaussian("gaus1","gaus1",Fisher,gm1,gsig1);
@@ -1222,13 +1313,6 @@ void analyticfits(int sampleIndex,int updown){
   RooPlot* Fisherframe = Fisher.frame();
   data->plotOn(Fisherframe);
   model->plotOn(Fisherframe);
-  if (sampleIndex==4){
-    fZX->cd();
-  }
-  else if (sampleIndex==7){
-    fttH->cd();
-  }
-  Fisherframe->Write("H_fit");
   
   TH2F* finalhist;
   finalhist = new TH2F("H_Fisher","H_Fisher",750,100,1600,50,0,2);
@@ -1252,10 +1336,138 @@ void analyticfits(int sampleIndex,int updown){
     fttH->cd();
   }
   finalhist->Write("H_Fisher");
+  Fisherframe->Write("H_fit");
   if (sampleIndex==4){
     fZX->Close();
   }
   else if (sampleIndex==7){
     fttH->Close();
   }
+
+}
+
+TH2F* altshapes(TH2F* original, int channel, int altnum){
+
+  int nXbins=original->GetNbinsX();
+  int nYbins=original->GetNbinsY();
+  float binFisher,scale,altvalue;
+
+  for (int i=1; i <=nXbins; i++){
+    for (int j=1; j<=nYbins; j++){
+      binFisher = original->GetYaxis()->GetBinCenter(j);
+      scale = altscale(binFisher,channel,altnum);
+      altvalue=scale*(original->GetBinContent(i,j));
+      original->SetBinContent(i,j,altvalue);
+    }
+  }
+
+  return original;
+
+}
+
+float altscale(float Fisher,int channel, int altnum){
+  float scale=0;
+
+  //ggH
+  if(channel==0){
+    if(altnum==1){
+      if (Fisher<=0.2) scale=0.899784;
+      if (Fisher>0.2 && Fisher<=0.4) scale=1.04396;
+      if (Fisher>0.4 && Fisher<=0.6) scale=1.07628;
+      if (Fisher>0.6 && Fisher<=0.8) scale=1.19168;
+      if (Fisher>0.8 && Fisher<=1.0) scale=1.33553;
+      if (Fisher>1.0 && Fisher<=1.2) scale=1.45699;
+      if (Fisher>1.2 && Fisher<=1.4) scale=1.59986;
+      if (Fisher>1.4 && Fisher<=1.6) scale=1.92241;
+      if (Fisher>1.6 && Fisher<=1.8) scale=2.18923;
+      if (Fisher>1.8) scale=3.04589;
+    }
+    if(altnum==2){
+      if (Fisher<=0.2) scale=1.07374;
+      if (Fisher>0.2 && Fisher<=0.4) scale=1.01152;
+      if (Fisher>0.4 && Fisher<=0.6) scale=0.87732;
+      if (Fisher>0.6 && Fisher<=0.8) scale=0.761324;
+      if (Fisher>0.8 && Fisher<=1.0) scale=0.707992;
+      if (Fisher>1.0 && Fisher<=1.2) scale=0.699586;
+      if (Fisher>1.2 && Fisher<=1.4) scale=0.630815;
+      if (Fisher>1.4 && Fisher<=1.6) scale=0.89361;
+      if (Fisher>1.6 && Fisher<=1.8) scale=1.09092;
+      if (Fisher>1.8) scale=2.09242;
+    }
+  }
+  //qqH
+  if(channel==1){
+    if(altnum==1){
+      if (Fisher<=0.2) scale=1.15119;
+      if (Fisher>0.2 && Fisher<=0.4) scale=1.10032;
+      if (Fisher>0.4 && Fisher<=0.6) scale=0.976487;
+      if (Fisher>0.6 && Fisher<=0.8) scale=0.953584;
+      if (Fisher>0.8 && Fisher<=1.0) scale=0.956769;
+      if (Fisher>1.0 && Fisher<=1.2) scale=0.918676;
+      if (Fisher>1.2 && Fisher<=1.4) scale=0.926049;
+      if (Fisher>1.4 && Fisher<=1.6) scale=0.804567;
+      if (Fisher>1.6 && Fisher<=1.8) scale=0.846913;
+      if (Fisher>1.8) scale=0.850984;
+    }
+  }
+  //qqZZ 
+  /*if(channel==2){
+    if(altnum==1){
+      if (Fisher<=0.2) scale=1.04573;
+      if (Fisher>0.2 && Fisher<=0.4) scale=0.988066;
+      if (Fisher>0.4 && Fisher<=0.6) scale=0.953113;
+      if (Fisher>0.6 && Fisher<=0.8) scale=0.742393;
+      if (Fisher>0.8 && Fisher<=1.0) scale=0.867237;
+      if (Fisher>1.0 && Fisher<=1.2) scale=0.554462;
+      if (Fisher>1.2 && Fisher<=1.4) scale=0.614161;
+      if (Fisher>1.4 && Fisher<=1.6) scale=1.24295;
+      if (Fisher>1.6 && Fisher<=1.8) scale=1.49153;
+      if (Fisher>1.8) scale=0.372884;
+    }
+    }*/
+
+  if(scale==0) cout<<"ERROR: Fisher Template has values <0 or >2."<<endl;
+
+  return scale;
+
+}
+
+TH2F* mirrortemplates(int sampleIndex){
+  TFile* alt1,*orig;
+  if (sampleIndex==1){
+    alt1 = new TFile(destDir + "qqH_fishertemplate_alt.root","OPEN");
+    orig = new TFile(destDir + "qqH_fishertemplate.root","OPEN");
+  }
+  if (sampleIndex==2){
+    alt1 = new TFile(destDir + "qqZZ_fishertemplate_alt.root","OPEN");
+    orig = new TFile(destDir + "qqZZ_fishertemplate.root","OPEN");
+  }
+  TH2F* altfisher = (TH2F*)alt1->Get("H_Fisher");
+  TH2F* origfisher = (TH2F*)orig->Get("H_Fisher");
+  TH2F* alt2fisher = new TH2F("H_Fisher","H_Fisher",int((highMzz-100.)/mBinSize+0.5),100,highMzz,50,0,2);
+
+  for(int i=1;i<=origfisher->GetNbinsX();i++){
+    for(int j=1;j<=origfisher->GetNbinsY();j++){
+      float origval=origfisher->GetBinContent(i,j);
+      float alt1val=altfisher->GetBinContent(i,j);
+      float scale=origval/alt1val;
+      float alt2val=scale*origval;
+      alt2fisher->SetBinContent(i,j,alt2val);
+    }
+  }
+   
+  //Renormalize
+  TH1F* tempProj;
+  double norm;
+  for(int i=1; i<=alt2fisher->GetNbinsX(); i++){
+    tempProj = (TH1F*) alt2fisher->ProjectionY("tempProj",i,i);
+    norm=tempProj->Integral();
+    if (norm>0) { // Avoid introducing NaNs in the histogram
+      for(int j=1; j<=alt2fisher->GetNbinsY(); j++){
+	alt2fisher->SetBinContent(i,j,alt2fisher->GetBinContent(i,j)/norm);
+      }
+    }
+  }
+
+  return alt2fisher;
 }
