@@ -4,6 +4,7 @@
 # 1: directory with cards
 # 2: card (signal model1 + signal model2)
 # 3: what to do (default is run hypothesis test)
+# 4: if(==1){prefit Mu} if(==0){Mu=1}[default]
 
 
 if [ $# -lt 2 ]
@@ -12,6 +13,7 @@ if [ $# -lt 2 ]
     echo "    1) directory with cards"
     echo "    2) card (signal model1)"
     echo "    3) action (not mandatory, default=0)"
+    echo "    4) prefit mu(1) or mu=1(==0)[default]"
     exit 1
 fi
 
@@ -37,14 +39,19 @@ mkdir $outDir
 
 
 action=1
+Nuis=0
 if [ $# -ge 3 ]
     then
     action=$3
+    if [ $# -ge 4 ]
+       then
+       Nuis=$4
+    fi
 fi
 
 
 # Run hypothesis testing, using nominal value of nuisances and mu for generation
-NTOYS=4000 # toys per  job
+NTOYS=100000 # toys per  job
 MH=126  # mass of the signal hypothesis
 
 if [ $action -eq 1 ]
@@ -60,7 +67,12 @@ elif [ $action -eq 2 ]
 ### Run 1D scan:
 ### FLOAT MU:
     text2workspace.py -m $MH $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs  --PO=muFloating -o floatMu.root
-    combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i 1 --clsAcc 0 --fullBToys -n "Test1D"
+    if [ $Nuis -eq 1 ]
+	then 
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i 1 --clsAcc 0 --fullBToys -n "Test1D" --fitNuis=1
+    else
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i 1 --clsAcc 0 --fullBToys -n "Test1D" --fitNuis=0
+    fi
     root -q -b higgsCombineTest1D.HybridNew.mH${MH}.root "${CMSSW_BASE}/src/HiggsAnalysis/CombinedLimit/test/plotting/hypoTestResultTree.cxx(\"qmu.FloatMu.root\",${MH},1,\"x\")"
     combine -M MultiDimFit floatMu.root --algo=grid --points 100  -m $MH -n 1D
     cp qmu.FloatMu.root qmu.root

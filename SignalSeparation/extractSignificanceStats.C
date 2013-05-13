@@ -18,7 +18,7 @@
 #include "TArrow.h"
 #include "Math/DistFunc.h"
 
-int extractSignificanceStats(bool unblind=false){
+int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString nameALT="0-"){
 
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);
@@ -208,88 +208,122 @@ int extractSignificanceStats(bool unblind=false){
   }//end if unblinding
 
   //Plotting
+ //Plotting
   gStyle->SetOptStat(0);
-  TCanvas *c1=new TCanvas("c1","c1",500,500);
+  TCanvas *c1=new TCanvas("c","c",500,500);
   c1->cd();
   hSM->Rebin(50);
   hPS->Rebin(50);
+  TString xtitle=" -2 #times ln(L_{"+legALT+"} / L_{0^{+}})";
+  hSM->SetXTitle(xtitle);
+  hSM->SetYTitle("Pseudoexperiments");
+  hPS->SetXTitle(xtitle);
+  hPS->SetYTitle("Pseudoexperiments");
+  hSM->SetLineColor(kRed+2);
+  hSM->SetLineStyle(2);
+  hSM->SetFillColor(798);
+  hSM->SetLineWidth(2);
+  hPS->SetFillColor(kAzure+7);
+  hPS->SetLineColor(kBlue);
+  hPS->SetLineWidth(1);
+  hPS->SetFillStyle(3001);
+
+  hObs->SetLineColor(kRed);
+  hObs->SetLineWidth(2);
+
+  TGraph *grObs=new TGraph();//dummy, just for the legend
+  grObs->SetLineColor(kRed);
+  grObs->SetLineWidth(1);
+  
+  hSM->GetXaxis()->SetRangeUser(-30.0,30.0);
+  hSM->GetXaxis()->SetLabelFont(42);
+  hSM->GetXaxis()->SetLabelOffset(0.007);
+  hSM->GetXaxis()->SetLabelSize(0.045);
+  hSM->GetXaxis()->SetTitleSize(0.05);
+  hSM->GetXaxis()->SetTitleOffset(1.15);
+  hSM->GetXaxis()->SetTitleFont(42);
+  hSM->GetYaxis()->SetLabelFont(42);
+  hSM->GetYaxis()->SetLabelOffset(0.007);
+  hSM->GetYaxis()->SetLabelSize(0.045);
+  hSM->GetYaxis()->SetTitleSize(0.05);
+  hSM->GetYaxis()->SetTitleOffset(1.8);
+  hSM->GetYaxis()->SetTitleFont(42); 
+  //TGaxis::SetMaxDigits(2); 
+  hSM->Scale(1./hSM->Integral("width"));
+  hPS->Scale(1./hPS->Integral("width"));
   float maxhSM=hSM->GetBinContent(hSM->GetMaximumBin());
   float maxhPS=hPS->GetBinContent(hPS->GetMaximumBin());
   if(maxhPS>maxhSM){
-    hSM->SetMaximum(maxhPS*1.15);
-    hPS->SetMaximum(maxhPS*1.15);
+    hSM->SetMaximum(maxhPS*1.3);
+    hPS->SetMaximum(maxhPS*1.3);
   }
   else{
-    hSM->SetMaximum(maxhSM*1.15);
-    hPS->SetMaximum(maxhSM*1.15);
+    hSM->SetMaximum(maxhSM*1.3);
+    hPS->SetMaximum(maxhSM*1.3);
   }
-  hSM->SetXTitle(" -2 #times ln(L_{0-}/L_{0+})");
-  hSM->SetYTitle("Generated experiments");
-  hPS->SetXTitle(" -2 #times ln(L_{0-}/L_{0+})");
-  hPS->SetYTitle("Generated experiments");
-  hSM->SetLineColor(kMagenta-3);
-  hSM->SetFillColor(kMagenta-3);
-  hSM->SetLineWidth(2);
-  hSM->SetFillStyle(3605);
-  hPS->SetLineColor(kBlue+1);
-  hPS->SetFillColor(kBlue+1);
-  hPS->SetLineWidth(2);
-  hPS->SetFillStyle(3695);
 
-  hObs->SetLineColor(kGreen+3);
-  hObs->SetLineWidth(5);
-
-  TGraph *grObs=new TGraph();//dummy, just for the legend
-  grObs->SetLineColor(kGreen+3);
-  grObs->SetLineWidth(5);
-  
-  hSM->GetXaxis()->SetLabelSize(0.04);
-  hSM->GetYaxis()->SetLabelSize(0.04);
-  hPS->GetXaxis()->SetLabelSize(0.04);
-  hPS->GetYaxis()->SetLabelSize(0.04);
-  hSM->GetXaxis()->SetRangeUser(-30.0,30.0);
-  hPS->GetXaxis()->SetRangeUser(-30.0,30.0);
+  TH1F* hSM2= (TH1F*)(hSM->Clone("hSM2")); 
+  hSM2->SetFillStyle(0);
+  hSM2->SetFillColor(0);
+  hSM2->SetLineColor(kRed+2);
+  hSM2->SetLineStyle(2);
+  hSM2->SetLineWidth(2);
 
   hSM->Draw();
   hPS->Draw("sames");
+  hSM2->Draw("sames");
 
   TArrow *obsArrow=0;
-  if(unblind)obsArrow=new TArrow(v_Obs.at(0),hSM->GetMaximum()/5.0,v_Obs.at(0),0.0,0.05,"|->");
+  double observedQ = v_Obs.at(0);
+  cout << "ObservedQ: " << observedQ << endl;
+  if(unblind)obsArrow=new TArrow(observedQ,hSM->GetMaximum()/5.0,observedQ,0.0,0.05,"|->");
   else obsArrow=new TArrow(0.0,hSM->GetMaximum()/5.0,0.0,0.0,0.05,"|->");
-  obsArrow->SetLineColor(kGreen+3);
-  obsArrow->SetLineWidth(5.0);
+  obsArrow->SetLineColor(kRed);
+  obsArrow->SetLineWidth(2.0);
   if(unblind)  obsArrow->Draw();
 
-  TLegend *leg = new TLegend(0.25,0.6,0.45,0.9);
+  TLegend *leg = new TLegend(0.63,0.73,0.88,0.93);
   leg->SetFillColor(0);
-  //  leg->SetTextFont(42);
-  leg->SetTextSize(0.035);
+  leg->SetLineColor(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(hSM, "   0+","f");
-  leg->AddEntry(hPS, "   0-","f");
-  if(unblind) leg->AddEntry(hObs,"  CMS data","L");
-  //  if(unblind) leg->AddEntry(hObs,"  Simulated data","L");
-  leg->Draw();
+  leg->SetFillStyle(0);
+  leg->SetTextFont(42);
+
+  leg->AddEntry(hSM, "0^{+}","f");
+  leg->AddEntry(hPS, legALT,"f");
+  if(unblind) leg->AddEntry(hObs,"CMS data","L");
+
+  c1->SetFillColor(0);
+   c1->SetBorderMode(0);
+   c1->SetBorderSize(2);
+   c1->SetTickx(1);
+   c1->SetTicky(1);
+   c1->SetLeftMargin(0.18);
+   c1->SetRightMargin(0.05);
+   c1->SetTopMargin(0.05);
+   c1->SetBottomMargin(0.15);
+   c1->SetFrameFillStyle(0);
+   c1->SetFrameBorderMode(0);
+   c1->SetFrameFillStyle(0);
+   c1->SetFrameBorderMode(0);
+
+ TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
+  pt->SetBorderSize(0);
+  pt->SetTextAlign(12);
+  pt->SetFillStyle(0);
+  pt->SetTextFont(42);
+  pt->SetTextSize(0.03);
+  TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
+  text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 19.6 fb^{-1}");
+  pt->Draw();   
 
 
-  TPaveText pt(0.16,0.95,0.40,0.99,"NDC");
-  pt.SetFillColor(0);
-  pt.SetTextAlign(12);
-  pt.SetTextSize(0.027);
-  pt.SetTextFont(42);
-  pt.AddText("CMS Preliminary");
-  pt.SetBorderSize(0);
-  TPaveText pt2(0.53,0.95,0.98,0.99,"NDC");
-  pt2.SetFillColor(0);
-  pt2.SetTextAlign(32);
-  pt2.SetTextSize(0.027);
-  pt2.SetTextFont(42);
-  pt2.AddText(Form(" #sqrt{s} = 7 TeV, L = %.1f fb^{-1}; #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",lumi7TeV,lumi8TeV));
-  pt2.SetBorderSize(0);
-  pt.Draw();
-  pt2.Draw();
-  c1->SaveAs("sigsep_combine.eps");
-  c1->SaveAs("sigsep_combine.root");
+ leg->Draw();
+
+  c1->SaveAs("sigsep_combine_"+nameALT+".eps");
+  c1->SaveAs("sigsep_combine_"+nameALT+".png");
+  c1->SaveAs("sigsep_combine_"+nameALT+".root");
+  c1->SaveAs("sigsep_combine_"+nameALT+".C");
 
   return 0;
 }//end main
