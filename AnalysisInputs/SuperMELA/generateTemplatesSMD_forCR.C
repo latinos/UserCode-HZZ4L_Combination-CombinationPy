@@ -367,6 +367,8 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   double totArea=bkgHist->Integral();
   bkgHist->Scale(1.0/totArea);
 
+  //Old Floor
+  /*
   // bkgHist->Smooth();
   for(int i=1; i<=bkgHist->GetNbinsX(); i++){
     for(int j=1; j<=bkgHist->GetNbinsY(); j++){
@@ -374,6 +376,18 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	bkgHist->SetBinContent(i,j,0.00000001);
     }// for(int j=1; j<=nYbins; j++){
   }// for(int i=1; i<=nXbins; i++){
+  */
+
+  //New Floor
+  double floor = ((bkgHist->Integral())/(bkgHist->GetNbinsX()*bkgHist->GetNbinsY()))*(0.1/100);
+  for(int i = 1; i <= bkgHist->GetNbinsX(); i++)
+    {
+      for(int j = 1; j <= bkgHist->GetNbinsY(); j++)
+	{
+	  double orig = bkgHist->GetBinContent(i,j);
+	  bkgHist->SetBinContent(i,j,(orig+floor));
+	}
+    }
 
   // normalize TH2
   totArea=bkgHist->Integral();

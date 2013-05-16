@@ -13,12 +13,12 @@ systematic lumiUnc 1.044
 sqrts 8
 
 ## Channels to include in cards ##
-channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
+channels all qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  91.3803
-rate ggZZ  5.95568
+rate qqZZ  91.3371
+rate ggZZ  4.98973
 rate zjets 3.0
 
 usehighmassreweightedshapes
@@ -37,56 +37,93 @@ HighMasssignalShape mean_CB -36.3933+(0.151667*@0)+(-0.000191185*@0*@0)+(7.24693
 HighMasssignalShape sigma_CB 20.1189+(-0.160897*@0)+(0.00032309*@0*@0)+(-7.20023e-08*@0*@0*@0)
 HighMasssignalShape gamma_BW -255.891+(1.07402*@0)+(-0.00116444*@0*@0)+(5.94677e-07*@0*@0*@0)
 
-## signal efficiency ##
-signalEff a1  -4.43607
-signalEff a2  4.60478
-signalEff a3  -56.9354
-signalEff a4  100.846
-signalEff b1  2.62341
-signalEff b2  0.00445491
-signalEff b3  -2.49356e-06
-signalEff g1  0.0468083
-signalEff g2  188.518
-signalEff g3  36.7868
 
+## signal efficiency ##
+signalEff a1  -4.41793
+signalEff a2  4.62153
+signalEff a3  -60.0558
+signalEff a4  106.942
+signalEff b1  2.55505
+signalEff b2  0.00197459
+signalEff b3  -5.39188e-07
+signalEff g1  0.026982
+signalEff g2  189.743
+signalEff g3  27.1286
+
+signalEff qqHa1  -4.41612
+signalEff qqHa2  4.62552
+signalEff qqHa3  -104.669
+signalEff qqHa4  135.627
+signalEff qqHb1  3.2632
+signalEff qqHb2  0.000304021
+signalEff qqHb3  -1.88312e-06
+signalEff qqHg1  4.59322e-06
+signalEff qqHg2  160.044
+signalEff qqHg3  34.6636
+
+signalEff ZHa1  -4.22768
+signalEff ZHa2  4.78068
+signalEff ZHa3  -239.629
+signalEff ZHa4  2.61648
+signalEff ZHb1  7.70391
+signalEff ZHb2  -0.107801
+signalEff ZHb3  0.000479668
+signalEff ZHg1  0.099999
+signalEff ZHg2  175.608
+signalEff ZHg3  36.2608
+
+signalEff WHa1  -4.46001
+signalEff WHa2  4.584
+signalEff WHa3  -44.6358
+signalEff WHa4  89.4518
+signalEff WHb1  5.70455
+signalEff WHb2  -0.0117218
+signalEff WHb3  -2.36516e-05
+signalEff WHg1  0.0999169
+signalEff WHg2  169.522
+signalEff WHg3  20.0869
+
+signalEff ttHa1  -4.29957
+signalEff ttHa2  4.71104
+signalEff ttHa3  -281.928
+signalEff ttHa4  0.0638761
+signalEff ttHb1  5.58266
+signalEff ttHb2  -0.0914723
+signalEff ttHb3  0.000459625
+signalEff ttHg1  0.0998154
+signalEff ttHg2  186.558
+signalEff ttHg3  30.3808
 
 ### background functions ###
-qqZZshape a0_bkgd   103.632
-qqZZshape a1_bkgd   10.3
-qqZZshape a2_bkgd   119.978
-qqZZshape a3_bkgd   0.0441064
-qqZZshape a4_bkgd   185.157
-qqZZshape a5_bkgd   8.52824
-qqZZshape a6_bkgd   40.6098
-qqZZshape a7_bkgd   0.100681
-qqZZshape a8_bkgd   51.6818
-qqZZshape a9_bkgd   0.0418686
-qqZZshape a10_bkgd  98.8603
-qqZZshape a11_bkgd  -6.9554
-qqZZshape a12_bkgd  20.6039
-qqZZshape a13_bkgd  0.084616
+qqZZshape a0_bkgd   104.201
+qqZZshape a1_bkgd   12.5129
+qqZZshape a2_bkgd   119.416
+qqZZshape a3_bkgd   0.044783
+qqZZshape a4_bkgd   185.284
+qqZZshape a5_bkgd   8.57913
+qqZZshape a6_bkgd   40.4382
+qqZZshape a7_bkgd   0.0991008
+qqZZshape a8_bkgd   50.9248
+qqZZshape a9_bkgd   0.0401194
+qqZZshape a10_bkgd  98.744
+qqZZshape a11_bkgd  -7.12279
+qqZZshape a12_bkgd  11.0417
+qqZZshape a13_bkgd  0.079258
 
 
-ggZZshape a0_bkgd  111.289
-ggZZshape a1_bkgd  49.5873
-ggZZshape a2_bkgd  146.085
-ggZZshape a3_bkgd  0.0301507
-ggZZshape a4_bkgd  185.857
-ggZZshape a5_bkgd  10.5173
-ggZZshape a6_bkgd  37.9824
-ggZZshape a7_bkgd  0.165863
-ggZZshape a8_bkgd  63.8607
-ggZZshape a9_bkgd  0.0778634
+ggZZshape a0_bkgd  110.221
+ggZZshape a1_bkgd  49.1314
+ggZZshape a2_bkgd  144.454
+ggZZshape a3_bkgd  0.0300246
+ggZZshape a4_bkgd  185.81
+ggZZshape a5_bkgd  10.5339
+ggZZshape a6_bkgd  37.4075
+ggZZshape a7_bkgd  0.165274
+ggZZshape a8_bkgd  64.0729
+ggZZshape a9_bkgd  0.0790483
 
 zjetsShape mean 140.3
 zjetsShape sigma 21.7
-#zjetsShape mean 137.2
-#zjetsShape sigma 18.62
-zjetsShape p0 -120670
-zjetsShape p1 2328
-zjetsShape p2 -8.867
-zjetsShape p3 0.0125
-zjetsShape p4 -6.058e-06
 
 
 ### channel dependent systematics ###
@@ -119,15 +156,15 @@ systematic BRhiggs_hzz4l True
 systematic CMS_eff True
 systematic CMS_hzz4l_Zjets True
 systematic CMS_zz4l_bkgMELA True
-systematic CMS_zz4l_sigMELA False
-systematic CMS_zz4l_mean True
-systematic CMS_zz4l_sigma True
-systematic CMS_zz4l_mean True
-systematic CMS_zz4l_sigma True
-systematic CMS_zz4l_n True
-systematic CMS_zz4l_gamma True
+systematic CMS_zz4l_sigMELA True
+systematic CMS_zz4l_mean False
+systematic CMS_zz4l_sigma False
+systematic CMS_zz4l_mean False
+systematic CMS_zz4l_sigma False
+systematic CMS_zz4l_n False
+systematic CMS_zz4l_gamma False
 ### for hypothesis testing ###
-doHypTest False
+doHypTest True
 #altHypLabel _ALT
 
 
