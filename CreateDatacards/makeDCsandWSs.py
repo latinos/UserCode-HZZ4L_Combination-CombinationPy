@@ -26,7 +26,7 @@ def parseOptions():
     parser.add_option('-t', '--templateDir', type='string', dest='templateDir', default="templates2D" ,help='directory with 2D template histos')
     parser.add_option('-e', '--massError',   dest='massError',       type='int',    default=0,     help='massError (default:0)')
     parser.add_option('-u', '--mekd',   dest='mekd',       type='int',    default=0,     help='mekd double gaussian inputs (default:0)')
-
+    parser.add_option('-s', '--altHypo',   dest='hypothesis', type='string',  default='gg0-',  help='Alt Hypo:gg0-, gg0+, qq1-, qq1+, gg2+m, qq2+m')
     
     # store options and arguments as global variables
     global opt, args
@@ -43,8 +43,6 @@ def parseOptions():
     if (opt.inputDir == ''):
         print 'Please pass an input directory! Exiting...'
         sys.exit()
-
-
 
     
 # define make directory function
@@ -77,18 +75,18 @@ def creationLoop(directory):
 #    stepSizes=[ 0.5, 0.5, 2.0, 5.0, 10.0, 20.0, 50.0 ]
 #    endVal=[ 60, 40, 65, 12, 5, 10, 9 ]
 
-    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0, 290.0, 350.0, 400.0, 600.0 ]
-    stepSizes=[ 0.5, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0 ]
-    endVal=[ 29, 20, 7,  30, 65, 12, 5, 10, 9 ]
+#    startMass=[ 110.0, 124.5, 126.5, 130.0, 160.0, 290.0, 350.0, 400.0, 600.0 ]
+#    stepSizes=[ 0.5, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0 ]
+#    endVal=[ 29, 20, 7,  30, 65, 12, 5, 10, 9 ]
 
 #    startMass=[ 400.0, 600.0 ]
 #    stepSizes=[ 20.0, 50.0 ]
 #    endVal=[      10,   9 ]
 
 
-#    startMass=[ 400.0 ]
-#    stepSizes=[ 0.5 ]
-#    endVal=[ 1 ]
+    startMass=[ 126.0 ]
+    stepSizes=[ 0.5 ]
+    endVal=[ 1 ]
 
     myClass = mainClass()
     
@@ -119,9 +117,9 @@ def creationLoop(directory):
             makeDirectory(directory+'/HCG_XSxBR/'+mhs)
 
             print mh
-            myClass.makeCardsWorkspaces(mh,directory,theInputs4e,opt.templateDir,opt.massError,opt.is2D,opt.mekd)
-            myClass.makeCardsWorkspaces(mh,directory,theInputs4mu,opt.templateDir,opt.massError,opt.is2D,opt.mekd)
-            myClass.makeCardsWorkspaces(mh,directory,theInputs2e2mu,opt.templateDir,opt.massError,opt.is2D,opt.mekd)
+            myClass.makeCardsWorkspaces(mh,directory,theInputs4e,opt.templateDir,opt.massError,opt.is2D,opt.mekd,opt.hypothesis)
+            myClass.makeCardsWorkspaces(mh,directory,theInputs4mu,opt.templateDir,opt.massError,opt.is2D,opt.mekd,opt.hypothesis)
+            myClass.makeCardsWorkspaces(mh,directory,theInputs2e2mu,opt.templateDir,opt.massError,opt.is2D,opt.mekd,opt.hypothesis)
                           
             c += 1
             

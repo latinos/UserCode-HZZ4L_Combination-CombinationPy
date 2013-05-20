@@ -136,9 +136,12 @@ class systematicsClass:
         channelList=['ggH','qqH','WH','ZH','ttH','qqZZ','ggZZ','zjets','ttbar','zbb']
         if theInputs["all"]:
             channelList=['ggH','qqZZ','ggZZ','zjets','ttbar','zbb']
+        if theInputs["all"] and theInputs["doHypTest"]:
+            channelList=['ggH','ggH','qqZZ','ggZZ','zjets']
+        
         
         for chan in channelList:
-            if theInputs[chan] or (chan.startswith("ggH") and theInputs["all"]):
+            if theInputs[chan] or theInputs["all"] or (theInputs["all"] and theInputs["doHypTest"]):
                 print chan, systLine[chan]
                 theFile.write(systLine[chan])
         theFile.write("\n")
@@ -612,7 +615,7 @@ class systematicsClass:
 	if (self.channel == self.ID_2e2mu) and theInputs['useCMS_hzz4l_Zjets']:
             self.Write_CMS_hzz2e2mu_Zjets(theFile,theInputs)
 
-        if theInputs['useCMS_zz4l_bkgMELA']:
+        if theInputs['useCMS_zz4l_bkgMELA'] and not theInputs['doHypTest']:
             self.Write_CMS_zz4l_bkgMELA(theFile,theInputs)
             
         if theInputs['useCMS_zz4l_sigMELA']:
@@ -629,7 +632,7 @@ class systematicsClass:
         sigmaCB_m_errPerCent = theInputs['CMS_zz4l_sigma_m_sig']
         Gamma_BW_errPerCent = theInputs['CMS_zz4l_gamma_sig']
         
-        if( self.channel == self.ID_4mu):
+        if( self.channel == self.ID_4mu and not theInputs['doHypTest']):
 
             if theInputs['useCMS_zz4l_mean']:
                 theFile.write("CMS_zz4l_mean_m_sig param 0.0 {0} \n".format(meanCB_m_errPerCent))
@@ -641,7 +644,7 @@ class systematicsClass:
                 theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
                 #theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
             
-        if( self.channel == self.ID_4e):
+        if( self.channel == self.ID_4e and not theInputs['doHypTest']):
 
             if theInputs['useCMS_zz4l_mean']:
                 theFile.write("CMS_zz4l_mean_e_sig param 0.0 {0} \n".format(meanCB_e_errPerCent))
@@ -653,7 +656,7 @@ class systematicsClass:
                 theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
                 #theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
             
-        if( self.channel == self.ID_2e2mu):
+        if( self.channel == self.ID_2e2mu and not theInputs['doHypTest']):
 
             if theInputs['useCMS_zz4l_mean']:
                 theFile.write("CMS_zz4l_mean_m_sig param 0.0 {0} \n".format(meanCB_m_errPerCent))
@@ -667,3 +670,25 @@ class systematicsClass:
                 theFile.write("interf_ggH param 0 1 [-1,1] \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
                 #theFile.write("CMS_zz4l_gamma_sig_{0}_{1:.0f} param 0.0 {2} \n".format(self.channel,self.sqrts,Gamma_BW_errPerCent))
 
+
+    def WriteSuperKDShapeSystematics(self,theFile,theInputs):
+
+
+        if( self.channel == self.ID_4mu and theInputs['doHypTest']):
+            
+            theFile.write("CMS_zz4l_smd_zjets_bkg_1 param 0  1  [-3,3]\n")
+            theFile.write("CMS_zz4l_smd_leptScale_sig_1 param 0  1  [-3,3]\n")
+            theFile.write("CMS_zz4l_smd_leptResol_sig_1 param 0  1  [-3,3]\n")
+            
+        if( self.channel == self.ID_4e and theInputs['doHypTest']):
+            
+            theFile.write("CMS_zz4l_smd_zjets_bkg_2 param 0  1  [-3,3]\n")
+            theFile.write("CMS_zz4l_smd_leptScale_sig_2 param 0  1  [-3,3]\n")
+            theFile.write("CMS_zz4l_smd_leptResol_sig_2 param 0  1  [-3,3]\n")
+            
+        if( self.channel == self.ID_2e2mu and theInputs['doHypTest']):
+            
+            theFile.write("CMS_zz4l_smd_zjets_bkg_3 param 0  1  [-3,3]\n")
+            theFile.write("CMS_zz4l_smd_leptScale_sig_3 param 0  1  [-3,3]\n")
+            theFile.write("CMS_zz4l_smd_leptResol_sig_3 param 0  1  [-3,3]\n")
+            

@@ -51,13 +51,16 @@ class datacardClass(object):
         self.zjets_chan = theInputs['zjets']
         self.ttbar_chan = theInputs['ttbar']
         self.zbb_chan = theInputs['zbb']
+        self.isAltSig = theInputs['doHypTest']
+        self.appendHypType = theInputs['altHypLabel']
         self.inputs = theInputs
-        self.isAltSig = False
-
+        
+        
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
         elif (self.channel == self.ID_2e2mu): self.appendName = '2e2mu'
-        else: print "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)"
+        else:
+            raise RuntimeError, "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)"
         
     
     # return trueVar if testStatement else return falseVar
@@ -96,7 +99,8 @@ class datacardClass(object):
         if (self.channel == self.ID_4mu): channelName = "4mu"
         elif (self.channel == self.ID_4e): channelName = "4e"
         elif (self.channel == self.ID_2e2mu): channelName = "2e2mu"
-        else: print "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)" 
+        else:
+            raise RuntimeError, "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)" 
 
      
         
@@ -143,7 +147,8 @@ class datacardClass(object):
         if self.mH >= 390:
             if self.inputs['useHighMassReweightedShapes']:
                 self.isHighMass = True
-            else: print "useHighMassReweightedShapes set to FALSE, using non-reweighted shapes!"
+            else:
+                print ">>>>>> useHighMassReweightedShapes set to FALSE, using non-reweighted shapes!"
 
         ## ---------------- SET PLOTTING STYLE ---------------- ## 
         ROOT.setTDRStyle(True)
@@ -249,16 +254,16 @@ class datacardClass(object):
         self.CMS_zz4l_mean_BW.setConstant(True)
         #CMS_zz4l_gamma_BW.setConstant(True)
 
-        print "mean_BW ", self.CMS_zz4l_mean_BW.getVal()
-        print "gamma_BW ", self.CMS_zz4l_gamma.getVal()
-        print "mean_e_sig ", self.CMS_zz4l_mean_e_sig.getVal()
-        print "sigma_e ", self.CMS_zz4l_sigma_e_sig.getVal()
-        print "mean_m_sig ", self.CMS_zz4l_mean_m_sig.getVal()
-        print "sigma_m ", self.CMS_zz4l_sigma_m_sig.getVal()
-        print "alpha ", self.CMS_zz4l_alpha.getVal()
-        print "n ", self.CMS_zz4l_n.getVal()
-        print "alpha2 ", self.CMS_zz4l_alpha2.getVal()
-        print "n2 ", self.CMS_zz4l_n2.getVal()
+        print ">>>>>> mean_BW ", self.CMS_zz4l_mean_BW.getVal()
+        print ">>>>>> gamma_BW ", self.CMS_zz4l_gamma.getVal()
+        print ">>>>>> mean_e_sig ", self.CMS_zz4l_mean_e_sig.getVal()
+        print ">>>>>> sigma_e ", self.CMS_zz4l_sigma_e_sig.getVal()
+        print ">>>>>> mean_m_sig ", self.CMS_zz4l_mean_m_sig.getVal()
+        print ">>>>>> sigma_m ", self.CMS_zz4l_sigma_m_sig.getVal()
+        print ">>>>>> alpha ", self.CMS_zz4l_alpha.getVal()
+        print ">>>>>> n ", self.CMS_zz4l_n.getVal()
+        print ">>>>>> alpha2 ", self.CMS_zz4l_alpha2.getVal()
+        print ">>>>>> n2 ", self.CMS_zz4l_n2.getVal()
 
                                                                 
         ## -------------------- RooFormulaVar's -------------------- ##
@@ -341,13 +346,13 @@ class datacardClass(object):
         name = "CMS_zz4l_gamma_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
         self.rfv_gamma_BW = ROOT.RooFormulaVar(name,"("+self.inputs['gamma_BW_shape_HM']+")"+"*(1+@1*0.05)",ROOT.RooArgList(self.MH,self.CMS_zz4l_gamma))
 
-        print "n_CB ", self.rfv_n_CB.getVal()
-        print "alpha_CB ", self.rfv_alpha_CB.getVal()
-        print "n2_CB ", self.rfv_n2_CB.getVal()
-        print "alpha2_CB ", self.rfv_alpha2_CB.getVal()
-        print "mean_CB ", self.rfv_mean_CB.getVal()
-        print "sigma_CB ", self.rfv_sigma_CB.getVal()
-        print "gamma_BW ", self.rfv_gamma_BW.getVal()    
+        print ">>>>>> n_CB ", self.rfv_n_CB.getVal()
+        print ">>>>>> alpha_CB ", self.rfv_alpha_CB.getVal()
+        print ">>>>>> n2_CB ", self.rfv_n2_CB.getVal()
+        print ">>>>>> alpha2_CB ", self.rfv_alpha2_CB.getVal()
+        print ">>>>>> mean_CB ", self.rfv_mean_CB.getVal()
+        print ">>>>>> sigma_CB ", self.rfv_sigma_CB.getVal()
+        print ">>>>>> gamma_BW ", self.rfv_gamma_BW.getVal()    
 
         
         self.CMS_zz4l_mean_sig_NoConv = ROOT.RooFormulaVar("CMS_zz4l_mean_sig_NoConv_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts),"@0+@1", ROOT.RooArgList(self.rfv_mean_CB, self.MH))
@@ -415,48 +420,6 @@ class datacardClass(object):
         self.sig_WH_HM.setBufferFraction(0.2)
         self.sig_ZH_HM.setBufferFraction(0.2)
         self.sig_ttH_HM.setBufferFraction(0.2)
-
-
-	####  ----------------------- mekd  parametrized double gaussian stuffs  -------------------------
-	#discVarName = "mekd"
-	#MEKD = ROOT.RooRealVar(discVarName, discVarName,dLow,dHigh);
-	#if self.bMEKD: 
-	#	name = "mekd_sig_a0_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-	#	mekd_sig_a0 = ROOT.RooFormulaVar(name,"("+self.inputs['mekd_sig_a0_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
-	#	name = "mekd_sig_a1_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-	#	mekd_sig_a1 = ROOT.RooFormulaVar(name,"("+self.inputs['mekd_sig_a1_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
-	#	name = "mekd_sig_a2_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-	#	mekd_sig_a2 = ROOT.RooFormulaVar(name,"("+self.inputs['mekd_sig_a2_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
-	#	name = "mekd_sig_a3_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-	#	mekd_sig_a3 = ROOT.RooFormulaVar(name,"("+self.inputs['mekd_sig_a3_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
-	#	name = "mekd_sig_a4_{0:.0f}_{1:.0f}_centralValue".format(self.channel,self.sqrts)
-	#	mekd_sig_a4 = ROOT.RooFormulaVar(name,"("+self.inputs['mekd_sig_a4_shape']+")", ROOT.RooArgList(CMS_zz4l_mass))
-	#	sigTemplateMorphPdf_ggH = ROOT.RooGenericPdf("mekd_sig_ggH", "mekd_sig_ggH", "@3*exp((-(@0-@1)^2)/(2*@2^2))/@2+(1-@3)*exp((-(@0-@4)^2)/(2*@5^2))/@5", ROOT.RooArgList(MEKD,mekd_sig_a0, mekd_sig_a1, mekd_sig_a2, mekd_sig_a3, mekd_sig_a4))
-	#	sigTemplateMorphPdf_VBF = sigTemplateMorphPdf_ggH 
-	#	sigTemplateMorphPdf_WH = sigTemplateMorphPdf_ggH 
-	#	sigTemplateMorphPdf_ZH = sigTemplateMorphPdf_ggH 
-	#	sigTemplateMorphPdf_ttH = sigTemplateMorphPdf_ggH 
-	#	print "\n \n mekd_sig_a2 channel ",self.channel
-	#	m = 100
-	#	while m >= 100 and m < 150:
-	#		CMS_zz4l_mass.setVal(m)
-	#		m = m + 0.1
-	#		if mekd_sig_a2.getVal() < 0 : print m, mekd_sig_a2.getVal() 
-	#		if mekd_sig_a2.getVal() > 1 : print m, mekd_sig_a2.getVal() 
-	#	print "\n \n mekd_sig_a1 channel ",self.channel
-	#	m = 100
-	#	while m >= 100 and m < 150:
-	#		CMS_zz4l_mass.setVal(m)
-	#		m = m + 0.1
-	#		if mekd_sig_a1.getVal() <= 0 : print m, mekd_sig_a1.getVal() 
-	#	print "\n \n mekd_sig_a4 channel ",self.channel
-	#	m = 100
-	#	while m >= 100 and m < 150:
-	#		CMS_zz4l_mass.setVal(m)
-	#		m = m + 0.1
-	#		if mekd_sig_a4.getVal() <= 0 : print m, mekd_sig_a4.getVal() 
-	#	CMS_zz4l_mass.setVal(140);
-
 
 
         ## -------------------------- BACKGROUND SHAPES ---------------------------------- ##
@@ -720,7 +683,7 @@ class datacardClass(object):
             self.rfvCsFilter = ROOT.RooFormulaVar(filterName,"@0",ROOT.RooArgList(self.one))
 
         if(self.DEBUG):
-            print "@@@@@@@ rfvCsFilter = ",self.rfvCsFilter.getVal()
+            print ">>>>>>  rfvCsFilter = ",self.rfvCsFilter.getVal()
 
         sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
         self.rrva1 = ROOT.RooRealVar(sigEffName,sigEffName, self.inputs['sigEff_a1'])
@@ -763,7 +726,7 @@ class datacardClass(object):
         #from TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
         
         ## following printout is needed ,  dont remove it
-        print " @@@@@@@@ sigeff ",self.rfvSigEff.getVal()
+        print ">>>>>>  sigeff ",self.rfvSigEff.getVal()
     
         CS_ggH = self.myCSW.HiggsCS(1,self.mH,self.sqrts)
         CS_VBF = self.myCSW.HiggsCS(2,self.mH,self.sqrts)
@@ -803,10 +766,7 @@ class datacardClass(object):
         if self.isHighMass : normalizationSignal = tmpNormSigHM
         else : normalizationSignal = self.getVariable(tmpNormSigNoConv,tmpNormSigConv,self.bUseCBnoConvolution)
             
-        print "#################### ",self.signalCB_ggH.createIntegral( ROOT.RooArgSet(self.CMS_zz4l_mass), ROOT.RooFit.Range("fullrangesignal") ).getVal()
-        print "#################### ",self.signalCB_ggH.createIntegral( ROOT.RooArgSet(self.CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
-        print "#################### ",self.sig_ggH.createIntegral( ROOT.RooArgSet(self.CMS_zz4l_mass), ROOT.RooFit.Range("fullrangesignal") ).getVal()
-        print "#################### norm Signal",normalizationSignal
+        print ">>>>>>  Norm Signal",normalizationSignal
         
         sclFactorSig_ggH = sigRate_ggH/normalizationSignal
         sclFactorSig_VBF = sigRate_VBF/normalizationSignal
@@ -820,14 +780,6 @@ class datacardClass(object):
         integral_ZH  = 0.0
         integral_ttH = 0.0
 
-        print "HEEEEEEEEEEEEEEEEERRE"
-        print "1   ", self.isHighMass
-        print "2   ",self.sig_ggH_HM.createIntegral( ROOT.RooArgSet(self.CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
-        print "3   ",self.signalBW_ggH_HM.getVal()
-        print "4   ",self.CMS_zz4l_mean_BW.getVal(),"  ",self.rfv_gamma_BW.getVal()
-        print "HEEEEEEEEEEEEEEEERRE"
-
-        
         if self.isHighMass :
             integral_ggH = self.sig_ggH_HM.createIntegral( ROOT.RooArgSet(self.CMS_zz4l_mass), ROOT.RooFit.Range("shape") ).getVal()
         else :
@@ -873,7 +825,7 @@ class datacardClass(object):
 
         self.rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,self.rrvNormSig.getVal(),integral_ggH),ROOT.RooArgList(self.rfvCsFilter,self.rfvSigEff, self.rhfXsBrFuncV_1))
 
-        print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(self.signalCB_ggH.createIntegral(RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.sig_ggH.createIntegral(RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
+        print ">>>>>> Compare Integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(self.signalCB_ggH.createIntegral(RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.sig_ggH.createIntegral(RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
         
         self.rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,self.rrvNormSig.getVal(),integral_VBF),ROOT.RooArgList(self.rfvCsFilter,self.rfvSigEff, self.rhfXsBrFuncV_2))
                          
@@ -886,24 +838,23 @@ class datacardClass(object):
 
         self.rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,self.rrvNormSig.getVal(),integral_ttH),ROOT.RooArgList(self.rfvCsFilter,self.rfvSigEff, self.rhfXsBrFuncV_5))
                          
-
-
-        print self.signalCB_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass)).getVal(),"   ",self.sig_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass)).getVal()
-        print self.signalCB_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),"   ",self.sig_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal()
-        if (self.all_chan):
-            print "Requested to sum up over the 5 chans: the norm in rfvSigRate_ggH should be the sum of the values of sigRate_XYZ_Shape variables:"
-        print " @@@@@@@ norm sig = ",self.rrvNormSig.getVal()
-        print " @@@@@@@ rfvSigRate_ggH = ",self.rfvSigRate_ggH.getVal()
-        print " sigRate_ggH_Shape=",sigRate_ggH_Shape
-        print " @@@@@@@ rfvSigRate_VBF = ",self.rfvSigRate_VBF.getVal()
-        print " sigRate_VBF_Shape=",sigRate_VBF_Shape
-        print " @@@@@@@ rfvSigRate_WH = ",self.rfvSigRate_WH.getVal()
-        print " sigRate_WH_Shape=",sigRate_WH_Shape
-        print " @@@@@@@ rfvSigRate_ZH = ",self.rfvSigRate_ZH.getVal()
-        print " sigRate_ZH_Shape=",sigRate_ZH_Shape
-        print " @@@@@@@ rfvSigRate_ttH = ",self.rfvSigRate_ttH.getVal()
-        print " sigRate_ttH_Shape=",sigRate_ttH_Shape
-        print "Sum of sigRate_XYZ_Shape=",sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
+        if self.DEBUG:
+            print self.signalCB_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass)).getVal(),"   ",self.sig_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass)).getVal()
+            print self.signalCB_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),"   ",self.sig_ggH.createIntegral(ROOT.RooArgSet(self.CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal()
+        if self.all_chan:
+            print " >>>>>> Requested to sum up over the 5 chans: the norm in rfvSigRate_ggH should be the sum of the values of sigRate_XYZ_Shape variables:"
+        print ">>>>>> Norm Sig = ",self.rrvNormSig.getVal()
+        print ">>>>>> rfvSigRate_ggH = ",self.rfvSigRate_ggH.getVal()
+        print ">>>>>> sigRate_ggH_Shape = ",sigRate_ggH_Shape
+        print ">>>>>> rfvSigRate_VBF = ",self.rfvSigRate_VBF.getVal()
+        print ">>>>>> sigRate_VBF_Shape = ",sigRate_VBF_Shape
+        print ">>>>>> rfvSigRate_WH = ",self.rfvSigRate_WH.getVal()
+        print ">>>>>> sigRate_WH_Shape = ",sigRate_WH_Shape
+        print ">>>>>> rfvSigRate_ZH = ",self.rfvSigRate_ZH.getVal()
+        print ">>>>>> sigRate_ZH_Shape = ",sigRate_ZH_Shape
+        print ">>>>>> rfvSigRate_ttH = ",self.rfvSigRate_ttH.getVal()
+        print ">>>>>> sigRate_ttH_Shape = ",sigRate_ttH_Shape
+        print ">>>>>> Sum of sigRate_XYZ_Shape =" ,sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
              
         ## ----------------------- BACKGROUND RATES ----------------------- ##
         ## rates per lumi for scaling
@@ -948,15 +899,15 @@ class datacardClass(object):
         
         
         ## If the channel is not declared in inputs, set rate = 0
-        if not self.ggH_chan and not self.all_chan :  sigRate_ggH_Shape = 0
+        if not self.ggH_chan and not self.all_chan:  sigRate_ggH_Shape = 0
         if not self.qqH_chan:  sigRate_VBF_Shape = 0
         if not self.WH_chan:   sigRate_WH_Shape = 0
         if not self.ZH_chan:   sigRate_ZH_Shape = 0
         if not self.ttH_chan:  sigRate_ttH_Shape = 0
         
-        if not self.qqZZ_chan:  bkgRate_qqzz_Shape = 0
-        if not self.ggZZ_chan:  bkgRate_ggzz_Shape = 0
-        if not self.zjets_chan: bkgRate_zjets_Shape = 0
+        if not self.qqZZ_chan and not self.all_chan:  bkgRate_qqzz_Shape = 0
+        if not self.ggZZ_chan and not self.all_chan:  bkgRate_ggzz_Shape = 0
+        if not self.zjets_chan and not self.all_chan: bkgRate_zjets_Shape = 0
         
         self.rates = {}
         self.rates['ggH'] = sigRate_ggH_Shape
@@ -1145,17 +1096,6 @@ class datacardClass(object):
         self.systematics.WriteShapeSystematics(fo,self.inputs)
         fo.close()
         
-        if(self.isAltSig):
-            if (self.endsInP5(self.mH)):
-                name_Shape = "{0}/HCG/{1:.1f}/hzz4l_{2}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts,self.appendHypType)
-            else:
-                name_Shape = "{0}/HCG/{1:.0f}/hzz4l_{2}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts,self.appendHypType)
-            fo = open( name_Shape, "wb")
-            self.WriteDatacard(fo, self.name_ShapeWS2, self.rates, self.data_obs.numEntries(), self.is2D,True,self.appendHypType )
-            self.systematics.WriteSystematics(fo, self.inputs)
-            self.systematics.WriteShapeSystematics(fo,self.inputs)
-            fo.close()
-
         ## forXSxBR
         if (self.endsInP5(self.mH)):
             name_Shape = "{0}/HCG_XSxBR/{2:.1f}/hzz4l_{1}S_{3:.0f}TeV.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts)	
@@ -1168,30 +1108,8 @@ class datacardClass(object):
         self.systematics_forXSxBR.WriteShapeSystematics(fo,self.inputs)
         fo.close()
 
-        if(self.isAltSig):
-            if (self.endsInP5(self.mH)):
-                name_Shape = "{0}/HCG_XSxBR/{2:.1f}/hzz4l_{1}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts,self.appendHypType)	
-            else:
-                name_Shape = "{0}/HCG_XSxBR/{2:.0f}/hzz4l_{1}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.appendName,self.mH,self.sqrts,self.appendHypType)
-            fo = open( name_Shape, "wb")
-            self.WriteDatacard(fo,self.name_ShapeWS2,self.rates,self.data_obs.numEntries(),self.is2D,True,self.appendHypType )
-            self.systematics.WriteSystematics(fo, self.inputs)
-            self.systematics.WriteShapeSystematics(fo,self.inputs)
-            fo.close()
-                
-
-
             
     def WriteDatacard(self,file,nameWS,theRates,obsEvents,is2D,isAltCard=False,AltLabel=""):
-
-        self.name_Shape = ""
-        self.name_ShapeWS = ""
-
-        if (self.endsInP5(self.mH)):
-            name_Shape = "{0}/HCG/{1:.1f}/hzz4l_{2}S_{3:.0f}TeV.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts)
-        else:
-            name_Shape = "{0}/HCG/{1:.0f}/hzz4l_{2}S_{3:.0f}TeV.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts)
-
 
         numberSig = self.numberOfSigChan(self.inputs)
         numberBg  = self.numberOfBgChan(self.inputs)
@@ -1270,7 +1188,11 @@ class datacardClass(object):
         if myinputs['ZH']:  counter+=1
         if myinputs['ttH']: counter+=1
         if myinputs['all']: counter+=1
-        
+        if self.isAltSig:
+            if myinputs['all']: counter+=1
+        else:
+            if myinputs['all']: counter+=2
+               
         return counter
 
     def numberOfBgChan(self,myinputs):
@@ -1282,6 +1204,12 @@ class datacardClass(object):
         if myinputs['zjets']: counter+=1
         if myinputs['ttbar']: counter+=1
         if myinputs['zbb']:   counter+=1
+
+        if self.isAltSig:
+            if myinputs['all']: counter+=3
+        else:
+            if myinputs['all']: counter+=5
+                    
         
         return counter
 
@@ -1363,6 +1291,8 @@ class datacardClass(object):
         self.bkg_ggzzErr = ROOT.RooProdPdf("bkg_ggzzErr","bkg_ggzzErr", ROOT.RooArgSet(self.bkg_ggzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(self.pdfErrZZ), ROOT.RooArgSet(self.RelErr)))
         self.bkg_zjetsErr = ROOT.RooProdPdf("bkg_zjetsErr","bkg_zjetsErr", ROOT.RooArgSet(self.bkg_zjets), ROOT.RooFit.Conditional(ROOT.RooArgSet(self.pdfErrZX), ROOT.RooArgSet(self.RelErr)));
         
+
+
 
 
 

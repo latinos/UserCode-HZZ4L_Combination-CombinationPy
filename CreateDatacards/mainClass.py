@@ -9,12 +9,14 @@ import ROOT
 from array import array
 from datacardClass import *
 from kdClass import *
+from superkdClass import *
 
 class mainClass():
     
     ID_4mu = 1
     ID_4e  = 2
     ID_2e2mu = 3
+    
     
 
     def __init__(self):
@@ -28,21 +30,17 @@ class mainClass():
         ROOT.gSystem.Load("include/HiggsCSandWidthSM4_cc.so")
         
 
-    def makeCardsWorkspaces(self, theMH, theOutputDir, theInputs,theTemplateDir,theMassError,theis2D,theUseMEKD):
+    def makeCardsWorkspaces(self, theMH, theOutputDir, theInputs,theTemplateDir,theMassError,theis2D,theUseMEKD,altHypo):
 
 
         ## ------------------ CHECK CHANNEL ------------------- ##
-        print theInputs['decayChannel']
-
         if (theInputs['decayChannel'] == self.ID_4mu): appendName = '4mu'
         elif (theInputs['decayChannel'] == self.ID_4e): appendName = '4e'
         elif (theInputs['decayChannel'] == self.ID_2e2mu): appendName = '2e2mu'
         else: print "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)"
         
-        #if (theInputs['decayChannel'] != self.ID_4mu and theInputs['decayChannel'] != self.ID_4mu and theInputs['decayChannel'] != self.ID_4mu):
-        #    raise RuntimeError, "Error: channel is not an option (4mu,4e,2e2mu)" 
+        print '>>>>>> Decay Channel: ',theInputs['decayChannel'],' = ',appendName
 
-        
         ## ----------------- WIDTH AND RANGES ----------------- ##
         myCSW = HiggsCSandWidth()
         widthHVal =  myCSW.HiggsWidth(0,theMH)
@@ -67,7 +65,7 @@ class mainClass():
         self.low_M = max( (theMH - 20.*self.windowVal), lowside)
         self.high_M = min( (theMH + 15.*self.windowVal), highside)
                
-        print "Higgs Width: ",widthHVal, " Window --- Low: ", self.low_M, " High: ", self.high_M
+        print '>>>>>> Higgs Width: ',widthHVal,' Window --- Low: ', self.low_M,' High: ', self.high_M
 
         ## add to the inputs
         theInputs['low_M'] = self.low_M
@@ -75,23 +73,23 @@ class mainClass():
         
         
 
-        ## ------------- MELA for Signal Separation ----------- ##
-        self.isAltSig = False
-        if (theInputs['doHypTest']):
-            self.isAltSig = True
+        ## ------------- Signal Separation ----------- ##
+        theInputs['altHypothesis'] = altHypo
+        if theInputs['doHypTest'] and theInputs['altHypLabel']=="" :
+            theInputs['altHypLabel'] = "_ALT"
+
+        if theInputs['doHypTest']:
+            print '----------------- Running Signal Hypothesis Test Cards -----------------'
+            print '>>>>>> Alt Hypothesis: ',theInputs['altHypothesis']
+            print '>>>>>> Alt Label: ',theInputs['altHypLabel']
             
-        if self.isAltSig and not self.all_chan :
+        if theInputs['doHypTest'] and not theInputs['all']:
             raise RuntimeError, "You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs ! (it should have already send you this error message, strange that  you are here...)"
         
-        if (self.isAltSig and not (self.is2D==1)):
+        if (theInputs['doHypTest'] and not (theis2D==1)):
             raise RuntimeError, "Cannot perform hypothesis testing without a 2D analysis, feature not supported yet. Exiting."
         
         
-        self.appendHypType = theInputs['altHypLabel']
-        if self.isAltSig and self.appendHypType=="" :
-            self.appendHypType = "_ALT"
-
-
         myDatacardClass = datacardClass()
 
         if( theis2D == 0 ):
@@ -103,15 +101,28 @@ class mainClass():
 
         if( theis2D == 1 ):
 
-            myDatacardClass2D = kdClass()
-            myDatacardClass2D.makeMassShapesYields(theMH,theOutputDir,theInputs,theTemplateDir,theMassError,theis2D,theUseMEKD)
+            if theInputs['doHypTest']:
 
-            myDatacardClass2D.setKD()
-            myDatacardClass2D.fetchDatasetKD()            
-            myDatacardClass2D.makeKDAnalysis()
-            myDatacardClass2D.writeWorkspaceKD()
-            myDatacardClass2D.prepareDatacardKD()
+                myDatacardClass2D = superkdClass()
+                myDatacardClass2D.makeMassShapesYields(theMH,theOutputDir,theInputs,theTemplateDir,theMassError,theis2D,theUseMEKD)
+                
+                myDatacardClass2D.setSuperKD()
+                myDatacardClass2D.fetchDatasetSuperKD()            
+                myDatacardClass2D.makeSuperKDAnalysis()
+                myDatacardClass2D.writeWorkspaceSuperKD()
+                myDatacardClass2D.prepareDatacardSuperKD()
+
+            else:
             
+                myDatacardClass2D = kdClass()
+                myDatacardClass2D.makeMassShapesYields(theMH,theOutputDir,theInputs,theTemplateDir,theMassError,theis2D,theUseMEKD)
+                
+                myDatacardClass2D.setKD()
+                myDatacardClass2D.fetchDatasetKD()            
+                myDatacardClass2D.makeKDAnalysis()
+                myDatacardClass2D.writeWorkspaceKD()
+                myDatacardClass2D.prepareDatacardKD()
+                
             
 
             

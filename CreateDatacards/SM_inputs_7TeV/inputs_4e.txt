@@ -13,7 +13,8 @@ systematic lumiUnc 1.022
 sqrts 7
 
 ## Channels to include in cards ##
-channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
+#channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
+channels all
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
@@ -166,9 +167,8 @@ systematic CMS_zz4l_n True
 systematic CMS_zz4l_gamma True
 
 ### for hypothesis testing ###
-doHypTest False
-#altHypLabel _ALT
-
+doHypTest True
+#altHypLabel _superMELA
 
 signalShape mekd_sig_a0 TMath::Max(6.995+(0.04525)*(@0-100)+(0.0002597)*(@0-100)*(@0-100),0)
 qqZZshape mekd_qqZZ_a0 TMath::Max(6.369+(0.0573)*(@0-100)+(-0.0009289)*(@0-100)*(@0-100),0)
