@@ -1,19 +1,19 @@
 #!/usr/bin/python
 #-----------------------------------------------
-# Latest update: 2012.05.21
-# by Predrag Milenovic,Matt Snowball
+# Latest update: 05.22.2013
+# by Predrag Milenovic, Matt Snowball
 #-----------------------------------------------
 import sys, os, pwd, commands
 import optparse, shlex, re
 import math
 import ROOT
 
-
-
-
+####################################
 cmssw_base=commands.getoutput("echo $CMSSW_BASE")
 curdir=commands.getoutput("pwd")
-TOYSPERDIR=50000
+TOYSPERDIR=20000
+####################################
+
 
 def parseOptions():
 
@@ -26,6 +26,7 @@ def parseOptions():
     parser.add_option('', '--generateToys',action='store_true', dest='generateToys',default=False,help='generate toys')
     parser.add_option('', '--haddToys',action='store_true', dest='haddToys',default=False,help='hadd toys')
     parser.add_option('', '--plot',action='store_true', dest='plot',default=False,help='make separation plot')
+    parser.add_option('', '--replot',action='store_true', dest='replot',default=False,help='make separation plot')
     parser.add_option('', '--tool',  dest='TOOL', type='string', default='combine',    help='Tool: combine or lands')
     parser.add_option('-t', '--toys',  dest='NTOYS', type='int', default=1000000,    help='Number of total toys, will be paralelised to have 50K per job')
     parser.add_option('-d', '--dir',   dest='SOURCEDIR', type='string', default='', help='SOURCEDIR, skip if SOURCEDIR is empty')
@@ -57,7 +58,7 @@ def parseOptions():
         print 'Please choose either 7, 8, or 7p8 for --sqrts/-e!'
         sys.exit()
 
-    if opt.SOURCEDIR == '' and not (opt.haddToys or opt.plot) :
+    if opt.SOURCEDIR == '' and not (opt.haddToys or opt.plot or opt.replot) :
         print 'Please pass a source dir (-d) containing all cards and ws!'
         sys.exit()
 
@@ -161,6 +162,7 @@ def makeBinaryWorkspace(dir,muType,mass):
         processCmd(cmd)
     elif muType == 'float':
         cmd = 'text2workspace.py -m '+str(mass)+' comb.txt -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs --PO=muFloating -o floatMu.root'
+        processCmd(cmd)
     else:
         raise RuntimeError,'Unknown muType! Please choose fixed or float(not implemented yet).'
 
@@ -295,10 +297,10 @@ def plotToysCombine(file):
     #cmd = 'extractSignificanceStats()'
     ROOT.gROOT.ProcessLine(cmd)
 
-    #print '>>>>> results: '
-    #cmd = 'cat '+opt.MODEL+'_'+opt.MUTYPE+myNuis+'.log'
-    #output = processCmd(cmd)
-    #print output
+    print '>>>>> results: '
+    cmd = 'cat '+opt.MODEL+'_'+opt.MUTYPE+myNuis+'.log'
+    output = processCmd(cmd)
+    print output
     os.chdir(curdir)
 
 
@@ -340,6 +342,26 @@ if __name__ == "__main__":
             
         if opt.TOOL == 'combine':
             outputFile = haddToysCombine()
+            plotToysCombine(outputFile)
+        else:
+            raise RuntimeError,'not implemented for lands yet'
+
+    elif opt.replot:
+        if not os.path.exists(opt.MODEL):
+            print opt.MODEL+' does not exist!'
+            sys.exit()
+            
+        if opt.TOOL == 'combine':
+            myFile = 'floatMu'
+            myNuis = ''
+            
+            if opt.MUTYPE == 'fixed':
+                myFile = 'fixedMu'
+                
+            if opt.FITNUIS:
+                myNuis = 'fitNuis'
+
+            outputFile = 'combineToys.'+myFile+myNuis+'.'+str(opt.MASS)+'.root'
             plotToysCombine(outputFile)
         else:
             raise RuntimeError,'not implemented for lands yet'
