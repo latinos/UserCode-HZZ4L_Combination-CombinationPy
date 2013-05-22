@@ -157,7 +157,7 @@ systematic BRhiggs_hzz4l True
 systematic CMS_eff True
 systematic CMS_hzz4l_Zjets True
 systematic CMS_zz4l_bkgMELA True
-systematic CMS_zz4l_sigMELA False
+systematic CMS_zz4l_sigMELA True
 systematic CMS_zz4l_mean True
 systematic CMS_zz4l_sigma True
 systematic CMS_zz4l_mean True
