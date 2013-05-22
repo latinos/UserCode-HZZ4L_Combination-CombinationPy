@@ -81,6 +81,15 @@ int extractSignificanceStats(TString jobname=""){
     cout<<"Please edit the code and change the sign of q when filling histos and vectors in the loop on tree entries"<<endl;
     return 1;
   }
+
+
+  if((int(v_SM.size())!= ntoysSM)||(int(v_PS.size())!= ntoysPS)){
+    cout<<"Mismatch in size of vectors and #entries of historgams ! v_SM.size()="<< v_SM.size() <<"  ntoysSM="<<ntoysSM<<endl;
+    return 1;
+  }
+
+
+
   float medianSM=v_SM.at(int(ntoysSM/2));
   float medianPS=v_PS.at(int(ntoysPS/2));
   cout<<"Toys generated "<<ntoysSM<<"\t"<<ntoysPS<<endl;
@@ -240,7 +249,7 @@ int extractSignificanceStats(TString jobname=""){
   leg->SetBorderSize(0);
   leg->AddEntry(hSM," 0^{+}_{m}","f");
   leg->AddEntry(hPS," 0^{+}_{h}","f");
-  leg->AddEntry(hObs, " #frac{1}{2} #times CMS data","l");
+  leg->AddEntry(hObs, " CMS data","l");
   leg->Draw();
 
 
