@@ -618,7 +618,7 @@ class systematicsClass:
         if theInputs['useCMS_zz4l_bkgMELA'] and not theInputs['doHypTest']:
             self.Write_CMS_zz4l_bkgMELA(theFile,theInputs)
             
-        if theInputs['useCMS_zz4l_sigMELA']:
+        if theInputs['useCMS_zz4l_sigMELA'] and not theInputs['doHypTest']:
             self.Write_CMS_zz4l_sigMELA(theFile,theInputs)
 
 
