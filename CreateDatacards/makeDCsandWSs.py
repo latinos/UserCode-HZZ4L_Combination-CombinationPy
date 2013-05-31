@@ -27,6 +27,7 @@ def parseOptions():
     parser.add_option('-e', '--massError',   dest='massError',       type='int',    default=0,     help='massError (default:0)')
     parser.add_option('-u', '--mekd',   dest='mekd',       type='int',    default=0,     help='mekd double gaussian inputs (default:0)')
     parser.add_option('-s', '--altHypo',   dest='hypothesis', type='string',  default='gg0-',  help='Alt Hypo:gg0-, gg0+, qq1-, qq1+, gg2+m, qq2+m')
+    parser.add_option('--unfold', action='store_true', dest='unfold', default=False ,help='no X11 windows')
     
     # store options and arguments as global variables
     global opt, args
@@ -43,6 +44,7 @@ def parseOptions():
     if (opt.inputDir == ''):
         print 'Please pass an input directory! Exiting...'
         sys.exit()
+
 
     
 # define make directory function
@@ -93,15 +95,18 @@ def creationLoop(directory):
     myReader4e = inputReader(opt.inputDir+"/inputs_4e.txt")
     myReader4e.readInputs()
     theInputs4e = myReader4e.getInputs()
+    theInputs4e['unfold'] = opt.unfold
 
     myReader4mu = inputReader(opt.inputDir+"/inputs_4mu.txt")
     myReader4mu.readInputs()
     theInputs4mu = myReader4mu.getInputs()
-
+    theInputs4mu['unfold'] = opt.unfold
+    
     myReader2e2mu = inputReader(opt.inputDir+"/inputs_2e2mu.txt")
     myReader2e2mu.readInputs()
     theInputs2e2mu = myReader2e2mu.getInputs()
-
+    theInputs2e2mu['unfold'] = opt.unfold
+    
     
     a=0
     while (a < len(startMass) ):

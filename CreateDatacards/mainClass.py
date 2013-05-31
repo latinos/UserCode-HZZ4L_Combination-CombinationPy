@@ -78,11 +78,17 @@ class mainClass():
         if theInputs['doHypTest'] and theInputs['altHypLabel']=="" :
             theInputs['altHypLabel'] = "_ALT"
 
+        if theInputs['unfold'] and not theInputs['doHypTest']:
+            raise RuntimeError, "Cannot unfold 2D into 1D if not doing Hypothesis test!"
+
         if theInputs['doHypTest']:
             print '----------------- Running Signal Hypothesis Test Cards -----------------'
             print '>>>>>> Alt Hypothesis: ',theInputs['altHypothesis']
             print '>>>>>> Alt Label: ',theInputs['altHypLabel']
-            
+
+        if theInputs['unfold']:
+            print '>>>>>> Unfolding 2D into 1D hists'
+                        
         if theInputs['doHypTest'] and not theInputs['all']:
             raise RuntimeError, "You asked to prepare DC and WS for Hyp Test but you did not want to sum over all signal channels. This is forbidden. Check inputs ! (it should have already send you this error message, strange that  you are here...)"
         
@@ -109,7 +115,10 @@ class mainClass():
                 myDatacardClass2D.setSuperKD()
                 myDatacardClass2D.fetchDatasetSuperKD()            
                 myDatacardClass2D.makeSuperKDAnalysis()
-                myDatacardClass2D.writeWorkspaceSuperKD()
+                if theInputs['unfold']:
+                    myDatacardClass2D.writeWorkspaceUnfoldedSuperKD()
+                else:
+                    myDatacardClass2D.writeWorkspaceSuperKD()
                 myDatacardClass2D.prepareDatacardSuperKD()
 
             else:

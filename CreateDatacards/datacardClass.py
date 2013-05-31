@@ -61,8 +61,8 @@ class datacardClass(object):
         elif (self.channel == self.ID_2e2mu): self.appendName = '2e2mu'
         else:
             raise RuntimeError, "Input Error: Unknown channel! (4mu = 1, 4e = 2, 2e2mu = 3)"
-        
-    
+
+            
     # return trueVar if testStatement else return falseVar
     def getVariable(self,trueVar,falseVar,testStatement):
 
@@ -658,6 +658,7 @@ class datacardClass(object):
         
         ## ------------------- LUMI -------------------- ##
         self.rrvLumi = ROOT.RooRealVar("cmshzz4l_lumi","cmshzz4l_lumi",self.lumi)  
+
         
         ## ----------------------- SIGNAL RATES ----------------------- ##
         self.CMS_zz4l_mass.setRange("shape",self.inputs['low_M'],self.inputs['high_M'])
@@ -671,6 +672,7 @@ class datacardClass(object):
             fr_low_M = 100
             fr_high_M = 1400
             
+
 
         self.CMS_zz4l_mass.setRange("fullrangesignal",fr_low_M,fr_high_M)
         self.CMS_zz4l_mass.setRange("fullrange",100,1400)
@@ -891,12 +893,13 @@ class datacardClass(object):
         ## SET RATES TO 1 
         ## DC RATES WILL BE MULTIPLIED
         ## BY RATES IMPORTED TO WS
-        sigRate_ggH_Shape = 1
-        sigRate_VBF_Shape = 1
-        sigRate_WH_Shape = 1
-        sigRate_ZH_Shape = 1
-        sigRate_ttH_Shape = 1
-        
+        if not self.inputs['unfold']:
+            sigRate_ggH_Shape = 1
+            sigRate_VBF_Shape = 1
+            sigRate_WH_Shape = 1
+            sigRate_ZH_Shape = 1
+            sigRate_ttH_Shape = 1
+            
         
         ## If the channel is not declared in inputs, set rate = 0
         if not self.ggH_chan and not self.all_chan:  sigRate_ggH_Shape = 0

@@ -54,10 +54,10 @@ class superkdClass(datacardClass):
         print '>>>>>> Signal Templates Files: ',templateSigName, ', ',templateSigName_ALT
         
 
-        #Set Bins
+        ##Set Bins
         dBins = self.sigTemplate.GetYaxis().GetNbins()
-        dLow = self.sigTemplate.GetYaxis().GetXmin()
-        dHigh = self.sigTemplate.GetYaxis().GetXmax()
+        dLow = self.sigTemplate.GetXaxis().GetXmin()
+        dHigh = self.sigTemplate.GetXaxis().GetXmax()
         self.D = ROOT.RooRealVar(self.discVarName,self.discVarName,dLow,dHigh)
         self.D.setBins(dBins)
         print '>>>>>> discVarName: ', self.discVarName
@@ -66,9 +66,9 @@ class superkdClass(datacardClass):
 
         #################################
         self.superDiscVarName = "CMS_zz4l_smd"
-        dBins = self.sigTemplate.GetYaxis().GetNbins()
-        dLow = self.sigTemplate.GetYaxis().GetXmin()
-        dHigh = self.sigTemplate.GetYaxis().GetXmax()
+        dBins = self.sigTemplate_ALT.GetXaxis().GetNbins()
+        dLow = self.sigTemplate_ALT.GetXaxis().GetXmin()
+        dHigh = self.sigTemplate_ALT.GetXaxis().GetXmax()
         self.SD = ROOT.RooRealVar(self.superDiscVarName,self.superDiscVarName,dLow,dHigh)
         self.SD.setBins(dBins)
 
@@ -79,26 +79,25 @@ class superkdClass(datacardClass):
     ## --------------------------- DATASET --------------------------- ##
     def fetchDatasetSuperKD(self):
 
-        dataFileDir = "CMSdata"
-        dataTreeName = "data_obs" 
-        dataFileName = "{0}/hzz{1}_{2}.root".format(dataFileDir,self.appendName,self.lumi)
-        if (self.DEBUG): print dataFileName," ",dataTreeName 
-        data_obs_file = ROOT.TFile(dataFileName)
+        self.dataFileDir = "CMSdata"
+        self.dataTreeName = "data_obs" 
+        self.dataFileName = "{0}/hzz{1}_{2}.root".format(self.dataFileDir,self.appendName,self.lumi)
+        if (self.DEBUG): print self.dataFileName," ",self.dataTreeName 
+        self.data_obs_file = ROOT.TFile(self.dataFileName)
         
-        print data_obs_file.Get(dataTreeName)
+        print self.data_obs_file.Get(self.dataTreeName)
         
-        if not (data_obs_file.Get(dataTreeName)):
-            print "File, \"",dataFileName,"\", or tree, \"",dataTreeName,"\", not found" 
+        if not (self.data_obs_file.Get(self.dataTreeName)):
+            print "File, \"",self.dataFileName,"\", or tree, \"",self.dataTreeName,"\", not found" 
             print "Exiting..."
             sys.exit()
             
-        self.data_obs_tree = data_obs_file.Get(dataTreeName)
+        self.data_obs_tree = self.data_obs_file.Get(self.dataTreeName)
         self.data_obs = ROOT.RooDataSet()
         self.datasetName = "data_obs_{0}".format(self.appendName)
             
         self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.CMS_zz4l_mass,self.SD,self.D),'CMS_zz4l_mass>106.0&&CMS_zz4l_mass<141.0').reduce(ROOT.RooArgSet(self.SD,self.D))
                 
-
 
 
     def makeSuperKDAnalysis(self):
@@ -181,7 +180,7 @@ class superkdClass(datacardClass):
         if self.sigMorph:
             self.syst1MorphSig.setConstant(False)
             self.syst2MorphSig.setConstant(False)
-            self.morphVarListSig1.add(syst1MorphSig)
+            self.morphVarListSig1.add(self.syst1MorphSig)
             ### just one morphing for all signal processes (fully correlated systs)
             ### self.morphVarListSig2.add(self.syst2MorphSig)
             self.morphVarListSig1.add(self.syst2MorphSig)
@@ -252,11 +251,11 @@ class superkdClass(datacardClass):
             self.funcList_zjets.add(self.bkgTemplatePdf_zjets)
             self.funcList_zjets.add(self.bkgTemplatePdf_zjets_Up)
             self.funcList_zjets.add(self.bkgTemplatePdf_zjets_Down)
-            self.alphaMorphBkg.setConstant(False) ### SHOULD THIS BE TRUE?
+            self.alphaMorphBkg.setConstant(False) 
             self.morphVarListBkg.add(self.alphaMorphBkg)
         else:
             self.funcList_zjets.add(self.bkgTemplatePdf_zjets)
-            self.alphaMorphBkg.setConstant(True) ### SHOULD THIS BE FALSE?
+            self.alphaMorphBkg.setConstant(True) 
             
             
         TemplateName = "bkgTemplateMorphPdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
@@ -273,7 +272,7 @@ class superkdClass(datacardClass):
 
             
     ## --------------------------- WORKSPACE -------------------------- ##
-    def writeWorkspaceSuperKD(self):
+    def writeWorkspaceUnfoldedSuperKD(self):
             
         endsInP5 = False
         tmpMH = self.mH
@@ -298,59 +297,117 @@ class superkdClass(datacardClass):
         
         if(self.DEBUG): print self.name_Shape,"  ",self.name_ShapeWS2
 
-        #Workspace
-        self.w = ROOT.RooWorkspace("w","w")
-        #Class code
-        self.w.importClassCode(RooqqZZPdf_v2.Class(),True)
-        self.w.importClassCode(RooggZZPdf_v2.Class(),True)
-        self.w.importClassCode(RooRelBWUFParam.Class(),True)
-        self.w.importClassCode(RooDoubleCB.Class(),True)
-        self.w.importClassCode(RooFormulaVar.Class(),True)
-        #Data
-        getattr(self.w,'import')(self.data_obs,ROOT.RooFit.Rename("data_obs")) 
-                
-        self.sigCB2d_ggH.SetNameTitle("ORIGggH","ORIGggH")
-        
-        getattr(self.w,'import')(self.sigCB2d_ggH, ROOT.RooFit.RecycleConflictNodes())
-        
-        self.sigTemplateMorphPdf_ggH.SetNameTitle("ggH","ggH")
-        getattr(self.w,'import')(self.sigTemplateMorphPdf_ggH, ROOT.RooFit.RecycleConflictNodes())
-        #save syst templates individually
-        systTempName=("ggHCMS_zz4l_leptScale_sig_{0}_{1:.0f}_Up").format(self.channel,self.sqrts)
-        self.sigTemplatePdf_ggH_syst1Up.SetNameTitle(systTempName,systTempName)
-        systTempName=("ggHCMS_zz4l_leptScale_sig_{0}_{1:.0f}_Down").format(self.channel,self.sqrts)
-        self.sigTemplatePdf_ggH_syst1Down.SetNameTitle(systTempName,systTempName)
-        
-        self.sigCB2d_ggH_ALT.SetNameTitle("ORIGggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
-        self.sigTemplateMorphPdf_ggH_ALT.SetNameTitle("ggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
-        getattr(self.w,'import')(self.sigCB2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
-        getattr(self.w,'import')(self.sigTemplatePdf_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
-        getattr(self.w,'import')(self.sigTemplateMorphPdf_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
-        
+
+        workspaceFile = ROOT.TFile(self.name_ShapeWS,"RECREATE")
+        workspaceFile.cd()
         
 
-        self.bkg1d_qqzz.SetNameTitle("ORIGbkg_qqzz","ORIGbkg_qqzz")
-        self.bkg1d_ggzz.SetNameTitle("ORIGbkg_ggzz","ORIGbkg_ggzz")
-        self.bkg1d_zjets.SetNameTitle("ORIGbkg_zjets","ORIGbkg_zjets")
+        #SM
+        theYield = self.rates['ggH']
+        hist = self.unfoldedHist(self.sigTemplate,'ggH',theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_syst1Up,'ggH_CMS_zz4l_smd_leptScale_sig_{0}Up'.format(self.channel),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_syst1Down,'ggH_CMS_zz4l_smd_leptScale_sig_{0}Down'.format(self.channel),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_syst2Up,'ggH_CMS_zz4l_smd_leptResol_sig_{0}Up'.format(self.channel),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_syst2Down,'ggH_CMS_zz4l_smd_leptResol_sig_{0}Down'.format(self.channel),theYield)
+        hist.Write()
+
+        #ALT
+        theYield = self.calcTotalYieldCorr(self.channel,self.altHypothesis)*self.rates['ggH']
+        hist = self.unfoldedHist(self.sigTemplate_ALT,'ggH{0}'.format(self.appendHypType),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_ALT_syst1Up,'ggH{0}_CMS_zz4l_smd_leptScale_sig_{1}Up'.format(self.appendHypType,self.channel),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_ALT_syst1Down,'ggH{0}_CMS_zz4l_smd_leptScale_sig_{1}Down'.format(self.appendHypType,self.channel),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_ALT_syst2Up,'ggH{0}_CMS_zz4l_smd_leptResol_sig_{1}Up'.format(self.appendHypType,self.channel),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.sigTemplate_ALT_syst2Down,'ggH{0}_CMS_zz4l_smd_leptResol_sig_{1}Down'.format(self.appendHypType,self.channel),theYield)
+        hist.Write()
         
-        self.bkgTemplateMorphPdf_qqzz.SetNameTitle("bkg2d_qqzz","bkg2d_qqzz")
-        self.bkgTemplateMorphPdf_ggzz.SetNameTitle("bkg2d_ggzz","bkg2d_ggzz")
+        #qqZZ
+        theYield = self.rates['qqZZ']
+        hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_qqzz',theYield)
+        hist.Write()
         
-        self.bkgTemplateMorphPdf_zjets.SetNameTitle("bkg2d_zjets","bkg2d_zjets")
+        #ggZZ
+        theYield = self.rates['ggZZ']
+        hist = self.unfoldedHist(self.ggbkgTemplate,'bkg2d_ggzz',theYield)
+        hist.Write()
         
-        getattr(self.w,'import')(self.bkgTemplateMorphPdf_qqzz,ROOT.RooFit.RecycleConflictNodes())
-        getattr(self.w,'import')(self.bkgTemplateMorphPdf_ggzz,ROOT.RooFit.RecycleConflictNodes())
-        getattr(self.w,'import')(self.bkgTemplateMorphPdf_zjets,ROOT.RooFit.RecycleConflictNodes())
+        #zjets
+        theYield = self.rates['zjets']
+        hist = self.unfoldedHist(self.zjetsTemplate,'bkg2d_zjets',theYield)
+        hist.Write()
+
+        #data
+        histData2D = self.sigTemplate.Clone()
+        for x in xrange(1,histData2D.GetNbinsX()+1):
+            for y in xrange(1,histData2D.GetNbinsY()+1):
+                histData2D.SetBinContent(x,y,0)
+
+        myfile = ROOT.TFile(self.dataFileName,"READ")
+        myTree = myfile.Get(self.dataTreeName)
         
-        ### save signal rates
-        getattr(self.w,'import')(self.rfvSigRate_ggH, ROOT.RooFit.RecycleConflictNodes())
-        self.rfvSigRate_ggH_ALT = ROOT.RooFormulaVar(self.rfvSigRate_ggH,"ggH{0}_norm".format(self.appendHypType))
-        print '>>>>>> Compare Signal Rates: SM=',self.rfvSigRate_ggH.getVal()," ALT=",self.rfvSigRate_ggH_ALT.getVal()
-        getattr(self.w,'import')(self.rfvSigRate_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+        for i in range( myTree.GetEntries() ):
+            myTree.GetEntry(i);
+
+            sd = getattr(myTree,self.superDiscVarName)
+            pd = getattr(myTree,self.discVarName)
+            print sd, pd
+            histData2D.Fill(sd,pd)
+
+        workspaceFile.cd()
+        hist = self.unfoldedHist(histData2D,'data_obs',-1)
+        hist.Write()
+            
+        workspaceFile.Close()
+
+
+    def unfoldedHist(self,hist,histName,norm):
+
+        nBinsX = hist.GetXaxis().GetNbins()
+        nBinsY = hist.GetYaxis().GetNbins()
+        totalNbins = nBinsX*nBinsY
+        print ">>>>>> Bins in 1D hist "+str(histName)+": ",totalNbins
         
-        
-        self.w.writeToFile(self.name_ShapeWS)
+        hist1D = ROOT.TH1F(histName,histName,totalNbins,0,totalNbins)
+
+        i=0
+        for j in xrange(nBinsX):
+            for k in xrange(nBinsY):
                 
+                binContent = hist.GetBinContent(j+1,k+1)
+                hist1D.SetBinContent(i+1,binContent)
+                #print hist1D.GetBinContent(i+1)
+                i+=1
+        
+        if norm > 0: hist1D.Scale(norm/hist1D.Integral("width"))
+
+        figs = self.outputDir+"/figs"
+        canv = ROOT.TCanvas("c","c",700,700)
+        canv.cd()
+        hist1D.SetFillColor(kBlack)
+        if histName.startswith("ggH"):
+            hist1D.SetFillColor(kOrange+10)
+        if histName.startswith("bkg2d_qqzz"):
+            hist1D.SetFillColor(kAzure-9)
+        if histName.startswith("bkg2d_ggzz"):
+            hist1D.SetFillColor(kAzure-8)
+        if histName.startswith("bkg2d_zjets"):
+            hist1D.SetFillColor(kGreen-5)
+        hist1D.Draw("HIST")
+        canv.SaveAs(figs+"/"+histName+"_"+self.appendName+".eps")
+        canv.SaveAs(figs+"/"+histName+"_"+self.appendName+".png")
+
+                    
+        return hist1D
+
+
+
 
     def prepareDatacardSuperKD(self):
 
@@ -363,7 +420,7 @@ class superkdClass(datacardClass):
         else:
             name_Shape = "{0}/HCG/{1:.0f}/hzz4l_{2}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts,self.appendHypType)
         fo = open( name_Shape, "wb")
-        self.WriteDatacardSuperKD(fo, self.name_ShapeWS2, self.rates, self.data_obs.numEntries(),self.isAltSig,self.appendHypType )
+        self.WriteDatacardSuperKD(fo, self.name_ShapeWS2, self.rates, self.data_obs.numEntries())
         self.systematics.WriteSystematics(fo, self.inputs)
         self.systematics.WriteShapeSystematics(fo,self.inputs)
         self.systematics.WriteSuperKDShapeSystematics(fo,self.inputs)
@@ -372,23 +429,25 @@ class superkdClass(datacardClass):
 
 
         
-    def WriteDatacardSuperKD(self,file,nameWS,theRates,obsEvents,isAltCard,AltLabel):
+    def WriteDatacardSuperKD(self,file,nameWS,theRates,obsEvents):
 
-        print "isAltCard = ",isAltCard
         numberSig = self.numberOfSigChan(self.inputs)
         numberBg  = self.numberOfBgChan(self.inputs)
 
         file.write("imax 1\n")
         file.write("jmax {0}\n".format(numberSig+numberBg-1))
         file.write("kmax *\n")
-        
         file.write("------------\n")
-        file.write("shapes * * {0} w:$PROCESS \n".format(nameWS))
+
+        if self.inputs['unfold']:
+            file.write("shapes * * {0} $PROCESS $PROCESS_$SYSTEMATIC \n".format(nameWS))
+            file.write("shapes data_obs a{0} {1} data_obs \n".format(self.channel,nameWS))
+        else:
+            file.write("shapes * * {0} w:$PROCESS \n".format(nameWS))
+
         file.write("------------\n")
-        
         file.write("bin a{0} \n".format(self.channel))
         file.write("observation {0} \n".format(obsEvents))
-        
         file.write("------------\n")
         file.write("## mass window [{0},{1}] \n".format(self.inputs['low_M'],self.inputs['high_M']))
         file.write("bin ")        
@@ -398,12 +457,9 @@ class superkdClass(datacardClass):
 
         if self.inputs["all"]:
             print "ALL CHANNELS --- KDCLASS --- WriteDatacardKD\n"
-            channelList=['ggH','qqZZ','ggZZ','zjets','ttbar','zbb']
-            if isAltCard :
-                channelList=['ggH','ggH','qqZZ','ggZZ','zjets']
-                channelName2D=['ggH','ggH{0}'.format(AltLabel),'bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets']
-            else:
-                channelName2D=['ggH','bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets','bkg2d_ttbar','bkg2d_zbb']
+            channelList=['ggH','ggH','qqZZ','ggZZ','zjets']
+            channelName2D=['ggH','ggH{0}'.format(self.appendHypType),'bkg2d_qqzz','bkg2d_ggzz','bkg2d_zjets']
+
           
         for chan in channelList:
             if self.inputs[chan] or self.inputs['all']:
@@ -447,8 +503,9 @@ class superkdClass(datacardClass):
         j=0
         for chan in channelList:
             if self.inputs[chan] or self.inputs["all"]:
-                if channelName2D[j].startswith('ggH{0}'.format(AltLabel)):
-                    file.write("{0:.4f} ".format(self.calcTotalYieldCorr(self.channel,self.altHypothesis)))
+                if channelName2D[j].startswith('ggH{0}'.format(self.appendHypType)):
+                    theYield = self.calcTotalYieldCorr(self.channel,self.altHypothesis)*theRates[chan]
+                    file.write("{0:.4f} ".format(theYield))
                 else:
                     file.write("{0:.4f} ".format(theRates[chan]))
             j+=1
@@ -457,7 +514,6 @@ class superkdClass(datacardClass):
         file.write("------------\n")
 
 
-    
 
     def calcTotalYieldCorr(self, channel, spinHypCode):
         
@@ -530,4 +586,5 @@ class superkdClass(datacardClass):
         newAltShape.Scale(1.0/newAltShape.Integral())
                     
         return newAltShape
+
 

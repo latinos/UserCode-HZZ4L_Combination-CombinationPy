@@ -675,20 +675,36 @@ class systematicsClass:
 
 
         if( self.channel == self.ID_4mu and theInputs['doHypTest']):
-            
-            theFile.write("CMS_zz4l_smd_zjets_bkg_1 param 0  1  [-3,3]\n")
-            theFile.write("CMS_zz4l_smd_leptScale_sig_1 param 0  1  [-3,3]\n")
-            theFile.write("CMS_zz4l_smd_leptResol_sig_1 param 0  1  [-3,3]\n")
+
+            if theInputs['unfold']:
+                #theFile.write("CMS_zz4l_smd_zjets_bkg_1 shape - - - - 1.0\n")
+                theFile.write("CMS_zz4l_smd_leptScale_sig_1 shape 1.0 1.0 - - -\n")
+                theFile.write("CMS_zz4l_smd_leptResol_sig_1 shape 1.0 1.0 - - -\n")
+            else:
+                theFile.write("CMS_zz4l_smd_zjets_bkg_1 param 0  1  [-3,3]\n")
+                theFile.write("CMS_zz4l_smd_leptScale_sig_1 param 0  1  [-3,3]\n")
+                theFile.write("CMS_zz4l_smd_leptResol_sig_1 param 0  1  [-3,3]\n")
             
         if( self.channel == self.ID_4e and theInputs['doHypTest']):
             
-            theFile.write("CMS_zz4l_smd_zjets_bkg_2 param 0  1  [-3,3]\n")
-            theFile.write("CMS_zz4l_smd_leptScale_sig_2 param 0  1  [-3,3]\n")
-            theFile.write("CMS_zz4l_smd_leptResol_sig_2 param 0  1  [-3,3]\n")
-            
+            if theInputs['unfold']:
+                #theFile.write("CMS_zz4l_smd_zjets_bkg_2 shape - - - - 1.0\n")
+                theFile.write("CMS_zz4l_smd_leptScale_sig_2 shape 1.0 1.0 - - -\n")
+                theFile.write("CMS_zz4l_smd_leptResol_sig_2 shape 1.0 1.0 - - -\n")
+            else:
+                theFile.write("CMS_zz4l_smd_zjets_bkg_2 param 0  1  [-3,3]\n")
+                theFile.write("CMS_zz4l_smd_leptScale_sig_2 param 0  1  [-3,3]\n")
+                theFile.write("CMS_zz4l_smd_leptResol_sig_2 param 0  1  [-3,3]\n")
+
         if( self.channel == self.ID_2e2mu and theInputs['doHypTest']):
-            
-            theFile.write("CMS_zz4l_smd_zjets_bkg_3 param 0  1  [-3,3]\n")
-            theFile.write("CMS_zz4l_smd_leptScale_sig_3 param 0  1  [-3,3]\n")
-            theFile.write("CMS_zz4l_smd_leptResol_sig_3 param 0  1  [-3,3]\n")
+                    
+            if theInputs['unfold']:
+                #theFile.write("CMS_zz4l_smd_zjets_bkg_3 shape - - - - 1.0\n")
+                theFile.write("CMS_zz4l_smd_leptScale_sig_3 shape 1.0 1.0 - - -\n")
+                theFile.write("CMS_zz4l_smd_leptResol_sig_3 shape 1.0 1.0 - - -\n")
+            else:
+                theFile.write("CMS_zz4l_smd_zjets_bkg_3 param 0  1  [-3,3]\n")
+                theFile.write("CMS_zz4l_smd_leptScale_sig_3 param 0  1  [-3,3]\n")
+                theFile.write("CMS_zz4l_smd_leptResol_sig_3 param 0  1  [-3,3]\n")
+           
             
