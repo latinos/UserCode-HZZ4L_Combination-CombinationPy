@@ -29,6 +29,8 @@ def parseOptions():
     
     parser.add_option('-x', '--xkd', dest='xKD', type='string', default="CMS_zz4l_smd",    help='name of x axis kd')
     parser.add_option('-y', '--ykd', dest='yKD', type='string', default="CMS_zz4l_pseudoKD", help='name of y axis kd')
+    parser.add_option('-q', '--quick',action='store_true', dest='quickRun', default=False, help='Skip 1D slices to run quick')
+    
 
     global opt, args
     (opt, args) = parser.parse_args()
@@ -225,35 +227,35 @@ def validate():
                     print "{0}: {1}   {2}: {3}".format(opt.xKD,xKDval,opt.yKD,yKDval)
                     
                 
-
+                if not opt.quickRun:
                 #### Plot 1D slices ####
-                xKDvar = ws.var(opt.xKD);
-                yKDvar = ws.var(opt.yKD);
-
-                xKDvar.setBins(ggH_2d.GetXaxis().GetNbins())
-                yKDvar.setBins(ggH_2d.GetYaxis().GetNbins())
-                
-                xkd_frame = xKDvar.frame()
-                ykd_frame = yKDvar.frame()
-                                            
-                data.plotOn(xkd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None));
-                ws.pdf("bkg2d_ggzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2));
-                ws.pdf("bkg2d_qqzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3));
-                ws.pdf("bkg2d_zjets").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4));
-                ws.pdf("ggH").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1));
-                ws.pdf("ggH_ALT").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6));
-                xkd_frame.Draw()
-                canv.SaveAs("{0}/xKDtemplate_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
-                
-                data.plotOn(ykd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None));
-                ws.pdf("bkg2d_ggzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2));
-                ws.pdf("bkg2d_qqzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3));
-                ws.pdf("bkg2d_zjets").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4));
-                ws.pdf("ggH").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1));
-                ws.pdf("ggH_ALT").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6));
-                ykd_frame.Draw();
-                canv.SaveAs("{0}/yKDtemplate_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
-                
+                    xKDvar = ws.var(opt.xKD);
+                    yKDvar = ws.var(opt.yKD);
+                    
+                    xKDvar.setBins(ggH_2d.GetXaxis().GetNbins())
+                    yKDvar.setBins(ggH_2d.GetYaxis().GetNbins())
+                    
+                    xkd_frame = xKDvar.frame()
+                    ykd_frame = yKDvar.frame()
+                    
+                    data.plotOn(xkd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None));
+                    ws.pdf("bkg2d_ggzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2));
+                    ws.pdf("bkg2d_qqzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3));
+                    ws.pdf("bkg2d_zjets").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4));
+                    ws.pdf("ggH").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1));
+                    ws.pdf("ggH_ALT").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6));
+                    xkd_frame.Draw()
+                    canv.SaveAs("{0}/xKDtemplate_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
+                    
+                    data.plotOn(ykd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None));
+                    ws.pdf("bkg2d_ggzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2));
+                    ws.pdf("bkg2d_qqzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3));
+                    ws.pdf("bkg2d_zjets").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4));
+                    ws.pdf("ggH").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1));
+                    ws.pdf("ggH_ALT").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6));
+                    ykd_frame.Draw();
+                    canv.SaveAs("{0}/yKDtemplate_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
+                    
                 i+=1
                 
 
