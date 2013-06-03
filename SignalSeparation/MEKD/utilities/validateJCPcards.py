@@ -36,6 +36,9 @@ def parseOptions():
     (opt, args) = parser.parse_args()
         
 
+    opt.xKDbinning = 'smd_binning'
+    opt.yKDbinning = 'psD_binning'
+
     if opt.inputDir == '':
         raise RuntimeError, 'Please choose and input directory!'
 
@@ -97,6 +100,9 @@ def printBinning(hist):
 
     print spacer
     print binString
+
+    print "Integral: ",hist.Integral()
+    print "Integral(\"width\"): ",hist.Integral("width")
         
 
 def validate():
@@ -152,28 +158,37 @@ def validate():
                 ##### PDFs #####
                 print ">>>> PDFs: "
                 
-                ggzz_2d = ws.pdf("bkg2d_ggzz").createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                qqzz_2d = ws.pdf("bkg2d_qqzz").createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                zjets_2d = ws.pdf("bkg2d_zjets").createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                ggH_2d = ws.pdf("ggH").createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                ggH_ALT_2d = ws.pdf("ggH_ALT").createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
+                xKDvar = ws.var(opt.xKD)
+                yKDvar = ws.var(opt.yKD)
+                
+                xkd_binning = ws.var(opt.xKD).getBinning(opt.xKDbinning)
+                ykd_binning = ws.var(opt.yKD).getBinning(opt.yKDbinning)
+
+                xkd_binning.Print()
+                ykd_binning.Print()
+                
+                ggzz_2d = ws.pdf("bkg2d_ggzz").createHistogram("bkg2d_ggzz_pdf",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                qqzz_2d = ws.pdf("bkg2d_qqzz").createHistogram("bkg2d_qqzz_pdf",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                zjets_2d = ws.pdf("bkg2d_zjets").createHistogram("bkg2d_zjets_pdf",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                ggH_2d = ws.pdf("ggH").createHistogram("ggH_pdf",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                ggH_ALT_2d = ws.pdf("ggH_ALT").createHistogram("ggH_ALT_pdf",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
 
                 canv = ROOT.TCanvas("c","c",700,700)
                 canv.cd()
                 
-                ggzz_2d.Draw("PROF COLZ");
+                ggzz_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/ggzz_pdf_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                qqzz_2d.Draw("PROF COLZ");
+                qqzz_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/qqzz_pdf_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                zjets_2d.Draw("PROF COLZ");
+                zjets_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/zjets_pdf_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                ggH_2d.Draw("PROF COLZ");
+                ggH_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/ggH_pdf_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                ggH_ALT_2d.Draw("PROF COLZ");
+                ggH_ALT_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/ggH_ALT_pdf_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
 
                 printBinning(ggH_2d)
@@ -185,28 +200,29 @@ def validate():
 
                 ##### Templates #####
                 print ">>>> Templates:"
-                Tggzz_2d = ws.pdf("bkgTemplatePdf_ggzz_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                Tqqzz_2d = ws.pdf("bkgTemplatePdf_qqzz_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                Tzjets_2d = ws.pdf("bkgTemplatePdf_zjets_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                TggH_2d = ws.pdf("sigTemplatePdf_ggH_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
-                TggH_ALT_2d = ws.pdf("sigTemplatePdf_ggH_ALT_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("{0},{1}".format(opt.xKD,opt.yKD))
+                Tggzz_2d = ws.pdf("bkgTemplatePdf_ggzz_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("bkg2d_ggzz_template",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                Tqqzz_2d = ws.pdf("bkgTemplatePdf_qqzz_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("bkg2d_qqzz_template",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                Tzjets_2d = ws.pdf("bkgTemplatePdf_zjets_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("bkg2d_zjets_template",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                TggH_2d = ws.pdf("sigTemplatePdf_ggH_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("ggH_template",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+                TggH_ALT_2d = ws.pdf("sigTemplatePdf_ggH_ALT_{0}_{1}".format(chanNum[i],sqrts)).createHistogram("ggH_ALT_template",xKDvar,ROOT.RooFit.Binning(xkd_binning),ROOT.RooFit.YVar(yKDvar,ROOT.RooFit.Binning(ykd_binning)))
+
 
                 canv = ROOT.TCanvas("c","c",700,700)
                 canv.cd()
                 
-                Tggzz_2d.Draw("PROF COLZ");
+                Tggzz_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/ggzz_template_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                Tqqzz_2d.Draw("PROF COLZ");
+                Tqqzz_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/qqzz_template_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                Tzjets_2d.Draw("PROF COLZ");
+                Tzjets_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/zjets_template_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                TggH_2d.Draw("PROF COLZ");
+                TggH_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/ggH_template_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
                 
-                TggH_ALT_2d.Draw("PROF COLZ");
+                TggH_ALT_2d.Draw("PROF COLZ")
                 canv.SaveAs("{0}/ggH_ALT_template_{1}_{2}TeV.png".format(opt.outputDir,chan,sqrts))
 
                 printBinning(TggH_2d)
@@ -229,32 +245,56 @@ def validate():
                 
                 if not opt.quickRun:
                 #### Plot 1D slices ####
-                    xKDvar = ws.var(opt.xKD);
-                    yKDvar = ws.var(opt.yKD);
                     
                     xKDvar.setBins(ggH_2d.GetXaxis().GetNbins())
                     yKDvar.setBins(ggH_2d.GetYaxis().GetNbins())
                     
                     xkd_frame = xKDvar.frame()
                     ykd_frame = yKDvar.frame()
+
+                    dummyHist_ggzz = ROOT.TH1F()
+                    dummyHist_qqzz = ROOT.TH1F()
+                    dummyHist_zjets = ROOT.TH1F()
+                    dummyHist_ggH = ROOT.TH1F()
+                    dummyHist_ggH_ALT = ROOT.TH1F()
+
+                    dummyHist_ggzz.SetLineColor(2)
+                    dummyHist_qqzz.SetLineColor(3)
+                    dummyHist_zjets.SetLineColor(4)
+                    dummyHist_ggH.SetLineColor(1)
+                    dummyHist_ggH_ALT.SetLineColor(6)
+
+                    dummyHist_ggzz.SetLineStyle(2)
+
+                    leg = ROOT.TLegend(0.75,0.75,1,1)
+                    leg.SetBorderSize(0)
+                    leg.SetTextFont(42)
+                    leg.AddEntry(dummyHist_ggzz,"ggZZ","L")
+                    leg.AddEntry(dummyHist_qqzz,"qqZZ","L")
+                    leg.AddEntry(dummyHist_zjets,"Zjets","L")
+                    leg.AddEntry(dummyHist_ggH,"ggH","L")
+                    leg.AddEntry(dummyHist_ggH_ALT,"ggH_ALT","L")
+
                     
-                    data.plotOn(xkd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None));
-                    ws.pdf("bkg2d_ggzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2));
-                    ws.pdf("bkg2d_qqzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3));
-                    ws.pdf("bkg2d_zjets").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4));
-                    ws.pdf("ggH").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1));
-                    ws.pdf("ggH_ALT").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6));
+                    data.plotOn(xkd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None))
+                    ws.pdf("bkg2d_ggzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2))
+                    ws.pdf("bkg2d_qqzz").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3))
+                    ws.pdf("bkg2d_zjets").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4))
+                    ws.pdf("ggH").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1))
+                    ws.pdf("ggH_ALT").plotOn(xkd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6))
                     xkd_frame.Draw()
-                    canv.SaveAs("{0}/xKDtemplate_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
+                    leg.Draw()
+                    canv.SaveAs("{0}/xKDslice_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
                     
-                    data.plotOn(ykd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None));
-                    ws.pdf("bkg2d_ggzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2));
-                    ws.pdf("bkg2d_qqzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3));
-                    ws.pdf("bkg2d_zjets").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4));
-                    ws.pdf("ggH").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1));
-                    ws.pdf("ggH_ALT").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6));
-                    ykd_frame.Draw();
-                    canv.SaveAs("{0}/yKDtemplate_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
+                    data.plotOn(ykd_frame,ROOT.RooFit.DataError(ROOT.RooAbsData.None))
+                    ws.pdf("bkg2d_ggzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(2),ROOT.RooFit.LineColor(2))
+                    ws.pdf("bkg2d_qqzz").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(3))
+                    ws.pdf("bkg2d_zjets").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(4))
+                    ws.pdf("ggH").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(1))
+                    ws.pdf("ggH_ALT").plotOn(ykd_frame,ROOT.RooFit.LineStyle(1),ROOT.RooFit.LineColor(6))
+                    ykd_frame.Draw()
+                    leg.Draw()
+                    canv.SaveAs("{0}/yKDslice_{1}_{2}_{3}TeV.png".format(opt.outputDir,mass,chan,sqrts))
                     
                 i+=1
                 
