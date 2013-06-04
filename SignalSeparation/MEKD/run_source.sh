@@ -8,6 +8,8 @@ NTOYS=$4
 MH=$5
 SEED=$6
 CARD=$7
+NITER=$((NTOYS / 1000))
+NTOYS=1000
 ########
 
 #CMSSW
@@ -25,9 +27,9 @@ if [[ "$MUTYPE" == "fixed" ]]
 
     if [[ "$FITNUIS" == "TRUE" ]]
 	then
-	combine -m ${MH} -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 --fitNuis=1 ${CARD} --singlePoint 1 --saveHybridResult --seed ${SEED} -T ${NTOYS} -i 1 --clsAcc 0 --fullBToys -n "fixedMu.fitNuis"
+	combine -m ${MH} -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 --fitNuis=1 ${CARD} --singlePoint 1 --saveHybridResult --seed ${SEED} -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "fixedMu.fitNuis"
     else
-	combine -m ${MH} -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 --fitNuis=0 ${CARD} --singlePoint 1 --saveHybridResult --seed ${SEED} -T ${NTOYS} -i 1 --clsAcc 0 --fullBToys -n "fixedMu"
+	combine -m ${MH} -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 --fitNuis=0 ${CARD} --singlePoint 1 --saveHybridResult --seed ${SEED} -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "fixedMu"
     fi
     
 ### float mu
@@ -36,9 +38,9 @@ elif [[ "$MUTYPE" == "float" ]]
 
     if [[ "$FITNUIS" == "TRUE" ]]
 	then
-	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} -i 1 --clsAcc 0 --fullBToys -n "floatMu.fitNuis" --fitNuis=1
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "floatMu.fitNuis" --fitNuis=1
     else
-	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} -i 1 --clsAcc 0 --fullBToys -n "floatMu" --fitNuis=0
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "floatMu" --fitNuis=0
     fi
     
 fi
