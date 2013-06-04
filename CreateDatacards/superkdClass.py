@@ -205,48 +205,50 @@ class superkdClass(datacardClass):
         self.sigCB2d_ggH = self.signalCB_ggH.Clone("sigCB2d_ggH")
         self.sigCB2d_ggH_ALT = self.signalCB_ggH.Clone("sigCB2d_ggH{0}".format(self.appendHypType))
 
-      ## ----------------- SuperKD 2D BACKGROUND SHAPES --------------- ##
+        ## ----------------- SuperKD 2D BACKGROUND SHAPES --------------- ##
         templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         self.bkgTempFile = ROOT.TFile(templateBkgName)
         self.bkgTemplate = self.bkgTempFile.Get("h_superDpsD")
         
+
         TemplateName = "bkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.bkgTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
-        TemplateName = "zjetsTempDataHist_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        TemplateName = "bkgTemplatePdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkgTemplatePdf_qqzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist)
+
+
+        TemplateName = "zjetsbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkgTempDataHist_zjets = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
+        TemplateName = "bkgTemplatePdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjets)
+
+        TemplateName = "zjetsbkgTempDataHist_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.bkgTempDataHist_zjetsUp = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
+        TemplateName = "bkgTemplatePdf_zjets_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkgTemplatePdf_zjets_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsUp)
         
+
+
+        templateBkgName = "{0}/Dbackground_ZJetsCR_AllChans.root".format(self.templateDir)
+        self.zjetsTempFile = ROOT.TFile(templateBkgName)
+        self.zjetsTemplateDown = self.zjetsTempFile.Get("h_superDpsD")
+        TemplateName = "zjetsbkgTempDataHist_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkgTempDataHist_zjetsDown = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplateDown,kFALSE))
+        #self.zjetsTemplateDown = self.reflectSystematics(self.bkgTemplate,self.zjetsTemplate)
+        TemplateName = "bkgTemplatePdf_zjets_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        self.bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsDown)
+        
+
         templateggBkgName = "{0}/Dbackground_ggZZ_{1}.root".format(self.templateDir ,self.appendName)
         self.ggbkgTempFile = ROOT.TFile(templateggBkgName)
         self.ggbkgTemplate = self.ggbkgTempFile.Get("h_superDpsD")
         TemplateName = "ggbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.ggbkgTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.ggbkgTemplate,kFALSE))
-        
-        TemplateName = "bkgTemplatePdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_qqzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist)
         TemplateName = "bkgTemplatePdf_ggzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.bkgTemplatePdf_ggzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.ggbkgTempDataHist)
-        
-        templateBkgName = "{0}/Dbackground_ZJetsCR_AllChans.root".format(self.templateDir)
-        self.zjetsTempFile = ROOT.TFile(templateBkgName)
-        self.zjetsTemplate = self.zjetsTempFile.Get("h_superDpsD")
-        TemplateName = "zjetsTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.zjetsTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplate,kFALSE))
-        
-        TemplateName = "bkgTemplatePdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist)
-        #        bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(SD,D),zjetsTempDataHist)
-        TemplateName = "bkgTemplatePdf_zjets_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_zjets_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsUp)
-        
-        
-        self.zjetsTemplateDown = self.reflectSystematics(self.bkgTemplate,self.zjetsTemplate)
-        #self.zjetsTemplateDown.setName("zjetsTemplateDown_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts))
-        #self.zjetsTemplateDown.setTitle("zjetsTemplateDown_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts))
-        TemplateName = "zjetsTempDataHistDown_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.zjetsTempDataHistDown = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplateDown,kFALSE))
-        TemplateName = "bkgTemplatePdf_zjets_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.zjetsTempDataHistDown)
-        
+
+
+        #################################
         
         self.funcList_zjets = ROOT.RooArgList()
         morphBkgVarName =  "CMS_zz4l_smd_zjets_bkg_{0:.0f}".format(self.channel)
@@ -426,11 +428,11 @@ class superkdClass(datacardClass):
         
         #zjets
         theYield = self.rates['zjets']
-        hist = self.unfoldedHist(self.zjetsTemplate,'bkg2d_zjets',theYield)
+        hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets',theYield)
         hist.Write()
         hist = self.unfoldedHist(self.zjetsTemplateDown,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Down'.format(self.channel),theYield)
         hist.Write()
-        hist = self.unfoldedHist(self.zjetsTemplate,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Up'.format(self.channel),theYield)#for now
+        hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Up'.format(self.channel),theYield)#for now
         hist.Write()
 
         #data
