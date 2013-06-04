@@ -729,8 +729,11 @@ class datacardClass(object):
         
         ## following printout is needed ,  dont remove it
         print ">>>>>>  sigeff ",self.rfvSigEff.getVal()
-    
-        CS_ggH = self.myCSW.HiggsCS(1,self.mH,self.sqrts)
+
+        if self.isAltSig:
+            CS_ggH = self.myCSW.HiggsCS(0,self.mH,self.sqrts)
+        else:
+            CS_ggH = self.myCSW.HiggsCS(1,self.mH,self.sqrts)
         CS_VBF = self.myCSW.HiggsCS(2,self.mH,self.sqrts)
         CS_WH = self.myCSW.HiggsCS(3,self.mH,self.sqrts)
         CS_ZH = self.myCSW.HiggsCS(4,self.mH,self.sqrts)
@@ -890,6 +893,10 @@ class datacardClass(object):
         self.systematics.setSystematics(bkgRate_qqzz_Shape,bkgRate_ggzz_Shape,bkgRate_zjets_Shape)
         self.systematics_forXSxBR.setSystematics(bkgRate_qqzz_Shape,bkgRate_ggzz_Shape,bkgRate_zjets_Shape)
 
+        if self.isAltSig:
+            sigRate_ggH_Shape = self.rfvSigRate_ggH.getVal()
+            print ">>>>>> Forcing sigRate_ggH_Shape = ",self.rfvSigRate_ggH.getVal()
+            
         ## SET RATES TO 1 
         ## DC RATES WILL BE MULTIPLIED
         ## BY RATES IMPORTED TO WS
