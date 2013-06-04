@@ -53,6 +53,9 @@ class superkdClass(datacardClass):
             
         print '>>>>>> Signal Templates Files: ',templateSigName, ', ',templateSigName_ALT
         
+        #### Set Proper Binning
+        self.xbins_sig  = ROOT.RooBinning(self.sigTemplate.GetXaxis().GetNbins(),self.sigTemplate.GetXaxis().GetXbins().GetArray())
+        self.ybins_sig  = ROOT.RooBinning(self.sigTemplate.GetYaxis().GetNbins(),self.sigTemplate.GetYaxis().GetXbins().GetArray()) 
 
         ##Set Bins
         dBins = self.sigTemplate.GetYaxis().GetNbins()
@@ -60,9 +63,10 @@ class superkdClass(datacardClass):
         dHigh = self.sigTemplate.GetXaxis().GetXmax()
         self.D = ROOT.RooRealVar(self.discVarName,self.discVarName,dLow,dHigh)
         self.D.setBins(dBins)
+        self.D.setBinning(self.ybins_sig)
         print '>>>>>> discVarName: ', self.discVarName
         print '>>>>>> bins [low,high]: ',dBins,'['+str(dLow)+','+str(dHigh)+']'
-        
+        self.ybins_sig.Print()
 
         #################################
         self.superDiscVarName = "CMS_zz4l_smd"
@@ -71,10 +75,11 @@ class superkdClass(datacardClass):
         dHigh = self.sigTemplate_ALT.GetXaxis().GetXmax()
         self.SD = ROOT.RooRealVar(self.superDiscVarName,self.superDiscVarName,dLow,dHigh)
         self.SD.setBins(dBins)
-
+        self.SD.setBinning(self.xbins_sig)
+        
         print '>>>>>> superDiscVarName: ', self.superDiscVarName
         print '>>>>>> bins [low,high]: ',dBins,'['+str(dLow)+','+str(dHigh)+']'
-
+        self.xbins_sig.Print()
 
     ## --------------------------- DATASET --------------------------- ##
     def fetchDatasetSuperKD(self):
@@ -103,15 +108,15 @@ class superkdClass(datacardClass):
     def makeSuperKDAnalysis(self):
 
         TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.sigTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate)
+        self.sigTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate,kFALSE))
         TemplateName = "sigTempDataHist_syst1Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.sigTempDataHist_syst1Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_syst1Up)
+        self.sigTempDataHist_syst1Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_syst1Up,kFALSE))
         TemplateName = "sigTempDataHist_syst1Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.sigTempDataHist_syst1Down =ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_syst1Down)
+        self.sigTempDataHist_syst1Down =ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_syst1Down,kFALSE))
         TemplateName = "sigTempDataHist_syst2Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.sigTempDataHist_syst2Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_syst1Up)
+        self.sigTempDataHist_syst2Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_syst1Up,kFALSE))
         TemplateName = "sigTempDataHist_syst2Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.sigTempDataHist_syst2Down =ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_syst1Down)
+        self.sigTempDataHist_syst2Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_syst1Down,kFALSE))
         
         TemplateName = "sigTemplatePdf_ggH_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.sigTemplatePdf_ggH = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.sigTempDataHist)
@@ -127,15 +132,15 @@ class superkdClass(datacardClass):
         #########################################################
         
         TemplateName = "sigTempDataHist_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
-        self.sigTempDataHist_ALT = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_ALT)
+        self.sigTempDataHist_ALT = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_ALT,kFALSE))
         TemplateName = "sigTempDataHist_syst1Up_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
-        self.sigTempDataHist_ALT_syst1Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_ALT_syst1Up)
+        self.sigTempDataHist_ALT_syst1Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_ALT_syst1Up,kFALSE))
         TemplateName = "sigTempDataHist_syst1Down_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
-        self.sigTempDataHist_ALT_syst1Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_ALT_syst1Down)
+        self.sigTempDataHist_ALT_syst1Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_ALT_syst1Down,kFALSE))
         TemplateName = "sigTempDataHist_syst2Up_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
-        self.sigTempDataHist_ALT_syst2Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_ALT_syst2Up)
+        self.sigTempDataHist_ALT_syst2Up = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_ALT_syst2Up,kFALSE))
         TemplateName = "sigTempDataHist_syst2Down_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
-        self.sigTempDataHist_ALT_syst2Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.sigTemplate_ALT_syst2Down)
+        self.sigTempDataHist_ALT_syst2Down = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.sigTemplate_ALT_syst2Down,kFALSE))
         
         TemplateName = "sigTemplatePdf_ggH{2}_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts, self.appendHypType)
         self.sigTemplatePdf_ggH_ALT = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.sigTempDataHist_ALT)
@@ -147,7 +152,8 @@ class superkdClass(datacardClass):
         self.sigTemplatePdf_ggH_ALT_syst2Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.sigTempDataHist_ALT_syst2Up)
         TemplateName = "sigTemplatePdf_ggH{2}_syst2Down_{0:.0f}_{1:.0f}{2}".format(self.channel,self.sqrts, self.appendHypType)
         self.sigTemplatePdf_ggH_ALT_syst2Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.sigTempDataHist_ALT_syst2Down)
-        
+
+
         
         ###Shape systematics for signal
         self.funcList_ggH = ROOT.RooArgList()
@@ -205,15 +211,15 @@ class superkdClass(datacardClass):
         self.bkgTemplate = self.bkgTempFile.Get("h_superDpsD")
         
         TemplateName = "bkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.bkgTemplate)
+        self.bkgTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
         TemplateName = "zjetsTempDataHist_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTempDataHist_zjetsUp = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.bkgTemplate)
+        self.bkgTempDataHist_zjetsUp = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
         
         templateggBkgName = "{0}/Dbackground_ggZZ_{1}.root".format(self.templateDir ,self.appendName)
         self.ggbkgTempFile = ROOT.TFile(templateggBkgName)
         self.ggbkgTemplate = self.ggbkgTempFile.Get("h_superDpsD")
         TemplateName = "ggbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.ggbkgTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.ggbkgTemplate)
+        self.ggbkgTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.ggbkgTemplate,kFALSE))
         
         TemplateName = "bkgTemplatePdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.bkgTemplatePdf_qqzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist)
@@ -224,7 +230,7 @@ class superkdClass(datacardClass):
         self.zjetsTempFile = ROOT.TFile(templateBkgName)
         self.zjetsTemplate = self.zjetsTempFile.Get("h_superDpsD")
         TemplateName = "zjetsTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.zjetsTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.zjetsTemplate)
+        self.zjetsTempDataHist = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplate,kFALSE))
         
         TemplateName = "bkgTemplatePdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         self.bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist)
@@ -237,9 +243,9 @@ class superkdClass(datacardClass):
         #self.zjetsTemplateDown.setName("zjetsTemplateDown_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts))
         #self.zjetsTemplateDown.setTitle("zjetsTemplateDown_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts))
         TemplateName = "zjetsTempDataHistDown_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.zjetsTempDataHistDown = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),self.zjetsTemplateDown)
+        self.zjetsTempDataHistDown = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplateDown,kFALSE))
         TemplateName = "bkgTemplatePdf_zjets_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist)
+        self.bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.zjetsTempDataHistDown)
         
         
         self.funcList_zjets = ROOT.RooArgList()
@@ -272,6 +278,87 @@ class superkdClass(datacardClass):
 
             
     ## --------------------------- WORKSPACE -------------------------- ##
+    def writeWorkspaceSuperKD(self):
+        
+        endsInP5 = False
+        tmpMH = self.mH
+        if (math.fabs(math.floor(tmpMH)-self.mH) > 0.001): endsInP5 = True
+        if (self.DEBUG): print "ENDS IN P5  ",endsInP5
+        
+        self.name_Shape = ""
+        self.name_ShapeWS = ""
+        self.name_ShapeWS2 = ""
+
+        if (endsInP5):
+            self.name_Shape = "{0}/HCG/{1:.1f}/hzz4l_{2}S_{3:.0f}TeV.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts)
+        else:
+            self.name_Shape = "{0}/HCG/{1:.0f}/hzz4l_{2}S_{3:.0f}TeV.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts)
+            
+        if (endsInP5):
+            self.name_ShapeWS = "{0}/HCG/{1:.1f}/hzz4l_{2}S_{3:.0f}TeV.input.root".format(self.outputDir,self.mH,self.appendName,self.sqrts)
+        else:
+            self.name_ShapeWS = "{0}/HCG/{1:.0f}/hzz4l_{2}S_{3:.0f}TeV.input.root".format(self.outputDir,self.mH,self.appendName,self.sqrts)
+            
+        self.name_ShapeWS2 = "hzz4l_{0}S_{1:.0f}TeV.input.root".format(self.appendName,self.sqrts)
+            
+        if(self.DEBUG): print self.name_Shape,"  ",self.name_ShapeWS2
+        
+        #Workspace
+        self.w = ROOT.RooWorkspace("w","w")
+        #Class code
+        self.w.importClassCode(RooqqZZPdf_v2.Class(),True)
+        self.w.importClassCode(RooggZZPdf_v2.Class(),True)
+        self.w.importClassCode(RooRelBWUFParam.Class(),True)
+        self.w.importClassCode(RooDoubleCB.Class(),True)
+        self.w.importClassCode(RooFormulaVar.Class(),True)
+        #Data
+        getattr(self.w,'import')(self.data_obs,ROOT.RooFit.Rename("data_obs"))
+        
+        self.sigCB2d_ggH.SetNameTitle("ORIGggH","ORIGggH")
+        
+        getattr(self.w,'import')(self.sigCB2d_ggH, ROOT.RooFit.RecycleConflictNodes())
+        
+        self.sigTemplateMorphPdf_ggH.SetNameTitle("ggH","ggH")
+        getattr(self.w,'import')(self.sigTemplateMorphPdf_ggH, ROOT.RooFit.RecycleConflictNodes())
+        #save syst templates individually
+        systTempName=("ggHCMS_zz4l_leptScale_sig_{0}_{1:.0f}_Up").format(self.channel,self.sqrts)
+        self.sigTemplatePdf_ggH_syst1Up.SetNameTitle(systTempName,systTempName)
+        systTempName=("ggHCMS_zz4l_leptScale_sig_{0}_{1:.0f}_Down").format(self.channel,self.sqrts)
+        self.sigTemplatePdf_ggH_syst1Down.SetNameTitle(systTempName,systTempName)
+        
+        self.sigCB2d_ggH_ALT.SetNameTitle("ORIGggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
+        self.sigTemplateMorphPdf_ggH_ALT.SetNameTitle("ggH{0}".format(self.appendHypType),"ggH{0}".format(self.appendHypType))
+        getattr(self.w,'import')(self.sigCB2d_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.sigTemplatePdf_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.sigTemplateMorphPdf_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+        
+        
+        
+        self.bkg1d_qqzz.SetNameTitle("ORIGbkg_qqzz","ORIGbkg_qqzz")
+        self.bkg1d_ggzz.SetNameTitle("ORIGbkg_ggzz","ORIGbkg_ggzz")
+        self.bkg1d_zjets.SetNameTitle("ORIGbkg_zjets","ORIGbkg_zjets")
+        
+        self.bkgTemplateMorphPdf_qqzz.SetNameTitle("bkg2d_qqzz","bkg2d_qqzz")
+        self.bkgTemplateMorphPdf_ggzz.SetNameTitle("bkg2d_ggzz","bkg2d_ggzz")
+        
+        self.bkgTemplateMorphPdf_zjets.SetNameTitle("bkg2d_zjets","bkg2d_zjets")
+        
+        getattr(self.w,'import')(self.bkgTemplateMorphPdf_qqzz,ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.bkgTemplateMorphPdf_ggzz,ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.bkgTemplateMorphPdf_zjets,ROOT.RooFit.RecycleConflictNodes())
+        
+        ### save signal rates
+        getattr(self.w,'import')(self.rfvSigRate_ggH, ROOT.RooFit.RecycleConflictNodes())
+        self.rfvSigRate_ggH_ALT = ROOT.RooFormulaVar(self.rfvSigRate_ggH,"ggH{0}_norm".format(self.appendHypType))
+        print '>>>>>> Compare Signal Rates: SM=',self.rfvSigRate_ggH.getVal()," ALT=",self.rfvSigRate_ggH_ALT.getVal()
+        getattr(self.w,'import')(self.rfvSigRate_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+        
+        
+        self.w.writeToFile(self.name_ShapeWS)
+        
+                
+        
+        
     def writeWorkspaceUnfoldedSuperKD(self):
             
         endsInP5 = False
@@ -301,7 +388,6 @@ class superkdClass(datacardClass):
         workspaceFile = ROOT.TFile(self.name_ShapeWS,"RECREATE")
         workspaceFile.cd()
         
-
         #SM
         theYield = self.rates['ggH']
         hist = self.unfoldedHist(self.sigTemplate,'ggH',theYield)
@@ -341,6 +427,10 @@ class superkdClass(datacardClass):
         #zjets
         theYield = self.rates['zjets']
         hist = self.unfoldedHist(self.zjetsTemplate,'bkg2d_zjets',theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.zjetsTemplateDown,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Down'.format(self.channel),theYield)
+        hist.Write()
+        hist = self.unfoldedHist(self.zjetsTemplate,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Up'.format(self.channel),theYield)#for now
         hist.Write()
 
         #data

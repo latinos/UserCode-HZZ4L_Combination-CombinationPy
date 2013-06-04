@@ -677,7 +677,7 @@ class systematicsClass:
         if( self.channel == self.ID_4mu and theInputs['doHypTest']):
 
             if theInputs['unfold']:
-                #theFile.write("CMS_zz4l_smd_zjets_bkg_1 shape - - - - 1.0\n")
+                theFile.write("CMS_zz4l_smd_zjets_bkg_1 shape - - - - 1.0\n")
                 theFile.write("CMS_zz4l_smd_leptScale_sig_1 shape 1.0 1.0 - - -\n")
                 theFile.write("CMS_zz4l_smd_leptResol_sig_1 shape 1.0 1.0 - - -\n")
             else:
@@ -688,7 +688,7 @@ class systematicsClass:
         if( self.channel == self.ID_4e and theInputs['doHypTest']):
             
             if theInputs['unfold']:
-                #theFile.write("CMS_zz4l_smd_zjets_bkg_2 shape - - - - 1.0\n")
+                theFile.write("CMS_zz4l_smd_zjets_bkg_2 shape - - - - 1.0\n")
                 theFile.write("CMS_zz4l_smd_leptScale_sig_2 shape 1.0 1.0 - - -\n")
                 theFile.write("CMS_zz4l_smd_leptResol_sig_2 shape 1.0 1.0 - - -\n")
             else:
@@ -699,7 +699,7 @@ class systematicsClass:
         if( self.channel == self.ID_2e2mu and theInputs['doHypTest']):
                     
             if theInputs['unfold']:
-                #theFile.write("CMS_zz4l_smd_zjets_bkg_3 shape - - - - 1.0\n")
+                theFile.write("CMS_zz4l_smd_zjets_bkg_3 shape - - - - 1.0\n")
                 theFile.write("CMS_zz4l_smd_leptScale_sig_3 shape 1.0 1.0 - - -\n")
                 theFile.write("CMS_zz4l_smd_leptResol_sig_3 shape 1.0 1.0 - - -\n")
             else:
