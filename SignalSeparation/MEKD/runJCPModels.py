@@ -24,17 +24,17 @@ def parseOptions():
     parser.add_option('-b', action='store_true', dest='noX', default=True, help='no X11 windows')
     parser.add_option('', '--fitNuis', action='store_true', dest='FITNUIS',  default=False, help='fit nuissances (default=False)')
     parser.add_option('', '--generateToys',action='store_true', dest='generateToys',default=False,help='generate toys')
-    parser.add_option('', '--haddToys',action='store_true', dest='haddToys',default=False,help='hadd toys')
+    parser.add_option('', '--haddToys',action='store_true', dest='haddToys',default=False,help='hadd toys only')
     parser.add_option('', '--plot',action='store_true', dest='plot',default=False,help='hadd toys and make plot')
     parser.add_option('', '--replot',action='store_true', dest='replot',default=False,help='dont hadd toys, make plot')
     parser.add_option('', '--tool',  dest='TOOL', type='string', default='combine',    help='Tool: combine or lands')
-    parser.add_option('-t', '--toys',  dest='NTOYS', type='int', default=1000000,    help='Number of total toys, will be paralelised to have 50K per job')
+    parser.add_option('-t', '--toys',  dest='NTOYS', type='int', default=1000000,    help='Number of total toys, will be paralelised to have 20K per job')
     parser.add_option('-d', '--dir',   dest='SOURCEDIR', type='string', default='', help='SOURCEDIR, skip if SOURCEDIR is empty')
     parser.add_option('-n', '--name',  dest='DIRNAME', type='string', default='submission_', help='submission dir names - submission_$i')
     parser.add_option('-M', '--model', dest='MODEL', type='string', default='', help='model name')
     parser.add_option('-m', '--mh',    dest='MASS', type='float', default=126.0, help='mass of Higgs hypothesis')
     parser.add_option('-e', '--sqrts', dest='ENERGY', type='string', default='7p8', help='sqrts: 7, 8, 7p8')
-    parser.add_option('-u', '--mu',    dest='MUTYPE', type='string', default='fixed', help='type of mu: fixed[default] or float')
+    parser.add_option('-u', '--mu',    dest='MUTYPE', type='string', default='float', help='type of mu: fixed or float[default]')
 
     # store options and arguments as global variables
     global opt, args
