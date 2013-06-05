@@ -3,7 +3,7 @@
 #      Signal Separation with MEKD        #
 #                                         #
 #         author: Matt Snowball           #
-#        last update: 05.22.2013          #
+#        last update: 06.05.2013          #
 #                                         #
 ###########################################
 
@@ -25,7 +25,18 @@
 	$ cp -r <path to cards>/cards_7TeV/HCG/<mass>/* HCG_<model>
 	$ cp -r <path to cards>/cards_8TeV/HCG/<mass>/* HCG_<model>
 
-4) check python script for options
+4a) validate cards
+
+	$ cp utlities/validateJCPcards.py .
+	$ python validateJCPcards.py -b -i HCG_<model> -x <xkdname=CMS_zz4l_smd> -y <ykdname>
+
+This will create a validation directory in the HCG_<model> directory with plots of slices and templates with their
+binning as well as printing out bin areas, normalizations, and expected event counts. 2D pdfs will not be normalized 
+to 1 with variable binning due to RooFit issues.  This is OK. To move on to 4b successfully, you must move or delete 
+the validation directory out of the HCG_<model> directory.
+
+
+4b) check python script for options
 
 	Usage: runJCPModels.py [options] datasetList
 	runJCPModels.py -h for help
