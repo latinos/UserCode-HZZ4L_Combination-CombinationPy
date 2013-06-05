@@ -43,4 +43,11 @@ python makeDCsandWSs.py -b -i <input directory> -a <output name> -t <templateDir
 ## this will unfold the 2D templates and use TH1Fs and plain root files 
 ## all yields etc should be identical between the 2 cases
 
+## or you can use buildAllCards.py to make all of your cards and workspaces
+## for each model and put them in the HCG_<1D or 2D>_<model> directories
+
+#look into buildAllCards.py and set the models list to what you want to build
+# then run it with
+
+	$ python buildAllCards.py
 
