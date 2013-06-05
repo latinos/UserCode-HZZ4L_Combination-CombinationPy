@@ -21,26 +21,26 @@
 
 3) copy cards for signal separation
 
-	$ mkdir cards_<model>
-	$ cp -r <path to cards>/cards_7TeV/HCG/<mass>/* cards_<model>
-	$ cp -r <path to cards>/cards_8TeV/HCG/<mass>/* cards_<model>
+	$ mkdir HCG_<model>
+	$ cp -r <path to cards>/cards_7TeV/HCG/<mass>/* HCG_<model>
+	$ cp -r <path to cards>/cards_8TeV/HCG/<mass>/* HCG_<model>
 
 4) check python script for options
 
-	$ python runJCPModels.py -h
 	Usage: runJCPModels.py [options] datasetList
 	runJCPModels.py -h for help
-
+	
 	Options:
 	  -h, --help            show this help message and exit
 	  -b                    no X11 windows
 	  --fitNuis             fit nuissances (default=False)
 	  --generateToys        generate toys
-	  --haddToys            hadd toys
-	  --plot                make separation plot
+	  --haddToys            hadd toys only
+	  --plot                hadd toys and make plot
+	  --replot              dont hadd toys, make plot
 	  --tool=TOOL           Tool: combine or lands
 	  -t NTOYS, --toys=NTOYS
-	                        Number of total toys, will be paralelised to have 50K
+	                        Number of total toys, will be paralelised to have 20K
 	                        per job
 	  -d SOURCEDIR, --dir=SOURCEDIR
 	                        SOURCEDIR, skip if SOURCEDIR is empty
@@ -52,22 +52,22 @@
 	  -e ENERGY, --sqrts=ENERGY
 	                        sqrts: 7, 8, 7p8
 	  -u MUTYPE, --mu=MUTYPE
-	                        type of mu: fixed[default] or float 
-
+	                        type of mu: fixed or float[default]
+	
 
 5) to run toys do the following
 
-	$ python runJCPModels.py --generateToys -t <total toys> -d cards_<model> -M <model name> -m <mass> -e <sqrts> --mu=<fixed or float>
+	$ python runJCPModels.py --generateToys -t <total toys> -d HCG_<model> -M <model name> -m <mass> --mu=<fixed or float>
 
-this will create a directory named after your model (-M) and within it will be a number of submission_<i> directories, each which will run 50K toys (about 1hr worth of batch).  These will be submitted to LSF 8nh queue.
+this will create a directory named after your model (-M) and within it will be a number of submission_<i> directories, each which will run 20K toys (about 1hr worth of batch).  These will be submitted to LSF 8nh queue.
 
 6) when the toys are done, you can either manually hadd toys together, or you can hadd toys and plot in one step 
 
 	-To hadd toys only
-	$ python runJCPModels.py --haddToys -M <model> --fitNuis=<fixed or float> -m <mass>
+	$ python runJCPModels.py -b --haddToys -M <model> --fitNuis=<fixed or float> -m <mass>
 
 	-To hadd toys and plot
-	$ python runJCPModels.py --plot -M <model> --fitNuis=<fixed or float> -m <mass>
+	$ python runJCPModels.py -b --plot -M <model> --fitNuis=<fixed or float> -m <mass>
 
 All results will be kept in the <model> directory
 
