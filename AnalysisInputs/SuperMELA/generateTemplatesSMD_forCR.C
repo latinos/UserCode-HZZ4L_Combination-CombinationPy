@@ -342,7 +342,12 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     KD_forSel=KD;
 
     bool cutPassed= (kdCut>0.0) ? (KD_forSel>kdCut) : true;
-    if( cutPassed &&sKD>=0.0&& mzz>mzzCutLow&&mzz<mzzCutHigh){
+    if (w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.)
+      {
+	cout << "ERROR!!!!" << endl;
+	cout << w << " " << sKD << " " << KD << endl;
+      }
+    if(mzz>mzzCutLow&&mzz<mzzCutHigh){
 
       bkgHist->Fill(sKD,KD,w);
       //   bkgHist->Fill(mzz,KD,w);
@@ -361,12 +366,16 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
 // smooth 
 
+  cout << "Pre-Smooth: " << bkgHist->Integral() << endl;
+
   if(smooth)   bkgHist->Smooth(1,"k5b"); //options:  "k3a", "k5a" , "k5b" 
-  
+
   // normalize TH2
   double totArea=bkgHist->Integral();
+  cout << "Post-Smooth: " << totArea << endl;
   bkgHist->Scale(1.0/totArea);
-
+  cout << "Norm? " << bkgHist->Integral() << endl;
+  
   //Old Floor
   /*
   // bkgHist->Smooth();
@@ -390,8 +399,10 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     }
 
   // normalize TH2
+  cout << "Post-Floor: " << bkgHist->Integral() << endl;
   totArea=bkgHist->Integral();
   bkgHist->Scale(1.0/totArea);
+  cout << "Final: " << bkgHist->Integral() << endl;
   
   /*
   //normalize in slices
