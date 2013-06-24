@@ -58,9 +58,9 @@ float binsYgrav[nbinsYgrav+1]={0.000, 0.100, 0.150, 0.175 , 0.200, 0.225, 0.250,
 
 // Luminosity, as float and as string to be used in file names, etc.
 double lumi7TeV = 5.051;
-double lumi8TeV = 12.21;
+double lumi8TeV = 19.63;
 TString lumistr7TeV = "5.051";
-TString lumistr8TeV = "12.21";
+TString lumistr8TeV = "19.63";
 
 
 // Location of output root files containing data events
