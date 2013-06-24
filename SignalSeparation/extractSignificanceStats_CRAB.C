@@ -24,7 +24,7 @@ int extractSignificanceStats_CRAB(bool unblind=false){
   gStyle->SetOptStat(0);
 
   const float lumi7TeV=5.051;
-  const float lumi8TeV=12.21;
+  const float lumi8TeV=19.63;
 
   char fileName[128];
   sprintf(fileName,"qmu.root");

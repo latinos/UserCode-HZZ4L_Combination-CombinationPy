@@ -30,7 +30,7 @@ if  [[ "$nchild" == "1" && "$n" == "1" ]]; then
     nchild=0;
 fi;
 
-NTOYS=200
+NTOYS=10000
 echo "## Starting at $(date); $NTOYS toys"
 
 (( ($i + 1) % 1 == 0 )) &&  ./combine floatMu.root -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 --singlePoint 1 --saveHybridResult  --clsAcc 0 --fullBToys -m 126.0 --fork $nchild -T $NTOYS -v 0 -n hzz4l_SpinCP_CRAB --saveToys -s $((10000 + $i)) -i $n

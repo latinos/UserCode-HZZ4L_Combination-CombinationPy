@@ -51,14 +51,15 @@ fi
 
 
 # Run hypothesis testing, using nominal value of nuisances and mu for generation
-NTOYS=100000 # toys per  job
+NTOYS=10000 # toys per  job
+NJOBS = 1 #number of jobs
 MH=126  # mass of the signal hypothesis
 
 if [ $action -eq 1 ]
     then 
 ### FIXED MU: 
     text2workspace.py -m $MH $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs -o fixedMu.root
-    combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 fixedMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i 1 --clsAcc 0 --fullBToys
+    combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 fixedMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i $NJOBS --clsAcc 0 --fullBToys
 #make the tree of the test statistics distribution (the macro is under HiggsAnalysis/CombinedLimit/test/plotting)
     root -q -b higgsCombineTest.HybridNew.mH${MH}.root "${CMSSW_BASE}/src/HiggsAnalysis/CombinedLimit/test/plotting/hypoTestResultTree.cxx(\"qmu.FixedMu.root\",${MH},1,\"x\")"
     cp qmu.FixedMu.root qmu.root
@@ -69,9 +70,9 @@ elif [ $action -eq 2 ]
     text2workspace.py -m $MH $card1 -P HiggsAnalysis.CombinedLimit.HiggsJPC:twoHypothesisHiggs  --PO=muFloating -o floatMu.root
     if [ $Nuis -eq 1 ]
 	then 
-	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i 1 --clsAcc 0 --fullBToys -n "Test1D" --fitNuis=1
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i $NJOBS --clsAcc 0 --fullBToys -n "Test1D" --fitNuis=1
     else
-	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i 1 --clsAcc 0 --fullBToys -n "Test1D" --fitNuis=0
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 floatMu.root --singlePoint 1 --saveHybridResult --fork 40 -T $NTOYS -i $NJOBS --clsAcc 0 --fullBToys -n "Test1D" --fitNuis=0
     fi
     root -q -b higgsCombineTest1D.HybridNew.mH${MH}.root "${CMSSW_BASE}/src/HiggsAnalysis/CombinedLimit/test/plotting/hypoTestResultTree.cxx(\"qmu.FloatMu.root\",${MH},1,\"x\")"
     combine -M MultiDimFit floatMu.root --algo=grid --points 100  -m $MH -n 1D

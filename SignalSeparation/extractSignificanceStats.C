@@ -177,7 +177,7 @@ int extractSignificanceStats(bool unblind=false, TString legALT="0^{-}", TString
   cout<<"Separation from histograms = "<<sepH<<" with coverage "<<coverage<<endl;
 
   if(unblind){
-    if(v_Obs.size()!=1){
+    if(v_Obs.size()!=1 && (v_Obs.at(0) != v_Obs.at(1))){
       cout<<"Ooops ! The size of the vector with the observed separation is not 1 but "<<v_Obs.size()<<" ! I am not going to plot the observed results."<<endl;
       unblind=false;
     }
