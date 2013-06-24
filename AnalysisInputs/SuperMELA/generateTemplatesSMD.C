@@ -347,12 +347,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     KD_forSel=KD;
 
     bool cutPassed= (kdCut>0.0) ? (KD_forSel>kdCut) : true;
-    if (w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.)
-      {
-	cout << "ERROR!!!!" << endl;
-	cout << w << " " << sKD << " " << KD << endl;
-      }
-    if(mzz>mzzCutLow&&mzz<mzzCutHigh){
+    if(w<.0015 && cutPassed &&sKD>=0.0&& mzz>mzzCutLow&&mzz<mzzCutHigh){
 
       bkgHist->Fill(sKD,KD,w);
       //   bkgHist->Fill(mzz,KD,w);
@@ -372,18 +367,12 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
 // smooth 
 
-  cout << "Pre-Smooth: " << bkgHist->Integral() << endl;
-
   if(smooth)   bkgHist->Smooth(1,"k5b"); //options:  "k3a", "k5a" , "k5b" 
 
   // normalize TH2
   double totArea=bkgHist->Integral();
-  cout << "Post-Smooth: " << totArea << endl;
   bkgHist->Scale(1.0/totArea);
-  cout << "Norm? " << bkgHist->Integral() << endl;
   
-  //Old Floor
-  /*
   // bkgHist->Smooth();
   for(int i=1; i<=bkgHist->GetNbinsX(); i++){
     for(int j=1; j<=bkgHist->GetNbinsY(); j++){
@@ -391,24 +380,10 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	bkgHist->SetBinContent(i,j,0.00000001);
     }// for(int j=1; j<=nYbins; j++){
   }// for(int i=1; i<=nXbins; i++){
-  */
-
-  //New Floor
-  double floor = ((bkgHist->Integral())/(bkgHist->GetNbinsX()*bkgHist->GetNbinsY()))*(0.1/100);
-  for(int i = 1; i <= bkgHist->GetNbinsX(); i++)
-    {
-      for(int j = 1; j <= bkgHist->GetNbinsY(); j++)
-	{
-	  double orig = bkgHist->GetBinContent(i,j);
-	  bkgHist->SetBinContent(i,j,(orig+floor));
-	}
-    }
 
   // normalize TH2
-  cout << "Post-Floor: " << bkgHist->Integral() << endl;
   totArea=bkgHist->Integral();
   bkgHist->Scale(1.0/totArea);
-  cout << "Final: " << bkgHist->Integral() << endl;
 
   /*
   //normalize in slices
