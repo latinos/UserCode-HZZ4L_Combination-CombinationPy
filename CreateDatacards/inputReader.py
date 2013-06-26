@@ -117,8 +117,15 @@ class inputReader:
         self.ggZZshape_a8 = -999.9
         self.ggZZshape_a9 = -999.9
         # zjets shape
-        self.zjetsShape_mean = -999.9
-        self.zjetsShape_sigma = -999.9
+        self.zjetsShape_mean_3P1F = -999.9
+        self.zjetsShape_sigma_3P1F = -999.9
+        self.zjetsShape_norm_3P1F = -999.9
+        self.zjetsShape_mean_2P2F = -999.9
+        self.zjetsShape_sigma_2P2F = -999.9
+        self.zjetsShape_norm_2P2F = -999.9
+        self.zjetsShape_mean_2P2F_2e2mu = -999.9
+        self.zjetsShape_sigma_2P2F_2e2mu = -999.9
+        self.zjetsShape_norm_2P2F_2e2mu = -999.9
         # systematics 
         self.zjetsKappaLow = -999.9
         self.zjetsKappaHigh = -999.9
@@ -430,8 +437,15 @@ class inputReader:
                
             if f[0].lower().startswith("zjetsshape"):
 
-                if f[1].lower().startswith("mean"):  self.zjetsShape_mean = f[2]
-                if f[1].lower().startswith("sigma"): self.zjetsShape_sigma = f[2]
+                if f[1].lower().startswith("mean_3p1f"):  self.zjetsShape_mean_3P1F = f[2]
+                if f[1].lower().startswith("sigma_3p1f"): self.zjetsShape_sigma_3P1F = f[2]
+                if f[1].lower().startswith("norm_3p1f"): self.zjetsShape_norm_3P1F = f[2]
+                if f[1].lower().startswith("mean_2p2f"):  self.zjetsShape_mean_2P2F = f[2]
+                if f[1].lower().startswith("sigma_2p2f"): self.zjetsShape_sigma_2P2F = f[2]
+                if f[1].lower().startswith("norm_2p2f"): self.zjetsShape_norm_2P2F = f[2]
+                if f[1].lower().startswith("mean_2e2mu_2p2f"):  self.zjetsShape_mean_2P2F_2e2mu = f[2]
+                if f[1].lower().startswith("sigma_2e2mu_2p2f"): self.zjetsShape_sigma_2P2F_2e2mu = f[2]
+                if f[1].lower().startswith("norm_2e2mu_2p2f"): self.zjetsShape_norm_2P2F_2e2mu = f[2]
                 
 
             if f[0].lower().startswith("systematic"):
@@ -631,8 +645,15 @@ class inputReader:
         if not self.goodEntry(self.ggZZshape_a8): raise RuntimeError, "{0} is not set.  Check inputs!".format("ggZZshape_a8")
         if not self.goodEntry(self.ggZZshape_a9): raise RuntimeError, "{0} is not set.  Check inputs!".format("ggZZshape_a9")
 
-        if not self.goodEntry(self.zjetsShape_mean): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean")
-        if not self.goodEntry(self.zjetsShape_sigma): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma")
+        if not self.goodEntry(self.zjetsShape_mean_3P1F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean_3P1F")
+        if not self.goodEntry(self.zjetsShape_sigma_3P1F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma_3P1F")
+        if not self.goodEntry(self.zjetsShape_norm_3P1F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_norm_3P1F")
+        if not self.goodEntry(self.zjetsShape_mean_2P2F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean_2P2F")
+        if not self.goodEntry(self.zjetsShape_sigma_2P2F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma_2P2F")
+        if not self.goodEntry(self.zjetsShape_norm_2P2F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_norm_2P2F")
+        if not self.goodEntry(self.zjetsShape_mean_2P2F_2e2mu): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean_2P2F_2e2mu")
+        if not self.goodEntry(self.zjetsShape_sigma_2P2F_2e2mu): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma_2P2F_2e2mu")
+        if not self.goodEntry(self.zjetsShape_norm_2P2F_2e2mu): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_norm_2P2F_2e2mu")
         
         if not self.goodEntry(self.zjetsKappaLow): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaLow")
         if not self.goodEntry(self.zjetsKappaHigh): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaHigh")
@@ -772,8 +793,15 @@ class inputReader:
         dict['ggZZshape_a8'] = float(self.ggZZshape_a8)
         dict['ggZZshape_a9'] = float(self.ggZZshape_a9)
 
-        dict['zjetsShape_mean'] = float(self.zjetsShape_mean)
-        dict['zjetsShape_sigma'] = float(self.zjetsShape_sigma)
+        dict['zjetsShape_mean_3P1F'] = float(self.zjetsShape_mean_3P1F)
+        dict['zjetsShape_sigma_3P1F'] = float(self.zjetsShape_sigma_3P1F)
+        dict['zjetsShape_norm_3P1F'] = float(self.zjetsShape_norm_3P1F)
+        dict['zjetsShape_mean_2P2F'] = float(self.zjetsShape_mean_2P2F)
+        dict['zjetsShape_sigma_2P2F'] = float(self.zjetsShape_sigma_2P2F)
+        dict['zjetsShape_norm_2P2F'] = float(self.zjetsShape_norm_2P2F)
+        dict['zjetsShape_mean_2P2F_2e2mu'] = float(self.zjetsShape_mean_2P2F_2e2mu)
+        dict['zjetsShape_sigma_2P2F_2e2mu'] = float(self.zjetsShape_sigma_2P2F_2e2mu)
+        dict['zjetsShape_norm_2P2F_2e2mu'] = float(self.zjetsShape_norm_2P2F_2e2mu)
 
         dict['zjetsKappaLow'] = float(self.zjetsKappaLow)
         dict['zjetsKappaHigh'] = float(self.zjetsKappaHigh)

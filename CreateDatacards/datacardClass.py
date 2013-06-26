@@ -1456,21 +1456,155 @@ class datacardClass:
         bkg_ggzz = ROOT.RooggZZPdf_v2("bkg_ggzzTmp","bkg_ggzzTmp",CMS_zz4l_mass,CMS_ggzzbkg_a0,CMS_ggzzbkg_a1,CMS_ggzzbkg_a2,CMS_ggzzbkg_a3,CMS_ggzzbkg_a4,CMS_ggzzbkg_a5,CMS_ggzzbkg_a6,CMS_ggzzbkg_a7,CMS_ggzzbkg_a8,CMS_ggzzbkg_a9)
     
         ## Reducible backgrounds
-        val_meanL = float(theInputs['zjetsShape_mean'])
-        val_sigmaL = float(theInputs['zjetsShape_sigma'])
+        val_meanL_3P1F = float(theInputs['zjetsShape_mean_3P1F'])
+        val_sigmaL_3P1F = float(theInputs['zjetsShape_sigma_3P1F'])
+        val_normL_3P1F = float(theInputs['zjetsShape_norm_3P1F'])
+        val_meanL_2P2F = float(theInputs['zjetsShape_mean_2P2F'])
+        val_sigmaL_2P2F = float(theInputs['zjetsShape_sigma_2P2F'])
+        val_normL_2P2F = float(theInputs['zjetsShape_norm_2P2F'])
+        val_meanL_2P2F_2 = float(theInputs['zjetsShape_mean_2P2F_2e2mu'])
+        val_sigmaL_2P2F_2 = float(theInputs['zjetsShape_sigma_2P2F_2e2mu'])
+        val_normL_2P2F_2 = float(theInputs['zjetsShape_norm_2P2F_2e2mu'])
 
         if not self.bVBF:
-            name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
-            name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet) 
+            if (self.channel == self.ID_4mu):
+                name = "mlZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL_2P2F)
+                name = "slZjet_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL_2P2F)
+                print "mean 4mu: ",mlZjet.getVal()
+                print "sigma 4mu: ",slZjet.getVal()
+                bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet)
+            elif (self.channel == self.ID_4e):
+                name = "mlZjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                mlZjet_2p2f = ROOT.RooRealVar(name,"mean landau Zjet 2p2f",val_meanL_2P2F)
+                name = "slZjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                slZjet_2p2f = ROOT.RooRealVar(name,"sigma landau Zjet 2p2f",val_sigmaL_2P2F)
+                name = "nlZjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                nlZjet_2p2f = ROOT.RooRealVar(name,"norm landau Zjet 2p2f",val_normL_2P2F)
+                print "mean 2p2f 4e: ",mlZjet_2p2f.getVal()
+                print "sigma 2p2f 4e: ",slZjet_2p2f.getVal()
+                print "norm 2p2f 4e: ",nlZjet_2p2f.getVal()
+                bkg_zjets_2p2f = ROOT.RooLandau("bkg_zjetsTmp_2p2f","bkg_zjetsTmp_2p2f",CMS_zz4l_mass,mlZjet_2p2f,slZjet_2p2f)
+                
+                name = "mlZjet_3p1f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                mlZjet_3p1f = ROOT.RooRealVar(name,"mean landau Zjet 3p1f",val_meanL_3P1F)
+                name = "slZjet_3p1f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                slZjet_3p1f = ROOT.RooRealVar(name,"sigma landau Zjet 3p1f",val_sigmaL_3P1F)
+                name = "nlZjet_3p1f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                nlZjet_3p1f = ROOT.RooRealVar(name,"norm landau Zjet 3p1f",val_normL_3P1F)
+                print "mean 3p1f 4e: ",mlZjet_3p1f.getVal()
+                print "sigma 3p1f 4e: ",slZjet_3p1f.getVal()
+                print "norm 3p1f 4e: ",nlZjet_3p1f.getVal()
+                bkg_zjets_3p1f = ROOT.RooLandau("bkg_zjetsTmp_3p1f","bkg_zjetsTmp_3p1f",CMS_zz4l_mass,mlZjet_3p1f,slZjet_3p1f)
+
+                bkg_zjets = ROOT.RooAddPdf("bkg_zjetsTmp","bkg_zjetsTmp",ROOT.RooArgList(bkg_zjets_2p2f,bkg_zjets_3p1f),ROOT.RooArgList(nlZjet_2p2f,nlZjet_3p1f))
+
+            elif (self.channel == self.ID_2e2mu):
+                name = "mlZjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                mlZjet_2p2f = ROOT.RooRealVar(name,"mean landau Zjet 2p2f",val_meanL_2P2F)
+                name = "slZjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                slZjet_2p2f = ROOT.RooRealVar(name,"sigma landau Zjet 2p2f",val_sigmaL_2P2F)
+                name = "nlZjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                nlZjet_2p2f = ROOT.RooRealVar(name,"norm landau Zjet 2p2f",val_normL_2P2F)
+                print "mean 2p2f 2mu2e: ",mlZjet_2p2f.getVal()
+                print "sigma 2p2f 2mu2e: ",slZjet_2p2f.getVal()
+                print "norm 2p2f 2mu2e: ",nlZjet_2p2f.getVal()
+                bkg_zjets_2p2f = ROOT.RooLandau("bkg_zjetsTmp_2p2f","bkg_zjetsTmp_2p2f",CMS_zz4l_mass,mlZjet_2p2f,slZjet_2p2f)
+
+                name = "mlZjet_2p2f_2_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                mlZjet_2p2f_2 = ROOT.RooRealVar(name,"mean landau Zjet 2p2f 2e2mu",val_meanL_2P2F_2)
+                name = "slZjet_2p2f_2_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                slZjet_2p2f_2 = ROOT.RooRealVar(name,"sigma landau Zjet 2p2f 2e2mu",val_sigmaL_2P2F_2)
+                name = "nlZjet_2p2f_2_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                nlZjet_2p2f_2 = ROOT.RooRealVar(name,"norm landau Zjet 2p2f 2e2mu",val_normL_2P2F_2)
+                print "mean 2p2f 2e2mu: ",mlZjet_2p2f_2.getVal()
+                print "sigma 2p2f 2e2mu: ",slZjet_2p2f_2.getVal()
+                print "norm 2p2f 2e2mu: ",nlZjet_2p2f_2.getVal()
+                bkg_zjets_2p2f_2 = ROOT.RooLandau("bkg_zjetsTmp_2p2f_2","bkg_zjetsTmp_2p2f_2",CMS_zz4l_mass,mlZjet_2p2f_2,slZjet_2p2f_2)
+                
+                name = "mlZjet_3p1f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                mlZjet_3p1f = ROOT.RooRealVar(name,"mean landau Zjet 3p1f",val_meanL_3P1F)
+                name = "slZjet_3p1f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                slZjet_3p1f = ROOT.RooRealVar(name,"sigma landau Zjet 3p1f",val_sigmaL_3P1F)
+                name = "nlZjet_3p1f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+                nlZjet_3p1f = ROOT.RooRealVar(name,"norm landau Zjet 3p1f",val_normL_3P1F)
+                print "mean 3p1f 2mu2e: ",mlZjet_3p1f.getVal()
+                print "sigma 3p1f 2mu2e: ",slZjet_3p1f.getVal()
+                print "norm 3p1f 2mu2e: ",nlZjet_3p1f.getVal()
+                bkg_zjets_3p1f = ROOT.RooLandau("bkg_zjetsTmp_3p1f","bkg_zjetsTmp_3p1f",CMS_zz4l_mass,mlZjet_3p1f,slZjet_3p1f)
+
+                bkg_zjets = ROOT.RooAddPdf("bkg_zjetsTmp","bkg_zjetsTmp",ROOT.RooArgList(bkg_zjets_2p2f,bkg_zjets_3p1f,bkg_zjets_2p2f_2),ROOT.RooArgList(nlZjet_2p2f,nlZjet_3p1f,nlZjet_2p2f_2))
+
         else:
-            name = "mlZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL)
-            name = "slZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-            slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL)
-            bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet)
+            if (self.channel == self.ID_4mu):
+                name = "mlZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                mlZjet = ROOT.RooRealVar(name,"mean landau Zjet",val_meanL_2P2F)
+                name = "slZjet_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts, self.VBFcat)
+                slZjet = ROOT.RooRealVar(name,"sigma landau Zjet",val_sigmaL_2P2F)
+                print "mean 4mu: ",mlZjet.getVal()
+                print "sigma 4mu: ",slZjet.getVal()
+                bkg_zjets = ROOT.RooLandau("bkg_zjetsTmp","bkg_zjetsTmp",CMS_zz4l_mass,mlZjet,slZjet)
+            elif (self.channel == self.ID_4e):
+                name = "mlZjet_2p2f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                mlZjet_2p2f = ROOT.RooRealVar(name,"mean landau Zjet 2p2f",val_meanL_2P2F)
+                name = "slZjet_2p2f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                slZjet_2p2f = ROOT.RooRealVar(name,"sigma landau Zjet 2p2f",val_sigmaL_2P2F)
+                name = "nlZjet_2p2f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                nlZjet_2p2f = ROOT.RooRealVar(name,"norm landau Zjet 2p2f",val_normL_2P2F)
+                print "mean 2p2f 4e: ",mlZjet_2p2f.getVal()
+                print "sigma 2p2f 4e: ",slZjet_2p2f.getVal()
+                print "norm 2p2f 4e: ",nlZjet_2p2f.getVal()
+                bkg_zjets_2p2f = ROOT.RooLandau("bkg_zjetsTmp_2p2f","bkg_zjetsTmp_2p2f",CMS_zz4l_mass,mlZjet_2p2f,slZjet_2p2f)
+                
+                name = "mlZjet_3p1f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                mlZjet_3p1f = ROOT.RooRealVar(name,"mean landau Zjet 3p1f",val_meanL_3P1F)
+                name = "slZjet_3p1f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                slZjet_3p1f = ROOT.RooRealVar(name,"sigma landau Zjet 3p1f",val_sigmaL_3P1F)
+                name = "nlZjet_3p1f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                nlZjet_3p1f = ROOT.RooRealVar(name,"norm landau Zjet 3p1f",val_normL_3P1F)
+                print "mean 3p1f 4e: ",mlZjet_3p1f.getVal()
+                print "sigma 3p1f 4e: ",slZjet_3p1f.getVal()
+                print "norm 3p1f 4e: ",nlZjet_3p1f.getVal()
+                bkg_zjets_3p1f = ROOT.RooLandau("bkg_zjetsTmp_3p1f","bkg_zjetsTmp_3p1f",CMS_zz4l_mass,mlZjet_3p1f,slZjet_3p1f)
+
+                bkg_zjets = ROOT.RooAddPdf("bkg_zjetsTmp","bkg_zjetsTmp",ROOT.RooArgList(bkg_zjets_2p2f,bkg_zjets_3p1f),ROOT.RooArgList(nlZjet_2p2f,nlZjet_3p1f))
+
+            elif (self.channel == self.ID_2e2mu):
+                name = "mlZjet_2p2f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                mlZjet_2p2f = ROOT.RooRealVar(name,"mean landau Zjet 2p2f",val_meanL_2P2F)
+                name = "slZjet_2p2f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                slZjet_2p2f = ROOT.RooRealVar(name,"sigma landau Zjet 2p2f",val_sigmaL_2P2F)
+                name = "nlZjet_2p2f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                nlZjet_2p2f = ROOT.RooRealVar(name,"norm landau Zjet 2p2f",val_normL_2P2F)
+                print "mean 2p2f 2mu2e: ",mlZjet_2p2f.getVal()
+                print "sigma 2p2f 2mu2e: ",slZjet_2p2f.getVal()
+                print "norm 2p2f 2mu2e: ",nlZjet_2p2f.getVal()
+                bkg_zjets_2p2f = ROOT.RooLandau("bkg_zjetsTmp_2p2f","bkg_zjetsTmp_2p2f",CMS_zz4l_mass,mlZjet_2p2f,slZjet_2p2f)
+
+                name = "mlZjet_2p2f_2_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                mlZjet_2p2f_2 = ROOT.RooRealVar(name,"mean landau Zjet 2p2f 2e2mu",val_meanL_2P2F_2)
+                name = "slZjet_2p2f_2_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                slZjet_2p2f_2 = ROOT.RooRealVar(name,"sigma landau Zjet 2p2f 2e2mu",val_sigmaL_2P2F_2)
+                name = "nlZjet_2p2f_2_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                nlZjet_2p2f_2 = ROOT.RooRealVar(name,"norm landau Zjet 2p2f 2e2mu",val_normL_2P2F_2)
+                print "mean 2p2f 2e2mu: ",mlZjet_2p2f_2.getVal()
+                print "sigma 2p2f 2e2mu: ",slZjet_2p2f_2.getVal()
+                print "norm 2p2f 2e2mu: ",nlZjet_2p2f_2.getVal()
+                bkg_zjets_2p2f_2 = ROOT.RooLandau("bkg_zjetsTmp_2p2f_2","bkg_zjetsTmp_2p2f_2",CMS_zz4l_mass,mlZjet_2p2f_2,slZjet_2p2f_2)
+                
+                name = "mlZjet_3p1f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                mlZjet_3p1f = ROOT.RooRealVar(name,"mean landau Zjet 3p1f",val_meanL_3P1F)
+                name = "slZjet_3p1f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                slZjet_3p1f = ROOT.RooRealVar(name,"sigma landau Zjet 3p1f",val_sigmaL_3P1F)
+                name = "nlZjet_3p1f_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+                nlZjet_3p1f = ROOT.RooRealVar(name,"norm landau Zjet 3p1f",val_normL_3P1F)
+                print "mean 3p1f 2mu2e: ",mlZjet_3p1f.getVal()
+                print "sigma 3p1f 2mu2e: ",slZjet_3p1f.getVal()
+                print "norm 3p1f 2mu2e: ",nlZjet_3p1f.getVal()
+                bkg_zjets_3p1f = ROOT.RooLandau("bkg_zjetsTmp_3p1f","bkg_zjetsTmp_3p1f",CMS_zz4l_mass,mlZjet_3p1f,slZjet_3p1f)
+
+                bkg_zjets = ROOT.RooAddPdf("bkg_zjetsTmp","bkg_zjetsTmp",ROOT.RooArgList(bkg_zjets_2p2f,bkg_zjets_3p1f,bkg_zjets_2p2f_2),ROOT.RooArgList(nlZjet_2p2f,nlZjet_3p1f,nlZjet_2p2f_2))
 
  
 	bkg_qqzzErr = ROOT.RooProdPdf("bkg_qqzzErr","bkg_qqzzErr", ROOT.RooArgSet(bkg_qqzz), ROOT.RooFit.Conditional(ROOT.RooArgSet(pdfErrZZ), ROOT.RooArgSet(RelErr)));
@@ -2147,6 +2281,33 @@ class datacardClass:
         normalizationBackground_qqzz = bkg_qqzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrange") ).getVal()
         normalizationBackground_ggzz = bkg_ggzz.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrange") ).getVal()
         normalizationBackground_zjets = bkg_zjets.createIntegral( ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("fullrange") ).getVal()
+
+        print "channel: "+self.appendName
+        print "fullrange zjets: ",normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion2",100.,200.)
+        print "100-200: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion2")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion3",100.,300.)
+        print "100-300: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion3")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion4",100.,400.)
+        print "100-400: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion4")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion5",100.,500.)
+        print "100-500: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion5")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion6",100.,600.)
+        print "100-600: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion6")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion7",100.,700.)
+        print "100-700: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion7")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion8",100.,800.)
+        print "100-800: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion8")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion9",100.,900.)
+        print "100-900: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion9")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion10",100.,1000.)
+        print "100-1000: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion10")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion11",100.,1100.)
+        print "100-1100: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion11")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion12",100.,1200.)
+        print "100-1200: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion12")).getVal()/normalizationBackground_zjets
+        CMS_zz4l_mass.setRange("tempregion13",100.,1300.)
+        print "100-1300: ", bkg_zjets.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass), ROOT.RooFit.Range("tempregion13")).getVal()/normalizationBackground_zjets
         
         sclFactorBkg_qqzz = self.lumi*bkgRate_qqzz/normalizationBackground_qqzz
         sclFactorBkg_ggzz = self.lumi*bkgRate_ggzz/normalizationBackground_ggzz
