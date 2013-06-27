@@ -2029,47 +2029,216 @@ class datacardClass:
             print "@@@@@@@ rfvCsFilter = ",rfvCsFilter.getVal()
 
         if not self.bVBF:
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
             rrva1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a1'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts)
             rrva2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a2'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts)
             rrva3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a3'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts)
             rrva4 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a4'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts)
             rrvb1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b1'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts)
             rrvb2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b2'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts)
             rrvb3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b3'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts)
             rrvg1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g1'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts)
             rrvg2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g2'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts)
             rrvg3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g3'])
+
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
+            rrva1_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa1'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts)
+            rrva2_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa2'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts)
+            rrva3_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa3'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts)
+            rrva4_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa4'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts)
+            rrvb1_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHb1'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts)
+            rrvb2_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHb2'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts)
+            rrvb3_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHb3'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts)
+            rrvg1_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHg1'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts)
+            rrvg2_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHg2'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts)
+            rrvg3_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHg3'])
+
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
+            rrva1_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa1'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts)
+            rrva2_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa2'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts)
+            rrva3_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa3'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts)
+            rrva4_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa4'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts)
+            rrvb1_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHb1'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts)
+            rrvb2_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHb2'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts)
+            rrvb3_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHb3'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts)
+            rrvg1_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHg1'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts)
+            rrvg2_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHg2'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts)
+            rrvg3_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHg3'])
+
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
+            rrva1_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa1'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts)
+            rrva2_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa2'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts)
+            rrva3_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa3'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts)
+            rrva4_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa4'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts)
+            rrvb1_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHb1'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts)
+            rrvb2_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHb2'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts)
+            rrvb3_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHb3'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts)
+            rrvg1_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHg1'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts)
+            rrvg2_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHg2'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts)
+            rrvg3_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHg3'])
+
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
+            rrva1_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa1'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts)
+            rrva2_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa2'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts)
+            rrva3_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa3'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts)
+            rrva4_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa4'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts)
+            rrvb1_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHb1'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts)
+            rrvb2_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHb2'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts)
+            rrvb3_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHb3'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts)
+            rrvg1_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHg1'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts)
+            rrvg2_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHg2'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts)
+            rrvg3_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHg3'])
         else:
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_a1".format(self.channel,self.sqrts,self.VBFcat)
+            
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts, self.VBFcat)
             rrva1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a1'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_a2".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts, self.VBFcat)
             rrva2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a2'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_a3".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts, self.VBFcat)
             rrva3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a3'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_a4".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts, self.VBFcat)
             rrva4 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a4'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_b1".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts, self.VBFcat)
             rrvb1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b1'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_b2".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts, self.VBFcat)
             rrvb2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b2'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_b3".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts, self.VBFcat)
             rrvb3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_b3'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_g1".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts, self.VBFcat)
             rrvg1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g1'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_g2".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts, self.VBFcat)
             rrvg2 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g2'])
-            sigEffName = "hzz4lsigeff_{0:.0f}_{1:.0f}_{2}_g3".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts, self.VBFcat)
             rrvg3 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_g3'])
+
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts, self.VBFcat)
+            rrva1_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa1'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts, self.VBFcat)
+            rrva2_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa2'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts, self.VBFcat)
+            rrva3_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa3'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts, self.VBFcat)
+            rrva4_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHa4'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb1_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHb1'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb2_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHb2'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb3_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHb3'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg1_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHg1'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg2_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHg2'])
+            sigEffName = "hzz4lqqHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg3_qqh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_qqHg3'])
+
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts, self.VBFcat)
+            rrva1_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa1'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts, self.VBFcat)
+            rrva2_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa2'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts, self.VBFcat)
+            rrva3_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa3'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts, self.VBFcat)
+            rrva4_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHa4'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb1_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHb1'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb2_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHb2'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb3_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHb3'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg1_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHg1'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg2_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHg2'])
+            sigEffName = "hzz4lZHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg3_zh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ZHg3'])
+
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts, self.VBFcat)
+            rrva1_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa1'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts, self.VBFcat)
+            rrva2_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa2'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts, self.VBFcat)
+            rrva3_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa3'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts, self.VBFcat)
+            rrva4_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHa4'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb1_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHb1'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb2_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHb2'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb3_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHb3'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg1_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHg1'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg2_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHg2'])
+            sigEffName = "hzz4lWHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg3_wh = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_WHg3'])
+
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts, self.VBFcat)
+            rrva1_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa1'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a2".format(self.channel,self.sqrts, self.VBFcat)
+            rrva2_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa2'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a3".format(self.channel,self.sqrts, self.VBFcat)
+            rrva3_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa3'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_a4".format(self.channel,self.sqrts, self.VBFcat)
+            rrva4_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHa4'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_b1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb1_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHb1'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_b2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb2_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHb2'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_b3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvb3_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHb3'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_g1".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg1_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHg1'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_g2".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg2_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHg2'])
+            sigEffName = "hzz4lttHeff_{0:.0f}_{1:.0f}_g3".format(self.channel,self.sqrts, self.VBFcat)
+            rrvg3_tth = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_ttHg3'])
 
         if(DEBUG):
             print "sigEff_a1 = ",theInputs['sigEff_a1']
@@ -2079,22 +2248,107 @@ class datacardClass:
             print "sigEff_b1 = ",theInputs['sigEff_b1']
             print "sigEff_b2 = ",theInputs['sigEff_b2']
             print "sigEff_b3 = ",theInputs['sigEff_b3']
+            print "sigEff_g1 = ",theInputs['sigEff_g1']
+            print "sigEff_g2 = ",theInputs['sigEff_g2']
+            print "sigEff_g3 = ",theInputs['sigEff_g3']
+
+            print "sigEff_qqHa1 = ",theInputs['sigEff_qqHa1']
+            print "sigEff_qqHa2 = ",theInputs['sigEff_qqHa2']
+            print "sigEff_qqHa3 = ",theInputs['sigEff_qqHa3']
+            print "sigEff_qqHa4 = ",theInputs['sigEff_qqHa4']
+            print "sigEff_qqHb1 = ",theInputs['sigEff_qqHb1']
+            print "sigEff_qqHb2 = ",theInputs['sigEff_qqHb2']
+            print "sigEff_qqHb3 = ",theInputs['sigEff_qqHb3']
+            print "sigEff_qqHg1 = ",theInputs['sigEff_qqHg1']
+            print "sigEff_qqHg2 = ",theInputs['sigEff_qqHg2']
+            print "sigEff_qqHg3 = ",theInputs['sigEff_qqHg3']
+
+            print "sigEff_ZHa1 = ",theInputs['sigEff_ZHa1']
+            print "sigEff_ZHa2 = ",theInputs['sigEff_ZHa2']
+            print "sigEff_ZHa3 = ",theInputs['sigEff_ZHa3']
+            print "sigEff_ZHa4 = ",theInputs['sigEff_ZHa4']
+            print "sigEff_ZHb1 = ",theInputs['sigEff_ZHb1']
+            print "sigEff_ZHb2 = ",theInputs['sigEff_ZHb2']
+            print "sigEff_ZHb3 = ",theInputs['sigEff_ZHb3']
+            print "sigEff_ZHg1 = ",theInputs['sigEff_ZHg1']
+            print "sigEff_ZHg2 = ",theInputs['sigEff_ZHg2']
+            print "sigEff_ZHg3 = ",theInputs['sigEff_ZHg3']
+
+            print "sigEff_WHa1 = ",theInputs['sigEff_WHa1']
+            print "sigEff_WHa2 = ",theInputs['sigEff_WHa2']
+            print "sigEff_WHa3 = ",theInputs['sigEff_WHa3']
+            print "sigEff_WHa4 = ",theInputs['sigEff_WHa4']
+            print "sigEff_WHb1 = ",theInputs['sigEff_WHb1']
+            print "sigEff_WHb2 = ",theInputs['sigEff_WHb2']
+            print "sigEff_WHb3 = ",theInputs['sigEff_WHb3']
+            print "sigEff_WHg1 = ",theInputs['sigEff_WHg1']
+            print "sigEff_WHg2 = ",theInputs['sigEff_WHg2']
+            print "sigEff_WHg3 = ",theInputs['sigEff_WHg3']
+
+            print "sigEff_ttHa1 = ",theInputs['sigEff_ttHa1']
+            print "sigEff_ttHa2 = ",theInputs['sigEff_ttHa2']
+            print "sigEff_ttHa3 = ",theInputs['sigEff_ttHa3']
+            print "sigEff_ttHa4 = ",theInputs['sigEff_ttHa4']
+            print "sigEff_ttHb1 = ",theInputs['sigEff_ttHb1']
+            print "sigEff_ttHb2 = ",theInputs['sigEff_ttHb2']
+            print "sigEff_ttHb3 = ",theInputs['sigEff_ttHb3']
+            print "sigEff_ttHg1 = ",theInputs['sigEff_ttHg1']
+            print "sigEff_ttHg2 = ",theInputs['sigEff_ttHg2']
+            print "sigEff_ttHg3 = ",theInputs['sigEff_ttHg3']
            
 
         if not self.bVBF:
-            sigEffName = "hzz4lsignaleff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            sigEffName_ggH = "hzz4lggHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            sigEffName_qqH = "hzz4lqqHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            sigEffName_WH = "hzz4lWHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            sigEffName_ZH = "hzz4lZHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            sigEffName_ttH = "hzz4lttHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
         else:
-            sigEffName = "hzz4lsignaleff_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)            
+            sigEffName_ggH = "hzz4lggHeff_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName_qqH = "hzz4lqqHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName_WH = "hzz4lWHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName_ZH = "hzz4lZHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
+            sigEffName_ttH = "hzz4lttHeff_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,self.VBFcat)
 
         listEff = ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH)
         listEff.add(rrvg1)
         listEff.add(rrvg2)
         listEff.add(rrvg3)
-        rfvSigEff = ROOT.RooFormulaVar(sigEffName,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff) #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
+
+        listEff_qqh = ROOT.RooArgList(rrva1_qqh,rrva2_qqh,rrva3_qqh,rrva4_qqh,rrvb1_qqh,rrvb2_qqh,rrvb3_qqh,self.MH)
+        listEff_qqh.add(rrvg1_qqh)
+        listEff_qqh.add(rrvg2_qqh)
+        listEff_qqh.add(rrvg3_qqh)
+
+        listEff_wh = ROOT.RooArgList(rrva1_wh,rrva2_wh,rrva3_wh,rrva4_wh,rrvb1_wh,rrvb2_wh,rrvb3_wh,self.MH)
+        listEff_wh.add(rrvg1_wh)
+        listEff_wh.add(rrvg2_wh)
+        listEff_wh.add(rrvg3_wh)
+
+        listEff_zh = ROOT.RooArgList(rrva1_zh,rrva2_zh,rrva3_zh,rrva4_zh,rrvb1_zh,rrvb2_zh,rrvb3_zh,self.MH)
+        listEff_zh.add(rrvg1_zh)
+        listEff_zh.add(rrvg2_zh)
+        listEff_zh.add(rrvg3_zh)
+
+        listEff_tth = ROOT.RooArgList(rrva1_tth,rrva2_tth,rrva3_tth,rrva4_tth,rrvb1_tth,rrvb2_tth,rrvb3_tth,self.MH)
+        listEff_tth.add(rrvg1_tth)
+        listEff_tth.add(rrvg2_tth)
+        listEff_tth.add(rrvg3_tth)
+        
+        rfvSigEff_ggH = ROOT.RooFormulaVar(sigEffName_ggH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff) #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
+
+        rfvSigEff_qqH = ROOT.RooFormulaVar(sigEffName_qqH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_qqh)
+        rfvSigEff_ZH = ROOT.RooFormulaVar(sigEffName_ZH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_zh)
+        rfvSigEff_WH = ROOT.RooFormulaVar(sigEffName_WH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_wh)
+        rfvSigEff_ttH = ROOT.RooFormulaVar(sigEffName_ttH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_tth)
         #from TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
         
         ## following printout is needed ,  dont remove it
-        print " @@@@@@@@ sigeff ",rfvSigEff.getVal()
+        print " @@@@@@@@ ggHeff ",rfvSigEff_ggH.getVal()
+        print " @@@@@@@@ qqHeff ",rfvSigEff_qqH.getVal()
+        print " @@@@@@@@ ZHeff ",rfvSigEff_ZH.getVal()
+        print " @@@@@@@@ WHeff ",rfvSigEff_WH.getVal()
+        print " @@@@@@@@ ttHeff ",rfvSigEff_ttH.getVal()
     
         CS_ggH = myCSW.HiggsCS(1,self.mH,self.sqrts)
         CS_VBF = myCSW.HiggsCS(2,self.mH,self.sqrts)
@@ -2110,7 +2364,11 @@ class datacardClass:
         if( self.channel == self.ID_4e ): BR = BRH4e
         if( self.channel == self.ID_2e2mu ): BR = BRH2e2mu
     
-        sigEfficiency = rfvSigEff.getVal()
+        sigEfficiency_ggH = rfvSigEff_ggH.getVal()
+        sigEfficiency_qqH = rfvSigEff_qqH.getVal()
+        sigEfficiency_ZH = rfvSigEff_WH.getVal()
+        sigEfficiency_WH = rfvSigEff_ZH.getVal()
+        sigEfficiency_ttH = rfvSigEff_ttH.getVal()
 
         if(DEBUG):
             print "CS_ggH: ",CS_ggH,", CS_VBF: ",CS_VBF,", CS_WH: ",CS_WH,", CS_ZH: ",CS_ZH
@@ -2120,11 +2378,11 @@ class datacardClass:
         if(self.sqrts == 7): csCorrection = self.csFilter(self.mH)
 
         ## SIG YIELDS
-        sigRate_ggH = csCorrection*CS_ggH*BR*sigEfficiency*1000.*self.lumi
-        sigRate_VBF = csCorrection*CS_VBF*BR*sigEfficiency*1000.*self.lumi
-        sigRate_WH = csCorrection*CS_WH*BR*sigEfficiency*1000.*self.lumi
-        sigRate_ZH = csCorrection*CS_ZH*BR*sigEfficiency*1000.*self.lumi
-        sigRate_ttH = csCorrection*CS_ttH*BR*sigEfficiency*1000.*self.lumi
+        sigRate_ggH = csCorrection*CS_ggH*BR*sigEfficiency_ggH*1000.*self.lumi
+        sigRate_VBF = csCorrection*CS_VBF*BR*sigEfficiency_qqH*1000.*self.lumi
+        sigRate_WH = csCorrection*CS_WH*BR*sigEfficiency_WH*1000.*self.lumi
+        sigRate_ZH = csCorrection*CS_ZH*BR*sigEfficiency_ZH*1000.*self.lumi
+        sigRate_ttH = csCorrection*CS_ttH*BR*sigEfficiency_ttH*1000.*self.lumi
 
         rfvTag_Ratio_ggH = ROOT.RooFormulaVar()
         rfvTag_Ratio_qqH = ROOT.RooFormulaVar()
@@ -2226,22 +2484,22 @@ class datacardClass:
             rrvNormSig = ROOT.RooRealVar(normSigName,normSigName, self.getVariable(signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),self.bUseCBnoConvolution))
         rrvNormSig.setConstant(True)
 
-        #rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+        #rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ggH, rhfXsBrFuncV_1))
 
-        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_1))
+        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ggH, rhfXsBrFuncV_1))
         
         print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
         
-        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_VBF,self.getVariable(rfvTag_Ratio_qqH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_2))
+        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_VBF,self.getVariable(rfvTag_Ratio_qqH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_qqH, rhfXsBrFuncV_2))
         
         
-        rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_WH,self.getVariable(rfvTag_Ratio_WH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_3))
+        rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_WH,self.getVariable(rfvTag_Ratio_WH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_WH, rhfXsBrFuncV_3))
         
         
-        rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ZH,self.getVariable(rfvTag_Ratio_ZH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_4))
+        rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ZH,self.getVariable(rfvTag_Ratio_ZH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ZH, rhfXsBrFuncV_4))
         
         
-        rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ttH,self.getVariable(rfvTag_Ratio_ttH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff, rhfXsBrFuncV_5))
+        rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ttH,self.getVariable(rfvTag_Ratio_ttH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ttH, rhfXsBrFuncV_5))
         
 
         print signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),"   ",sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal()
