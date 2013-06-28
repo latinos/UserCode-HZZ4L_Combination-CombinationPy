@@ -619,15 +619,15 @@ class systematicsClass:
         #theFile.write("CMS_zz4l_ggZZ_Fisher_sys param 0  1  [-3,3]\n")
         #theFile.write("CMS_zz4l_ZX_Fisher_sys param 0  1  [-3,3]\n")
 
-    def Write_CMS_zz4l_PToverM_sys(self,theFile,theInputs):
-        theFile.write("CMS_zz4l_ggH_PToverM_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_qqH_PToverM_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ttH_PToverM_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_WH_PToverM_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ZH_PToverM_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_qqZZ_PToverM_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ggZZ_PToverM_sys param 0  1  [-3,3]\n")
-        theFile.write("CMS_zz4l_ZX_PToverM_sys param 0  1  [-3,3]\n")
+    def Write_CMS_zz4l_Pt_sys(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ttH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_WH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqZZ_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ggZZ_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZX_Pt_sys param 0  1  [-3,3]\n")
     
     def WriteSystematics(self,theFile,theInputs, theVBFcat=False, theUse3D=False):
 
@@ -702,8 +702,8 @@ class systematicsClass:
         if (theVBFcat and theUse3D and theInputs['useCMS_zz4l_Fisher_sys']):
             self.Write_CMS_zz4l_Fisher_sys(theFile,theInputs)
             
-        if (not theVBFcat and theUse3D and theInputs['useCMS_zz4l_PToverM_sys']):
-            self.Write_CMS_zz4l_PToverM_sys(theFile,theInputs)
+        if (not theVBFcat and theUse3D and theInputs['useCMS_zz4l_Pt_sys']):
+            self.Write_CMS_zz4l_Pt_sys(theFile,theInputs)
             
 
     def WriteShapeSystematics(self,theFile,theInputs):

@@ -135,7 +135,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
   newFile->cd();
   TTree* newTree = new TTree("data_obs","data_obs"); 
   Double_t CMS_zz4l_mass, melaLD, pseudomelaLD, supermelaLD, CMS_zz4l_massErr, CMS_zz4l_massRelErr;
-  Double_t ptoverm = -99, Fisher = -99;
+  Double_t pt = -99, Fisher = -99;
   newTree->Branch("CMS_zz4l_mass",&CMS_zz4l_mass,"CMS_zz4l_mass/D");
   newTree->Branch("CMS_zz4l_massErr",&CMS_zz4l_massErr,"CMS_zz4l_massErr/D");
   newTree->Branch("CMS_zz4l_massRelErr",&CMS_zz4l_massRelErr,"CMS_zz4l_massRelErr/D");
@@ -147,7 +147,7 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
   //newTree->Branch("bkg_VAMCFMNorm",&bkg_VAMCFMNorm,"bkg_VAMCFMNorm/D");
   newTree->Branch("ZZVAKD",&ZZVAKD2,"ZZVAKD/D");
   newTree->Branch("CMS_zz4l_Fisher",&Fisher,"CMS_zz4l_Fisher/D");
-  newTree->Branch("CMS_zz4l_PToverM",&ptoverm,"CMS_zz4l_PToverM/D");
+  newTree->Branch("CMS_zz4l_Pt",&pt,"CMS_zz4l_Pt/D");
 
 
   cout << inFile << " entries: " << treedata->GetEntries() << endl;
@@ -186,12 +186,21 @@ void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool 
     melaLD=p0plus_VAJHU/(p0plus_VAJHU+bkg_VAMCFMNorm);
     if(useJET && !VBFtag) 
       {
-	ptoverm = pt4l/mzz;
+	if(pt4l > 200.)
+	  {
+	    //if pt out of range set to middle of higest bin
+	    pt4l = 198.;
+	  }
+	pt = pt4l;
       }
     if(useJET && VBFtag) 
       {
+	if(fisher > 2.)
+	  {
+	    //if fisher out of range set to middle of higest bin
+	    fisher = 1.98;
+	  }
 	Fisher = fisher;
-	cout << "Got HERE" << endl;
       }
 
 

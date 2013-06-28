@@ -126,9 +126,11 @@ ggZZshape a9_bkgd  0.0712558
 zjetsShape mean_3p1f 120.3
 zjetsShape sigma_3p1f 14.8
 zjetsShape norm_3p1f 2.20
+
 zjetsShape mean_2p2f 172.1
 zjetsShape sigma_2p2f 30.5
 zjetsShape norm_2p2f 1.75
+
 zjetsShape mean_2e2mu_2p2f 0
 zjetsShape sigma_2e2mu_2p2f 0
 zjetsShape norm_2e2mu_2p2f 0
@@ -178,7 +180,7 @@ doHypTest False
 ### for VBF fraction ###
 useCMS_zz4l_doVBFtest True
 useCMS_zz4l_Fisher_sys True
-useCMS_zz4l_PToverM_sys True
+useCMS_zz4l_Pt_sys True
 
 systematic param QCD_scale_ggH_2j_sys 0.3
 systematic param QCD_scale_qqH_2j_sys 0.1
