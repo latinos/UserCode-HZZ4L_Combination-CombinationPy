@@ -160,12 +160,17 @@ class inputReader:
         self.zjetsShape_mean_3P1F = -999.9
         self.zjetsShape_sigma_3P1F = -999.9
         self.zjetsShape_norm_3P1F = -999.9
+        
         self.zjetsShape_mean_2P2F = -999.9
         self.zjetsShape_sigma_2P2F = -999.9
         self.zjetsShape_norm_2P2F = -999.9
+        self.zjetsShape_pol0_2P2F = -999.9
+        self.zjetsShape_pol1_2P2F = -999.9
+        
         self.zjetsShape_mean_2P2F_2e2mu = -999.9
         self.zjetsShape_sigma_2P2F_2e2mu = -999.9
         self.zjetsShape_norm_2P2F_2e2mu = -999.9
+        
         # systematics 
         self.zjetsKappaLow = -999.9
         self.zjetsKappaHigh = -999.9
@@ -524,9 +529,13 @@ class inputReader:
                 if f[1].lower().startswith("mean_3p1f"):  self.zjetsShape_mean_3P1F = f[2]
                 if f[1].lower().startswith("sigma_3p1f"): self.zjetsShape_sigma_3P1F = f[2]
                 if f[1].lower().startswith("norm_3p1f"): self.zjetsShape_norm_3P1F = f[2]
+                
                 if f[1].lower().startswith("mean_2p2f"):  self.zjetsShape_mean_2P2F = f[2]
                 if f[1].lower().startswith("sigma_2p2f"): self.zjetsShape_sigma_2P2F = f[2]
                 if f[1].lower().startswith("norm_2p2f"): self.zjetsShape_norm_2P2F = f[2]
+                if f[1].lower().startswith("pol0_2p2f"): self.zjetsShape_pol0_2P2F = f[2]
+                if f[1].lower().startswith("pol1_2p2f"): self.zjetsShape_pol1_2P2F = f[2]
+                
                 if f[1].lower().startswith("mean_2e2mu_2p2f"):  self.zjetsShape_mean_2P2F_2e2mu = f[2]
                 if f[1].lower().startswith("sigma_2e2mu_2p2f"): self.zjetsShape_sigma_2P2F_2e2mu = f[2]
                 if f[1].lower().startswith("norm_2e2mu_2p2f"): self.zjetsShape_norm_2P2F_2e2mu = f[2]
@@ -968,9 +977,13 @@ class inputReader:
         dict['zjetsShape_mean_3P1F'] = float(self.zjetsShape_mean_3P1F)
         dict['zjetsShape_sigma_3P1F'] = float(self.zjetsShape_sigma_3P1F)
         dict['zjetsShape_norm_3P1F'] = float(self.zjetsShape_norm_3P1F)
+        
         dict['zjetsShape_mean_2P2F'] = float(self.zjetsShape_mean_2P2F)
         dict['zjetsShape_sigma_2P2F'] = float(self.zjetsShape_sigma_2P2F)
         dict['zjetsShape_norm_2P2F'] = float(self.zjetsShape_norm_2P2F)
+        dict['zjetsShape_pol0_2P2F'] = float(self.zjetsShape_pol0_2P2F)
+        dict['zjetsShape_pol1_2P2F'] = float(self.zjetsShape_pol1_2P2F)
+        
         dict['zjetsShape_mean_2P2F_2e2mu'] = float(self.zjetsShape_mean_2P2F_2e2mu)
         dict['zjetsShape_sigma_2P2F_2e2mu'] = float(self.zjetsShape_sigma_2P2F_2e2mu)
         dict['zjetsShape_norm_2P2F_2e2mu'] = float(self.zjetsShape_norm_2P2F_2e2mu)

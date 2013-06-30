@@ -1,10 +1,12 @@
-zjetsShape mean_3p1f 120.3
-zjetsShape sigma_3p1f 14.8
-zjetsShape norm_3p1f 2.20
+zjetsShape mean_3p1f 110.9
+zjetsShape sigma_3p1f 9.59
+zjetsShape norm_3p1f 2.57
 
-zjetsShape mean_2p2f 172.1
-zjetsShape sigma_2p2f 30.5
-zjetsShape norm_2p2f 1.75
+zjetsShape mean_2p2f 195.4
+zjetsShape sigma_2p2f 38.9
+zjetsShape norm_2p2f 0.12
+zjetsShape pol0_2p2f 3.68
+zjetsShape pol1_2p2f -0.006
 
 zjetsShape mean_2e2mu_2p2f 0
 zjetsShape sigma_2e2mu_2p2f 0
