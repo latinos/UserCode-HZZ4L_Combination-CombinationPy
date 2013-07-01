@@ -78,7 +78,7 @@ class datacardClass:
             else:
                 BR = myCSWrhf.HiggsBR(12,mHVal)
 
-            if (signalProc == 4 or signalProc == 5 or signalProc ==6):
+            if (signalProc == 3 or signalProc == 4 or signalProc == 5):
                 #overwrite BR if VH,ttH sample
                 #these samples have inclusive Z decay
                 BR = myCSWrhf.HiggsBR(11,mHVal)
