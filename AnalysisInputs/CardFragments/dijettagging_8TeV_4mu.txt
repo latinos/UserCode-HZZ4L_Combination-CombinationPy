@@ -1,0 +1,10 @@
+
+### for VBF fraction ###
+useCMS_zz4l_doVBFtest True
+useCMS_zz4l_Fisher_sys True
+useCMS_zz4l_Pt_sys True
+
+systematic param QCD_scale_ggH_2j_sys 0.3
+systematic param QCD_scale_qqH_2j_sys 0.1
+
+
