@@ -39,7 +39,9 @@ int sqrts    = 7;              // sqrts, used only for withPt_/withY_
 
 //---
 int useSqrts=0;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
-TString melaName = "ZZLD"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
+TString SigName = "p0plus_VAJHU"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
+TString BkgName = "bkg_VAMCFMNorm";
+TString melaName = "VAKD";
 
 bool makePSTemplate = false;
 bool makeAltSignal = false;
@@ -142,8 +144,10 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
 
       oldTempValue = temp->GetBinContent(i,j);
       newTempValue = oldTempValue*(slope[point]*(double)j/30.+yIntr[point]);
+      if(newTempValue <= 0.) newTempValue=0.00000001;
       tempUp->SetBinContent(i,j,newTempValue);
       newTempValue = oldTempValue*(-slope[point]*(double)j/30.+2.-yIntr[point]);
+      if(newTempValue <= 0.) newTempValue=0.00000001;
       tempDn->SetBinContent(i,j,newTempValue);
 
     }// end loop over Y bins
@@ -418,7 +422,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   cout << "Chain for " << channel << " " << sampleIndex << " " << isLowMass << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
-  float mzz,KD,KD_cut,w;
+  float mzz,KD,KD_cut,w, interfw=0.;
   float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
   float pt4l=0, Y4l=0;
   float psig=0, pbkg=0;
@@ -432,7 +436,8 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
     melaName = "ZZpseudoLD";
   }
   
-  bkgMC->SetBranchAddress(melaName.Data(),&KD);
+  bkgMC->SetBranchAddress(SigName.Data(),&psig);
+  bkgMC->SetBranchAddress(BkgName.Data(),&pbkg);
   if (melaName!=melaCutName) {
     bkgMC->SetBranchAddress(melaCutName.Data(),&KD_cut);
   } else {
@@ -441,6 +446,10 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
+  if(sampleIndex == 0 && isLowMass && (channel == "4mu" || channel == "4e"))
+    {
+      bkgMC->SetBranchAddress("LIWeight",&interfw);
+    }
   if (recompute_) {
     bkgMC->SetBranchAddress("Z1Mass",&m1);
     bkgMC->SetBranchAddress("Z2Mass",&m2);
@@ -466,6 +475,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   for(int i=0; i<bkgMC->GetEntries(); i++){
 
     bkgMC->GetEntry(i);
+    float weight = 0.;
 
     if(i%100000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
 
@@ -503,7 +513,10 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
 */	
       }
 
-      bkgHist->Fill(mzz,KD,w);
+      KD = psig/(psig+pbkg);
+      if(sampleIndex == 0 && isLowMass && (channel == "4mu" || channel == "4e")) weight = w*interfw;
+      else weight = w;
+      bkgHist->Fill(mzz,KD,weight);
 
     }
 

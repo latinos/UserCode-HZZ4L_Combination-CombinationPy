@@ -37,7 +37,7 @@ using namespace RooFit ;
 #include "Config.h"
 //<----------
 
-void backgroundFits_qqzz_1Dw(int channel, int sqrts);
+void backgroundFits_qqzz_1Dw(int channel, int sqrts, int VBFtag);
 
 // Run all final states and sqrts in one go
 void backgroundFits_qqzz_1Dw() {
@@ -45,16 +45,30 @@ void backgroundFits_qqzz_1Dw() {
   gSystem->Exec("mkdir -p bkgFigs7TeV");
   gSystem->Exec("mkdir -p bkgFigs8TeV");
 
-  backgroundFits_qqzz_1Dw(1,7);
-  backgroundFits_qqzz_1Dw(2,7);
-  backgroundFits_qqzz_1Dw(3,7);  
-  backgroundFits_qqzz_1Dw(1,8);
-  backgroundFits_qqzz_1Dw(2,8);
-  backgroundFits_qqzz_1Dw(3,8);
+  backgroundFits_qqzz_1Dw(1,7,1);
+  backgroundFits_qqzz_1Dw(2,7,1);
+  backgroundFits_qqzz_1Dw(3,7,1);  
+  backgroundFits_qqzz_1Dw(1,8,1);
+  backgroundFits_qqzz_1Dw(2,8,1);
+  backgroundFits_qqzz_1Dw(3,8,1);
+
+  backgroundFits_qqzz_1Dw(1,7,0);
+  backgroundFits_qqzz_1Dw(2,7,0);
+  backgroundFits_qqzz_1Dw(3,7,0);  
+  backgroundFits_qqzz_1Dw(1,8,0);
+  backgroundFits_qqzz_1Dw(2,8,0);
+  backgroundFits_qqzz_1Dw(3,8,0);
+
+  backgroundFits_qqzz_1Dw(1,7,2);
+  backgroundFits_qqzz_1Dw(2,7,2);
+  backgroundFits_qqzz_1Dw(3,7,2);  
+  backgroundFits_qqzz_1Dw(1,8,2);
+  backgroundFits_qqzz_1Dw(2,8,2);
+  backgroundFits_qqzz_1Dw(3,8,2);
 }
 
 // The actual job
-void backgroundFits_qqzz_1Dw(int channel, int sqrts)
+void backgroundFits_qqzz_1Dw(int channel, int sqrts, int VBFtag)
 {
   TString schannel;
   if      (channel == 1) schannel = "4mu";
@@ -64,9 +78,11 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts)
 
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  cout << "schannel = " << schannel << "  sqrts = " << sqrts << endl;
+  cout << "schannel = " << schannel << "  sqrts = " << sqrts << " VBFtag = " << VBFtag << endl;
 
-  TString outfile = "CardFragments/qqzzBackgroundFit_" + ssqrts + "_" + schannel + ".txt";
+  TString outfile;
+  if(VBFtag<2) outfile = "CardFragments/qqzzBackgroundFit_" + ssqrts + "_" + schannel + "_" + Form("%d",int(VBFtag)) + ".txt";
+  if(VBFtag==2) outfile = "CardFragments/qqzzBackgroundFit_" + ssqrts + "_" + schannel + ".txt";
   ofstream of(outfile,ios_base::out);
   of << "### background functions ###" << endl;
 
@@ -90,11 +106,20 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts)
   RooRealVar* MC_weight = new RooRealVar("MC_weight","MC_weight",0.,2.) ; 
   RooRealVar* ZZMass = new RooRealVar("ZZMass","ZZMass",100.,1000.);
   RooRealVar* ZZLD = new RooRealVar("ZZLD","ZZLD",0.,1.);
+  RooRealVar* NJets = new RooRealVar("NJets","NJets",0.,100.);
   
   char cut[10];
   sprintf(cut,"ZZLD>0.5");
   //RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*ZZLD),cut,"MC_weight");
-  RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight),0,"MC_weight");
+  if (VBFtag==1){
+    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets>1","MC_weight");
+  }
+  else if(VBFtag==0){
+    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets<2","MC_weight");
+  }
+  else if(VBFtag==2){
+    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"","MC_weight");
+  }
 
   double totalweight = 0.;
   double totalweight_z = 0.;
@@ -323,7 +348,9 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts)
   pt2->Draw();
   TString outputPath = "bkgFigs";
   outputPath = outputPath+ (long) sqrts + "TeV/";
-  outputName =  outputPath + "bkgqqzz_" + schannel;
+  TString outputName;
+  if(VBFtag<2) outputName =  outputPath + "bkgqqzz_" + schannel + "_" + Form("%d",int(VBFtag));
+  if(VBFtag==2) outputName =  outputPath + "bkgqqzz_" + schannel;
   c->SaveAs(outputName + ".eps");
   c->SaveAs(outputName + ".png");
     
@@ -336,7 +363,8 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts)
   frameM4lz->Draw();
   box2->Draw("same");
   
-  outputName = outputPath + "bkgqqzz_" + schannel + "_z";
+  if (VBFtag<2) outputName = outputPath + "bkgqqzz_" + schannel + "_z" + "_" + Form("%d",int(VBFtag));
+  if (VBFtag<2) outputName = outputPath + "bkgqqzz_" + schannel + "_z";
   c2->SaveAs(outputName + ".eps");
   c2->SaveAs(outputName + ".png");
 
@@ -369,7 +397,8 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts)
   //c3->SaveAs(outputName);
   */
 
-  outputName = outputPath + "bkgqqzz_" + schannel + "_z.root";
+  if (VBFtag<2) outputName = outputPath + "bkgqqzz_" + schannel + "_z" + "_" + Form("%d",int(VBFtag)) + ".root";
+  if (VBFtag==2) outputName = outputPath + "bkgqqzz_" + schannel + "_z" + ".root";
   TFile* outF = new TFile(outputName,"RECREATE");
   outF->cd();
   c2->Write();

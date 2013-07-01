@@ -56,7 +56,7 @@ Run:
 root -q -b mergeFragments.C+
 
 The full config files are written under 
-../CreateDatacards/SM_inputs_?TeV/ 
+../CreateDatacards/SM_inputs_?TeV_tagged/ 
 
 
 
@@ -65,7 +65,7 @@ Run:
 
 root -q -b prepareData.C+
 
-This creates all files for 3 final states, 7 and 8 TeV and stores them
+This creates all files for 3 final states, 7 and 8 TeV, and for the tagged/untagged and stores them
 in the final destination directory, i.e. 
 ../CreateDatacards/CMSdata/
 

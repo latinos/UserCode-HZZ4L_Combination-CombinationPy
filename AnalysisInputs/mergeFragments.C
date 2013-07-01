@@ -5,7 +5,7 @@
  * -run with:
  * root -q -b mergeFragments.C+
  * This runs on the 3 final states for 7 and 8 TeV and writes the full config files in 
- * ../CreateDatacards/SM_inputs_?TeV/ .
+ * ../CreateDatacards/SM_inputs_?TeV_tagged/ .
  *
  */
 
@@ -20,24 +20,33 @@
 //<----------
 
 using namespace std;
-void mergeFragments(int channel, int sqrts, double lumi);
+void mergeFragments(int channel, int sqrts, double lumi, bool dijettag = false);
 void append(TString file, TString outfile);
 
 
 // Run all fs/sqrts in one go
 void mergeFragments() {
 
-  mergeFragments(1, 7, lumi7TeV);
-  mergeFragments(2, 7, lumi7TeV);
-  mergeFragments(3, 7, lumi7TeV);
-  mergeFragments(1, 8, lumi8TeV);
-  mergeFragments(2, 8, lumi8TeV);
-  mergeFragments(3, 8, lumi8TeV);
+  //Nondijet
+  mergeFragments(1, 7, lumi7TeV, false);
+  mergeFragments(2, 7, lumi7TeV, false);
+  mergeFragments(3, 7, lumi7TeV, false);
+  mergeFragments(1, 8, lumi8TeV, false);
+  mergeFragments(2, 8, lumi8TeV, false);
+  mergeFragments(3, 8, lumi8TeV, false);
+
+  //Dijet
+  mergeFragments(1, 7, lumi7TeV, true);
+  mergeFragments(2, 7, lumi7TeV, true);
+  mergeFragments(3, 7, lumi7TeV, true);
+  mergeFragments(1, 8, lumi8TeV, true);
+  mergeFragments(2, 8, lumi8TeV, true);
+  mergeFragments(3, 8, lumi8TeV, true);
   
 }
 
 
-void mergeFragments(int channel, int sqrts, double lumi) {
+void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
 
   TString schannel;
   if      (channel == 1) schannel = "4mu";
@@ -46,7 +55,7 @@ void mergeFragments(int channel, int sqrts, double lumi) {
 
   TString ssqrts = (long) sqrts + TString("TeV");
 
-  TString outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "/inputs_" +  schannel + ".txt";
+  TString outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "_tagged/inputs_" +  schannel + "_" + Form("%d",int(dijettag)) + ".txt";
   ofstream of(outfile,ios_base::out);
 
   float lumiUnc = 0;
@@ -54,7 +63,7 @@ void mergeFragments(int channel, int sqrts, double lumi) {
   else if (sqrts==8) lumiUnc = 1.044;
     
 
-  of << "############## Inputs for " << schannel << " for " << sqrts << " TeV ##############" << endl
+  of << "############## Inputs for " << schannel << " for " << sqrts << " TeV " << " dijettag-> " << dijettag << "  ##############" << endl
      << "## SM ##"                 << endl
      << "model SM"                 << endl
      <<                               endl
@@ -73,19 +82,26 @@ void mergeFragments(int channel, int sqrts, double lumi) {
      <<                               endl;
   of.close();
 
-  TString suffix = ssqrts + "_" + schannel + ".txt";
+  TString sig_untagged = ssqrts + "_" + schannel + ".txt";
+  TString sig_untagged_ratio = ssqrts + "_" + schannel + "_ratio.txt";
+  TString sig_tagged = ssqrts + "_" + schannel + "_" + Form("%d",int(dijettag)) + ".txt";
+  TString bkg_untagged = ssqrts + "_" + schannel + ".txt";
+  TString bkg_tagged = ssqrts + "_" + schannel + "_" + Form("%d",int(dijettag)) + ".txt";
 
-  append("CardFragments/ZZRates_" + suffix, outfile);
-  append("CardFragments/zjetRate_" + suffix, outfile);
-  append("CardFragments/signalFunctions_" + suffix, outfile);
-  append("CardFragments/signalEfficiency_" + suffix, outfile);
-  append("CardFragments/qqzzBackgroundFit_" + suffix, outfile);
-  append("CardFragments/ggzzBackgroundFit_" + suffix, outfile);
-  append("CardFragments/zjetShape_" + suffix, outfile);  
-  append("CardFragments/sys_" + suffix, outfile);
+  append("CardFragments/ZZRates_" + bkg_tagged, outfile);
+  append("CardFragments/zjetRate_" + bkg_tagged, outfile);
+  append("CardFragments/signalFunctions_" + sig_untagged, outfile);
+  append("CardFragments/signalEfficiency_" + sig_untagged, outfile);
+  //append("CardFragments/signalEfficiency_" + sig_untagged_ratio, outfile);
+  append("CardFragments/qqzzBackgroundFit_" + bkg_untagged, outfile);
+  append("CardFragments/ggzzBackgroundFit_" + bkg_untagged, outfile);
+  append("CardFragments/zjetShape_" + bkg_untagged, outfile);  
+  append("CardFragments/sys_" + bkg_untagged, outfile);
   append("CardFragments/hypTesting.txt", outfile);
-  append("CardFragments/mekd_" + suffix, outfile);
-  append("CardFragments/relerr_" + suffix, outfile);
+  append("CardFragments/dijettagging_"+sig_untagged,outfile);
+  append("CardFragments/signalEfficiency_"+ssqrts+"_"+schannel+"_ratio.txt", outfile);
+  append("CardFragments/mekd_" + bkg_untagged, outfile);
+  append("CardFragments/relerr_" + bkg_untagged, outfile);
 
   cout << "Wrote " << outfile << endl;
 }
