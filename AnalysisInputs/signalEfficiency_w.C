@@ -1,3 +1,4 @@
+
 /* 
  * Compute efficiencies for signals and write them in card fragments.
  * usage: 
@@ -44,7 +45,7 @@ using namespace ROOT::Math;
 
 TFile* ftot,*fratio;
 
-void signalEfficiency_w(int channel, double sqrts, int process, double JES);
+void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofstream* txtYields=0);
 
 
 // Run all final states and sqrts in one go
@@ -52,48 +53,64 @@ void signalEfficiency_w() {
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
 
+  // // Not really needed
+  //   gSystem->Load("libHiggsHiggs_CS_and_Width.so");
+  //   gROOT->LoadMacro("$CMSSW_BASE/src/Higgs/Higgs_CS_and_Width/include/HiggsCSandWidth.h+");
+
   float JES = 0; // 1=JES up; -1=JES down
 
+  //Create and open the text output file with yields per mass points
+  ofstream fileOutYields;
+  TString yieldsFileName = "yields.txt";
+  fileOutYields.open(yieldsFileName);
+  fileOutYields << "############### YIELDS ###############" << endl;
+  fileOutYields << "Lumi 7 TeV: " << lumi7TeV << endl;
+  fileOutYields << "Lumi 8 TeV: " << lumi8TeV << endl << endl;
+  fileOutYields << "   sqrts      channel     process     mH     eff      XS*BR     Yield" << endl;
+
   //ggH
-  signalEfficiency_w(1,7,1,JES);
-  signalEfficiency_w(2,7,1,JES);
-  signalEfficiency_w(3,7,1,JES);
-  signalEfficiency_w(1,8,1,JES);
-  signalEfficiency_w(2,8,1,JES);
-  signalEfficiency_w(3,8,1,JES);
+  //  signalEfficiency_w(1,7,1,JES,&fileOutYields);
+  //   signalEfficiency_w(2,7,1,JES,&fileOutYields);
+  //   signalEfficiency_w(3,7,1,JES,&fileOutYields);
+  signalEfficiency_w(1,8,1,JES,&fileOutYields);
+  signalEfficiency_w(2,8,1,JES,&fileOutYields);
+  signalEfficiency_w(3,8,1,JES,&fileOutYields);
   //qqH
-  signalEfficiency_w(1,7,2,JES);
-  signalEfficiency_w(2,7,2,JES);
-  signalEfficiency_w(3,7,2,JES);
-  signalEfficiency_w(1,8,2,JES);
-  signalEfficiency_w(2,8,2,JES);
-  signalEfficiency_w(3,8,2,JES);
+  //   signalEfficiency_w(1,7,2,JES,&fileOutYields);
+  //   signalEfficiency_w(2,7,2,JES,&fileOutYields);
+  //   signalEfficiency_w(3,7,2,JES,&fileOutYields);
+  signalEfficiency_w(1,8,2,JES,&fileOutYields);
+  signalEfficiency_w(2,8,2,JES,&fileOutYields);
+  signalEfficiency_w(3,8,2,JES,&fileOutYields);
   //ZH
-  signalEfficiency_w(1,7,3,JES);
-  signalEfficiency_w(2,7,3,JES);
-  signalEfficiency_w(3,7,3,JES);
-  signalEfficiency_w(1,8,3,JES);
-  signalEfficiency_w(2,8,3,JES);
-  signalEfficiency_w(3,8,3,JES);
+//   signalEfficiency_w(1,7,3,JES,&fileOutYields);
+//   signalEfficiency_w(2,7,3,JES,&fileOutYields);
+//   signalEfficiency_w(3,7,3,JES,&fileOutYields);
+  signalEfficiency_w(1,8,3,JES,&fileOutYields);
+  signalEfficiency_w(2,8,3,JES,&fileOutYields);
+  signalEfficiency_w(3,8,3,JES,&fileOutYields);
   //WH
-  signalEfficiency_w(1,7,4,JES);
-  signalEfficiency_w(2,7,4,JES);
-  signalEfficiency_w(3,7,4,JES);
-  signalEfficiency_w(1,8,4,JES);
-  signalEfficiency_w(2,8,4,JES);
-  signalEfficiency_w(3,8,4,JES);
+//   signalEfficiency_w(1,7,4,JES,&fileOutYields);
+//   signalEfficiency_w(2,7,4,JES,&fileOutYields);
+//   signalEfficiency_w(3,7,4,JES,&fileOutYields);
+  signalEfficiency_w(1,8,4,JES,&fileOutYields);
+  signalEfficiency_w(2,8,4,JES,&fileOutYields);
+  signalEfficiency_w(3,8,4,JES,&fileOutYields);
   //ttH
-  signalEfficiency_w(1,7,5,JES);
-  signalEfficiency_w(2,7,5,JES);
-  signalEfficiency_w(3,7,5,JES);
-  signalEfficiency_w(1,8,5,JES);
-  signalEfficiency_w(2,8,5,JES);
-  signalEfficiency_w(3,8,5,JES);
+//   signalEfficiency_w(1,7,5,JES,&fileOutYields);
+//   signalEfficiency_w(2,7,5,JES,&fileOutYields);
+//   signalEfficiency_w(3,7,5,JES,&fileOutYields);
+  signalEfficiency_w(1,8,5,JES,&fileOutYields);
+  signalEfficiency_w(2,8,5,JES,&fileOutYields);
+  signalEfficiency_w(3,8,5,JES,&fileOutYields);
+
+  fileOutYields.close();
+  
 }
 
 
 // The actual job
-void signalEfficiency_w(int channel, double sqrts, int process, double JES) 
+void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofstream* txtYields) 
 {
   TString schannel;
   if      (channel == 1) schannel = "4mu";
@@ -187,10 +204,24 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
   double totefficiencyErr[arraySize];
   double dijetratioVal[arraySize];
   double dijetratioErr[arraySize];
+
+  // Define the object to compute XS and BRs
+  HiggsCSandWidth *myCSW = new HiggsCSandWidth(gSystem->ExpandPathName("$CMSSW_BASE/src/Higgs/Higgs_CS_and_Width/txtFiles/"));
 	
   TString infile;
 
   for (int i = 0; i < nPoints; i++){
+
+    // Compute XS and BR
+    double xsTimesBR = 0.;
+    double BR4l = myCSW->HiggsBR(15,masses[i]);
+    double BRHZZ = myCSW->HiggsBR(11,masses[i]);
+    if (process==1) xsTimesBR = BR4l*myCSW->HiggsCS(1,masses[i],sqrts);
+    else if (process==2) xsTimesBR = BR4l*myCSW->HiggsCS(2,masses[i],sqrts);
+    else if (process==3) xsTimesBR = BRHZZ*myCSW->HiggsCS(3,masses[i],sqrts);
+    else if (process==4) xsTimesBR = BRHZZ*myCSW->HiggsCS(4,masses[i],sqrts);
+    else if (process==5) xsTimesBR = BRHZZ*myCSW->HiggsCS(5,masses[i],sqrts);
+
     if (process==1) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
     else if (process==2) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VBFH" + (long)masses[i] + ".root";
     else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_" + sprocess + (long)masses[i] + ".root";    
@@ -239,10 +270,15 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
 
       // We use the efficiency vs. generated events in the proper FS for ggH, VBF, and the efficiency vs all generated events for VH, ttH
       float effw = MC_weight_norm;
-      if (process>=3) {
-	effw = MC_weight_noxsec;
+      if (process==3) {
+	effw = MC_weight_noxsec*filter_eff_ZH_8TeV;
       }
-      
+      else if (process==4){
+	effw = MC_weight_noxsec*filter_eff_WH_8TeV;
+      }
+      else if (process==5){
+	effw = MC_weight_noxsec*filter_eff_ttH_8TeV;
+      }      
 
       int NJets=0;
       double jetptc=0;
@@ -317,9 +353,16 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
     totefficiencyErr[i] = sqrt(ndjsumw2 + djsumw2);
     dijetratioVal[i]=totaldjCtr/totefficiencyVal[i];
     dijetratioErr[i]=sqrt(pow(totalndjCtr,2)*djsumw2 + pow(totaldjCtr,2)*ndjsumw2)/pow(totefficiencyVal[i],2);
+    
+    // Write yields to output file
+    double lumi = -1.;
+    sqrts == 7 ? lumi = lumi7TeV*1000 : lumi = lumi8TeV*1000;
+    double yield = xsTimesBR*lumi*totefficiencyVal[i];
+    (*txtYields) << "   " << std::fixed << setprecision(1) << sqrts << "        " << schannel << "         " << sprocess << "         " << masses[i] << "    " << std::fixed << setprecision(4) << totefficiencyVal[i] << "   " << std::fixed << setprecision(5) << xsTimesBR << "   " << yield << endl;
+    
   
     f->Close();
-  }
+  }  
 	
 
   TGraphErrors* totgrEff = new TGraphErrors( nPoints, mHVal, totefficiencyVal, 0, totefficiencyErr);
