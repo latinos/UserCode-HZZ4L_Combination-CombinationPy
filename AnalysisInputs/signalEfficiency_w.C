@@ -25,6 +25,11 @@
 #include "TGraphErrors.h"
 #include "TSystem.h"
 
+#if !defined(__CINT__) || defined(__MAKECINT__)
+#include <TSystem.h>
+#include <TROOT.h>
+#include "Higgs/Higgs_CS_and_Width/include/HiggsCSandWidth.h"
+#endif
 
 #include "../CreateDatacards/include/tdrstyle.cc"
 
@@ -356,7 +361,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
   totgrEff->Draw("AP");
   polyFunctot->Draw("sames");
   ctot->Print(outname+".eps");
-  ctot->Print(outname+".png"); // Does not work in batch?
+  //ctot->Print(outname+".png"); // Does not work in batch?
   ctot->Print(outname+".pdf"); 
   ftot->cd();
   totgrEff->Write("TotalEfficiency");
