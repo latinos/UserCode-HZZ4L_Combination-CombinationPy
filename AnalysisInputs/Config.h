@@ -44,8 +44,13 @@
 //TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130120/v2/PRODFSR/";
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130120/v2/PRODFSR_8TeV/";
 
-TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130613b/PRODFSR/";
-TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130613b/PRODFSR_8TeV/";
+// Legacy paper
+//TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130613b/PRODFSR/";
+//TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130613b/PRODFSR_8TeV/";
+
+TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702/PRODFSR/";	 
+TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702/PRODFSR_8TeV/";
+
 
 // Luminosity, as float and as string to be used in file names, etc.
 double lumi7TeV = 5.051;
@@ -85,6 +90,10 @@ double mHVHVal7TeV[nVHPoints7TeV] = {110,115,120,125,126,130,140,150,160,180}; /
 const int nVHPoints8TeV = 11;
 int VHmasses8TeV[nVHPoints8TeV]   = {110,115,120,125,126,130,140,150,160,180,200};
 double mHVHVal8TeV[nVHPoints8TeV] = {110,115,120,125,126,130,140,150,160,180,200};
+
+double filter_eff_WH_8TeV = 0.0105;
+double filter_eff_ZH_8TeV = 0.028;
+double filter_eff_ttH_8TeV = 0.0296;
 
 //--------------------
 
