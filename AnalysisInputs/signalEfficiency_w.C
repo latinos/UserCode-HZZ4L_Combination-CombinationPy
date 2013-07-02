@@ -47,116 +47,43 @@ void signalEfficiency_w() {
   gSystem->Exec("mkdir -p sigFigs7TeV");
   gSystem->Exec("mkdir -p sigFigs8TeV");
 
-  //ggH
-  signalEfficiency_w(1,7,1,0.);
-  signalEfficiency_w(2,7,1,0.);
-  signalEfficiency_w(3,7,1,0.);
-  signalEfficiency_w(1,8,1,0.);
-  signalEfficiency_w(2,8,1,0.);
-  signalEfficiency_w(3,8,1,0.);
-  //qqH
-  signalEfficiency_w(1,7,2,0.);
-  signalEfficiency_w(2,7,2,0.);
-  signalEfficiency_w(3,7,2,0.);
-  signalEfficiency_w(1,8,2,0.);
-  signalEfficiency_w(2,8,2,0.);
-  signalEfficiency_w(3,8,2,0.);
-  //ZH
-  signalEfficiency_w(1,7,3,0.);
-  signalEfficiency_w(2,7,3,0.);
-  signalEfficiency_w(3,7,3,0.);
-  signalEfficiency_w(1,8,3,0.);
-  signalEfficiency_w(2,8,3,0.);
-  signalEfficiency_w(3,8,3,0.);
-  //WH
-  signalEfficiency_w(1,7,4,0.);
-  signalEfficiency_w(2,7,4,0.);
-  signalEfficiency_w(3,7,4,0.);
-  signalEfficiency_w(1,8,4,0.);
-  signalEfficiency_w(2,8,4,0.);
-  signalEfficiency_w(3,8,4,0.);
-  //ttH
-  signalEfficiency_w(1,7,5,0.);
-  signalEfficiency_w(2,7,5,0.);
-  signalEfficiency_w(3,7,5,0.);
-  signalEfficiency_w(1,8,5,0.);
-  signalEfficiency_w(2,8,5,0.);
-  signalEfficiency_w(3,8,5,0.);
-  /*
-  //JES Up
-  //ggH
-  signalEfficiency_w(1,7,1,1.);
-  signalEfficiency_w(2,7,1,1.);
-  signalEfficiency_w(3,7,1,1.);
-  signalEfficiency_w(1,8,1,1.);
-  signalEfficiency_w(2,8,1,1.);
-  signalEfficiency_w(3,8,1,1.);
-  //qqH
-  signalEfficiency_w(1,7,2,1.);
-  signalEfficiency_w(2,7,2,1.);
-  signalEfficiency_w(3,7,2,1.);
-  signalEfficiency_w(1,8,2,1.);
-  signalEfficiency_w(2,8,2,1.);
-  signalEfficiency_w(3,8,2,1.);
-  //ZH
-  signalEfficiency_w(1,7,3,1.);
-  signalEfficiency_w(2,7,3,1.);
-  signalEfficiency_w(3,7,3,1.);
-  signalEfficiency_w(1,8,3,1.);
-  signalEfficiency_w(2,8,3,1.);
-  signalEfficiency_w(3,8,3,1.);
-  //WH
-  signalEfficiency_w(1,7,4,1.);
-  signalEfficiency_w(2,7,4,1.);
-  signalEfficiency_w(3,7,4,1.);
-  signalEfficiency_w(1,8,4,1.);
-  signalEfficiency_w(2,8,4,1.);
-  signalEfficiency_w(3,8,4,1.);
-  //ttH
-  signalEfficiency_w(1,7,5,1.);
-  signalEfficiency_w(2,7,5,1.);
-  signalEfficiency_w(3,7,5,1.);
-  signalEfficiency_w(1,8,5,1.);
-  signalEfficiency_w(2,8,5,1.);
-  signalEfficiency_w(3,8,5,1.);
+  float JES = 0; // 1=JES up; -1=JES down
 
-  //JES Down
   //ggH
-  signalEfficiency_w(1,7,1,-1.);
-  signalEfficiency_w(2,7,1,-1.);
-  signalEfficiency_w(3,7,1,-1.);
-  signalEfficiency_w(1,8,1,-1.);
-  signalEfficiency_w(2,8,1,-1.);
-  signalEfficiency_w(3,8,1,-1.);
+  signalEfficiency_w(1,7,1,JES);
+  signalEfficiency_w(2,7,1,JES);
+  signalEfficiency_w(3,7,1,JES);
+  signalEfficiency_w(1,8,1,JES);
+  signalEfficiency_w(2,8,1,JES);
+  signalEfficiency_w(3,8,1,JES);
   //qqH
-  signalEfficiency_w(1,7,2,-1.);
-  signalEfficiency_w(2,7,2,-1.);
-  signalEfficiency_w(3,7,2,-1.);
-  signalEfficiency_w(1,8,2,-1.);
-  signalEfficiency_w(2,8,2,-1.);
-  signalEfficiency_w(3,8,2,-1.);
+  signalEfficiency_w(1,7,2,JES);
+  signalEfficiency_w(2,7,2,JES);
+  signalEfficiency_w(3,7,2,JES);
+  signalEfficiency_w(1,8,2,JES);
+  signalEfficiency_w(2,8,2,JES);
+  signalEfficiency_w(3,8,2,JES);
   //ZH
-  signalEfficiency_w(1,7,3,-1.);
-  signalEfficiency_w(2,7,3,-1.);
-  signalEfficiency_w(3,7,3,-1.);
-  signalEfficiency_w(1,8,3,-1.);
-  signalEfficiency_w(2,8,3,-1.);
-  signalEfficiency_w(3,8,3,-1.);
+  signalEfficiency_w(1,7,3,JES);
+  signalEfficiency_w(2,7,3,JES);
+  signalEfficiency_w(3,7,3,JES);
+  signalEfficiency_w(1,8,3,JES);
+  signalEfficiency_w(2,8,3,JES);
+  signalEfficiency_w(3,8,3,JES);
   //WH
-  signalEfficiency_w(1,7,4,-1.);
-  signalEfficiency_w(2,7,4,-1.);
-  signalEfficiency_w(3,7,4,-1.);
-  signalEfficiency_w(1,8,4,-1.);
-  signalEfficiency_w(2,8,4,-1.);
-  signalEfficiency_w(3,8,4,-1.);
+  signalEfficiency_w(1,7,4,JES);
+  signalEfficiency_w(2,7,4,JES);
+  signalEfficiency_w(3,7,4,JES);
+  signalEfficiency_w(1,8,4,JES);
+  signalEfficiency_w(2,8,4,JES);
+  signalEfficiency_w(3,8,4,JES);
   //ttH
-  signalEfficiency_w(1,7,5,-1.);
-  signalEfficiency_w(2,7,5,-1.);
-  signalEfficiency_w(3,7,5,-1.);
-  signalEfficiency_w(1,8,5,-1.);
-  signalEfficiency_w(2,8,5,-1.);
-  signalEfficiency_w(3,8,5,-1.);
-  */
+  signalEfficiency_w(1,7,5,JES);
+  signalEfficiency_w(2,7,5,JES);
+  signalEfficiency_w(3,7,5,JES);
+  signalEfficiency_w(1,8,5,JES);
+  signalEfficiency_w(2,8,5,JES);
+  signalEfficiency_w(3,8,5,JES);
 }
 
 
@@ -264,20 +191,24 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
     else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_" + sprocess + (long)masses[i] + ".root";    
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
-    float mela, MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
+    float MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
+    float MC_weight_noxsec;
     //int NJets;
-    int genProcessId=0;
+    short genProcessId=0;
+    short NJets30;
     vector<double> *JetPt=0;
     vector<double> *JetSigma=0;
-    t1->SetBranchAddress("MC_weight_norm",&MC_weight_norm);
+    t1->SetBranchAddress("MC_weight_norm",&MC_weight_norm); // For efficiency vs "proper" final state
+    t1->SetBranchAddress("MC_weight_noxsec",&MC_weight_noxsec); // For efficiency vs all gen events
     t1->SetBranchAddress("MC_weight_powhegWeight",&MC_weight_powhegWeight);
     t1->SetBranchAddress("MC_weight_PUWeight",&MC_weight_PUWeight);
     t1->SetBranchAddress("MC_weight_dataMC",&MC_weight_dataMC);
-    t1->SetBranchAddress("ZZLD",&mela);
     //t1->SetBranchAddress("NJets",&NJets);
     t1->SetBranchAddress("genProcessId",&genProcessId);
     t1->SetBranchAddress("JetPt",&JetPt);
     t1->SetBranchAddress("JetSigma",&JetSigma);
+    t1->SetBranchAddress("NJets30",&NJets30);
+
     //Initialize counters for non-dijet events
     int numndjEventsRaw = 0;
     float numndjEventsPowheg =0;
@@ -298,36 +229,50 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
     float djsumw_init2=0;
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
-      if ((process==3 && genProcessId!=24) || (process==4 && genProcessId!=26) || (process==5 && (genProcessId!=121 && genProcessId!=122))) continue;
+      if ((process==3 && genProcessId!=24) || (process==4 && genProcessId!=26) || (process==5 && (genProcessId!=121 && genProcessId!=122))) continue; 
+
+
+      // We use the efficiency vs. generated events in the proper FS for ggH, VBF, and the efficiency vs all generated events for VH, ttH
+      float effw = MC_weight_norm;
+      if (process>=3) {
+	effw = MC_weight_noxsec;
+      }
+      
+
       int NJets=0;
       double jetptc=0;
-      for (int j=0; j<JetPt->size();j++){
+      for (unsigned int j=0; j<JetPt->size();j++){
 	if (JES==0.) jetptc=JetPt->at(j);
 	else if (JES!=0.) jetptc=JetPt->at(j)*(1+JES*JetSigma->at(j));
 	if (jetptc>30.) NJets++;
       }
-      if(NJets < 2){
-	totalndjCtr+=MC_weight_norm; 
-	ndjsumw2 += MC_weight_norm*MC_weight_norm;
-	++numndjEventsRaw;      
-	numndjEventsPowheg += MC_weight_powhegWeight;
-	numndjEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
-	numndjEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
+
+      if (NJets30!=NJets) cout << "ERROR: " << NJets30 << " " << NJets << endl;
+
+      if(NJets30 < 2){
+	totalndjCtr+=effw;      // Actual efficiency
+	ndjsumw2 += effw*effw;  // square of weights, for error 
+	// Numbers for x-check:
+	++numndjEventsRaw;      // Number of raw events
+	numndjEventsPowheg += MC_weight_powhegWeight; // Raw, hi-mass reweighted
+	numndjEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight; // Raw + hi-mass + PU rew
+	numndjEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC; // Raw + hi-mass rew + PU +data/MC rew
 	if (MC_weight_powhegWeight>0) {
-	  float w_initial = MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
-	  ndjeff_noweight += w_initial;
-	  ndjsumw_init2 += w_initial*w_initial; 
+	  float w_initial = effw/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC); //initial weight (1/nevt_gen)
+	  ndjeff_noweight += w_initial; // efficiency, with no reweight
+	  ndjsumw_init2 += w_initial*w_initial;
 	}
       } else if(NJets > 1){
-	totaldjCtr+=MC_weight_norm; 
-	djsumw2 += MC_weight_norm*MC_weight_norm;
-	++numdjEventsRaw;      
-	numdjEventsPowheg += MC_weight_powhegWeight;
-	numdjEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight;
-	numdjEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC;
+	totaldjCtr+=effw;      // Actual efficiency
+	djsumw2 += effw*effw;  // square of weights, for error 
+	// Numbers for x-check:
+	++numdjEventsRaw;      // Number of raw events
+	numdjEventsPowheg += MC_weight_powhegWeight; // Raw, hi-mass reweighted
+	numdjEventsPU += MC_weight_powhegWeight*MC_weight_PUWeight; // Raw + hi-mass + PU rew
+	numdjEventsDataMC += MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC; // Raw + hi-mass rew + PU +data/MC rew
 	if (MC_weight_powhegWeight>0) {
-	  float w_initial = MC_weight_norm/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC);
-	  djeff_noweight += w_initial;
+	  float w_initial = effw/(MC_weight_powhegWeight*MC_weight_PUWeight*MC_weight_dataMC); //initial weight (1/nevt_gen)
+	  djeff_noweight += w_initial; // efficiency, with no reweight
 	  djsumw_init2 += w_initial*w_initial; 
 	}
       }
@@ -363,7 +308,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
     }
     
     totefficiencyVal[i] = totalndjCtr + totaldjCtr;
-    cout<<sprocess<<" "<<m<<" "<<totefficiencyVal[i]<<endl;
+    cout << sprocess << " " << m << " " << totefficiencyVal[i]<<endl;
     totefficiencyErr[i] = sqrt(ndjsumw2 + djsumw2);
     dijetratioVal[i]=totaldjCtr/totefficiencyVal[i];
     dijetratioErr[i]=sqrt(pow(totalndjCtr,2)*djsumw2 + pow(totaldjCtr,2)*ndjsumw2)/pow(totefficiencyVal[i],2);
@@ -458,7 +403,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES)
 
   outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes + "_ratio";
 
-  TF1 *ratiofit;
+  TF1 *ratiofit=0;
   if (process==1 || process==2) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
   if (process==3 || process==4 || process==5 ) ratiofit = new TF1("ratiofit","([0]+[1]*x)",110.,xMax);
 
