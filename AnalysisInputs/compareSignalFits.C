@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-
+#include "SignalInterpolationStrings.h"
 /*
 #include "TCanvas.h"
 #include "TFile.h"
@@ -30,29 +30,42 @@ using namespace RooFit ;
 using namespace std;
 
 //Declaration
-void signalFits(int channel, int sqrts, int icomp);
+void signalFits(int channel, int sqrts, int icomp,int njets =0,TCanvas *canv=0x0, bool isLongRange = false);
 float WidthValue(float mHStarWidth);
 bool writeFits = false;
-bool writeParam = true;
+bool plotParam = false;
+bool plotSingleFit = false;
+bool plotMoriondPdf= false;
+bool plotPdfFromFile = true;
 
 void compareSignalFits()
 {
-  gSystem->Exec("mkdir -p compFigs7TeV");
+  gSystem->Exec("mkdir -p compFigs7TeV130613");//if change folders, change as well in line 121
   gSystem->Exec("mkdir -p compFigs8TeV130613");
 
   gSystem->Load("../CreateDatacards/CMSSW_6_1_1/lib/slc5_amd64_gcc472/libHiggsAnalysisCombinedLimit.so");
 
-  for(int ich=1;ich<4;ich++)
+  TCanvas *canv = new TCanvas();
+
+  for(int ich=1;ich<4;ich++) 
     for(int ien=8;ien<9;ien++)
-      for(int icomp=0;icomp<3;icomp++)
-	signalFits(ien,ich,icomp);
-  //signalFits(8,1,1);
+      for(int icomp=0;icomp<5;icomp++){
+	signalFits(ien,ich,icomp,0,canv);
+	signalFits(ien,ich,icomp,2,canv);
+	signalFits(ien,ich,icomp,-1,canv);//no jet tagging
+	signalFits(ien,ich,icomp,0,canv,1);//jet tagging, long mass range
+	signalFits(ien,ich,icomp,2,canv,1);//jet tagging, long mass range
+	
+      }
+  //signalFits(8,1,0,2,canv);//for tests
 }
 
 //The actual job
-void signalFits(int sqrts, int channel, int icomp)
+void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, bool isLongRange)
 {
-  TCanvas canv;
+
+ 
+  if(!canv)canv = new TCanvas();
   string schannel;
   if (channel == 1) schannel = "4mu";
   if (channel == 2) schannel = "4e";
@@ -63,6 +76,7 @@ void signalFits(int sqrts, int channel, int icomp)
   if (icomp == 1) scomp = "WH";
   if (icomp == 2) scomp = "ttH";
   if (icomp == 3) scomp = "VBFH";
+  if (icomp == 4) scomp = "powheg15H";
 
   cout << "Final state = " << schannel << " and sqrt(s) = " << sqrts << " "<<scomp<<endl;
 
@@ -73,13 +87,14 @@ void signalFits(int sqrts, int channel, int icomp)
   TString filePathH;
 
   if(sqrts == 7){
-    filePath = filePath7TeV;
+    filePath ="root://lxcms02//data/Higgs/rootuplesOut/130613/PRODFSR/";
+    filePathH="root://lxcms02//data/Higgs/rootuplesOut/130613/PRODFSR/";
     nPoints = nPoints7TeV;
     masses = mHVal7TeV;
   }
   else if(sqrts == 8){
-    filePath =filePath8TeV;//"root://lxcms02//data/Higgs/rootuplesOut/130613/PRODFSR_8TeV/";
-    filePathH=filePath8TeV;//"root://lxcms02//data/Higgs/rootuplesOut/130613/PRODFSR_8TeV/";
+    filePath ="root://lxcms02//data/Higgs/rootuplesOut/130613/PRODFSR_8TeV/";
+    filePathH="root://lxcms02//data/Higgs/rootuplesOut/130613/PRODFSR_8TeV/";
     nPoints = nPoints8TeV;
     masses = mHVal8TeV;
   }
@@ -96,6 +111,8 @@ void signalFits(int sqrts, int channel, int icomp)
   Double_t a_sigmaCB[arraySize]; Double_t a_sigmaCB_err[arraySize];
   Double_t a_alphaCB[arraySize]; Double_t a_alphaCB_err[arraySize];
   Double_t a_nCB[arraySize];     Double_t a_nCB_err[arraySize];
+  Double_t a_alpha2CB[arraySize]; Double_t a_alpha2CB_err[arraySize];
+  Double_t a_n2CB[arraySize];     Double_t a_n2CB_err[arraySize];
   Double_t a_Gamma[arraySize];   Double_t a_Gamma_err[arraySize];
 
   Double_t a_fitCovQual[arraySize];
@@ -107,19 +124,47 @@ void signalFits(int sqrts, int channel, int icomp)
 
   //Loop over the mass points
   for (int i = 0; i < nPoints; i++){
-    //if(masses[i]<299||masses[i]>301)continue;          
+    //if(masses[i]<123.5||masses[i]>124.5)continue;  //For tests
+    if( masses[i]>399 &&( icomp<3||plotParam)) continue;  
+
     //Open input file with shapes and retrieve the tree
     char tmp_finalInPath[200];
     sprintf(tmp_finalInPath,"/HZZ4lTree_%s%i.root",scomp.c_str(),masses[i]);
     string finalInPath = filePath + tmp_finalInPath;
     cout<<finalInPath.c_str()<<endl;
     TFile *f = TFile::Open(finalInPath.c_str()) ;
+    if(!f)continue;
     TTree *tree= (TTree*) f->Get("SelectedTree");
     if(tree==NULL){
       cout << "Impossible to retrieve the tree for mass point " << masses[i] <<" GeV " << endl;
-      abort();
+      continue;
     }
 
+    //hack to use nJets, to be replaced with RooCategory
+    TFile *fo = new TFile("tmp.root","RECREATE");
+    TTree *newTree = new TTree("treesmall","tresmall");
+    if(njets>=0){
+      Double_t zzmass,mcw,nj;
+      TBranch *b_zzmass,*b_mcw,*b_nj;
+      newTree->Branch("ZZMass", &zzmass, "ZZMass/D");
+      newTree->Branch("MC_weight", &mcw, "MC_weight/D");
+      newTree->Branch("NJets30", &nj, "NJets30/D");
+      Float_t zzmass0,mcw0;
+      Short_t nj0;
+      tree->SetBranchAddress("ZZMass",&zzmass0,&b_zzmass);
+      tree->SetBranchAddress("MC_weight",&mcw0,&b_mcw);
+      tree->SetBranchAddress("NJets30",&nj0,&b_nj);
+      for(int itree=0;itree<tree->GetEntries();itree++){
+	tree->GetEntry(itree);
+	zzmass=(Double_t)zzmass0;
+	mcw=(Double_t)mcw0;
+	nj=(Double_t)nj0;
+	//cout<<zzmass<<" "<<nj<<endl;
+	newTree->Fill();
+      }
+    }
+
+    //Open ggH file and retrieve the tree
     sprintf(tmp_finalInPath,"/HZZ4lTree_H%i.root",masses[i]);
     finalInPath = filePathH + tmp_finalInPath;
     cout<<finalInPath.c_str()<<endl;
@@ -128,9 +173,11 @@ void signalFits(int sqrts, int channel, int icomp)
     TTree *treeH= (TTree*) fH->Get("SelectedTree");
     if(treeH==NULL){
       cout << "Impossible to retrieve the tree for mass point " << masses[i] <<" GeV " << endl;
-      abort();
+      continue;
     }
 
+
+    //Mass Range
     double valueWidth = WidthValue(masses[i]);
     double windowVal = max(valueWidth,1.);
     double lowside = 100.;
@@ -143,31 +190,59 @@ void signalFits(int sqrts, int channel, int icomp)
       high_M = min( (masses[i] + 2.*windowVal), 1600.);
     }
 
-    cout << "lowM = " << low_M << ", highM = " << high_M << endl;
+    if(isLongRange){
+      low_M = 70;
+      high_M = 600;
+    }
+
+    //cout << "lowM = " << low_M << ", highM = " << high_M << endl;
 
     //Set the observable and get the RooDataSomething
     RooRealVar ZZMass("ZZMass","ZZMass",low_M,high_M);
     RooRealVar MC_weight("MC_weight","MC_weight",0.,10.);
+    RooRealVar NJets30("NJets30","NJets30",0,100);
 
-    if(channel == 2) ZZMass.setBins(50);
-    if(channel == 3) ZZMass.setBins(50);
+    ZZMass.setBins(50);
+    if(channel == 2) ZZMass.setBins(30);
+    if(channel == 3) ZZMass.setBins(30);
+ 
+    if(icomp==0)ZZMass.setBins(65);
+    if(icomp==0 && channel == 2)ZZMass.setBins(40);
+    if(icomp==0 && channel == 3)ZZMass.setBins(40);
 
-    RooDataSet *set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
+    if(isLongRange) ZZMass.setBins(100);
+
+    RooDataSet *set2;
+    if(njets==0) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=0 && NJets30<1.5", "MC_weight");
+    if(njets==2) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=2", "MC_weight");
+    if(njets==-1)set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
     RooDataHist *set = (RooDataHist*)set2->binnedClone("datahist","datahist");
 
     RooRealVar ZZMassH("ZZMass","ZZMassH",low_M,high_M);
     RooRealVar MC_weightH("MC_weight","MC_weightH",0.,10.);
 
-    if(channel == 2) ZZMassH.setBins(50);
-    if(channel == 3) ZZMassH.setBins(50);
+     ZZMassH.setBins(50);
+     if(channel == 2) ZZMassH.setBins(30);
+     if(channel == 3) ZZMassH.setBins(30);
 
-    RooDataSet *set2H = new RooDataSet("data ggH","dataH", treeH, RooArgSet(ZZMassH,MC_weightH), "", "MC_weightH");
+    if(icomp==0)ZZMassH.setBins(65);
+    if(icomp==0 && channel == 2)ZZMassH.setBins(40);
+    if(icomp==0 && channel == 3)ZZMassH.setBins(40);
+
+    if(isLongRange) ZZMassH.setBins(100);
+
+    RooDataSet *set2H = new RooDataSet("data ggH","dataH", treeH, RooArgSet(ZZMassH,MC_weightH), "", "MC_weight");
     RooDataHist *setH = (RooDataHist*)set2H->binnedClone("datahistH","datahistH");
 
     double sumset = (double)set->sumEntries();
     double sumsetH = (double)setH->sumEntries();
 
-    cout<<"setH "<<setH->sumEntries()<<" set "<<set->sumEntries()<<endl;
+    RooDataSet setM;
+    RooRealVar *CMS_zz4l_mass;
+    double sumsetM =1;
+
+    //cout<<"setH "<<setH->sumEntries()<<" set "<<set->sumEntries()<<endl;
+
     //Theoretical signal model  
     RooRealVar MHStar("MHStar","MHStar",masses[i],0.,2000.);
     MHStar.setConstant(true);
@@ -184,6 +259,8 @@ void signalFits(int sqrts, int channel, int icomp)
     RooRealVar sigmaCB("sigmaCB","sigmaCB",1.,0.01,100.);
     RooRealVar alphaCB("alphaCB","alphaCB",3.,-10.,10.);
     RooRealVar nCB("nCB","nCB",2.,-10.,10.);
+    RooRealVar alpha2CB("alpha2CB","alpha2CB",3.,-10.,10.);
+    RooRealVar n2CB("n2CB","n2CB",2.,-10.,10.);
 
     //Initialize to decent values
     float m = masses[i];
@@ -192,7 +269,8 @@ void signalFits(int sqrts, int channel, int icomp)
     else if(channel == 3) sigmaCB.setVal(7.42629+-0.100902*m+0.000660553*m*m+-1.52583e-06*m*m*m+1.2399e-09*m*m*m*m);
     else abort();
 
-    RooCBShape massRes("massRes","crystal ball",ZZMass,meanCB,sigmaCB,alphaCB,nCB);
+    //RooCBShape massRes("massRes","crystal ball",ZZMass,meanCB,sigmaCB,alphaCB,nCB);
+    RooDoubleCB massRes("massRes","crystal ball",ZZMass,meanCB,sigmaCB,alphaCB,nCB,alpha2CB,n2CB);
 
     //Convolute theoretical shape and resolution
     RooFFTConvPdf *sigPDF;
@@ -200,32 +278,85 @@ void signalFits(int sqrts, int channel, int icomp)
     else sigPDF = new RooFFTConvPdf("sigPDF","sigPDF",ZZMass, SignalTheor,massRes);
     sigPDF->setBufferFraction(0.2);
 
-    double pm=0,ps=1,pa=3,pn=2,ga=1;
-
-    if(!writeFits){
+    //take the pdf from the parametrization
+    RooFFTConvPdf *paramPDF;
+    double pm=0,ps=1,pa=3,pn=2,ga=1,pa2=3,pn2=2;
+    if(!writeFits && plotParam){
       TString finname;finname.Form("foutFit%d%d%d.root",sqrts,channel,icomp);
       TFile *finFits = TFile::Open(finname.Data());
-      TF1 * fitm = (TF1*)finFits->Get("mean");
-      TF1 * fits = (TF1*)finFits->Get("sigma");
-      TF1 * fita = (TF1*)finFits->Get("alpha");
-      TF1 * fitn = (TF1*)finFits->Get("n");
-      TF1 * fitg = (TF1*)finFits->Get("gamma");
+      if(finFits){
+	TF1 * fitm = (TF1*)finFits->Get("mean");
+	TF1 * fits = (TF1*)finFits->Get("sigma");
+	TF1 * fita = (TF1*)finFits->Get("alpha");
+	TF1 * fitn = (TF1*)finFits->Get("n");
+	TF1 * fita2 = (TF1*)finFits->Get("alpha2");
+	TF1 * fitn2 = (TF1*)finFits->Get("n2");
+	TF1 * fitg = (TF1*)finFits->Get("gamma");
+	
+	pm=fitm->Eval(masses[i]);
+	pa=fita->Eval(masses[i]);
+	pa2=fita2->Eval(masses[i]);
+	ps=fits->Eval(masses[i]);
+	pn=fitn->Eval(masses[i]);
+	pn2=fitn2->Eval(masses[i]);
+	ga=fitg->Eval(masses[i]);
+      }
+    
 
-      pm=fitm->Eval(masses[i]);
-      pa=fita->Eval(masses[i]);
-      ps=fits->Eval(masses[i]);
-      pn=fitn->Eval(masses[i]);
-      ga=fitg->Eval(masses[i]);
+      RooRealVar meanCB_p("meanCB_p","meanCB_p",pm);
+      RooRealVar sigmaCB_p("sigmaCB_p","sigmaCB_p",ps);
+      RooRealVar alphaCB_p("alphaCB_p","alphaCB_p",pa);
+      RooRealVar nCB_p("nCB_p","nCB_p",pn);
+      RooRealVar alpha2CB_p("alpha2CB_p","alpha2CB_p",pa2);
+      RooRealVar n2CB_p("n2CB_p","n2CB_p",pn2);
+      RooRealVar pgamma("pgamma","pgamma",ga);
+
+      //RooCBShape paramCB("mparamCB","crystal ball param",ZZMass,meanCB_p,sigmaCB_p,alphaCB_p,nCB_p);
+      RooDoubleCB paramCB("paramCB","crystal ball param",ZZMass,meanCB_p,sigmaCB_p,alphaCB_p,nCB_p,alpha2CB_p,n2CB_p);
+      RooRelBWUFParam paramBW("paramBW","paramBW",ZZMass,MHStar,pgamma);
+      RooFFTConvPdf *paramPDF =  new RooFFTConvPdf("fitparamPDF","fitparamPDF",ZZMass, paramBW,paramCB);
     }
-    RooRealVar meanCB_p("meanCB_p","meanCB_p",pm);
-    RooRealVar sigmaCB_p("sigmaCB_p","sigmaCB_p",ps);
-    RooRealVar alphaCB_p("alphaCB_p","alphaCB_p",pa);
-    RooRealVar nCB_p("nCB_p","nCB_p",pn);
-    RooRealVar pgamma("pgamma","pgamma",ga);
+    //take the pdf from the (Moriond) datacards
+    //STILL BUG FIXING THIS PART!!!!!!!!!!!!!!!
+    RooDoubleCB MoriondCB;
+    if(plotMoriondPdf){
+      int mass=masses[i];
+      TString cardName;
+      cardName.Form("/afs/cern.ch/work/g/gortona/MoriondWS/hzz4l/%i/hzz4l_%sS_%iTeV_0.input.root",mass,schannel.c_str(),sqrts);
+      TFile *fff = TFile::Open(cardName.Data());
+      if(fff){
+	RooWorkspace w = (RooWorkspace)fff->Get("w");
+	//w.Print();
+	//abort();
+	MoriondCB = (RooDoubleCB)w.pdf("signalCB_ggH_SM");
+	cout<<"qui"<<endl;
+	CMS_zz4l_mass = (RooRealVar*)w.var("CMS_zz4l_mass");
+	//setM = (RooDataSet)w.data("CMS_zz4l_mass");
+	cout<<"qui 1"<<endl;
+	//abort();
+      }
+    }
 
-    RooCBShape paramCB("mparamCB","crystal ball param",ZZMass,meanCB_p,sigmaCB_p,alphaCB_p,nCB_p);
-    RooRelBWUFParam paramBW("paramBW","paramBW",ZZMass,MHStar,pgamma);
-    RooFFTConvPdf *paramPDF =  new RooFFTConvPdf("fitparamPDF","fitparamPDF",ZZMass, paramBW,paramCB);
+    //take the pdf from committed RooFormulaVar (parameters from Emanuele are here: UserCode/Mangano/WWAnalysis/TreeModifiers/macro/SignalInterpolationStrings.h
+    RooRealVar zero("zero","zero",0.0);
+    RooRealVar HMass("HMass","HMass",masses[i]);
+
+    bool ien=1;
+    if(sqrts==8)ien=0;
+
+    RooFormulaVar meanCB_f("meanCB_f"    ,getSignalCBMeanString(masses[i],channel-1,ien,0).c_str(),RooArgList(HMass,zero));
+    RooFormulaVar sigmaCB_f("sigmaCB_f"  ,getSignalCBSigmaString(masses[i],channel-1,ien).c_str(),RooArgList(HMass,zero));
+    RooFormulaVar alphaCB_f("alphaCB_f"  ,getSignalCBAlphaLString(masses[i],channel-1,ien).c_str(),RooArgList(HMass));
+    RooFormulaVar nCB_f("nCB_f"          ,getSignalCBNLString(masses[i],channel-1,ien).c_str(),RooArgList(HMass));
+    RooFormulaVar alpha2CB_f("alpha2CB_f",getSignalCBAlphaRString(masses[i],channel-1,ien).c_str(),RooArgList(HMass));
+    RooFormulaVar n2CB_f("n2CB_f"        ,getSignalCBNRString(masses[i],channel-1,ien).c_str(),RooArgList(HMass));
+    RooFormulaVar fgamma("fgamma"        ,getSignalBWGammaString(masses[i],channel-1,ien).c_str(),RooArgList(HMass,zero));
+
+    RooDoubleCB formulaCB("formulaCB","crystal ball from Formulas",ZZMass,meanCB_f,sigmaCB_f,alphaCB_f,nCB_f,alpha2CB_f,n2CB_f);
+    RooRelBWUFParam formulaBW("formulaBW","formulaBW",ZZMass,MHStar,fgamma);
+    RooAbsPdf *formulaPDF;
+    if(masses[i]<400)formulaPDF = (RooDoubleCB*)formulaCB.Clone();
+    else formulaPDF = new RooFFTConvPdf("fitFormulaPDF","fitFormulaPDF",ZZMass, formulaBW,formulaCB);
 
     //Fit the shape
     RooFitResult *fitRes = sigPDF->fitTo(*set,Save(1), SumW2Error(kTRUE));
@@ -238,50 +369,75 @@ void signalFits(int sqrts, int channel, int icomp)
     a_sigmaCB[i] = sigmaCB.getVal();
     a_alphaCB[i]  = alphaCB.getVal();
     a_nCB[i]     = nCB.getVal();
+    a_alpha2CB[i]  = alpha2CB.getVal();
+    a_n2CB[i]     = n2CB.getVal();
     a_Gamma[i] = Gamma_TOT.getVal();
 
     a_meanCB_err[i]  = meanCB.getError();
     a_sigmaCB_err[i] = sigmaCB.getError();
     a_alphaCB_err[i]  = alphaCB.getError();
     a_nCB_err[i]     = nCB.getError();
+    a_alpha2CB_err[i]  = alpha2CB.getError();
+    a_n2CB_err[i]     = n2CB.getError();
     if(masses[i] > 399.) a_Gamma_err[i] = Gamma_TOT.getError();
     else a_Gamma_err[i] = 0.;
 
     //Plot in the figures directory
     RooPlot *xplot = ZZMass.frame();
-    double ymax = xplot->GetYaxis()->GetXmax();
     double scale = sumset/sumsetH;
     set->plotOn(xplot);
-    sigPDF->plotOn(xplot);
-    if(!writeFits && writeParam)paramPDF->plotOn(xplot,LineColor(kRed+1),LineStyle(2));
-    //setH->plotOn(xplot,MarkerStyle(24),Rescale(scale));
-    //xplot->GetYaxis()->SetRange(0.,ymax);
+    if(plotSingleFit) sigPDF->plotOn(xplot);
+    if(!writeFits && plotParam) paramPDF->plotOn(xplot,LineColor(kRed+1),LineStyle(2));
+    if(plotPdfFromFile) formulaPDF->plotOn(xplot,LineColor(kGreen+2),LineStyle(2));
     RooPlot *xplotH = ZZMassH.frame();
     setH->plotOn(xplotH,MarkerStyle(24),Rescale(scale));
-    //sigPDF->plotOn(xplotH);
 
-    //canv.Divide(2,1);
-    canv.cd();
+    canv->cd();
     xplot->Draw();
-    //xplot->GetYaxis()->SetRange(0.,ymax);
-    //canv.cd(2);
     xplotH->Draw("SAME");
+
+    if(plotMoriondPdf){
+      cout<<"fino a qui 0"<<endl;
+      RooPlot *mplot = CMS_zz4l_mass->frame();
+      double mscale = sumset/sumsetM;
+      cout<<"fino a qui"<<endl;
+      MoriondCB.plotOn(mplot,LineColor(kOrange+7),LineStyle(4)/*,Rescale(mscale)*/);
+      mplot->Draw("SAME");
+    }
+  
 
     TLegend *leg1 = new TLegend(0.15,0.65,0.35,0.85);
     leg1->SetFillColor(0);
     leg1->SetLineColor(0);
     leg1->SetFillStyle(0);
-    TLegendEntry *edata = leg1->AddEntry("data","data","lpe");
+    TString dataname = scomp.c_str();
+    TString jetname;
+    if(njets==2)jetname.Form(" %i+ jets",njets);
+    if(njets==0)jetname.Form(" 0/1 jets");
+    dataname.Append(jetname.Data());
+    TLegendEntry *edata = leg1->AddEntry(dataname.Data(),dataname.Data(),"lpe");
     edata->SetMarkerStyle(20);
-    TLegendEntry *edataggh = leg1->AddEntry("data ggH","data ggH","lpe");
+    TLegendEntry *edataggh = leg1->AddEntry("ggH","ggH","lpe");
     edataggh->SetMarkerStyle(24);
     edataggh->SetFillColor(0);
-    TLegendEntry *esigpdf = leg1->AddEntry("sigPDF","PDF fit","l");
-    esigpdf->SetLineColor(kBlue);
-    if(writeParam){
+    if(plotSingleFit){
+      TLegendEntry *esigpdf = leg1->AddEntry("sigPDF","PDF fit","l");
+      esigpdf->SetLineColor(kBlue);
+    }
+    if(plotParam){
       TLegendEntry *eparpdf = leg1->AddEntry("paramPDF","Parametric PDF","l");
       eparpdf->SetLineColor(kRed+1);
       eparpdf->SetLineStyle(2);
+    }
+    if(plotMoriondPdf){
+      TLegendEntry *emorpdf = leg1->AddEntry("Moriond PDF","Moriond PDF","l");
+      emorpdf->SetLineColor(kGreen+2);
+      emorpdf->SetLineStyle(4);
+    }
+    if(plotPdfFromFile){
+      TLegendEntry *eforpdf = leg1->AddEntry("Emanuele Shape","Emanuele Shape","l");
+      eforpdf->SetLineColor(kGreen+2);
+      eforpdf->SetLineStyle(2);
     }
     leg1->Draw("SAME");
 
@@ -290,9 +446,15 @@ void signalFits(int sqrts, int channel, int icomp)
     tmp_plotFileTitle += "/fitMass_";
     char tmp2_plotFileTitle[200];
     sprintf(tmp2_plotFileTitle,"%s%i_%iTeV_",scomp.c_str(),masses[i],sqrts);
-    string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + schannel + ".png";
-
-    canv.SaveAs(plotFileTitle.c_str());
+    string njetstr = "";
+    if(njets==0)njetstr+="0jets_";
+    if(njets==2)njetstr+="2plusjets_";
+    if(isLongRange)njetstr+="longRange_";
+    string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + njetstr + schannel + ".png";
+    canv->SaveAs(plotFileTitle.c_str());
+    delete newTree;
+    fo->Close();
+    delete fo;
   }
 
   if(writeFits){
@@ -302,18 +464,24 @@ void signalFits(int sqrts, int channel, int icomp)
     TGraph* gr_sigmaCB = new TGraph(nPoints, masses, a_sigmaCB);
     TGraph* gr_alphaCB = new TGraph(nPoints, masses, a_alphaCB);
     TGraph* gr_nCB     = new TGraph(nPoints, masses, a_nCB);
+    TGraph* gr_alpha2CB = new TGraph(nPoints, masses, a_alpha2CB);
+    TGraph* gr_n2CB     = new TGraph(nPoints, masses, a_n2CB);
     TGraph* gr_Gamma   = new TGraph(nPoints, masses, a_Gamma);
 
     gr_meanCB->Fit("pol3");
     gr_sigmaCB->Fit("pol3");
     gr_alphaCB->Fit("pol3");
     gr_nCB->Fit("pol3");
+    gr_alpha2CB->Fit("pol3");
+    gr_n2CB->Fit("pol3");
     gr_Gamma->Fit("pol3");
     
     TF1 *fit_meanCB  = gr_meanCB->GetListOfFunctions()->First();
     TF1 *fit_sigmaCB = gr_sigmaCB->GetListOfFunctions()->First();
     TF1 *fit_alphaCB = gr_alphaCB->GetListOfFunctions()->First();
     TF1 *fit_nCB     = gr_nCB->GetListOfFunctions()->First();
+    TF1 *fit_alpha2CB = gr_alpha2CB->GetListOfFunctions()->First();
+    TF1 *fit_n2CB     = gr_n2CB->GetListOfFunctions()->First();
     TF1 *fit_Gamma   = gr_Gamma->GetListOfFunctions()->First();
 
     TString foutname =   "foutFit";
@@ -329,12 +497,16 @@ void signalFits(int sqrts, int channel, int icomp)
     fit_sigmaCB->SetName("sigma");
     fit_alphaCB->SetName("alpha");
     fit_nCB->SetName("n");
+    fit_alpha2CB->SetName("alpha2");
+    fit_n2CB->SetName("n2");
     fit_Gamma->SetName("gamma");
 
     fit_meanCB->Write();
     fit_sigmaCB->Write();
     fit_alphaCB->Write();
     fit_nCB->Write();
+    fit_alpha2CB->Write();
+    fit_n2CB->Write();
     fit_Gamma->Write();
 
     foutFit->Close();
