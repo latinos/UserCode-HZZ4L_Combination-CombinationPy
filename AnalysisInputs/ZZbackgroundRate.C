@@ -35,6 +35,8 @@
 #include "Config.h"
 //<----------
 
+//VBFtag convention: 0->0/1 Jets; 1->2+ jets; 2->No tagging
+
 using namespace std;
 void compute(TString name, int sqrts, double lumi, int VBFtag);
 double sumWeights(TString name, double lumi, int selVBF);
@@ -140,35 +142,19 @@ double sumWeights(TString name, double lumi, int selVBF){
   TChain* tree = new TChain("SelectedTree");
   tree->Add((TString)(name));
 
-  float MC_weight,ZZMass,mela,Z2Mass,Z1Mass;
-  int NJets;
-  //std::vector<double> *JetEta = new vector<double>;
-  std::vector<double> *JetPt = new vector<double>;
-  //std::vector<double> *JetPhi = new vector<double>;
-  //std::vector<double> *JetMass = new vector<double>;
-  tree->SetBranchAddress("MC_weight",&MC_weight);  
-  tree->SetBranchAddress("ZZMass",&ZZMass);  
-  tree->SetBranchAddress("Z1Mass",&Z1Mass);  
-  tree->SetBranchAddress("Z2Mass",&Z2Mass);  
-  tree->SetBranchAddress("ZZLD",&mela);
-  //tree->SetBranchAddress("NJets",&NJets);
-  tree->SetBranchAddress("JetPt", &JetPt);
-  //tree->SetBranchAddress("JetEta", &JetEta);
-  //tree->SetBranchAddress("JetMass", &JetMass); 
-
+  float MC_weight;
+  Short_t NJets;
   double totEvents=0;
-  //Get Histos for LD
+
+  tree->SetBranchAddress("MC_weight",&MC_weight);  
+  tree->SetBranchAddress("NJets30", &NJets);
+
   for(int iEvt=0; iEvt<tree->GetEntries(); iEvt++){
     tree->GetEntry(iEvt);
-    NJets=0;
-    for(int i=0;i<JetPt->size();i++){
-      if(JetPt->at(i)>30.) NJets++;
-    }
     if( (selVBF == 1 && NJets > 1) || (selVBF == 0 && NJets < 2) || (selVBF==2))
-      {
-	totEvents=totEvents+MC_weight;
-      }
+      totEvents=totEvents+MC_weight;
   }
+
   return totEvents*lumi;
 }
 
