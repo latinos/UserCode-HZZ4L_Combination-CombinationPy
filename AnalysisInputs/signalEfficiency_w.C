@@ -75,6 +75,11 @@ void signalEfficiency_w() {
   signalEfficiency_w(1,8,1,JES,&fileOutYields);
   signalEfficiency_w(2,8,1,JES,&fileOutYields);
   signalEfficiency_w(3,8,1,JES,&fileOutYields);
+  //ggH (powheg15) // TEMPORARY for x-check
+  signalEfficiency_w(1,8,6,JES,&fileOutYields);
+  signalEfficiency_w(2,8,6,JES,&fileOutYields);
+  signalEfficiency_w(3,8,6,JES,&fileOutYields);
+
   //qqH
   //   signalEfficiency_w(1,7,2,JES,&fileOutYields);
   //   signalEfficiency_w(2,7,2,JES,&fileOutYields);
@@ -124,6 +129,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   else if (process == 3) sprocess = "ZH";
   else if (process == 4) sprocess = "WH";
   else if (process == 5) sprocess = "ttH";
+  else if (process == 6) sprocess = "ggH_p15"; // TEMPORARY for x-check
   else cout << "Not a valid channel: " << process << endl;
 
   TString sjes;
@@ -193,6 +199,18 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
       mHVal   = mHVHVal8TeV;
       filepath = filePath8TeV;
     }
+  }  else if (process==6) {
+    if (sqrts==7) {
+      nPoints = nPoints7TeV_p15;
+      masses  = masses7TeV_p15;
+      mHVal   = mHVal7TeV_p15;
+      filepath = filePath7TeV;      
+    } else if (sqrts==8) {
+      nPoints = nPoints8TeV_p15;
+      masses  = masses8TeV_p15;
+      mHVal   = mHVal8TeV_p15;
+      filepath = filePath8TeV;
+    }
   }  
 
   float xMax = masses[nPoints-1]+10;
@@ -214,17 +232,26 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
     // Compute XS and BR
     double xsTimesBR = 0.;
-    double BR4l = myCSW->HiggsBR(15,masses[i]);
+    double BRH4e = myCSW->HiggsBR(12,masses[i]);
+    double BRH2e2mu = myCSW->HiggsBR(13,masses[i]);
     double BRHZZ = myCSW->HiggsBR(11,masses[i]);
-    if (process==1) xsTimesBR = BR4l*myCSW->HiggsCS(1,masses[i],sqrts);
-    else if (process==2) xsTimesBR = BR4l*myCSW->HiggsCS(2,masses[i],sqrts);
-    else if (process==3) xsTimesBR = BRHZZ*myCSW->HiggsCS(3,masses[i],sqrts);
-    else if (process==4) xsTimesBR = BRHZZ*myCSW->HiggsCS(4,masses[i],sqrts);
-    else if (process==5) xsTimesBR = BRHZZ*myCSW->HiggsCS(5,masses[i],sqrts);
+    double BR = BRHZZ;
+    if (process==1 || process==2 || process==6) {
+      if (channel==1 || channel==2) BR = BRH4e;
+      else BR = BRH2e2mu;
+    }
+
+    if (process==1)      xsTimesBR = BR*myCSW->HiggsCS(1,masses[i],sqrts);
+    else if (process==2) xsTimesBR = BR*myCSW->HiggsCS(2,masses[i],sqrts);
+    else if (process==3) xsTimesBR = BR*myCSW->HiggsCS(3,masses[i],sqrts);
+    else if (process==4) xsTimesBR = BR*myCSW->HiggsCS(4,masses[i],sqrts);
+    else if (process==5) xsTimesBR = BR*myCSW->HiggsCS(5,masses[i],sqrts);
+    else if (process==6) xsTimesBR = BR*myCSW->HiggsCS(1,masses[i],sqrts);
 
     if (process==1) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
     else if (process==2) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VBFH" + (long)masses[i] + ".root";
     else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_" + sprocess + (long)masses[i] + ".root";    
+    else if (process==6) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_powheg15H" + (long)masses[i] + ".root";
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
     float MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
@@ -394,15 +421,16 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
   TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes;
 
-  totgrEff->Fit(polyFunctot,"Rt");
+  if (process!=6) totgrEff->Fit(polyFunctot,"Rt");
   TString xaxisText = "m_{" + schannel + "}";
   totgrEff->GetXaxis()->SetTitle(xaxisText);
   TString yaxisText = "Efficiency, " + sprocess + ", " + schannel;
   totgrEff->GetYaxis()->SetTitle(yaxisText);
   totgrEff->SetMinimum(0.0);
   totgrEff->SetMaximum(1.0);
+  if (process>=3) totgrEff->SetMaximum(0.0035);
   totgrEff->Draw("AP");
-  polyFunctot->Draw("sames");
+  if (process!=6) polyFunctot->Draw("sames");
   ctot->Print(outname+".eps");
   //ctot->Print(outname+".png"); // Does not work in batch?
   ctot->Print(outname+".pdf"); 
@@ -410,6 +438,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   totgrEff->Write("TotalEfficiency");
   ftot->Close();
 
+  if (process!=6){
   cout << endl;
   cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << endl;
   cout << "   a1 = " << polyFunctot->GetParameter(0) << endl;
@@ -443,6 +472,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   oftot << "signalEff " << oftotprocess << "g2  " << polyFunctot->GetParameter(8) << endl;
   oftot << "signalEff " << oftotprocess << "g3  " << polyFunctot->GetParameter(9) << endl;
   oftot << endl;
+  }
   oftot.close();
   
   cname = "eff" + sprocess + ssqrts + "_" + schannel + "_ratio";
@@ -455,7 +485,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   if (process==1 || process==2) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
   if (process==3 || process==4 || process==5 ) ratiofit = new TF1("ratiofit","([0]+[1]*x)",110.,xMax);
 
-  ratgrEff->Fit(ratiofit,"Rt");
+  if (process!=6) ratgrEff->Fit(ratiofit,"Rt");
   ratgrEff->GetXaxis()->SetTitle(xaxisText);
   TString yaxisratio = "Dijet ratio, " + sprocess + ", " + schannel;
   ratgrEff->GetYaxis()->SetTitle(yaxisratio);
@@ -469,6 +499,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   ratgrEff->Write("Ratio");
   fratio->Close();
   
+  if (process!=6){
   cout << endl;
   cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << endl;
   cout << "   a1 = " << ratiofit->GetParameter(0) << endl;
@@ -481,16 +512,19 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   if (process==1 || process==2) ofrat << "+(" << ratiofit->GetParameter(2) << "*@0*@0)" << endl;
   else if (process==3 || process==4 ) ofrat << endl;
   else if (process==5) ofrat << endl << endl;
+  }
   ofrat.close();
 
   // deviations
   cout << "Deviations..." << endl;
   double maxResidual=0;
+  if (process!=6){
   for (int i = 0; i < nPoints; i++){
     double eval = polyFunctot->Eval(masses[i]);
     double residual = (eval - totefficiencyVal[i]);
     maxResidual = max(maxResidual,fabs(residual));
     if (verbose)    cout << "For mass, " << masses[i] << ": measured value is " << totefficiencyVal[i] << " and difference from function is " << residual <<endl;
+  }
   }
   cout << "Largest residual= " << maxResidual << endl;
 }
