@@ -37,6 +37,7 @@ bool plotParam = false;
 bool plotSingleFit = false;
 bool plotMoriondPdf= false;
 bool plotPdfFromFile = true;
+bool plotOverFlowBins = false;
 
 void compareSignalFits()
 {
@@ -47,17 +48,16 @@ void compareSignalFits()
 
   TCanvas *canv = new TCanvas();
 
-  for(int ich=1;ich<4;ich++) 
+  for(int ich=3;ich<4;ich++) 
     for(int ien=8;ien<9;ien++)
       for(int icomp=0;icomp<5;icomp++){
-	signalFits(ien,ich,icomp,0,canv);
-	signalFits(ien,ich,icomp,2,canv);
-	signalFits(ien,ich,icomp,-1,canv);//no jet tagging
-	signalFits(ien,ich,icomp,0,canv,1);//jet tagging, long mass range
-	signalFits(ien,ich,icomp,2,canv,1);//jet tagging, long mass range
-	
+	//signalFits(ien,ich,icomp,0,canv);
+	//signalFits(ien,ich,icomp,2,canv);
+	//signalFits(ien,ich,icomp,-1,canv);//no jet tagging
+	//signalFits(ien,ich,icomp,0,canv,1);//jet tagging, long mass range
+	//signalFits(ien,ich,icomp,2,canv,1);//jet tagging, long mass range
       }
-  //signalFits(8,1,0,2,canv);//for tests
+  signalFits(8,1,3,2,canv);//for tests
 }
 
 //The actual job
@@ -124,7 +124,7 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
 
   //Loop over the mass points
   for (int i = 0; i < nPoints; i++){
-    //if(masses[i]<123.5||masses[i]>124.5)continue;  //For tests
+    if(masses[i]<399.5||masses[i]>400.5)continue;  //For tests
     if( masses[i]>399 &&( icomp<3||plotParam)) continue;  
 
     //Open input file with shapes and retrieve the tree
@@ -140,6 +140,7 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
       continue;
     }
 
+    /*
     //hack to use nJets, to be replaced with RooCategory
     TFile *fo = new TFile("tmp.root","RECREATE");
     TTree *newTree = new TTree("treesmall","tresmall");
@@ -163,6 +164,7 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
 	newTree->Fill();
       }
     }
+    */
 
     //Open ggH file and retrieve the tree
     sprintf(tmp_finalInPath,"/HZZ4lTree_H%i.root",masses[i]);
@@ -202,58 +204,84 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     RooRealVar MC_weight("MC_weight","MC_weight",0.,10.);
     RooRealVar NJets30("NJets30","NJets30",0,100);
 
-    ZZMass.setBins(50);
-    if(channel == 2) ZZMass.setBins(30);
-    if(channel == 3) ZZMass.setBins(30);
+    ZZMass.setBins(100);
+    if(channel == 2) ZZMass.setBins(60);
+    if(channel == 3) ZZMass.setBins(60);
  
-    if(icomp==0)ZZMass.setBins(65);
-    if(icomp==0 && channel == 2)ZZMass.setBins(40);
-    if(icomp==0 && channel == 3)ZZMass.setBins(40);
+    if(icomp==0)ZZMass.setBins(100);
+    if(icomp==0 && channel == 2)ZZMass.setBins(60);
+    if(icomp==0 && channel == 3)ZZMass.setBins(60);
 
-    if(isLongRange) ZZMass.setBins(100);
+    if(isLongRange) ZZMass.setBins(200);
 
     RooDataSet *set2;
-    if(njets==0) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=0 && NJets30<1.5", "MC_weight");
-    if(njets==2) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=2", "MC_weight");
-    if(njets==-1)set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
+    RooArgSet ntupleVarSet(ZZMass,NJets30,MC_weight);
+    if(njets==-1) set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
+    else {  
+      set2 = new RooDataSet("data","data",ntupleVarSet,WeightVar("MC_weight"));
+      
+      Float_t myMC,myMass;
+      Short_t myNJets;
+      int nentries = tree->GetEntries();
+      
+      tree->SetBranchAddress("ZZMass",&myMass);
+      tree->SetBranchAddress("MC_weight",&myMC);
+      tree->SetBranchAddress("NJets30",&myNJets);
+      
+      for(int itr =0;itr<nentries;itr++) {
+	tree->GetEntry(itr);
+	if(njets==0 && myNJets>1) continue;
+	if(njets==2 && myNJets<2) continue;
+	if(!plotOverFlowBins && (myMass>high_M || myMass<low_M))continue;
+	ntupleVarSet.setRealValue("ZZMass",myMass);
+	ntupleVarSet.setRealValue("MC_weight",myMC);
+	ntupleVarSet.setRealValue("NJets30",(double)myNJets);
+	
+	set2->add(ntupleVarSet, myMC);
+      }
+    }
+    
+    //if(njets==0) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=0 && NJets30<1.5", "MC_weight");
+    //if(njets==2) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=2", "MC_weight");
+    //if(njets==-1)set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
     RooDataHist *set = (RooDataHist*)set2->binnedClone("datahist","datahist");
-
+    
     RooRealVar ZZMassH("ZZMass","ZZMassH",low_M,high_M);
     RooRealVar MC_weightH("MC_weight","MC_weightH",0.,10.);
-
-     ZZMassH.setBins(50);
-     if(channel == 2) ZZMassH.setBins(30);
-     if(channel == 3) ZZMassH.setBins(30);
-
-    if(icomp==0)ZZMassH.setBins(65);
-    if(icomp==0 && channel == 2)ZZMassH.setBins(40);
-    if(icomp==0 && channel == 3)ZZMassH.setBins(40);
-
-    if(isLongRange) ZZMassH.setBins(100);
-
+    
+    ZZMassH.setBins(100);
+    if(channel == 2) ZZMassH.setBins(60);
+    if(channel == 3) ZZMassH.setBins(60);
+  
+    if(icomp==0)ZZMassH.setBins(100);
+    if(icomp==0 && channel == 2)ZZMassH.setBins(60);
+    if(icomp==0 && channel == 3)ZZMassH.setBins(60);
+    
+    if(isLongRange) ZZMassH.setBins(200);
+    
     RooDataSet *set2H = new RooDataSet("data ggH","dataH", treeH, RooArgSet(ZZMassH,MC_weightH), "", "MC_weight");
     RooDataHist *setH = (RooDataHist*)set2H->binnedClone("datahistH","datahistH");
-
+    
     double sumset = (double)set->sumEntries();
     double sumsetH = (double)setH->sumEntries();
-
+    
     RooDataSet setM;
     RooRealVar *CMS_zz4l_mass;
     double sumsetM =1;
-
+    
     //cout<<"setH "<<setH->sumEntries()<<" set "<<set->sumEntries()<<endl;
-
+    
     //Theoretical signal model  
     RooRealVar MHStar("MHStar","MHStar",masses[i],0.,2000.);
     MHStar.setConstant(true);
     RooRealVar Gamma_TOT("Gamma_TOT","Gamma_TOT",valueWidth,0.,700.);
     if(masses[i] < 399.) Gamma_TOT.setConstant(true);
     RooRealVar one("one","one",1.0);
-    one.setConstant(kTRUE);
-
+    //one.setConstant(kTRUE);
+    
     RooGenericPdf SignalTheor("SignalTheor","(@0)/( pow(pow(@0,2)-pow(@1,2),2) + pow(@0,2)*pow(@2,2) )",RooArgSet(ZZMass,MHStar,Gamma_TOT));
     RooRelBWUFParam SignalTheorLM("signalTheorLM","signalTheorLM",ZZMass,MHStar,one);
-
+    
     //Experimental resolution
     RooRealVar meanCB("meanCB","meanCB",0.,-20.,20.);
     RooRealVar sigmaCB("sigmaCB","sigmaCB",1.,0.01,100.);
@@ -261,7 +289,7 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     RooRealVar nCB("nCB","nCB",2.,-10.,10.);
     RooRealVar alpha2CB("alpha2CB","alpha2CB",3.,-10.,10.);
     RooRealVar n2CB("n2CB","n2CB",2.,-10.,10.);
-
+  
     //Initialize to decent values
     float m = masses[i];
     if(channel == 1) sigmaCB.setVal(11.282-0.213437*m+0.0015906*m*m-5.18846e-06*m*m*m+8.05552e-09*m*m*m*m -4.69101e-12*m*m*m*m*m);
@@ -344,7 +372,7 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     bool ien=1;
     if(sqrts==8)ien=0;
 
-    RooFormulaVar meanCB_f("meanCB_f"    ,getSignalCBMeanString(masses[i],channel-1,ien,0).c_str(),RooArgList(HMass,zero));
+    RooFormulaVar meanCB_f("meanCB_f"    ,getSignalCBMeanString(masses[i],channel-1,ien,1).c_str(),RooArgList(HMass,zero));
     RooFormulaVar sigmaCB_f("sigmaCB_f"  ,getSignalCBSigmaString(masses[i],channel-1,ien).c_str(),RooArgList(HMass,zero));
     RooFormulaVar alphaCB_f("alphaCB_f"  ,getSignalCBAlphaLString(masses[i],channel-1,ien).c_str(),RooArgList(HMass));
     RooFormulaVar nCB_f("nCB_f"          ,getSignalCBNLString(masses[i],channel-1,ien).c_str(),RooArgList(HMass));
@@ -353,10 +381,13 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     RooFormulaVar fgamma("fgamma"        ,getSignalBWGammaString(masses[i],channel-1,ien).c_str(),RooArgList(HMass,zero));
 
     RooDoubleCB formulaCB("formulaCB","crystal ball from Formulas",ZZMass,meanCB_f,sigmaCB_f,alphaCB_f,nCB_f,alpha2CB_f,n2CB_f);
-    RooRelBWUFParam formulaBW("formulaBW","formulaBW",ZZMass,MHStar,fgamma);
-    RooAbsPdf *formulaPDF;
-    if(masses[i]<400)formulaPDF = (RooDoubleCB*)formulaCB.Clone();
-    else formulaPDF = new RooFFTConvPdf("fitFormulaPDF","fitFormulaPDF",ZZMass, formulaBW,formulaCB);
+    RooRelBWUFParam formulaBW("formulaBW","formulaBW",ZZMass,HMass,one);
+    if(masses[i]>399)formulaBW = RooRelBWUFParam("formulaBW","formulaBW",ZZMass,HMass,fgamma);
+    //else formulaBW = RooRelBWUFParam("formulaBW","formulaBW",ZZMass,HMass,fgamma);
+    /*RooAbsPdf*/
+    RooFFTConvPdf *formulaPDF = new RooFFTConvPdf("fitFormulaPDF","fitFormulaPDF",ZZMass, formulaBW,formulaCB);
+    //if(masses[i]<400)formulaPDF = (RooDoubleCB*)formulaCB.Clone();
+    //else formulaPDF = new RooFFTConvPdf("fitFormulaPDF","fitFormulaPDF",ZZMass, formulaBW,formulaCB);
 
     //Fit the shape
     RooFitResult *fitRes = sigPDF->fitTo(*set,Save(1), SumW2Error(kTRUE));
@@ -388,7 +419,11 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     set->plotOn(xplot);
     if(plotSingleFit) sigPDF->plotOn(xplot);
     if(!writeFits && plotParam) paramPDF->plotOn(xplot,LineColor(kRed+1),LineStyle(2));
-    if(plotPdfFromFile) formulaPDF->plotOn(xplot,LineColor(kGreen+2),LineStyle(2));
+    if(plotPdfFromFile) {
+      //formulaBW.plotOn(xplot,LineColor(kRed+2),LineStyle(2));
+      //formulaCB.plotOn(xplot,LineColor(kYellow+2),LineStyle(2));
+      formulaPDF->plotOn(xplot,LineColor(kGreen+2),LineStyle(2));
+    }
     RooPlot *xplotH = ZZMassH.frame();
     setH->plotOn(xplotH,MarkerStyle(24),Rescale(scale));
 
@@ -452,9 +487,9 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     if(isLongRange)njetstr+="longRange_";
     string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + njetstr + schannel + ".png";
     canv->SaveAs(plotFileTitle.c_str());
-    delete newTree;
-    fo->Close();
-    delete fo;
+    //delete newTree;
+    //fo->Close();
+    //delete fo;
   }
 
   if(writeFits){
