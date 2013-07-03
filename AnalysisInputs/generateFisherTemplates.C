@@ -43,7 +43,7 @@ const TString filePath8TeVM="SamplesfromMichalis/8TeV/";
 bool extendToHighMass = true;                                     // Include signal samples above 600 GeV
 float highMzz=(extendToHighMass?1600:800);
 float mBinSize=2.;
-bool useMichalis = false;                                         // False = use CJLST trees, True = use trees from Michalis (other trees can be assigned in buildChain())
+//bool useMichalis = false;                                         // False = use CJLST trees, True = use trees from Michalis (other trees can be assigned in buildChain())
 
 //Function Constructors 
 void templateOptions(bool debug, bool findAlternatives);          // Sets debug mode (only produces unsmoothed plots) and whether alternatives are produced
@@ -62,7 +62,7 @@ TH2F* mirrortemplates(int sampleIndex);                           // Generates m
 //---------------------------------------------------
 
 void generateFisherTemplates() {
-  gSystem->Load("../CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
+  //gSystem->Load("/home/ianderso/UserCode/HZZ4L_Combination/CombinationPy/CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
 
   bool debug=false;
   bool findAlternatives=true;
@@ -72,8 +72,8 @@ void generateFisherTemplates() {
 void templateOptions(bool debug, bool findAlternatives){
   makeTemplate(0,debug);
   if (findAlternatives){
-    //makeTemplate(1,debug);
-    //makeTemplate(-1,debug);
+    makeTemplate(1,debug);
+    makeTemplate(-1,debug);
     makeTemplate(2,debug);
     makeTemplate(3,debug);
   }
@@ -82,458 +82,191 @@ void templateOptions(bool debug, bool findAlternatives){
 //---------------------------------------------------
 
 void buildChain(TChain* bkgMC, int sampleIndex){
-
-  if(!useMichalis){
-    TString filePath;
-    int nPoints;
-    int masses[100];
-    if (useSqrts==1){
-      if (sampleIndex==0){
-	nPoints=nPoints7TeV;
-	for (int i=0;i<nPoints;i++){
-	  masses[i]=masses7TeV[i];
-	}
-      } else if (sampleIndex==1){
-	nPoints=nVBFPoints7TeV;
-	for (int i=0;i<nPoints;i++){
-	  masses[i]=VBFmasses7TeV[i];
-	}
-      } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
-	nPoints=nVHPoints7TeV;
-	for (int i=0;i<nPoints;i++){
-	  masses[i]=VHmasses7TeV[i];
-	}
+  TString filePath;
+  int nPoints=0;
+  int masses[100];
+  if (useSqrts==1){
+    if (sampleIndex==0){
+      nPoints=nPoints7TeV;
+      for (int i=0;i<nPoints;i++){
+	masses[i]=masses7TeV[i];
       }
-      filePath = filePath7TeV;
-    }
-    if (useSqrts==2){
-      if (sampleIndex==0){
-	nPoints=nPoints8TeV;
-	for (int i=0;i<nPoints;i++){
-	  masses[i]=masses8TeV[i];
-	}
-      } else if (sampleIndex==1){
-	nPoints=nVBFPoints8TeV;
-	for (int i=0;i<nPoints;i++){
-	  masses[i]=VBFmasses8TeV[i];
-	}
-      } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
-	nPoints=nVHPoints8TeV;
-	for (int i=0;i<nPoints;i++){
-	  masses[i]=VHmasses8TeV[i];
-	}
-      }
-      filePath = filePath8TeV;
-    }
-    if (useSqrts==0){
-      if (sampleIndex==0){
-	nPoints=nPoints7TeV+nPoints8TeV;
-	for (int i=0;i<nPoints7TeV;i++){
-	  masses[i]=masses7TeV[i];
-	}
-	for (int i=0;i<nPoints8TeV;i++){
-	  masses[i+nPoints7TeV]=masses8TeV[i];
-	}
-      } else if (sampleIndex==1){
-	nPoints=nVBFPoints7TeV+nVBFPoints8TeV;
-	for (int i=0;i<nVBFPoints7TeV;i++){
-	  masses[i]=VBFmasses7TeV[i];
-	}
-	for (int i=0;i<nVBFPoints8TeV;i++){
-	  masses[i+nVBFPoints7TeV]=VBFmasses8TeV[i];
-	}
-      } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
-	nPoints=nVHPoints7TeV+nVHPoints8TeV;
-	for (int i=0;i<nVHPoints7TeV;i++){
-	  masses[i]=VHmasses7TeV[i];
-	}
-	for (int i=0;i<nVHPoints8TeV;i++){
-	  masses[i+nVHPoints7TeV]=VHmasses8TeV[i];
-	}
-      }
-    }
-    if (sampleIndex!=2 && sampleIndex!=3 && sampleIndex!=4 && sampleIndex!=-2){
-      if (nPoints==0){
-	cout<<"nPoints not set in Config.h"<<endl;
-	abort();
-      }
-      for (int i=0; i<nPoints; i++){
-	char tmp_finalInPath4mu[200],tmp_finalInPath4e[200],tmp_finalInPath2mu2e[200];
-	string finalInPath4mu,finalInPath4e,finalInPath2mu2e;
-	if (sampleIndex==0){
-	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_H%i.root",masses[i]);
-	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_H%i.root",masses[i]);
-	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_H%i.root",masses[i]);
-	}else if (sampleIndex==1){
-	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_VBFH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_VBFH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_VBFH%i.root",masses[i]);
-	}else if (sampleIndex==5){
-	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_ZH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_ZH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_ZH%i.root",masses[i]);
-	}else if (sampleIndex==6){
-	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_WH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_WH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_WH%i.root",masses[i]);
-	}else if (sampleIndex==7){
-	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_ttH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_ttH%i.root",masses[i]);
-	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_ttH%i.root",masses[i]);
-	}
-	if (useSqrts!=0){
-	  finalInPath4mu = filePath + tmp_finalInPath4mu;
-	  finalInPath4e = filePath + tmp_finalInPath4e;
-	  finalInPath2mu2e = filePath + tmp_finalInPath2mu2e;
-	} else if (useSqrts==0){
-	  if ((sampleIndex==0 && i<nPoints7TeV) || (sampleIndex==1 && i<nVBFPoints7TeV) || ((sampleIndex==5 || sampleIndex==6 || sampleIndex==7) && i<nVHPoints7TeV)){
-	    finalInPath4mu = filePath7TeV + tmp_finalInPath4mu;
-	    finalInPath4e = filePath7TeV + tmp_finalInPath4e;
-	    finalInPath2mu2e = filePath7TeV + tmp_finalInPath2mu2e;
-	  } else{
-	    finalInPath4mu = filePath8TeV + tmp_finalInPath4mu;
-	    finalInPath4e = filePath8TeV + tmp_finalInPath4e;
-	    finalInPath2mu2e = filePath8TeV + tmp_finalInPath2mu2e;
-	  }
-	}
-	bkgMC->Add(finalInPath4mu.c_str());
-	bkgMC->Add(finalInPath4e.c_str());
-	bkgMC->Add(finalInPath2mu2e.c_str());
-      }
-    }
-    else if (sampleIndex==2 || sampleIndex==3){
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4mu.root");
-	bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4e.root");
-	bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo2e2mu.root");
-	bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4tau.root");
-	bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo2mu2tau.root");
-	bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo2e2tau.root");
-	bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo4mu.root");
-	bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo4e.root");
-	bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo2e2mu.root");
-	bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo4tau.root");
-	bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo2mu2tau.root");
-	bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo2e2tau.root");	
-	bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo4mu.root");
-	bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo4e.root");
-	bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo2e2mu.root");
-	bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo4tau.root");
-	bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo2mu2tau.root");
-	bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo2e2tau.root");
-      }	
-      if(useSqrts%2==0){
-	bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo4mu.root");
-	bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo4e.root");
-	bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo2e2mu.root");
-	bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo4tau.root");
-	bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo2mu2tau.root");
-	bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo2e2tau.root");
-	bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo4mu.root");
-	bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo4e.root");
-	bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo2e2mu.root");
-	bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo4tau.root");
-	bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo2mu2tau.root");
-	bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo2e2tau.root");	
-	bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo4mu.root");
-	bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo4e.root");
-	bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo2e2mu.root");
-	bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo4tau.root");
-	bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo2mu2tau.root");
-	bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo2e2tau.root");
-      }
-    }
-    else if (sampleIndex==4){
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CREEMMosTree.root");
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
-	bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
-      }
-      if(useSqrts%2==0){
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CREEMMosTree.root");
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
-	bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
-      }
-    }
-    else if (sampleIndex==-2){
-      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZJetsTo4L.root");
-      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZJetsTo4L.root");
-      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZJetsTo4L.root");
-    }
-  }
-  if (useMichalis){
-    if(sampleIndex==0){
-      //7TeV
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeVM + "ggH115.root");
-	bkgMC->Add(filePath7TeVM + "ggH120.root");
-	bkgMC->Add(filePath7TeVM + "ggH124.root");
-	bkgMC->Add(filePath7TeVM + "ggH125.root");
-	bkgMC->Add(filePath7TeVM + "ggH126.root");
-	bkgMC->Add(filePath7TeVM + "ggH130.root");
-	bkgMC->Add(filePath7TeVM + "ggH140.root");
-	bkgMC->Add(filePath7TeVM + "ggH150.root");
-	bkgMC->Add(filePath7TeVM + "ggH160.root");
-	bkgMC->Add(filePath7TeVM + "ggH170.root");
-	bkgMC->Add(filePath7TeVM + "ggH180.root");
-	bkgMC->Add(filePath7TeVM + "ggH190.root");
-	bkgMC->Add(filePath7TeVM + "ggH200.root");
-	bkgMC->Add(filePath7TeVM + "ggH210.root");
-	bkgMC->Add(filePath7TeVM + "ggH220.root");
-	bkgMC->Add(filePath7TeVM + "ggH230.root");
-	bkgMC->Add(filePath7TeVM + "ggH250.root");
-	bkgMC->Add(filePath7TeVM + "ggH275.root");
-	bkgMC->Add(filePath7TeVM + "ggH300.root");
-	bkgMC->Add(filePath7TeVM + "ggH325.root");
-	bkgMC->Add(filePath7TeVM + "ggH350.root");
-	bkgMC->Add(filePath7TeVM + "ggH400.root");
-	bkgMC->Add(filePath7TeVM + "ggH425.root");
-	bkgMC->Add(filePath7TeVM + "ggH450.root");
-	bkgMC->Add(filePath7TeVM + "ggH475.root");
-	bkgMC->Add(filePath7TeVM + "ggH525.root");
-	bkgMC->Add(filePath7TeVM + "ggH550.root");
-	bkgMC->Add(filePath7TeVM + "ggH575.root");
-	bkgMC->Add(filePath7TeVM + "ggH600.root");
-	if (extendToHighMass) {
-	  bkgMC->Add(filePath7TeVM + "ggH650.root");
-	  bkgMC->Add(filePath7TeVM + "ggH700.root");
-	  bkgMC->Add(filePath7TeVM + "ggH750.root");
-	  bkgMC->Add(filePath7TeVM + "ggH800.root");
-	  bkgMC->Add(filePath7TeVM + "ggH900.root");
-	  bkgMC->Add(filePath7TeVM + "ggH1000.root");
-	}
-      }
-      if(useSqrts%2==0){
-	//8TeV
-	bkgMC->Add(filePath8TeVM + "ggH118.root");      
-	bkgMC->Add(filePath8TeVM + "ggH119.root");
-	bkgMC->Add(filePath8TeVM + "ggH120.root");
-	bkgMC->Add(filePath8TeVM + "ggH121.root");
-	bkgMC->Add(filePath8TeVM + "ggH122.root");
-	bkgMC->Add(filePath8TeVM + "ggH123.root");
-	bkgMC->Add(filePath8TeVM + "ggH124.root");
-	bkgMC->Add(filePath8TeVM + "ggH125.root");
-	bkgMC->Add(filePath8TeVM + "ggH126.root");
-	bkgMC->Add(filePath8TeVM + "ggH127.root");
-	bkgMC->Add(filePath8TeVM + "ggH128.root");
-	bkgMC->Add(filePath8TeVM + "ggH129.root");
-	bkgMC->Add(filePath8TeVM + "ggH130.root");
-	bkgMC->Add(filePath8TeVM + "ggH135.root");
-	bkgMC->Add(filePath8TeVM + "ggH140.root");
-	bkgMC->Add(filePath8TeVM + "ggH145.root");
-	bkgMC->Add(filePath8TeVM + "ggH150.root");
-	bkgMC->Add(filePath8TeVM + "ggH160.root");
-	bkgMC->Add(filePath8TeVM + "ggH170.root");
-	bkgMC->Add(filePath8TeVM + "ggH180.root");
-	bkgMC->Add(filePath8TeVM + "ggH190.root");
-	bkgMC->Add(filePath8TeVM + "ggH200.root");
-	bkgMC->Add(filePath8TeVM + "ggH220.root");
-	bkgMC->Add(filePath8TeVM + "ggH250.root");
-	bkgMC->Add(filePath8TeVM + "ggH275.root");
-	bkgMC->Add(filePath8TeVM + "ggH300.root");
-	bkgMC->Add(filePath8TeVM + "ggH325.root");
-	bkgMC->Add(filePath8TeVM + "ggH375.root");
-	bkgMC->Add(filePath8TeVM + "ggH400.root");
-	bkgMC->Add(filePath8TeVM + "ggH425.root");
-	bkgMC->Add(filePath8TeVM + "ggH450.root");
-	bkgMC->Add(filePath8TeVM + "ggH475.root");
-	bkgMC->Add(filePath8TeVM + "ggH500.root");
-	bkgMC->Add(filePath8TeVM + "ggH525.root");
-	bkgMC->Add(filePath8TeVM + "ggH550.root");
-	bkgMC->Add(filePath8TeVM + "ggH575.root");
-	bkgMC->Add(filePath8TeVM + "ggH600.root");
-	if (extendToHighMass) {
-	  bkgMC->Add(filePath8TeVM + "ggH650.root");
-	  bkgMC->Add(filePath8TeVM + "ggH700.root");
-	  bkgMC->Add(filePath8TeVM + "ggH750.root");
-	  bkgMC->Add(filePath8TeVM + "ggH800.root");
-	  bkgMC->Add(filePath8TeVM + "ggH850.root");
-	  bkgMC->Add(filePath8TeVM + "ggH900.root");
-	  bkgMC->Add(filePath8TeVM + "ggH1000.root");
-	}
-      }
-    } else   if(sampleIndex==1){
-      //7TeV
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeVM + "qqH115.root");
-	bkgMC->Add(filePath7TeVM + "qqH120.root");
-	bkgMC->Add(filePath7TeVM + "qqH125.root");
-	bkgMC->Add(filePath7TeVM + "qqH130.root");
-	bkgMC->Add(filePath7TeVM + "qqH140.root");
-	bkgMC->Add(filePath7TeVM + "qqH150.root");
-	bkgMC->Add(filePath7TeVM + "qqH160.root");
-	bkgMC->Add(filePath7TeVM + "qqH170.root");
-	bkgMC->Add(filePath7TeVM + "qqH180.root");
-	bkgMC->Add(filePath7TeVM + "qqH190.root");
-	bkgMC->Add(filePath7TeVM + "qqH200.root");
-	bkgMC->Add(filePath7TeVM + "qqH210.root");
-	bkgMC->Add(filePath7TeVM + "qqH220.root");
-	bkgMC->Add(filePath7TeVM + "qqH230.root");
-	bkgMC->Add(filePath7TeVM + "qqH250.root");
-	bkgMC->Add(filePath7TeVM + "qqH275.root");
-	bkgMC->Add(filePath7TeVM + "qqH300.root");
-	bkgMC->Add(filePath7TeVM + "qqH325.root");
-	bkgMC->Add(filePath7TeVM + "qqH350.root");
-	bkgMC->Add(filePath7TeVM + "qqH400.root");
-	bkgMC->Add(filePath7TeVM + "qqH425.root");
-	bkgMC->Add(filePath7TeVM + "qqH450.root");
-	bkgMC->Add(filePath7TeVM + "qqH475.root");
-	bkgMC->Add(filePath7TeVM + "qqH575.root");
-	bkgMC->Add(filePath7TeVM + "qqH600.root");
-	if (extendToHighMass) {
-	  bkgMC->Add(filePath7TeVM + "qqH650.root");
-	  bkgMC->Add(filePath7TeVM + "qqH700.root");
-	  bkgMC->Add(filePath7TeVM + "qqH800.root");
-	  bkgMC->Add(filePath7TeVM + "qqH900.root");
-	  bkgMC->Add(filePath7TeVM + "qqH1000.root");
-	}
-      }
-      if(useSqrts%2==0){
-	//8TeV
-	bkgMC->Add(filePath8TeVM + "qqH118.root");
-	bkgMC->Add(filePath8TeVM + "qqH119.root");
-	bkgMC->Add(filePath8TeVM + "qqH120.root");
-	bkgMC->Add(filePath8TeVM + "qqH121.root");
-	bkgMC->Add(filePath8TeVM + "qqH122.root");
-	bkgMC->Add(filePath8TeVM + "qqH123.root");
-	bkgMC->Add(filePath8TeVM + "qqH124.root");
-	bkgMC->Add(filePath8TeVM + "qqH125.root");
-	bkgMC->Add(filePath8TeVM + "qqH126.root");
-	bkgMC->Add(filePath8TeVM + "qqH127.root");
-	bkgMC->Add(filePath8TeVM + "qqH128.root");
-	bkgMC->Add(filePath8TeVM + "qqH129.root");
-	bkgMC->Add(filePath8TeVM + "qqH130.root");
-	bkgMC->Add(filePath8TeVM + "qqH135.root");
-	bkgMC->Add(filePath8TeVM + "qqH140.root");
-	bkgMC->Add(filePath8TeVM + "qqH145.root");
-	bkgMC->Add(filePath8TeVM + "qqH150.root");
-	bkgMC->Add(filePath8TeVM + "qqH160.root");
-	bkgMC->Add(filePath8TeVM + "qqH170.root");
-	bkgMC->Add(filePath8TeVM + "qqH180.root");
-	bkgMC->Add(filePath8TeVM + "qqH190.root");
-	bkgMC->Add(filePath8TeVM + "qqH200.root");
-	bkgMC->Add(filePath8TeVM + "qqH220.root");
-	bkgMC->Add(filePath8TeVM + "qqH250.root");
-	bkgMC->Add(filePath8TeVM + "qqH275.root");
-	bkgMC->Add(filePath8TeVM + "qqH300.root");
-	bkgMC->Add(filePath8TeVM + "qqH325.root");
-	bkgMC->Add(filePath8TeVM + "qqH350.root");
-	bkgMC->Add(filePath8TeVM + "qqH375.root");
-	bkgMC->Add(filePath8TeVM + "qqH400.root");
-	bkgMC->Add(filePath8TeVM + "qqH425.root");
-	bkgMC->Add(filePath8TeVM + "qqH450.root");
-	bkgMC->Add(filePath8TeVM + "qqH475.root");
-	bkgMC->Add(filePath8TeVM + "qqH500.root");
-	bkgMC->Add(filePath8TeVM + "qqH525.root");
-	bkgMC->Add(filePath8TeVM + "qqH550.root");
-	bkgMC->Add(filePath8TeVM + "qqH575.root");
-	bkgMC->Add(filePath8TeVM + "qqH600.root");
-	if (extendToHighMass) {
-	  bkgMC->Add(filePath8TeVM + "qqH650.root");
-	  bkgMC->Add(filePath8TeVM + "qqH700.root");
-	  bkgMC->Add(filePath8TeVM + "qqH750.root");
-	  bkgMC->Add(filePath8TeVM + "qqH800.root");
-	  bkgMC->Add(filePath8TeVM + "qqH850.root");
-	  bkgMC->Add(filePath8TeVM + "qqH900.root");
-	  bkgMC->Add(filePath8TeVM + "qqH1000.root");
-	}
-      }
-    } else if (sampleIndex==2){
-      //7TeV
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeVM + "ZZ2e2mu.root");
-	bkgMC->Add(filePath7TeVM + "ZZ2e2tau.root");
-	bkgMC->Add(filePath7TeVM + "ZZ2mu2tau.root");
-	bkgMC->Add(filePath7TeVM + "ZZ4e.root");
-	bkgMC->Add(filePath7TeVM + "ZZ4mu.root");
-	bkgMC->Add(filePath7TeVM + "ZZ4tau.root");
-      }
-      //8TeV
-      if(useSqrts%2==0){
-	bkgMC->Add(filePath8TeVM + "ZZ2e2mu.root");
-	bkgMC->Add(filePath8TeVM + "ZZ2e2tau.root");
-	bkgMC->Add(filePath8TeVM + "ZZ2mu2tau.root");
-	bkgMC->Add(filePath8TeVM + "ZZ4e.root");
-	bkgMC->Add(filePath8TeVM + "ZZ4mu.root");
-	bkgMC->Add(filePath8TeVM + "ZZ4tau.root");
-      }
-    } else if (sampleIndex==3){
-      //7TeV
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeVM + "GGZZ2L2L.root");
-	bkgMC->Add(filePath7TeVM + "GGZZ4L.root");
-      }
-      //8TeV
-      if(useSqrts%2==0){
-	bkgMC->Add(filePath8TeVM + "GGZZ2L2L.root");
-	bkgMC->Add(filePath8TeVM + "GGZZ4L.root");
-      }
-    } else if (sampleIndex==4){
-      //7TeV
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeVM + "DATA.root");
-      }
-      //8TeV
-      if(useSqrts%2==0){
-	bkgMC->Add(filePath8TeVM + "DATA.root");
+    } else if (sampleIndex==1){
+      nPoints=nVBFPoints7TeV;
+      for (int i=0;i<nPoints;i++){
+	masses[i]=VBFmasses7TeV[i];
       }
     } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
-      //7TeV
-      if(useSqrts<2){
-	bkgMC->Add(filePath7TeVM + "VH126.root");
-	bkgMC->Add(filePath7TeVM + "VH127.root");
-	bkgMC->Add(filePath7TeVM + "VH128.root");
-	bkgMC->Add(filePath7TeVM + "VH129.root");
-	bkgMC->Add(filePath7TeVM + "VH130.root");
-	bkgMC->Add(filePath7TeVM + "VH135.root");
-	bkgMC->Add(filePath7TeVM + "VH140.root");
-	bkgMC->Add(filePath7TeVM + "VH145.root");
-	bkgMC->Add(filePath7TeVM + "VH150.root");
-	bkgMC->Add(filePath7TeVM + "VH160.root");
-	bkgMC->Add(filePath7TeVM + "VH170.root");
-	bkgMC->Add(filePath7TeVM + "VH180.root");
-	bkgMC->Add(filePath7TeVM + "VH190.root");
-	bkgMC->Add(filePath7TeVM + "VH200.root");
-	bkgMC->Add(filePath7TeVM + "VH210.root");
-	bkgMC->Add(filePath7TeVM + "VH220.root");
-	bkgMC->Add(filePath7TeVM + "VH230.root");
-	bkgMC->Add(filePath7TeVM + "VH250.root");
-	bkgMC->Add(filePath7TeVM + "VH275.root");
-	bkgMC->Add(filePath7TeVM + "VH300.root");      
-      }
-      if(useSqrts%2==0){
-	bkgMC->Add(filePath8TeVM + "VH126.root");
-	bkgMC->Add(filePath8TeVM + "VH127.root");
-	bkgMC->Add(filePath8TeVM + "VH128.root");
-	bkgMC->Add(filePath8TeVM + "VH129.root");
-	bkgMC->Add(filePath8TeVM + "VH130.root");
-	bkgMC->Add(filePath8TeVM + "VH135.root");
-	bkgMC->Add(filePath8TeVM + "VH140.root");
-	bkgMC->Add(filePath8TeVM + "VH145.root");
-	bkgMC->Add(filePath8TeVM + "VH150.root");
-	bkgMC->Add(filePath8TeVM + "VH160.root");
-	bkgMC->Add(filePath8TeVM + "VH170.root");
-	bkgMC->Add(filePath8TeVM + "VH180.root");
-	bkgMC->Add(filePath8TeVM + "VH190.root");
-	bkgMC->Add(filePath8TeVM + "VH200.root");
-	bkgMC->Add(filePath8TeVM + "VH210.root");
-	bkgMC->Add(filePath8TeVM + "VH220.root");
-	bkgMC->Add(filePath8TeVM + "VH230.root");
-	bkgMC->Add(filePath8TeVM + "VH250.root");
-	bkgMC->Add(filePath8TeVM + "VH275.root");
-	bkgMC->Add(filePath8TeVM + "VH300.root");
+      nPoints=nVHPoints7TeV;
+      for (int i=0;i<nPoints;i++){
+	masses[i]=VHmasses7TeV[i];
       }
     }
+    filePath = filePath7TeV;
+  }
+  if (useSqrts==2){
+    if (sampleIndex==0){
+      nPoints=nPoints8TeV;
+      for (int i=0;i<nPoints;i++){
+	masses[i]=masses8TeV[i];
+      }
+    } else if (sampleIndex==1){
+      nPoints=nVBFPoints8TeV;
+      for (int i=0;i<nPoints;i++){
+	masses[i]=VBFmasses8TeV[i];
+      }
+    } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
+      nPoints=nVHPoints8TeV;
+      for (int i=0;i<nPoints;i++){
+	masses[i]=VHmasses8TeV[i];
+      }
+    }
+    filePath = filePath8TeV;
+  }
+  if (useSqrts==0){
+    if (sampleIndex==0){
+      nPoints=nPoints7TeV+nPoints8TeV;
+      for (int i=0;i<nPoints7TeV;i++){
+	masses[i]=masses7TeV[i];
+      }
+      for (int i=0;i<nPoints8TeV;i++){
+	masses[i+nPoints7TeV]=masses8TeV[i];
+      }
+    } else if (sampleIndex==1){
+      nPoints=nVBFPoints7TeV+nVBFPoints8TeV;
+      for (int i=0;i<nVBFPoints7TeV;i++){
+	masses[i]=VBFmasses7TeV[i];
+      }
+      for (int i=0;i<nVBFPoints8TeV;i++){
+	masses[i+nVBFPoints7TeV]=VBFmasses8TeV[i];
+      }
+    } else if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
+      nPoints=nVHPoints7TeV+nVHPoints8TeV;
+      for (int i=0;i<nVHPoints7TeV;i++){
+	masses[i]=VHmasses7TeV[i];
+      }
+      for (int i=0;i<nVHPoints8TeV;i++){
+	masses[i+nVHPoints7TeV]=VHmasses8TeV[i];
+      }
+    }
+  }
+  if (sampleIndex!=2 && sampleIndex!=3 && sampleIndex!=4 && sampleIndex!=-2){
+    if(nPoints==0){
+      cout<<"nPoints not set in Config.h"<<endl;
+      abort();
+    }
+    for (int i=0; i<nPoints; i++){
+      char tmp_finalInPath4mu[200],tmp_finalInPath4e[200],tmp_finalInPath2mu2e[200];
+      string finalInPath4mu,finalInPath4e,finalInPath2mu2e;
+      if (sampleIndex==0){
+	sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_H%i.root",masses[i]);
+	sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_H%i.root",masses[i]);
+	sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_H%i.root",masses[i]);
+      }else if (sampleIndex==1){
+	sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_VBFH%i.root",masses[i]);
+	sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_VBFH%i.root",masses[i]);
+	sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_VBFH%i.root",masses[i]);
+      }else if (sampleIndex==5){
+	sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_ZH%i.root",masses[i]);
+	sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_ZH%i.root",masses[i]);
+	sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_ZH%i.root",masses[i]);
+      }else if (sampleIndex==6){
+	sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_WH%i.root",masses[i]);
+	sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_WH%i.root",masses[i]);
+	sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_WH%i.root",masses[i]);
+      }else if (sampleIndex==7){
+	sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_ttH%i.root",masses[i]);
+	sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_ttH%i.root",masses[i]);
+	sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_ttH%i.root",masses[i]);
+      }
+      if (useSqrts!=0){
+	finalInPath4mu = filePath + tmp_finalInPath4mu;
+	finalInPath4e = filePath + tmp_finalInPath4e;
+	finalInPath2mu2e = filePath + tmp_finalInPath2mu2e;
+      } else if (useSqrts==0){
+	if ((sampleIndex==0 && i<nPoints7TeV) || (sampleIndex==1 && i<nVBFPoints7TeV) || ((sampleIndex==5 || sampleIndex==6 || sampleIndex==7) && i<nVHPoints7TeV)){
+	  finalInPath4mu = filePath7TeV + tmp_finalInPath4mu;
+	  finalInPath4e = filePath7TeV + tmp_finalInPath4e;
+	  finalInPath2mu2e = filePath7TeV + tmp_finalInPath2mu2e;
+	} else{
+	  finalInPath4mu = filePath8TeV + tmp_finalInPath4mu;
+	  finalInPath4e = filePath8TeV + tmp_finalInPath4e;
+	  finalInPath2mu2e = filePath8TeV + tmp_finalInPath2mu2e;
+	}
+      }
+      bkgMC->Add(finalInPath4mu.c_str());
+      bkgMC->Add(finalInPath4e.c_str());
+      bkgMC->Add(finalInPath2mu2e.c_str());
+    }
+  }
+  else if (sampleIndex==2 || sampleIndex==3){
+    if(useSqrts<2){
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4mu.root");
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4e.root");
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo2e2mu.root");
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4tau.root");
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo2mu2tau.root");
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo2e2tau.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo4mu.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo4e.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo2e2mu.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo4tau.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo2mu2tau.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ZZTo2e2tau.root");	
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo4mu.root");
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo4e.root");
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo2e2mu.root");
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo4tau.root");
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo2mu2tau.root");
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ZZTo2e2tau.root");
+    }	
+    if(useSqrts%2==0){
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo4mu.root");
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo4e.root");
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo2e2mu.root");
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo4tau.root");
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo2mu2tau.root");
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZTo2e2tau.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo4mu.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo4e.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo2e2mu.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo4tau.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo2mu2tau.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZTo2e2tau.root");	
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo4mu.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo4e.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo2e2mu.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo4tau.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo2mu2tau.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo2e2tau.root");
+    }
+  }
+  else if (sampleIndex==4){
+    if(useSqrts<2){
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CREEMMosTree.root");
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
+    }
+    if(useSqrts%2==0){
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CREEMMosTree.root");
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
+    }
+  }
+  else if (sampleIndex==-2){
+    bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ZZJetsTo4L.root");
+    bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ZZJetsTo4L.root");
+    bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZJetsTo4L.root");
   }
 }
 
@@ -542,7 +275,7 @@ void buildChain(TChain* bkgMC, int sampleIndex){
 void makeTemplate(int updown, bool debug){
 
   TString jes;
-  if(updown==1){
+  if (updown==1){
     jes="_up";
   }
   else if(updown==-1){
@@ -559,30 +292,30 @@ void makeTemplate(int updown, bool debug){
   if (debug) debugname="_unnormalized";
 
   if(updown==0 || updown==1 || updown==-1){
-    fqqH = new TFile(destDir + "qqH_fishertemplate"+jes+debugname+".root","RECREATE");
-    fggH = new TFile(destDir + "ggH_fishertemplate"+jes+debugname+".root","RECREATE");
-    fqqZZ = new TFile(destDir + "qqZZ_fishertemplate"+jes+debugname+".root","RECREATE");
-    fggZZ = new TFile(destDir + "ggZZ_fishertemplate"+jes+debugname+".root","RECREATE");
-    fZX = new TFile(destDir + "Z+X_fishertemplate"+jes+debugname+".root","RECREATE");
-    fZH = new TFile(destDir + "ZH_fishertemplate"+jes+debugname+".root","RECREATE");
-    fWH = new TFile(destDir + "WH_fishertemplate"+jes+debugname+".root","RECREATE");
-    fttH = new TFile(destDir + "ttH_fishertemplate"+jes+debugname+".root","RECREATE");
+    fqqH = new TFile(destDir + "qqH_fisher"+jes+debugname+".root","RECREATE");
+    fggH = new TFile(destDir + "ggH_fisher"+jes+debugname+".root","RECREATE");
+    fqqZZ = new TFile(destDir + "qqZZ_fisher"+jes+debugname+".root","RECREATE");
+    fggZZ = new TFile(destDir + "ggZZ_fisher"+jes+debugname+".root","RECREATE");
+    fZX = new TFile(destDir + "Z+X_fisher"+jes+debugname+".root","RECREATE");
+    fZH = new TFile(destDir + "ZH_fisher"+jes+debugname+".root","RECREATE");
+    fWH = new TFile(destDir + "WH_fisher"+jes+debugname+".root","RECREATE");
+    fttH = new TFile(destDir + "ttH_fisher"+jes+debugname+".root","RECREATE");
   } else{
-    fqqH = new TFile(destDir + "qqH_fishertemplate"+jes+debugname+".root","RECREATE");
-    fggH = new TFile(destDir + "ggH_fishertemplate"+jes+debugname+".root","RECREATE");
-    fqqZZ = new TFile(destDir + "qqZZ_fishertemplate"+jes+debugname+".root","RECREATE");
+    fqqH = new TFile(destDir + "qqH_fisher"+jes+debugname+".root","RECREATE");
+    fggH = new TFile(destDir + "ggH_fisher"+jes+debugname+".root","RECREATE");
+    //fqqZZ = new TFile(destDir + "qqZZ_fisher"+jes+debugname+".root","RECREATE");
   }
-  
+
   TH2F* low,*high,*H_Fisher;
   
   
   // =========================
   // ggH
-    
+  
   low = fillTemplate(0,true,updown);
   high = fillTemplate(0,false,updown);
   H_Fisher = mergeTemplates(low,high);
-  
+
   if (!debug && updown<2) smoothtemplates(H_Fisher,0);
   if (!debug && updown==2) smoothtemplates(H_Fisher,-1);
   if (!debug && updown==3) smoothtemplates(H_Fisher,-2);
@@ -591,49 +324,50 @@ void makeTemplate(int updown, bool debug){
   H_Fisher->Write("H_Fisher");
   fggH->Close();
   
-  
   // ==========================
   // qqH
-    
+  
   if(updown<3){
     low = fillTemplate(1,true,updown);
     high = fillTemplate(1,false,updown);
     H_Fisher = mergeTemplates(low,high);
-  }
+  }  
 
   if (!debug && updown<2) smoothtemplates(H_Fisher,1);
   if (!debug && updown==2) smoothtemplates(H_Fisher,-3);
   if (!debug && updown==3) H_Fisher = mirrortemplates(1);
-  
+
   fqqH->cd();
   H_Fisher->Write("H_Fisher");
   fqqH->Close();
   
   // ==========================
   // qqZZ
-    
+
   if(updown<2){
     low = fillTemplate(2,true,updown);
     high = fillTemplate(2,false,updown);
   }
-  if(updown==2){
+  /*if(updown==2){
     low = fillTemplate(-2,true,0);
     high = fillTemplate(-2,false,0);
-  }
-  if (updown<3) H_Fisher = mergeTemplates(low,high);
-  
-  if (!debug && updown<3) smoothtemplates(H_Fisher,2);
-  if (!debug && updown==3) H_Fisher = mirrortemplates(2);
+    }*/
+  //if (updown<3) H_Fisher = mergeTemplates(low,high);
 
-  fqqZZ->cd();
-  H_Fisher->Write("H_Fisher");
-  fqqZZ->Close();
-  
+  if (!debug && updown<2) smoothtemplates(H_Fisher,2); //Alter updown to be <3 when 
+  //if (!debug && updown==3) H_Fisher = mirrortemplates(2);
+
+  if(updown<2){
+    fqqZZ->cd();
+    H_Fisher->Write("H_Fisher");
+    fqqZZ->Close();
+  }
+
   if (updown!=2 && updown!=3){
     
-  // ==========================
-  // ggZZ
-      
+    // ==========================
+    // ggZZ
+    
     low = fillTemplate(3,true,updown);
     high = fillTemplate(3,false,updown);
     H_Fisher = mergeTemplates(low,high);
@@ -644,10 +378,10 @@ void makeTemplate(int updown, bool debug){
     H_Fisher->Write("H_Fisher");
     fggZZ->Close();
     
-  // ==========================
-  // Z+X
-    
-    if (debug){
+    // ==========================
+    // Z+X
+    /*
+      if (debug){
       low = fillTemplate(4,true,updown);
       high = fillTemplate(4,false,updown);
       H_Fisher = mergeTemplates(low,high);
@@ -655,14 +389,13 @@ void makeTemplate(int updown, bool debug){
       fZX->cd();
       H_Fisher = mergeTemplates(low,high);
       fZX->Close();
-    }
-    else{
+      }
+      else{
       analyticfits(4,updown);
-    }
-  
-  // ==========================
-  // ZH
-
+      }
+    */
+    // ==========================
+    // ZH
     low = fillTemplate(5,true,updown);
     high = fillTemplate(5,false,updown);
     H_Fisher = mergeTemplates(low,high);
@@ -673,9 +406,8 @@ void makeTemplate(int updown, bool debug){
     H_Fisher->Write("H_Fisher");
     fZH->Close();
     
-  // ==========================
-  // WH
-      
+    // ==========================
+    // WH
     low = fillTemplate(6,true,updown);
     high = fillTemplate(6,false,updown);
     H_Fisher = mergeTemplates(low,high);
@@ -685,10 +417,10 @@ void makeTemplate(int updown, bool debug){
     fWH->cd();
     H_Fisher->Write("H_Fisher");
     fWH->Close();
-  
-  // ==========================
-  // ttH
-
+    
+    // ==========================
+    // ttH
+    
     if (debug){
       low = fillTemplate(7,true,updown);
       high = fillTemplate(7,false,updown);
@@ -701,17 +433,13 @@ void makeTemplate(int updown, bool debug){
     else{
       analyticfits(7,updown);
     }
-   
-  } //End of updown!=3
-
+  }
 }
 
 //---------------------------------------------------
 
 TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
-  TChain* bkgMC;
-  if (!useMichalis) bkgMC = new TChain("SelectedTree");
-  if (useMichalis) bkgMC = new TChain("FourLeptonTreeProducer/tree");
+  TChain* bkgMC = new TChain("SelectedTree");
   buildChain(bkgMC,sampleIndex);
 
   cout << "Chain for " << sampleIndex << " " << isLowMass << " " << updown << " " << bkgMC->GetEntries() << endl;
@@ -719,89 +447,24 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
 
   //bkgMC->Sumw2();
 
-  double mmass,mdeta,mmJJ,mw,mFisher,mheff,mprocessID;
   float mass,deta,mJJ,w,Fisher;
-  int processID;
-  double lz2chg,lz2mass,lminllmass; // To deal with Z+X background
-  double z11,z12,z21,z22;
   int njets;
+  int processID;
   string channel;
-  vector<double> *JetPt=0;
-  vector<double> *JetSigma=0;
 
-  if(!useMichalis){
-    bkgMC->SetBranchAddress("ZZMass",&mass);
-    //bkgMC->SetBranchAddress("NJets",&njets);
-    bkgMC->SetBranchAddress("DiJetDEta",&deta);
-    if(updown==0 || updown==2 || updown==3){
-      bkgMC->SetBranchAddress("DiJetMass",&mJJ);
-    }else if(updown==1){
-      bkgMC->SetBranchAddress("DiJetMassPlus",&mJJ);
-    }else if(updown==-1){
-      bkgMC->SetBranchAddress("DiJetMassMinus",&mJJ);
-    }
-    bkgMC->SetBranchAddress("MC_weight",&w);
-    bkgMC->SetBranchAddress("genProcessId",&processID);
-    bkgMC->SetBranchAddress("JetPt",&JetPt);
-    bkgMC->SetBranchAddress("JetSigma",&JetSigma);
-    lz2chg=1;
-    lz2mass=13;
-    lminllmass=5;
-  }else if(useMichalis){
-    if (sampleIndex!=4){
-      bkgMC->SetBranchAddress("H_Mass",&mmass);
-      bkgMC->SetBranchAddress("H_NJets",&njets);
-      if(updown==0 || updown==2 || updown==3){
-	bkgMC->SetBranchAddress("H_DEta",&mdeta);
-	bkgMC->SetBranchAddress("H_MJJ",&mmJJ);
-      }
-      else if(updown==1){
-	bkgMC->SetBranchAddress("H_DEtaUp",&mdeta);
-	bkgMC->SetBranchAddress("H_MJJUp",&mmJJ);
-      }
-      else if(updown==-1){
-	bkgMC->SetBranchAddress("H_DEtaDwn",&mdeta);
-	bkgMC->SetBranchAddress("H_MJJDwn",&mmJJ);
-      }
-      bkgMC->SetBranchAddress("eventWeight",&mw);
-      bkgMC->SetBranchAddress("H_eff",&mheff);
-      bkgMC->SetBranchAddress("H_Z1_leg1_PdgId",&z11);
-      bkgMC->SetBranchAddress("H_Z1_leg2_PdgId",&z12);
-      bkgMC->SetBranchAddress("H_Z2_leg1_PdgId",&z21);
-      bkgMC->SetBranchAddress("H_Z2_leg2_PdgId",&z22);
-      lz2chg=1;
-      lz2mass=13;
-      lminllmass=5;
-      if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
-	bkgMC->SetBranchAddress("genHProcess",&mprocessID);
-      }
-    }
-    else{
-      bkgMC->SetBranchAddress("HLoose_Mass",&mmass);
-      bkgMC->SetBranchAddress("HLoose_NJets",&njets);
-      if(updown==0 || updown==2 || updown==3){
-	bkgMC->SetBranchAddress("HLoose_DEta",&mdeta);
-	bkgMC->SetBranchAddress("HLoose_MJJ",&mmJJ);
-      }
-      else if(updown==1){
-	bkgMC->SetBranchAddress("HLoose_DEtaUp",&mdeta);
-	bkgMC->SetBranchAddress("HLoose_MJJUp",&mmJJ);
-      }
-      else if(updown==-1){
-	bkgMC->SetBranchAddress("HLoose_DEtaDwn",&mdeta);
-	bkgMC->SetBranchAddress("HLoose_MJJDwn",&mmJJ);
-      }
-      bkgMC->SetBranchAddress("eventWeight",&mw);
-      bkgMC->SetBranchAddress("H_eff",&mheff);
-      bkgMC->SetBranchAddress("HLoose_Z1_leg1_PdgId",&z11);
-      bkgMC->SetBranchAddress("HLoose_Z1_leg2_PdgId",&z12);
-      bkgMC->SetBranchAddress("HLoose_Z2_leg1_PdgId",&z21);
-      bkgMC->SetBranchAddress("HLoose_Z2_leg2_PdgId",&z22);
-      bkgMC->SetBranchAddress("HLoose_Z2_Charge",&lz2chg);
-      bkgMC->SetBranchAddress("HLoose_Z2_Mass",&lz2mass);
-      bkgMC->SetBranchAddress("HLoose_MinOSPairMass",&lminllmass);
-    }
+  bkgMC->SetBranchAddress("ZZMass",&mass);
+  bkgMC->SetBranchAddress("NJets30",&njets);
+  bkgMC->SetBranchAddress("DiJetDEta",&deta);
+  if(updown==0 || updown==2 || updown==3){
+    bkgMC->SetBranchAddress("DiJetMass",&mJJ);
+  }else if(updown==1){
+    bkgMC->SetBranchAddress("DiJetMassPlus",&mJJ);
+  }else if(updown==-1){
+    bkgMC->SetBranchAddress("DiJetMassMinus",&mJJ);
   }
+  bkgMC->SetBranchAddress("Fisher",&Fisher);
+  bkgMC->SetBranchAddress("MC_weight",&w);
+  bkgMC->SetBranchAddress("genProcessId",&processID);
 
   TH2F* bkgHist;
   if(!isLowMass){
@@ -813,40 +476,24 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
 
   bkgHist->Sumw2();
 
+  int percent=0;
+
   //Fill histogram
   for(int i=0; i<bkgMC->GetEntries(); i++){
     bkgMC->GetEntry(i);
-    if (i%50000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-    //if (sampleIndex>=5 && i%5000==0) cout << i << " " << processID << " " << mass << " " << deta << " " << mJJ << " " << njets << endl;
-    if (mass<100 || deta<=-99 || mJJ<=-99) continue;
-    if (lz2chg==0 || lz2mass<=12 || lminllmass<=4) continue;
-    if(!useMichalis){
-      int NJets=0;
-      double jetptc=0;
-      for (int j=0; j<JetPt->size();j++){
-        if (updown==0 || updown==2 || updown==3) jetptc=JetPt->at(j);
-        else if (updown==1) jetptc=JetPt->at(j)*(1+JetSigma->at(j));
-        else if (updown==-1) jetptc=JetPt->at(j)*(1-JetSigma->at(j));
-        if (jetptc>30.) NJets++;
-      }
-      if (NJets<2) continue;
-      if ((sampleIndex==5 && processID!=24) || (sampleIndex==6 && processID!=26) || (sampleIndex==7 && processID!=121)) continue;
-      Fisher=0.09407*fabs(deta)+0.00041581*mJJ;
-      bkgHist->Fill(mass,Fisher,w);
-    }else if(useMichalis){
-      if (njets<2) continue;
-      if ((sampleIndex==5 && mprocessID!=24) || (sampleIndex==6 && mprocessID!=26) || (sampleIndex==7 && mprocessID!=121)) continue;
-      mFisher=0.09407*fabs(mdeta)+0.00041581*mmJJ;
-      if (abs(z11)==11 && abs(z12)==11 && abs(z21)==11 && abs(z22)==11) channel="4e";
-      if (abs(z11)==13 && abs(z12)==13 && abs(z21)==13 && abs(z22)==13) channel="4mu";
-      if ((abs(z11)==11 && abs(z12)==11 && abs(z21)==13 && abs(z22)==13) || (abs(z11)==13 && abs(z12)==13 && abs(z21)==11 && abs(z22)==11)) channel="2e2mu";
-      if (channel=="4e" || channel=="4mu" || channel=="2e2mu"){
-	bkgHist->Fill(mmass,mFisher,mw*mheff);
-      }
-      else continue;
+    if (i%50000==0){
+      cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
     }
+    if (mass<100 || deta<=-99 || mJJ<=-99 || njets<2) continue;
+    if(updown!=0) Fisher = 0.18*fabs(deta) + 0.000192*mJJ;
+    if (Fisher>=2.){
+      Fisher = 1.98;
+      percent++;
+    }
+    bkgHist->Fill(mass,Fisher,w);
   }
-  
+  cout<<percent<<" events found with Fisher>2 or "<<float(percent)/float(bkgMC->GetEntries())<<endl;
+
   return bkgHist;
 }
 
@@ -882,7 +529,7 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
 //---------------------------------------------------
 
 TH2F* smoothtemplates(TH2F* inputdata, int sampleIndex){
-  if(sampleIndex==0 || sampleIndex==1 || sampleIndex==-1 || sampleIndex==-2 || sampleIndex==-3){
+  if(sampleIndex==0 || sampleIndex==1){
     rebin(inputdata,sampleIndex);
   }
   else if(sampleIndex==2 || sampleIndex==3 || sampleIndex==5 || sampleIndex==6){
@@ -1167,95 +814,29 @@ TH2F* rebin_lowstatistics(TH2F* finalhist, int sampleIndex){
 //---------------------------------------------------
 
 void analyticfits(int sampleIndex,int updown){
-  TChain* bkgMC;
-  if (!useMichalis) bkgMC = new TChain("SelectedTree");
-  if (useMichalis) bkgMC = new TChain("FourLeptonTreeProducer/tree");
+  TChain* bkgMC = new TChain("SelectedTree");
   buildChain(bkgMC,sampleIndex);
 
   cout << "Chain for " << sampleIndex << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
-  double mdeta,mmJJ,mw,mmass,mtempFisher,mheff,lz2chg,lz2mass,lminllmass,mprocessID;
   float deta,mJJ,w,mass,tempFisher;
   int processID;
-  double z11,z12,z21,z22;
   int njets;
-  vector<double> *JetPt=0;
-  vector<double> *JetSigma=0;
 
-  if(!useMichalis){
-    bkgMC->SetBranchAddress("ZZMass",&mass);
-    //bkgMC->SetBranchAddress("NJets",&njets);
-    bkgMC->SetBranchAddress("DiJetDEta",&deta);
-    if(updown==0){
-      bkgMC->SetBranchAddress("DiJetMass",&mJJ);
-    }else if(updown==1){
-      bkgMC->SetBranchAddress("DiJetMassPlus",&mJJ);
-    }else if(updown==-1){
-      bkgMC->SetBranchAddress("DiJetMassMinus",&mJJ);
-    }
-    bkgMC->SetBranchAddress("JetPt",&JetPt);
-    bkgMC->SetBranchAddress("JetSigma",&JetSigma);
-    bkgMC->SetBranchAddress("MC_weight",&w);
-    bkgMC->SetBranchAddress("genProcessId",&processID);
-    lz2chg=1;
-    lz2mass=13;
-    lminllmass=5;
-  }else if(useMichalis){
-    if (sampleIndex!=4){
-      bkgMC->SetBranchAddress("H_Mass",&mmass);
-      bkgMC->SetBranchAddress("H_NJets",&njets);
-      if(updown==0){
-	bkgMC->SetBranchAddress("H_DEta",&mdeta);
-	bkgMC->SetBranchAddress("H_MJJ",&mmJJ);
-      }
-      else if(updown==1){
-	bkgMC->SetBranchAddress("H_DEtaUp",&mdeta);
-	bkgMC->SetBranchAddress("H_MJJUp",&mmJJ);
-      }
-      else if(updown==-1){
-	bkgMC->SetBranchAddress("H_DEtaDwn",&mdeta);
-	bkgMC->SetBranchAddress("H_MJJDwn",&mmJJ);
-      }
-      bkgMC->SetBranchAddress("eventWeight",&mw);
-      bkgMC->SetBranchAddress("H_eff",&mheff);
-      bkgMC->SetBranchAddress("H_Z1_leg1_PdgId",&z11);
-      bkgMC->SetBranchAddress("H_Z1_leg2_PdgId",&z12);
-      bkgMC->SetBranchAddress("H_Z2_leg1_PdgId",&z21);
-      bkgMC->SetBranchAddress("H_Z2_leg2_PdgId",&z22);
-      lz2chg=1;
-      lz2mass=13;
-      lminllmass=5;
-      if (sampleIndex==5 || sampleIndex==6 || sampleIndex==7){
-	bkgMC->SetBranchAddress("genHProcess",&mprocessID);
-      }
-    }
-    else{
-      bkgMC->SetBranchAddress("HLoose_Mass",&mmass);
-      bkgMC->SetBranchAddress("HLoose_NJets",&njets);
-      if(updown==0){
-	bkgMC->SetBranchAddress("HLoose_DEta",&mdeta);
-	bkgMC->SetBranchAddress("HLoose_MJJ",&mmJJ);
-      }
-      else if(updown==1){
-	bkgMC->SetBranchAddress("HLoose_DEtaUp",&mdeta);
-	bkgMC->SetBranchAddress("HLoose_MJJUp",&mmJJ);
-      }
-      else if(updown==-1){
-	bkgMC->SetBranchAddress("HLoose_DEtaDwn",&mdeta);
-	bkgMC->SetBranchAddress("HLoose_MJJDwn",&mmJJ);
-      }
-      bkgMC->SetBranchAddress("eventWeight",&mw);
-      bkgMC->SetBranchAddress("H_eff",&mheff);
-      bkgMC->SetBranchAddress("HLoose_Z2_Charge",&lz2chg);
-      bkgMC->SetBranchAddress("HLoose_Z2_Mass",&lz2mass);
-      bkgMC->SetBranchAddress("HLoose_MinOSPairMass",&lminllmass);
-      bkgMC->SetBranchAddress("HLoose_Z1_leg1_PdgId",&z11);
-      bkgMC->SetBranchAddress("HLoose_Z1_leg2_PdgId",&z12);
-      bkgMC->SetBranchAddress("HLoose_Z2_leg1_PdgId",&z21);
-      bkgMC->SetBranchAddress("HLoose_Z2_leg2_PdgId",&z22);
-    }
+  bkgMC->SetBranchAddress("ZZMass",&mass);
+  bkgMC->SetBranchAddress("NJets30",&njets);
+  bkgMC->SetBranchAddress("DiJetDEta",&deta);
+  if(updown==0){
+    bkgMC->SetBranchAddress("DiJetMass",&mJJ);
+  }else if(updown==1){
+    bkgMC->SetBranchAddress("DiJetMassPlus",&mJJ);
+  }else if(updown==-1){
+    bkgMC->SetBranchAddress("DiJetMassMinus",&mJJ);
   }
+  bkgMC->SetBranchAddress("MC_weight",&w);
+  bkgMC->SetBranchAddress("genProcessId",&processID);
+  bkgMC->SetBranchAddress("Fisher",&tempFisher);
 
   RooRealVar Fisher("Fisher","Fisher",0.,2.);
   RooRealVar gm1("gm1","",0.1,0.4);
@@ -1272,37 +853,13 @@ void analyticfits(int sampleIndex,int updown){
   for(int i=0; i<bkgMC->GetEntries(); i++){
     bkgMC->GetEntry(i);
     if(i%50000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-    if(!useMichalis){
-      int NJets=0;
-      double jetptc=0;
-      for (int j=0; j<JetPt->size();j++){
-	if (updown==0) jetptc=JetPt->at(j);
-	else if (updown==1) jetptc=JetPt->at(j)*(1+JetSigma->at(j));
-	else if (updown==-1) jetptc=JetPt->at(j)*(1-JetSigma->at(j));
-	if (jetptc>30.) NJets++;
-      }
-      if(mass>100 && lz2chg!=0 && lz2mass>12 && lminllmass>4 && NJets>=2){
-	if (sampleIndex==7 && processID!=121) continue;
-	tempFisher=0.09407*fabs(deta)+0.00041581*mJJ;
-	Fisher=tempFisher;
-	data->add(RooArgSet(Fisher),w);
-      }
-    }
-    if(useMichalis){
-      if(mmass>100 && lz2chg!=0 && lz2mass>12 && lminllmass>4 && njets>=2){
-	if (sampleIndex==7 && mprocessID!=121) continue;
-	mtempFisher=0.09407*fabs(mdeta)+0.00041581*mmJJ;
-	Fisher=mtempFisher;
-	if (abs(z11)==11 && abs(z12)==11 && abs(z21)==11 && abs(z22)==11) channel="4e";
-	if (abs(z11)==13 && abs(z12)==13 && abs(z21)==13 && abs(z22)==13) channel="4mu";
-	if ((abs(z11)==11 && abs(z12)==11 && abs(z21)==13 && abs(z22)==13) || (abs(z11)==13 && abs(z12)==13 && abs(z21)==11 && abs(z22)==11)) channel="2e2mu";
-	if (channel=="4e" || channel=="4mu" || channel=="2e2mu"){
-	  data->add(RooArgSet(Fisher),mw*mheff);
-	}
-      }
+    if(mass>100 && njets>=2){
+      if(updown!=0) tempFisher = 0.18*fabs(deta) + 0.000192*mJJ;
+      if(tempFisher>=2.) tempFisher=1.98;
+      Fisher=tempFisher;
+      data->add(RooArgSet(Fisher),w);
     }
   }
-
 
   //Fit is a Landau + Gaussian
   RooGaussian* gaus1 = new RooGaussian("gaus1","gaus1",Fisher,gm1,gsig1);
@@ -1343,15 +900,13 @@ void analyticfits(int sampleIndex,int updown){
   else if (sampleIndex==7){
     fttH->Close();
   }
-
 }
 
-TH2F* altshapes(TH2F* original, int channel, int altnum){
-
+TH2F* altshapes(TH2F* original, int channel, int altnum){	 	 
   int nXbins=original->GetNbinsX();
   int nYbins=original->GetNbinsY();
   float binFisher,scale,altvalue;
-
+	 	 
   for (int i=1; i <=nXbins; i++){
     for (int j=1; j<=nYbins; j++){
       binFisher = original->GetYaxis()->GetBinCenter(j);
@@ -1360,92 +915,91 @@ TH2F* altshapes(TH2F* original, int channel, int altnum){
       original->SetBinContent(i,j,altvalue);
     }
   }
-
-  return original;
-
+	 	 
+  return original;	 	
 }
-
+	 	 
 float altscale(float Fisher,int channel, int altnum){
   float scale=0;
-
+  
   //ggH
   if(channel==0){
     if(altnum==1){
-      if (Fisher<=0.2) scale=0.899784;
-      if (Fisher>0.2 && Fisher<=0.4) scale=1.04396;
-      if (Fisher>0.4 && Fisher<=0.6) scale=1.07628;
-      if (Fisher>0.6 && Fisher<=0.8) scale=1.19168;
-      if (Fisher>0.8 && Fisher<=1.0) scale=1.33553;
-      if (Fisher>1.0 && Fisher<=1.2) scale=1.45699;
-      if (Fisher>1.2 && Fisher<=1.4) scale=1.59986;
-      if (Fisher>1.4 && Fisher<=1.6) scale=1.92241;
-      if (Fisher>1.6 && Fisher<=1.8) scale=2.18923;
-      if (Fisher>1.8) scale=3.04589;
+      if (Fisher<=0.2) scale=0.860963;
+      if (Fisher>0.2 && Fisher<=0.4) scale=1.02564;
+      if (Fisher>0.4 && Fisher<=0.6) scale=1.04104;
+      if (Fisher>0.6 && Fisher<=0.8) scale=1.06351;
+      if (Fisher>0.8 && Fisher<=1.0) scale=1.1585;
+      if (Fisher>1.0 && Fisher<=1.2) scale=1.31685;
+      if (Fisher>1.2 && Fisher<=1.4) scale=1.34064;
+      if (Fisher>1.4 && Fisher<=1.6) scale=1.60101;
+      if (Fisher>1.6 && Fisher<=1.8) scale=1.84312;
+      if (Fisher>1.8) scale=2.28459;
     }
     if(altnum==2){
-      if (Fisher<=0.2) scale=1.07374;
-      if (Fisher>0.2 && Fisher<=0.4) scale=1.01152;
-      if (Fisher>0.4 && Fisher<=0.6) scale=0.87732;
-      if (Fisher>0.6 && Fisher<=0.8) scale=0.761324;
-      if (Fisher>0.8 && Fisher<=1.0) scale=0.707992;
-      if (Fisher>1.0 && Fisher<=1.2) scale=0.699586;
-      if (Fisher>1.2 && Fisher<=1.4) scale=0.630815;
-      if (Fisher>1.4 && Fisher<=1.6) scale=0.89361;
-      if (Fisher>1.6 && Fisher<=1.8) scale=1.09092;
-      if (Fisher>1.8) scale=2.09242;
+      if (Fisher<=0.2) scale=1.05071;
+      if (Fisher>0.2 && Fisher<=0.4) scale=1.08807;
+      if (Fisher>0.4 && Fisher<=0.6) scale=0.988566;
+      if (Fisher>0.6 && Fisher<=0.8) scale=0.883993;
+      if (Fisher>0.8 && Fisher<=1.0) scale=0.777513;
+      if (Fisher>1.0 && Fisher<=1.2) scale=0.727857;
+      if (Fisher>1.2 && Fisher<=1.4) scale=0.687078;
+      if (Fisher>1.4 && Fisher<=1.6) scale=0.630311;
+      if (Fisher>1.6 && Fisher<=1.8) scale=0.827337;
+      if (Fisher>1.8) scale=1.04622;
     }
   }
   //qqH
   if(channel==1){
     if(altnum==1){
-      if (Fisher<=0.2) scale=1.15119;
-      if (Fisher>0.2 && Fisher<=0.4) scale=1.10032;
-      if (Fisher>0.4 && Fisher<=0.6) scale=0.976487;
-      if (Fisher>0.6 && Fisher<=0.8) scale=0.953584;
-      if (Fisher>0.8 && Fisher<=1.0) scale=0.956769;
-      if (Fisher>1.0 && Fisher<=1.2) scale=0.918676;
-      if (Fisher>1.2 && Fisher<=1.4) scale=0.926049;
-      if (Fisher>1.4 && Fisher<=1.6) scale=0.804567;
-      if (Fisher>1.6 && Fisher<=1.8) scale=0.846913;
-      if (Fisher>1.8) scale=0.850984;
+      if (Fisher<=0.2) scale=1.18197;
+      if (Fisher>0.2 && Fisher<=0.4) scale=1.17726;
+      if (Fisher>0.4 && Fisher<=0.6) scale=1.00603;
+      if (Fisher>0.6 && Fisher<=0.8) scale=1.0123;
+      if (Fisher>0.8 && Fisher<=1.0) scale=0.985812;
+      if (Fisher>1.0 && Fisher<=1.2) scale=0.906812;
+      if (Fisher>1.2 && Fisher<=1.4) scale=0.968142;
+      if (Fisher>1.4 && Fisher<=1.6) scale=0.820917;
+      if (Fisher>1.6 && Fisher<=1.8) scale=0.914569;
+      if (Fisher>1.8) scale=0.838355;
     }
   }
-  //qqZZ 
+  //qqZZ NOT USED, reading from separate files instead
   /*if(channel==2){
     if(altnum==1){
-      if (Fisher<=0.2) scale=1.04573;
-      if (Fisher>0.2 && Fisher<=0.4) scale=0.988066;
-      if (Fisher>0.4 && Fisher<=0.6) scale=0.953113;
-      if (Fisher>0.6 && Fisher<=0.8) scale=0.742393;
-      if (Fisher>0.8 && Fisher<=1.0) scale=0.867237;
-      if (Fisher>1.0 && Fisher<=1.2) scale=0.554462;
-      if (Fisher>1.2 && Fisher<=1.4) scale=0.614161;
-      if (Fisher>1.4 && Fisher<=1.6) scale=1.24295;
-      if (Fisher>1.6 && Fisher<=1.8) scale=1.49153;
-      if (Fisher>1.8) scale=0.372884;
+    if (Fisher<=0.2) scale=1.04573;
+    if (Fisher>0.2 && Fisher<=0.4) scale=0.988066;
+    if (Fisher>0.4 && Fisher<=0.6) scale=0.953113;
+    if (Fisher>0.6 && Fisher<=0.8) scale=0.742393;
+    if (Fisher>0.8 && Fisher<=1.0) scale=0.867237;
+    if (Fisher>1.0 && Fisher<=1.2) scale=0.554462;
+    if (Fisher>1.2 && Fisher<=1.4) scale=0.614161;
+    if (Fisher>1.4 && Fisher<=1.6) scale=1.24295;
+    if (Fisher>1.6 && Fisher<=1.8) scale=1.49153;
+    if (Fisher>1.8) scale=0.372884;
     }
     }*/
-
+	 	 
   if(scale==0) cout<<"ERROR: Fisher Template has values <0 or >2."<<endl;
-
+  
   return scale;
-
+  
 }
-
+	 	 
 TH2F* mirrortemplates(int sampleIndex){
   TFile* alt1,*orig;
   if (sampleIndex==1){
-    alt1 = new TFile(destDir + "qqH_fishertemplate_alt.root","OPEN");
-    orig = new TFile(destDir + "qqH_fishertemplate.root","OPEN");
+    alt1 = new TFile(destDir + "qqH_fisher_alt.root","OPEN");
+    orig = new TFile(destDir + "qqH_fisher.root","OPEN");
   }
   if (sampleIndex==2){
-    alt1 = new TFile(destDir + "qqZZ_fishertemplate_alt.root","OPEN");
-    orig = new TFile(destDir + "qqZZ_fishertemplate.root","OPEN");
+    alt1 = new TFile(destDir + "qqZZ_fisher_alt.root","OPEN");
+    orig = new TFile(destDir + "qqZZ_fisher.root","OPEN");
   }
   TH2F* altfisher = (TH2F*)alt1->Get("H_Fisher");
   TH2F* origfisher = (TH2F*)orig->Get("H_Fisher");
   TH2F* alt2fisher = new TH2F("H_Fisher","H_Fisher",int((highMzz-100.)/mBinSize+0.5),100,highMzz,50,0,2);
-
+  
   for(int i=1;i<=origfisher->GetNbinsX();i++){
     for(int j=1;j<=origfisher->GetNbinsY();j++){
       float origval=origfisher->GetBinContent(i,j);
@@ -1455,7 +1009,7 @@ TH2F* mirrortemplates(int sampleIndex){
       alt2fisher->SetBinContent(i,j,alt2val);
     }
   }
-   
+  
   //Renormalize
   TH1F* tempProj;
   double norm;
@@ -1468,6 +1022,6 @@ TH2F* mirrortemplates(int sampleIndex){
       }
     }
   }
-
+	 	 
   return alt2fisher;
 }
