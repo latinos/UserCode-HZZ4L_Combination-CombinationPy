@@ -51,13 +51,13 @@ void compareSignalFits()
   for(int ich=3;ich<4;ich++) 
     for(int ien=8;ien<9;ien++)
       for(int icomp=0;icomp<5;icomp++){
-	//signalFits(ien,ich,icomp,0,canv);
-	//signalFits(ien,ich,icomp,2,canv);
-	//signalFits(ien,ich,icomp,-1,canv);//no jet tagging
-	//signalFits(ien,ich,icomp,0,canv,1);//jet tagging, long mass range
-	//signalFits(ien,ich,icomp,2,canv,1);//jet tagging, long mass range
+	signalFits(ien,ich,icomp,0,canv);
+	signalFits(ien,ich,icomp,2,canv);
+	signalFits(ien,ich,icomp,-1,canv);//no jet tagging
+	signalFits(ien,ich,icomp,0,canv,1);//jet tagging, long mass range
+	signalFits(ien,ich,icomp,2,canv,1);//jet tagging, long mass range
       }
-  signalFits(8,1,3,2,canv);//for tests
+  //signalFits(8,1,3,2,canv);//for tests
 }
 
 //The actual job
@@ -140,31 +140,6 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
       continue;
     }
 
-    /*
-    //hack to use nJets, to be replaced with RooCategory
-    TFile *fo = new TFile("tmp.root","RECREATE");
-    TTree *newTree = new TTree("treesmall","tresmall");
-    if(njets>=0){
-      Double_t zzmass,mcw,nj;
-      TBranch *b_zzmass,*b_mcw,*b_nj;
-      newTree->Branch("ZZMass", &zzmass, "ZZMass/D");
-      newTree->Branch("MC_weight", &mcw, "MC_weight/D");
-      newTree->Branch("NJets30", &nj, "NJets30/D");
-      Float_t zzmass0,mcw0;
-      Short_t nj0;
-      tree->SetBranchAddress("ZZMass",&zzmass0,&b_zzmass);
-      tree->SetBranchAddress("MC_weight",&mcw0,&b_mcw);
-      tree->SetBranchAddress("NJets30",&nj0,&b_nj);
-      for(int itree=0;itree<tree->GetEntries();itree++){
-	tree->GetEntry(itree);
-	zzmass=(Double_t)zzmass0;
-	mcw=(Double_t)mcw0;
-	nj=(Double_t)nj0;
-	//cout<<zzmass<<" "<<nj<<endl;
-	newTree->Fill();
-      }
-    }
-    */
 
     //Open ggH file and retrieve the tree
     sprintf(tmp_finalInPath,"/HZZ4lTree_H%i.root",masses[i]);
@@ -241,9 +216,6 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
       }
     }
     
-    //if(njets==0) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=0 && NJets30<1.5", "MC_weight");
-    //if(njets==2) set2 = new RooDataSet("data","data", newTree, RooArgSet(ZZMass,MC_weight,NJets30), "NJets30>=2", "MC_weight");
-    //if(njets==-1)set2 = new RooDataSet("data","data", tree, RooArgSet(ZZMass,MC_weight), "", "MC_weight");
     RooDataHist *set = (RooDataHist*)set2->binnedClone("datahist","datahist");
     
     RooRealVar ZZMassH("ZZMass","ZZMassH",low_M,high_M);
