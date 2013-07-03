@@ -70,6 +70,7 @@ void backgroundFits_qqzz_1Dw() {
 // The actual job
 void backgroundFits_qqzz_1Dw(int channel, int sqrts, int VBFtag)
 {
+  if(sqrts==7)return;
   TString schannel;
   if      (channel == 1) schannel = "4mu";
   else if (channel == 2) schannel = "4e";
@@ -105,20 +106,28 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts, int VBFtag)
 
   RooRealVar* MC_weight = new RooRealVar("MC_weight","MC_weight",0.,2.) ; 
   RooRealVar* ZZMass = new RooRealVar("ZZMass","ZZMass",100.,1000.);
-  RooRealVar* ZZLD = new RooRealVar("ZZLD","ZZLD",0.,1.);
-  RooRealVar* NJets = new RooRealVar("NJets","NJets",0.,100.);
-  
-  char cut[10];
-  sprintf(cut,"ZZLD>0.5");
-  //RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*ZZLD),cut,"MC_weight");
-  if (VBFtag==1){
-    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets>1","MC_weight");
-  }
-  else if(VBFtag==0){
-    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"NJets<2","MC_weight");
-  }
-  else if(VBFtag==2){
-    RooDataSet* set = new RooDataSet("set","set",tree,RooArgSet(*ZZMass,*MC_weight,*NJets),"","MC_weight");
+  RooRealVar* NJets30 = new RooRealVar("NJets30","NJets30",0.,100.);
+  RooArgSet ntupleVarSet(*ZZMass,*NJets30,*MC_weight);
+  RooDataSet *set = new RooDataSet("set","set",ntupleVarSet,WeightVar("MC_weight"));
+
+  Float_t myMC,myMass;
+  Short_t myNJets;
+  int nentries = tree->GetEntries();
+
+  tree->SetBranchAddress("ZZMass",&myMass);
+  tree->SetBranchAddress("MC_weight",&myMC);
+  tree->SetBranchAddress("NJets30",&myNJets);
+
+  for(int i =0;i<nentries;i++) {
+    tree->GetEntry(i);
+    if(VBFtag==1 && myNJets<2)continue;
+    if(VBFtag==0 && myNJets>1)continue;
+
+    ntupleVarSet.setRealValue("ZZMass",myMass);
+    ntupleVarSet.setRealValue("MC_weight",myMC);
+    ntupleVarSet.setRealValue("NJets30",(double)myNJets);
+
+    set->add(ntupleVarSet, myMC);
   }
 
   double totalweight = 0.;
@@ -131,7 +140,7 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts, int VBFtag)
     if (row->getRealValue("ZZMass") < 200) totalweight_z += set->weight();
   } 
   cout << "nEntries: " << set->numEntries() << ", totalweight: " << totalweight << ", totalweight_z: " << totalweight_z << endl;
-	
+
   gSystem->Load("libHiggsAnalysisCombinedLimit.so");
 	
   //// ---------------------------------------
@@ -364,7 +373,7 @@ void backgroundFits_qqzz_1Dw(int channel, int sqrts, int VBFtag)
   box2->Draw("same");
   
   if (VBFtag<2) outputName = outputPath + "bkgqqzz_" + schannel + "_z" + "_" + Form("%d",int(VBFtag));
-  if (VBFtag<2) outputName = outputPath + "bkgqqzz_" + schannel + "_z";
+  if (VBFtag==2) outputName = outputPath + "bkgqqzz_" + schannel + "_z";
   c2->SaveAs(outputName + ".eps");
   c2->SaveAs(outputName + ".png");
 
