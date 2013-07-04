@@ -35,7 +35,7 @@ CardFragments/zjetShape_[sqrts]TeV_[fs].txt
 4. 1D SIGNAL SHAPES 
 Run:
 
-root -q signalFits.C
+root -l californiaSignalShapes.C 
 
 Parameters to be used in the config files are in:
 CardFragments/signalFunctions_[sqrts]TeV_[fs].txt
