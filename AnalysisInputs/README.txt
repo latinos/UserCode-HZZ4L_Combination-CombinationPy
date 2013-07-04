@@ -6,6 +6,8 @@ The merger of these fragments
 
 All common configurable parameters are specified in the file Config.h.
 
+To run californiaSignalShapes.C you need to download the shapes. In CreateDataCards/CMSSW_6_1_1/src
+cvs co -d Higgs/Higgs_CS_and_Width/include/SignalInterpolationStrings.h  /UserCode/Mangano/WWAnalysis/TreeModifiers/macro/SignalInterpolationStrings.h
 1. SIGNAL EFFICIENCIES
 Run:
 
