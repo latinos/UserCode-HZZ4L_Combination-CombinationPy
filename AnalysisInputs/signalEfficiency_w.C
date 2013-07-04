@@ -66,45 +66,62 @@ void signalEfficiency_w() {
   fileOutYields << "############### YIELDS ###############" << endl;
   fileOutYields << "Lumi 7 TeV: " << lumi7TeV << endl;
   fileOutYields << "Lumi 8 TeV: " << lumi8TeV << endl << endl;
-  fileOutYields << "   sqrts      channel     process     mH     eff      XS*BR     Yield" << endl;
+  fileOutYields << "   sqrts      channel     process     mH     eff      XS*BR     Yield" << endl << endl;;
 
   //ggH
-  //  signalEfficiency_w(1,7,1,JES,&fileOutYields);
-  //   signalEfficiency_w(2,7,1,JES,&fileOutYields);
-  //   signalEfficiency_w(3,7,1,JES,&fileOutYields);
+  fileOutYields << "    *** Summary: ggH @ 7TeV ***" << endl << endl;
+  signalEfficiency_w(1,7,1,JES,&fileOutYields);
+  signalEfficiency_w(2,7,1,JES,&fileOutYields);
+  signalEfficiency_w(3,7,1,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: ggH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,1,JES,&fileOutYields);
   signalEfficiency_w(2,8,1,JES,&fileOutYields);
   signalEfficiency_w(3,8,1,JES,&fileOutYields);
-  //ggH (powheg15) // TEMPORARY for x-check
-  signalEfficiency_w(1,8,6,JES,&fileOutYields);
-  signalEfficiency_w(2,8,6,JES,&fileOutYields);
-  signalEfficiency_w(3,8,6,JES,&fileOutYields);
+//   //ggH (powheg15) // TEMPORARY for x-check
+//   fileOutYields << endl << endl <<"    *** Summary: ggH @ 8TeV (new Powheg high mass) ***" << endl << endl;
+//   signalEfficiency_w(1,8,6,JES,&fileOutYields);
+//   signalEfficiency_w(2,8,6,JES,&fileOutYields);
+//   signalEfficiency_w(3,8,6,JES,&fileOutYields);
+//   //ggH (powheg15jhuGenV3) // TEMPORARY for x-check
+//   fileOutYields << endl << endl <<"    *** Summary: ggH @ 8TeV (new Powheg low mass) ***" << endl << endl;
+//   signalEfficiency_w(1,8,7,JES,&fileOutYields);
+//   signalEfficiency_w(2,8,7,JES,&fileOutYields);
+//   signalEfficiency_w(3,8,7,JES,&fileOutYields);
+
 
   //qqH
-  //   signalEfficiency_w(1,7,2,JES,&fileOutYields);
-  //   signalEfficiency_w(2,7,2,JES,&fileOutYields);
-  //   signalEfficiency_w(3,7,2,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: qqH @ 7TeV ***" << endl << endl;
+  signalEfficiency_w(1,7,2,JES,&fileOutYields);
+  signalEfficiency_w(2,7,2,JES,&fileOutYields);
+  signalEfficiency_w(3,7,2,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: qqH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,2,JES,&fileOutYields);
   signalEfficiency_w(2,8,2,JES,&fileOutYields);
   signalEfficiency_w(3,8,2,JES,&fileOutYields);
   //ZH
-//   signalEfficiency_w(1,7,3,JES,&fileOutYields);
-//   signalEfficiency_w(2,7,3,JES,&fileOutYields);
-//   signalEfficiency_w(3,7,3,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: ZH @ 7TeV ***" << endl << endl;
+  signalEfficiency_w(1,7,3,JES,&fileOutYields);
+  signalEfficiency_w(2,7,3,JES,&fileOutYields);
+  signalEfficiency_w(3,7,3,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: ZH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,3,JES,&fileOutYields);
   signalEfficiency_w(2,8,3,JES,&fileOutYields);
   signalEfficiency_w(3,8,3,JES,&fileOutYields);
   //WH
-//   signalEfficiency_w(1,7,4,JES,&fileOutYields);
-//   signalEfficiency_w(2,7,4,JES,&fileOutYields);
-//   signalEfficiency_w(3,7,4,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: WH @ 7TeV ***" << endl << endl;
+  signalEfficiency_w(1,7,4,JES,&fileOutYields);
+  signalEfficiency_w(2,7,4,JES,&fileOutYields);
+  signalEfficiency_w(3,7,4,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: WH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,4,JES,&fileOutYields);
   signalEfficiency_w(2,8,4,JES,&fileOutYields);
   signalEfficiency_w(3,8,4,JES,&fileOutYields);
   //ttH
-//   signalEfficiency_w(1,7,5,JES,&fileOutYields);
-//   signalEfficiency_w(2,7,5,JES,&fileOutYields);
-//   signalEfficiency_w(3,7,5,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: ttH @ 7TeV ***" << endl << endl;
+  signalEfficiency_w(1,7,5,JES,&fileOutYields);
+  signalEfficiency_w(2,7,5,JES,&fileOutYields);
+  signalEfficiency_w(3,7,5,JES,&fileOutYields);
+  fileOutYields << endl << endl <<"    *** Summary: ttH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,5,JES,&fileOutYields);
   signalEfficiency_w(2,8,5,JES,&fileOutYields);
   signalEfficiency_w(3,8,5,JES,&fileOutYields);
@@ -130,6 +147,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   else if (process == 4) sprocess = "WH";
   else if (process == 5) sprocess = "ttH";
   else if (process == 6) sprocess = "ggH_p15"; // TEMPORARY for x-check
+  else if (process == 7) sprocess = "ggH_p15jhuGenV3"; // TEMPORARY for x-check
   else cout << "Not a valid channel: " << process << endl;
 
   TString sjes;
@@ -211,7 +229,21 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
       mHVal   = mHVal8TeV_p15;
       filepath = filePath8TeV;
     }
+  } else if (process==7) {
+    if (sqrts==7) {
+      cout << "No powheg15JhuGenV3 samples available at 7 TeV" << endl;
+      exit(1);
+    } else if (sqrts==8) {
+      nPoints = nPoints8TeV_p15jhuGenV3;
+      masses  = masses8TeV_p15jhuGenV3;
+      mHVal   = mHVal8TeV_p15jhuGenV3;
+      filepath = filePath8TeV;
+    }
   }  
+
+  // FIXME: need to skip ZH @ 7TeV for mH = 200 GeV
+  if (process==3 && sqrts==7) nPoints = nPoints-1;
+
 
   float xMax = masses[nPoints-1]+10;
 
@@ -236,7 +268,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     double BRH2e2mu = myCSW->HiggsBR(13,masses[i]);
     double BRHZZ = myCSW->HiggsBR(11,masses[i]);
     double BR = BRHZZ;
-    if (process==1 || process==2 || process==6) {
+    if (process==1 || process==2 || process>=6) {
       if (channel==1 || channel==2) BR = BRH4e;
       else BR = BRH2e2mu;
     }
@@ -246,12 +278,14 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     else if (process==3) xsTimesBR = BR*myCSW->HiggsCS(3,masses[i],sqrts);
     else if (process==4) xsTimesBR = BR*myCSW->HiggsCS(4,masses[i],sqrts);
     else if (process==5) xsTimesBR = BR*myCSW->HiggsCS(5,masses[i],sqrts);
-    else if (process==6) xsTimesBR = BR*myCSW->HiggsCS(1,masses[i],sqrts);
+    else if (process==6 || process==7) xsTimesBR = BR*myCSW->HiggsCS(1,masses[i],sqrts);
+
 
     if (process==1) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_H" + (long)masses[i] + ".root";
     else if (process==2) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_VBFH" + (long)masses[i] + ".root";
     else if (process==3 || process==4 || process==5) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_" + sprocess + (long)masses[i] + ".root";    
     else if (process==6) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_powheg15H" + (long)masses[i] + ".root";
+    else if (process==7) infile = filepath+ "/" + (schannel=="2e2mu"?"2mu2e":schannel) + "/HZZ4lTree_powheg15jhuGenV3H" + (long)masses[i] + ".root";
     TFile *f = TFile::Open(infile) ;
     TTree *t1 = (TTree*) f->Get("SelectedTree");
     float MC_weight_norm, MC_weight_PUWeight, MC_weight_powhegWeight,  MC_weight_dataMC;
@@ -290,10 +324,10 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     float djeff_noweight=0;
     float djsumw2=0;
     float djsumw_init2=0;
+
     for (int a = 0; a < t1->GetEntries(); a++){ 
       t1->GetEntry(a);
       if ((process==3 && genProcessId!=24) || (process==4 && genProcessId!=26) || (process==5 && (genProcessId!=121 && genProcessId!=122))) continue; 
-
 
       // We use the efficiency vs. generated events in the proper FS for ggH, VBF, and the efficiency vs all generated events for VH, ttH
       float effw = MC_weight_norm;
@@ -421,16 +455,16 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
   TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes;
 
-  if (process!=6) totgrEff->Fit(polyFunctot,"Rt");
+  if (process!=6 && process!=7) totgrEff->Fit(polyFunctot,"Rt");
   TString xaxisText = "m_{" + schannel + "}";
   totgrEff->GetXaxis()->SetTitle(xaxisText);
   TString yaxisText = "Efficiency, " + sprocess + ", " + schannel;
   totgrEff->GetYaxis()->SetTitle(yaxisText);
   totgrEff->SetMinimum(0.0);
   totgrEff->SetMaximum(1.0);
-  if (process>=3) totgrEff->SetMaximum(0.0035);
+  if (process>=3 && process!=6 && process!=7) totgrEff->SetMaximum(0.0035);
   totgrEff->Draw("AP");
-  if (process!=6) polyFunctot->Draw("sames");
+  if (process!=6 && process!=7) polyFunctot->Draw("sames");
   ctot->Print(outname+".eps");
   //ctot->Print(outname+".png"); // Does not work in batch?
   ctot->Print(outname+".pdf"); 
@@ -438,7 +472,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   totgrEff->Write("TotalEfficiency");
   ftot->Close();
 
-  if (process!=6){
+  if (process!=6 && process!=7){
   cout << endl;
   cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << endl;
   cout << "   a1 = " << polyFunctot->GetParameter(0) << endl;
@@ -485,7 +519,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   if (process==1 || process==2) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
   if (process==3 || process==4 || process==5 ) ratiofit = new TF1("ratiofit","([0]+[1]*x)",110.,xMax);
 
-  if (process!=6) ratgrEff->Fit(ratiofit,"Rt");
+  if (process!=6 && process!=7) ratgrEff->Fit(ratiofit,"Rt");
   ratgrEff->GetXaxis()->SetTitle(xaxisText);
   TString yaxisratio = "Dijet ratio, " + sprocess + ", " + schannel;
   ratgrEff->GetYaxis()->SetTitle(yaxisratio);
@@ -499,7 +533,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   ratgrEff->Write("Ratio");
   fratio->Close();
   
-  if (process!=6){
+  if (process!=6 && process!=7){
   cout << endl;
   cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << endl;
   cout << "   a1 = " << ratiofit->GetParameter(0) << endl;
@@ -518,7 +552,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   // deviations
   cout << "Deviations..." << endl;
   double maxResidual=0;
-  if (process!=6){
+  if (process!=6 && process!=7){
   for (int i = 0; i < nPoints; i++){
     double eval = polyFunctot->Eval(masses[i]);
     double residual = (eval - totefficiencyVal[i]);
