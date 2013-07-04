@@ -46,6 +46,7 @@ void californiaSignalShapes(int channel, int sqrts){
   ofsCard.open(outCardName.c_str(),fstream::out);
 
   ofsCard << "## signal functions --- no spaces! ##" << endl;
+  ofsCard << "usehighmassreweightedshapes" << endl;
   ofsCard << "signalShape n_CB "      << getSignalCBNLString(125.,channel-1,en) << endl;	     
   ofsCard << "signalShape alpha_CB "  << getSignalCBAlphaLString(125.,channel-1,en)  << endl; 
   ofsCard << "signalShape n2_CB "     << getSignalCBNRString(125.,channel-1,en)<< endl;	     
