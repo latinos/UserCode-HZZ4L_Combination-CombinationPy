@@ -236,6 +236,10 @@ void backgroundFits_ggzz_1Dw(int channel, int sqrts, int VBFtag)
   frameM4l->GetYaxis()->SetTitle("a.u.");
   frameM4l->GetYaxis()->SetRangeUser(0,0.04);
   if(channel == 3)frameM4l->GetYaxis()->SetRangeUser(0,0.06);
+  if(VBFtag<2){
+    if(channel == 3)frameM4l->GetYaxis()->SetRangeUser(0,0.01);
+    else frameM4l->GetYaxis()->SetRangeUser(0,0.005);
+  }
   frameM4l->GetXaxis()->SetRangeUser(100,600);
   TCanvas *c = new TCanvas("c","c",800,600);
   c->cd();
