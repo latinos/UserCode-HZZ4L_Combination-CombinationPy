@@ -60,7 +60,7 @@ bool onlyICHEPStat = false;
 Mela* myMELA;
 #endif
 
-void convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool VBFtag);
+int convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool VBFtag);
 
 // Run all final states and sqrts in one go
 void prepareData() {
@@ -116,11 +116,11 @@ int convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool V
 
   int neventOut=0;
   Int_t run;
-  float mzz, pseudomela, mela, mzzErr;
+  float mzz, mzzErr;
   float p0plus_VAJHU, bkg_VAMCFM;
-  float m1, m2, costheta1, costheta2, costhetastar, phi, phi1;
+  float m1, m2;
   //float ZZVAKD;
-  float pt4l, Y4l, fisher;
+  float pt4l, fisher;
   int NJets_30;
 
   treedata->SetBranchAddress("RunNumber",&run);
@@ -143,7 +143,7 @@ int convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool V
   TFile* newFile  = new TFile(outfile, "RECREATE");
   newFile->cd();
   TTree* newTree = new TTree("data_obs","data_obs"); 
-  Double_t CMS_zz4l_mass, melaLD, pseudomelaLD, supermelaLD, CMS_zz4l_massErr, CMS_zz4l_massRelErr;
+  Double_t CMS_zz4l_mass, melaLD, CMS_zz4l_massErr, CMS_zz4l_massRelErr;
   Double_t pt = -99, Fisher = -99;
   newTree->Branch("CMS_zz4l_mass",&CMS_zz4l_mass,"CMS_zz4l_mass/D");
   newTree->Branch("CMS_zz4l_massErr",&CMS_zz4l_massErr,"CMS_zz4l_massErr/D");
