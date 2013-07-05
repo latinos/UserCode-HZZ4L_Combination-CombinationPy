@@ -2,12 +2,21 @@ Quick instructions:
 
 All scripts produce configuration file fragments under the directory
 CardFragments.
-The merger of these fragments 
 
 All common configurable parameters are specified in the file Config.h.
 
+DEPENDENCIES:
+
+cd ZZ4L_Combination/CombinationPy/CreateDatacards
+cmsrel CMSSW_6_1_1
+cd CMSSW_6_1_1/src
+cvs co -r V03-01-00 HiggsAnalysis/CombinedLimit 
+cvs co -r V00-03-01 -d Higgs/Higgs_CS_and_Width UserCode/Snowball/Higgs/Higgs_CS_and_Width 
+
 To run californiaSignalShapes.C you need to download the shapes. In CreateDataCards/CMSSW_6_1_1/src
-cvs co -d Higgs/Higgs_CS_and_Width/include/SignalInterpolationStrings.h  /UserCode/Mangano/WWAnalysis/TreeModifiers/macro/SignalInterpolationStrings.h
+cvs co -d WWAnalysis/TreeModifiers/macro UserCode/Mangano/WWAnalysis/TreeModifiers/macro/SignalInterpolationStrings.h
+
+
 1. SIGNAL EFFICIENCIES
 Run:
 
