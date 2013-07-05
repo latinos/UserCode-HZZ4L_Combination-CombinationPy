@@ -15,7 +15,7 @@
 #include <sstream>
 
 void californiaSignalShapes(){
-  gROOT->LoadMacro("$CMSSW_BASE/src/Higgs/Higgs_CS_and_Width/include/SignalInterpolationStrings.h+");
+  gROOT->LoadMacro("$CMSSW_BASE/src/WWAnalysis/TreeModifiers/macro/SignalInterpolationStrings.h+");
   californiaSignalShapes(1,7);
   californiaSignalShapes(2,7);
   californiaSignalShapes(3,7);
