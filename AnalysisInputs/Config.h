@@ -48,8 +48,8 @@
 //TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130613b/PRODFSR/";
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130613b/PRODFSR_8TeV/";
 
-TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702/PRODFSR/";	 
-TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702/PRODFSR_8TeV/";
+TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702b/PRODFSR/";	 
+TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702b/PRODFSR_8TeV/";
 
 
 // Luminosity, as float and as string to be used in file names, etc.
@@ -77,13 +77,13 @@ const int nPoints7TeV_p15 = 12;
 int masses7TeV_p15[nPoints7TeV_p15]   = {125,126,400,450,500,550,600,650,700,800,900,1000};
 double mHVal7TeV_p15[nPoints7TeV_p15] = {125,126,400,450,500,550,600,650,700,800,900,1000};
 
-const int nPoints8TeV_p15 = 12;
-int masses8TeV_p15[nPoints8TeV_p15]   = {125,126,400,450,500,550,600,650,700,800,900,1000};
+const int nPoints8TeV_p15 = 17;
+int masses8TeV_p15[nPoints8TeV_p15]   = {125,126,225,250,275,300,350,400,450,500,550,600,650,700,800,900,1000};
 double mHVal8TeV_p15[nPoints8TeV_p15] = {125,126,400,450,500,550,600,650,700,800,900,1000};
 
-const int nPoints8TeV_p15jhuGenV3 = 10;
-int masses8TeV_p15jhuGenV3[nPoints8TeV_p15jhuGenV3]   = {122,124,125,130,135,140,145,160,180,185};
-double mHVal8TeV_p15jhuGenV3[nPoints8TeV_p15jhuGenV3] = {122,124,125,130,135,140,145,160,180,185};
+const int nPoints8TeV_p15jhuGenV3 = 13;
+int masses8TeV_p15jhuGenV3[nPoints8TeV_p15jhuGenV3]   = {115,122,124,125,130,135,140,145,160,170,180,185,190};
+double mHVal8TeV_p15jhuGenV3[nPoints8TeV_p15jhuGenV3] = {115,122,124,125,130,135,140,145,160,170,180,185,190};
 
 //The number and values of mass points for which you have qqH trees, for 7 and 8 TeV
 const int nVBFPoints7TeV = 32; //FIXME: check 950 GeV sample 
