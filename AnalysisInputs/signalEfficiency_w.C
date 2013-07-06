@@ -69,59 +69,47 @@ void signalEfficiency_w() {
   fileOutYields << "   sqrts      channel     process     mH     eff      XS*BR     Yield" << endl << endl;;
 
   //ggH
-  fileOutYields << "    *** Summary: ggH @ 7TeV ***" << endl << endl;
   signalEfficiency_w(1,7,1,JES,&fileOutYields);
   signalEfficiency_w(2,7,1,JES,&fileOutYields);
   signalEfficiency_w(3,7,1,JES,&fileOutYields);
-  fileOutYields << endl << endl <<"    *** Summary: ggH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,1,JES,&fileOutYields);
   signalEfficiency_w(2,8,1,JES,&fileOutYields);
   signalEfficiency_w(3,8,1,JES,&fileOutYields);
-//   //ggH (powheg15) // TEMPORARY for x-check
-//   fileOutYields << endl << endl <<"    *** Summary: ggH @ 8TeV (new Powheg high mass) ***" << endl << endl;
-//   signalEfficiency_w(1,8,6,JES,&fileOutYields);
-//   signalEfficiency_w(2,8,6,JES,&fileOutYields);
-//   signalEfficiency_w(3,8,6,JES,&fileOutYields);
-//   //ggH (powheg15jhuGenV3) // TEMPORARY for x-check
-//   fileOutYields << endl << endl <<"    *** Summary: ggH @ 8TeV (new Powheg low mass) ***" << endl << endl;
-//   signalEfficiency_w(1,8,7,JES,&fileOutYields);
-//   signalEfficiency_w(2,8,7,JES,&fileOutYields);
-//   signalEfficiency_w(3,8,7,JES,&fileOutYields);
+  //ggH (powheg15) // TEMPORARY for x-check
+  signalEfficiency_w(1,8,6,JES,&fileOutYields);
+  signalEfficiency_w(2,8,6,JES,&fileOutYields);
+  signalEfficiency_w(3,8,6,JES,&fileOutYields);
+  //ggH (powheg15jhuGenV3) // TEMPORARY for x-check
+  signalEfficiency_w(1,8,7,JES,&fileOutYields);
+  signalEfficiency_w(2,8,7,JES,&fileOutYields);
+  signalEfficiency_w(3,8,7,JES,&fileOutYields);
 
 
   //qqH
-  fileOutYields << endl << endl <<"    *** Summary: qqH @ 7TeV ***" << endl << endl;
   signalEfficiency_w(1,7,2,JES,&fileOutYields);
   signalEfficiency_w(2,7,2,JES,&fileOutYields);
   signalEfficiency_w(3,7,2,JES,&fileOutYields);
-  fileOutYields << endl << endl <<"    *** Summary: qqH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,2,JES,&fileOutYields);
   signalEfficiency_w(2,8,2,JES,&fileOutYields);
   signalEfficiency_w(3,8,2,JES,&fileOutYields);
   //ZH
-  fileOutYields << endl << endl <<"    *** Summary: ZH @ 7TeV ***" << endl << endl;
   signalEfficiency_w(1,7,3,JES,&fileOutYields);
   signalEfficiency_w(2,7,3,JES,&fileOutYields);
   signalEfficiency_w(3,7,3,JES,&fileOutYields);
-  fileOutYields << endl << endl <<"    *** Summary: ZH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,3,JES,&fileOutYields);
   signalEfficiency_w(2,8,3,JES,&fileOutYields);
   signalEfficiency_w(3,8,3,JES,&fileOutYields);
   //WH
-  fileOutYields << endl << endl <<"    *** Summary: WH @ 7TeV ***" << endl << endl;
   signalEfficiency_w(1,7,4,JES,&fileOutYields);
   signalEfficiency_w(2,7,4,JES,&fileOutYields);
   signalEfficiency_w(3,7,4,JES,&fileOutYields);
-  fileOutYields << endl << endl <<"    *** Summary: WH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,4,JES,&fileOutYields);
   signalEfficiency_w(2,8,4,JES,&fileOutYields);
   signalEfficiency_w(3,8,4,JES,&fileOutYields);
   //ttH
-  fileOutYields << endl << endl <<"    *** Summary: ttH @ 7TeV ***" << endl << endl;
   signalEfficiency_w(1,7,5,JES,&fileOutYields);
   signalEfficiency_w(2,7,5,JES,&fileOutYields);
   signalEfficiency_w(3,7,5,JES,&fileOutYields);
-  fileOutYields << endl << endl <<"    *** Summary: ttH @ 8TeV ***" << endl << endl;
   signalEfficiency_w(1,8,5,JES,&fileOutYields);
   signalEfficiency_w(2,8,5,JES,&fileOutYields);
   signalEfficiency_w(3,8,5,JES,&fileOutYields);
@@ -156,6 +144,8 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   else if (JES<0.)  sjes="_down";
 
   TString ssqrts = (long) sqrts + TString("TeV");
+
+  (*txtYields) << endl << endl << "    *** Summary: " << sprocess << ", sqrts = " << sqrts << " TeV ***" << endl;
 
   cout << "process = " << sprocess << " schannel = " << schannel << "  sqrts = " << sqrts << " JES = " << JES <<endl;
 
@@ -424,6 +414,8 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   
     f->Close();
   }  
+
+  (*txtYields) << endl << endl << endl;
 	
 
   TGraphErrors* totgrEff = new TGraphErrors( nPoints, mHVal, totefficiencyVal, 0, totefficiencyErr);
