@@ -40,7 +40,7 @@ int sqrts    = 7;              // sqrts, used only for withPt_/withY_
 //---
 int useSqrts=0;              //0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TString SigName = "p0plus_VAJHU"; // name of MELA branch to be used. Possibilities are ZZLD,ZZLD_analBkg,ZZLD_postICHEP,ZZLD_PtY,pseudoMelaLD, spinTwoMinimalMelaLD 
-TString BkgName = "bkg_VAMCFMNorm";
+TString BkgName = "bkg_VAMCFM";
 TString melaName = "VAKD";
 
 bool makePSTemplate = false;
