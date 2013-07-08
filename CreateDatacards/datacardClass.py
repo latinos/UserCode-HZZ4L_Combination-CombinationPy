@@ -168,7 +168,7 @@ class datacardClass:
             else: print "useHighMassReweightedShapes set to FALSE, using non-reweighted shapes!"
 
             
-        if(DEBUG): print "width: ",self.widthHVal
+        print "width: ",self.widthHVal
         
         self.windowVal = max( self.widthHVal, 1.0)
         lowside = 100.0
@@ -2506,9 +2506,9 @@ class datacardClass:
         
 
         if self.isHighMass :
-            rrvNormSig = ROOT.RooRealVar(normSigName,normSigName, sig_ggH_HM.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("fullrange")).getVal())
+            rrvNormSig = ROOT.RooRealVar(normSigName,normSigName, sig_ggH_HM.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal())
         else :
-            rrvNormSig = ROOT.RooRealVar(normSigName,normSigName, self.getVariable(signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("fullrange")).getVal(),sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("fullrange")).getVal(),self.bUseCBnoConvolution))
+            rrvNormSig = ROOT.RooRealVar(normSigName,normSigName, self.getVariable(signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),self.bUseCBnoConvolution))
         rrvNormSig.setConstant(True)
         print "!!!%%%*** ",rrvNormSig.getVal()
         print "!!!%%%*** ",integral_ggH
