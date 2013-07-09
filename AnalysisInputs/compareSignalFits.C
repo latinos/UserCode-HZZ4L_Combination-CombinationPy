@@ -38,8 +38,9 @@ bool plotSingleFit = false;
 bool plotMoriondPdf= false;
 bool plotPdfFromFile = true;
 bool plotOverFlowBins = false;
+bool saveRoots = false;
 
-float debugMass = 0;
+float debugMass = 126;
 
 void compareSignalFits()
 {
@@ -51,16 +52,13 @@ void compareSignalFits()
   TCanvas *canv = new TCanvas();
 
   for(int ich=1;ich<4;ich++){
-    if(ich!=3)continue;
     for(int ien=7;ien<9;ien++){
-      if(ien!=8)continue;
       for(int icomp=0;icomp<6;icomp++){
-	if(icomp<4)continue;
 	signalFits(ien,ich,icomp,0,canv);
 	signalFits(ien,ich,icomp,2,canv);
 	signalFits(ien,ich,icomp,-1,canv);//no jet tagging
-	//signalFits(ien,ich,icomp,0,canv,1);//jet tagging, long mass range
-	//signalFits(ien,ich,icomp,2,canv,1);//jet tagging, long mass range
+	signalFits(ien,ich,icomp,0,canv,1);//jet tagging, long mass range
+	signalFits(ien,ich,icomp,2,canv,1);//jet tagging, long mass range
 	
       }
     }
