@@ -58,6 +58,9 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   TString outfile = "../CreateDatacards/SM_inputs_" + ssqrts + "_tagged/inputs_" +  schannel + "_" + Form("%d",int(dijettag)) + ".txt";
   ofstream of(outfile,ios_base::out);
 
+  TString outfile2 = "../CreateDatacards/SM_inputs_" + ssqrts + "/inputs_" +  schannel + ".txt";
+  ofstream of2(outfile2,ios_base::out);
+
   float lumiUnc = 0;
   if      (sqrts==7) lumiUnc = 1.022;
   else if (sqrts==8) lumiUnc = 1.044;
@@ -82,6 +85,25 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
      <<                               endl;
   of.close();
 
+  of2 << "############## Inputs for " << schannel << " for " << sqrts << " TeV  ##############" << endl
+     << "## SM ##"                 << endl
+     << "model SM"                 << endl
+     <<                               endl
+     << "## decay chan ##"         << endl
+     << "decay " << schannel       << endl
+     <<                               endl
+     << "## lumi ##"               << endl
+     << "lumi " << lumi            << endl
+     << "systematic lumiUnc " <<  lumiUnc << endl
+     <<                               endl
+     << "## sqrtS ##"              << endl
+     << "sqrts " << sqrts          << endl
+     <<                               endl
+     << "## Channels to include in cards ##" << endl
+     << "channels ggH qqH WH ZH ttH qqZZ ggZZ zjets" << endl
+     <<                               endl;
+  of2.close();
+
   TString sig_untagged = ssqrts + "_" + schannel + ".txt";
   TString sig_untagged_ratio = ssqrts + "_" + schannel + "_ratio.txt";
   TString sig_tagged = ssqrts + "_" + schannel + "_" + Form("%d",int(dijettag)) + ".txt";
@@ -89,21 +111,33 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   TString bkg_tagged = ssqrts + "_" + schannel + "_" + Form("%d",int(dijettag)) + ".txt";
 
   append("CardFragments/ZZRates_" + bkg_tagged, outfile);
+  append("CardFragments/ZZRates_" + bkg_untagged, outfile2);
   append("CardFragments/zjetRate_" + bkg_tagged, outfile);
+  append("CardFragments/zjetRate_" + bkg_untagged, outfile2);
   append("CardFragments/signalFunctions_" + sig_untagged, outfile);
+  append("CardFragments/signalFunctions_" + sig_untagged, outfile2);
   append("CardFragments/signalEfficiency_" + sig_untagged, outfile);
+  append("CardFragments/signalEfficiency_" + sig_untagged, outfile2);
   //append("CardFragments/signalEfficiency_" + sig_untagged_ratio, outfile);
   append("CardFragments/qqzzBackgroundFit_" + bkg_untagged, outfile);
+  append("CardFragments/qqzzBackgroundFit_" + bkg_untagged, outfile2);
   append("CardFragments/ggzzBackgroundFit_" + bkg_untagged, outfile);
-  append("CardFragments/zjetShape_" + bkg_untagged, outfile);  
+  append("CardFragments/ggzzBackgroundFit_" + bkg_untagged, outfile2);
+  append("CardFragments/zjetShape_" + bkg_untagged, outfile);
+  append("CardFragments/zjetShape_" + bkg_untagged, outfile2);  
   append("CardFragments/sys_" + bkg_untagged, outfile);
+  append("CardFragments/sys_" + bkg_untagged, outfile2);
   append("CardFragments/hypTesting.txt", outfile);
+  append("CardFragments/hypTesting.txt", outfile2);
   append("CardFragments/dijettagging_"+sig_untagged,outfile);
   append("CardFragments/signalEfficiency_"+ssqrts+"_"+schannel+"_ratio.txt", outfile);
   append("CardFragments/mekd_" + bkg_untagged, outfile);
+  append("CardFragments/mekd_" + bkg_untagged, outfile2);
   append("CardFragments/relerr_" + bkg_untagged, outfile);
+  append("CardFragments/relerr_" + bkg_untagged, outfile2);
 
   cout << "Wrote " << outfile << endl;
+  cout << "Wrote " << outfile2 << endl;
 }
 
 

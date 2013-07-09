@@ -143,21 +143,21 @@ int convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool V
   treedata->SetBranchAddress("NJets30", &NJets_30);
 
   //Spin Disc variables
-  bkgMC->SetBranchAddress("p0plus_m4l",&psigM4l);
-  bkgMC->SetBranchAddress("bkg_m4l",&pbkgM4l);
-  bkgMC->SetBranchAddress("p0minus_VAJHU",&p0minusVA);
-  bkgMC->SetBranchAddress("p0hplus_VAJHU",&p0hplusVA);
-  bkgMC->SetBranchAddress("p1plus_VAJHU",&p1plusVA);
-  bkgMC->SetBranchAddress("p1_VAJHU",&p1minusVA);
-  bkgMC->SetBranchAddress("p2_VAJHU",&p2minimalVA);
-  bkgMC->SetBranchAddress("p2qqb_VAJHU",&p2minimalVA_qq);
-  bkgMC->SetBranchAddress("p2hplus_VAJHU", &p2hplusVA);
-  bkgMC->SetBranchAddress("p2hminus_VAJHU", &p2hminusVA);
-  bkgMC->SetBranchAddress("p2bplus_VAJHU", &p2bplusVA);
-  bkgMC->SetBranchAddress("p1_prodIndep_VAJHU", &p1minusProdIndepVA);
-  bkgMC->SetBranchAddress("p1plus_prodIndep_VAJHU", &p1plusProdIndepVA);
-  bkgMC->SetBranchAddress("p2_prodIndep_VAJHU", &p2mProdIndepVA);
-  bkgMC->SetBranchAddress("bkg_prodIndep_VAMCFM", &pbkg_ProdIndep_VA);
+  treedata->SetBranchAddress("p0plus_m4l",&psigM4l);
+  treedata->SetBranchAddress("bkg_m4l",&pbkgM4l);
+  treedata->SetBranchAddress("p0minus_VAJHU",&p0minusVA);
+  treedata->SetBranchAddress("p0hplus_VAJHU",&p0hplusVA);
+  treedata->SetBranchAddress("p1plus_VAJHU",&p1plusVA);
+  treedata->SetBranchAddress("p1_VAJHU",&p1minusVA);
+  treedata->SetBranchAddress("p2_VAJHU",&p2minimalVA);
+  treedata->SetBranchAddress("p2qqb_VAJHU",&p2minimalVA_qq);
+  treedata->SetBranchAddress("p2hplus_VAJHU", &p2hplusVA);
+  treedata->SetBranchAddress("p2hminus_VAJHU", &p2hminusVA);
+  treedata->SetBranchAddress("p2bplus_VAJHU", &p2bplusVA);
+  treedata->SetBranchAddress("p1_prodIndep_VAJHU", &p1minusProdIndepVA);
+  treedata->SetBranchAddress("p1plus_prodIndep_VAJHU", &p1plusProdIndepVA);
+  treedata->SetBranchAddress("p2_prodIndep_VAJHU", &p2mProdIndepVA);
+  treedata->SetBranchAddress("bkg_prodIndep_VAMCFM", &pbkg_ProdIndep_VA);
  
    
   TFile* newFile  = new TFile(outfile, "RECREATE");
@@ -233,13 +233,13 @@ int convertTreeForDatacards(TString inFile, TString outfile, bool useJET, bool V
       }
 
     //make variables for spin analysis
-    sKD = double((p0plus_VAJHU*psigM4l)/(p0plus_VAJHU*psigM4l + pbkg_VAMCFM*pbkgM4l));
+    sKD = double((p0plus_VAJHU*psigM4l)/(p0plus_VAJHU*psigM4l + bkg_VAMCFM*pbkgM4l));
     pseudoKD = double(p0plus_VAJHU/(p0plus_VAJHU + p0minusVA));
     graviKD = double(p0plus_VAJHU/(p0plus_VAJHU + p2minimalVA));
     p0hplusKD = double(p0plus_VAJHU/(p0plus_VAJHU + p0hplusVA));
     p1plusKD = double(p0plus_VAJHU/(p0plus_VAJHU + p1plusVA));
     p1minusKD = double(p0plus_VAJHU/(p0plus_VAJHU + p1minusVA));
-    qqgraviKD = double(p0plus_VAJHU/(p0plus_VAJHU + qqgraviVA));
+    qqgraviKD = double(p0plus_VAJHU/(p0plus_VAJHU + p2minimalVA_qq));
     p2hplusKD = double(p0plus_VAJHU/(p0plus_VAJHU + p2hplusVA));
     p2hminusKD = double(p0plus_VAJHU/(p0plus_VAJHU + p2hminusVA));
     p2bplusKD = double(p0plus_VAJHU/(p0plus_VAJHU + p2bplusVA));
