@@ -39,6 +39,11 @@ class inputReader:
         self.zjets_chan = False
         self.ttbar_chan = False
         self.zbb_chan = False
+        self.ggH_SM_chan = True
+        self.qqH_SM_chan = True
+        self.WH_SM_chan = True
+        self.ZH_SM_chan = True
+        self.ttH_SM_chan = True
         # rates
         self.qqZZ_rate = -999.9
         self.ggZZ_rate = -999.9
@@ -76,6 +81,46 @@ class inputReader:
         self.sigeff_g1 = -999.9
         self.sigeff_g2 = -999.9
         self.sigeff_g3 = -999.9
+        self.sigeff_qqHa1 = -999.9
+        self.sigeff_qqHa2 = -999.9
+        self.sigeff_qqHa3 = -999.9
+        self.sigeff_qqHa4 = -999.9
+        self.sigeff_qqHb1 = -999.9
+        self.sigeff_qqHb2 = -999.9
+        self.sigeff_qqHb3 = -999.9
+        self.sigeff_qqHg1 = -999.9
+        self.sigeff_qqHg2 = -999.9
+        self.sigeff_qqHg3 = -999.9
+        self.sigeff_ZHa1 = -999.9
+        self.sigeff_ZHa2 = -999.9
+        self.sigeff_ZHa3 = -999.9
+        self.sigeff_ZHa4 = -999.9
+        self.sigeff_ZHb1 = -999.9
+        self.sigeff_ZHb2 = -999.9
+        self.sigeff_ZHb3 = -999.9
+        self.sigeff_ZHg1 = -999.9
+        self.sigeff_ZHg2 = -999.9
+        self.sigeff_ZHg3 = -999.9
+        self.sigeff_WHa1 = -999.9
+        self.sigeff_WHa2 = -999.9
+        self.sigeff_WHa3 = -999.9
+        self.sigeff_WHa4 = -999.9
+        self.sigeff_WHb1 = -999.9
+        self.sigeff_WHb2 = -999.9
+        self.sigeff_WHb3 = -999.9
+        self.sigeff_WHg1 = -999.9
+        self.sigeff_WHg2 = -999.9
+        self.sigeff_WHg3 = -999.9
+        self.sigeff_ttHa1 = -999.9
+        self.sigeff_ttHa2 = -999.9
+        self.sigeff_ttHa3 = -999.9
+        self.sigeff_ttHa4 = -999.9
+        self.sigeff_ttHb1 = -999.9
+        self.sigeff_ttHb2 = -999.9
+        self.sigeff_ttHb3 = -999.9
+        self.sigeff_ttHg1 = -999.9
+        self.sigeff_ttHg2 = -999.9
+        self.sigeff_ttHg3 = -999.9
         # signal efficiency ratios for jet tagging catagoies
         self.tagged_ggH_ratio = -999.9
         self.tagged_qqH_ratio = -999.9
@@ -84,6 +129,7 @@ class inputReader:
         self.tagged_ttH_ratio = -999.9
         self.QCD_scale_ggH_2j_sys = -999.9
         self.QCD_scale_qqH_2j_sys = -999.9
+        #self.QCD_scale_qqZZ_2j_sys = -999.9
         # qqZZ shape
         self.qqZZshape_a0 = -999.9
         self.qqZZshape_a1 = -999.9
@@ -111,13 +157,20 @@ class inputReader:
         self.ggZZshape_a8 = -999.9
         self.ggZZshape_a9 = -999.9
         # zjets shape
-        self.zjetsShape_mean = -999.9
-        self.zjetsShape_sigma = -999.9
-        self.zjetsShape_p0 = -999.9
-        self.zjetsShape_p1 = -999.9
-        self.zjetsShape_p2 = -999.9
-        self.zjetsShape_p3 = -999.9
-        self.zjetsShape_p4 = -999.9
+        self.zjetsShape_mean_3P1F = -999.9
+        self.zjetsShape_sigma_3P1F = -999.9
+        self.zjetsShape_norm_3P1F = -999.9
+        
+        self.zjetsShape_mean_2P2F = -999.9
+        self.zjetsShape_sigma_2P2F = -999.9
+        self.zjetsShape_norm_2P2F = -999.9
+        self.zjetsShape_pol0_2P2F = -999.9
+        self.zjetsShape_pol1_2P2F = -999.9
+        
+        self.zjetsShape_mean_2P2F_2e2mu = -999.9
+        self.zjetsShape_sigma_2P2F_2e2mu = -999.9
+        self.zjetsShape_norm_2P2F_2e2mu = -999.9
+        
         # systematics 
         self.zjetsKappaLow = -999.9
         self.zjetsKappaHigh = -999.9
@@ -168,7 +221,7 @@ class inputReader:
         # --- VBF systematics
         self.useCMS_zz4l_doVBFtest = False
         self.useCMS_zz4l_Fisher_sys = False
-        self.useCMS_zz4l_PToverM_sys = False
+        self.useCMS_zz4l_Pt_sys = False
         
 	# ---  mekd stuffs
 	self.mekd_sig_a0_shape = -999.
@@ -348,6 +401,50 @@ class inputReader:
                 if f[1].lower().startswith("g2"): self.sigeff_g2 = float(f[2])
                 if f[1].lower().startswith("g3"): self.sigeff_g3 = float(f[2])
 
+                if f[1].lower().startswith("qqha1"): self.sigeff_qqHa1 = float(f[2])
+                if f[1].lower().startswith("qqha2"): self.sigeff_qqHa2 = float(f[2])
+                if f[1].lower().startswith("qqha3"): self.sigeff_qqHa3 = float(f[2])
+                if f[1].lower().startswith("qqha4"): self.sigeff_qqHa4 = float(f[2])
+                if f[1].lower().startswith("qqhb1"): self.sigeff_qqHb1 = float(f[2])
+                if f[1].lower().startswith("qqhb2"): self.sigeff_qqHb2 = float(f[2])
+                if f[1].lower().startswith("qqhb3"): self.sigeff_qqHb3 = float(f[2])
+                if f[1].lower().startswith("qqhg1"): self.sigeff_qqHg1 = float(f[2])
+                if f[1].lower().startswith("qqhg2"): self.sigeff_qqHg2 = float(f[2])
+                if f[1].lower().startswith("qqhg3"): self.sigeff_qqHg3 = float(f[2])
+
+                if f[1].lower().startswith("zha1"): self.sigeff_ZHa1 = float(f[2])
+                if f[1].lower().startswith("zha2"): self.sigeff_ZHa2 = float(f[2])
+                if f[1].lower().startswith("zha3"): self.sigeff_ZHa3 = float(f[2])
+                if f[1].lower().startswith("zha4"): self.sigeff_ZHa4 = float(f[2])
+                if f[1].lower().startswith("zhb1"): self.sigeff_ZHb1 = float(f[2])
+                if f[1].lower().startswith("zhb2"): self.sigeff_ZHb2 = float(f[2])
+                if f[1].lower().startswith("zhb3"): self.sigeff_ZHb3 = float(f[2])
+                if f[1].lower().startswith("zhg1"): self.sigeff_ZHg1 = float(f[2])
+                if f[1].lower().startswith("zhg2"): self.sigeff_ZHg2 = float(f[2])
+                if f[1].lower().startswith("zhg3"): self.sigeff_ZHg3 = float(f[2])
+
+                if f[1].lower().startswith("wha1"): self.sigeff_WHa1 = float(f[2])
+                if f[1].lower().startswith("wha2"): self.sigeff_WHa2 = float(f[2])
+                if f[1].lower().startswith("wha3"): self.sigeff_WHa3 = float(f[2])
+                if f[1].lower().startswith("wha4"): self.sigeff_WHa4 = float(f[2])
+                if f[1].lower().startswith("whb1"): self.sigeff_WHb1 = float(f[2])
+                if f[1].lower().startswith("whb2"): self.sigeff_WHb2 = float(f[2])
+                if f[1].lower().startswith("whb3"): self.sigeff_WHb3 = float(f[2])
+                if f[1].lower().startswith("whg1"): self.sigeff_WHg1 = float(f[2])
+                if f[1].lower().startswith("whg2"): self.sigeff_WHg2 = float(f[2])
+                if f[1].lower().startswith("whg3"): self.sigeff_WHg3 = float(f[2])
+
+                if f[1].lower().startswith("ttha1"): self.sigeff_ttHa1 = float(f[2])
+                if f[1].lower().startswith("ttha2"): self.sigeff_ttHa2 = float(f[2])
+                if f[1].lower().startswith("ttha3"): self.sigeff_ttHa3 = float(f[2])
+                if f[1].lower().startswith("ttha4"): self.sigeff_ttHa4 = float(f[2])
+                if f[1].lower().startswith("tthb1"): self.sigeff_ttHb1 = float(f[2])
+                if f[1].lower().startswith("tthb2"): self.sigeff_ttHb2 = float(f[2])
+                if f[1].lower().startswith("tthb3"): self.sigeff_ttHb3 = float(f[2])
+                if f[1].lower().startswith("tthg1"): self.sigeff_ttHg1 = float(f[2])
+                if f[1].lower().startswith("tthg2"): self.sigeff_ttHg2 = float(f[2])
+                if f[1].lower().startswith("tthg3"): self.sigeff_ttHg3 = float(f[2])
+
                 if f[1].lower().startswith("tagged_ggh_ratio"):
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula! Please check!".format(f[1])
                     else: self.tagged_ggH_ratio = f[2]
@@ -429,13 +526,20 @@ class inputReader:
                
             if f[0].lower().startswith("zjetsshape"):
 
-                if f[1].lower().startswith("mean"):  self.zjetsShape_mean = f[2]
-                if f[1].lower().startswith("sigma"): self.zjetsShape_sigma = f[2]
-                if f[1].lower().startswith("p0"):    self.zjetsShape_p0 = f[2]
-                if f[1].lower().startswith("p1"):    self.zjetsShape_p1 = f[2]
-                if f[1].lower().startswith("p2"):    self.zjetsShape_p2 = f[2]
-                if f[1].lower().startswith("p3"):    self.zjetsShape_p3 = f[2]
-                if f[1].lower().startswith("p4"):    self.zjetsShape_p4 = f[2]
+                if f[1].lower().startswith("mean_3p1f"):  self.zjetsShape_mean_3P1F = f[2]
+                if f[1].lower().startswith("sigma_3p1f"): self.zjetsShape_sigma_3P1F = f[2]
+                if f[1].lower().startswith("norm_3p1f"): self.zjetsShape_norm_3P1F = f[2]
+                
+                if f[1].lower().startswith("mean_2p2f"):  self.zjetsShape_mean_2P2F = f[2]
+                if f[1].lower().startswith("sigma_2p2f"): self.zjetsShape_sigma_2P2F = f[2]
+                if f[1].lower().startswith("norm_2p2f"): self.zjetsShape_norm_2P2F = f[2]
+                if f[1].lower().startswith("pol0_2p2f"): self.zjetsShape_pol0_2P2F = f[2]
+                if f[1].lower().startswith("pol1_2p2f"): self.zjetsShape_pol1_2P2F = f[2]
+                
+                if f[1].lower().startswith("mean_2e2mu_2p2f"):  self.zjetsShape_mean_2P2F_2e2mu = f[2]
+                if f[1].lower().startswith("sigma_2e2mu_2p2f"): self.zjetsShape_sigma_2P2F_2e2mu = f[2]
+                if f[1].lower().startswith("norm_2e2mu_2p2f"): self.zjetsShape_norm_2P2F_2e2mu = f[2]
+                
 
             if f[0].lower().startswith("systematic"):
                 
@@ -483,6 +587,8 @@ class inputReader:
                         self.QCD_scale_ggH_2j_sys = f[3]
                     if f[2].lower().startswith("qcd_scale_qqh_2j_sys"):
                         self.QCD_scale_qqH_2j_sys = f[3]
+                   # if f[2].lower().startswith("qcd_scale_qqh_2j_sys"):
+                    #    self.QCD_scale_qqZZ_2j_sys = f[3]
                         
                 if f[1].lower().startswith("luminosity"):
                     self.useLumiUnc = self.parseBoolString(f[2])
@@ -542,8 +648,8 @@ class inputReader:
                 self.useCMS_zz4l_doVBFtest = self.parseBoolString(f[1])
             if f[0].lower().startswith("usecms_zz4l_fisher_sys"):
                 self.useCMS_zz4l_Fisher_sys = self.parseBoolString(f[1])
-            if f[0].lower().startswith("usecms_zz4l_ptoverm_sys"):
-                self.useCMS_zz4l_PToverM_sys = self.parseBoolString(f[1])
+            if f[0].lower().startswith("usecms_zz4l_pt_sys"):
+                self.useCMS_zz4l_Pt_sys = self.parseBoolString(f[1])
 
     def getInputs(self):
 
@@ -606,6 +712,50 @@ class inputReader:
         if not self.goodEntry(self.sigeff_g2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_g2")
         if not self.goodEntry(self.sigeff_g3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_g3")
 
+        if not self.goodEntry(self.sigeff_qqHa1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHa1")
+        if not self.goodEntry(self.sigeff_qqHa2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHa2")
+        if not self.goodEntry(self.sigeff_qqHa3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHa3")
+        if not self.goodEntry(self.sigeff_qqHa4): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHa4")
+        if not self.goodEntry(self.sigeff_qqHb1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHb1")
+        if not self.goodEntry(self.sigeff_qqHb2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHb2")
+        if not self.goodEntry(self.sigeff_qqHb3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHb3")
+        if not self.goodEntry(self.sigeff_qqHg1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHg1")
+        if not self.goodEntry(self.sigeff_qqHg2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHg2")
+        if not self.goodEntry(self.sigeff_qqHg3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_qqHg3")
+
+        if not self.goodEntry(self.sigeff_WHa1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHa1")
+        if not self.goodEntry(self.sigeff_WHa2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHa2")
+        if not self.goodEntry(self.sigeff_WHa3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHa3")
+        if not self.goodEntry(self.sigeff_WHa4): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHa4")
+        if not self.goodEntry(self.sigeff_WHb1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHb1")
+        if not self.goodEntry(self.sigeff_WHb2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHb2")
+        if not self.goodEntry(self.sigeff_WHb3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHb3")
+        if not self.goodEntry(self.sigeff_WHg1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHg1")
+        if not self.goodEntry(self.sigeff_WHg2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHg2")
+        if not self.goodEntry(self.sigeff_WHg3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_WHg3")
+
+        if not self.goodEntry(self.sigeff_ZHa1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHa1")
+        if not self.goodEntry(self.sigeff_ZHa2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHa2")
+        if not self.goodEntry(self.sigeff_ZHa3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHa3")
+        if not self.goodEntry(self.sigeff_ZHa4): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHa4")
+        if not self.goodEntry(self.sigeff_ZHb1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHb1")
+        if not self.goodEntry(self.sigeff_ZHb2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHb2")
+        if not self.goodEntry(self.sigeff_ZHb3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHb3")
+        if not self.goodEntry(self.sigeff_ZHg1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHg1")
+        if not self.goodEntry(self.sigeff_ZHg2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHg2")
+        if not self.goodEntry(self.sigeff_ZHg3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ZHg3")
+
+        if not self.goodEntry(self.sigeff_ttHa1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHa1")
+        if not self.goodEntry(self.sigeff_ttHa2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHa2")
+        if not self.goodEntry(self.sigeff_ttHa3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHa3")
+        if not self.goodEntry(self.sigeff_ttHa4): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHa4")
+        if not self.goodEntry(self.sigeff_ttHb1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHb1")
+        if not self.goodEntry(self.sigeff_ttHb2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHb2")
+        if not self.goodEntry(self.sigeff_ttHb3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHb3")
+        if not self.goodEntry(self.sigeff_ttHg1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHg1")
+        if not self.goodEntry(self.sigeff_ttHg2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHg2")
+        if not self.goodEntry(self.sigeff_ttHg3): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_ttHg3")
+
         if not self.goodEntry(self.qqZZshape_a0): raise RuntimeError, "{0} is not set.  Check inputs!".format("qqZZshape_a0")
         if not self.goodEntry(self.qqZZshape_a1): raise RuntimeError, "{0} is not set.  Check inputs!".format("qqZZshape_a1")
         if not self.goodEntry(self.qqZZshape_a2): raise RuntimeError, "{0} is not set.  Check inputs!".format("qqZZshape_a2")
@@ -632,13 +782,15 @@ class inputReader:
         if not self.goodEntry(self.ggZZshape_a8): raise RuntimeError, "{0} is not set.  Check inputs!".format("ggZZshape_a8")
         if not self.goodEntry(self.ggZZshape_a9): raise RuntimeError, "{0} is not set.  Check inputs!".format("ggZZshape_a9")
 
-        if not self.goodEntry(self.zjetsShape_mean): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean")
-        if not self.goodEntry(self.zjetsShape_sigma): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma")
-        #if not self.goodEntry(self.zjetsShape_p0): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p0")
-        #if not self.goodEntry(self.zjetsShape_p1): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p1")
-        #if not self.goodEntry(self.zjetsShape_p2): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p2")
-        #if not self.goodEntry(self.zjetsShape_p3): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p3")
-        #if not self.goodEntry(self.zjetsShape_p4): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_p4")
+        if not self.goodEntry(self.zjetsShape_mean_3P1F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean_3P1F")
+        if not self.goodEntry(self.zjetsShape_sigma_3P1F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma_3P1F")
+        if not self.goodEntry(self.zjetsShape_norm_3P1F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_norm_3P1F")
+        if not self.goodEntry(self.zjetsShape_mean_2P2F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean_2P2F")
+        if not self.goodEntry(self.zjetsShape_sigma_2P2F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma_2P2F")
+        if not self.goodEntry(self.zjetsShape_norm_2P2F): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_norm_2P2F")
+        if not self.goodEntry(self.zjetsShape_mean_2P2F_2e2mu): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_mean_2P2F_2e2mu")
+        if not self.goodEntry(self.zjetsShape_sigma_2P2F_2e2mu): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_sigma_2P2F_2e2mu")
+        if not self.goodEntry(self.zjetsShape_norm_2P2F_2e2mu): raise RuntimeError, "{0} is not set.  Check inputs!".format("zjetsShape_norm_2P2F_2e2mu")
         
         if not self.goodEntry(self.zjetsKappaLow): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaLow")
         if not self.goodEntry(self.zjetsKappaHigh): raise RuntimeError, "{0} is not set.  Check inputs!".format("self.zjetsKappaHigh")
@@ -693,6 +845,11 @@ class inputReader:
         dict['WH'] = self.WH_chan
         dict['ZH'] = self.ZH_chan
         dict['ttH'] = self.ttH_chan
+        dict['ggH_SM'] = self.ggH_chan
+        dict['qqH_SM'] = self.qqH_chan
+        dict['WH_SM'] = self.WH_chan
+        dict['ZH_SM'] = self.ZH_chan
+        dict['ttH_SM'] = self.ttH_chan
         dict['qqZZ'] = self.qqZZ_chan
         dict['ggZZ'] = self.ggZZ_chan
         dict['zjets'] = self.zjets_chan
@@ -738,6 +895,50 @@ class inputReader:
         dict['sigEff_g2'] = float(self.sigeff_g2)
         dict['sigEff_g3'] = float(self.sigeff_g3)
 
+        dict['sigEff_qqHa1'] = float(self.sigeff_qqHa1)
+        dict['sigEff_qqHa2'] = float(self.sigeff_qqHa2)
+        dict['sigEff_qqHa3'] = float(self.sigeff_qqHa3)
+        dict['sigEff_qqHa4'] = float(self.sigeff_qqHa4)
+        dict['sigEff_qqHb1'] = float(self.sigeff_qqHb1)
+        dict['sigEff_qqHb2'] = float(self.sigeff_qqHb2)
+        dict['sigEff_qqHb3'] = float(self.sigeff_qqHb3)
+        dict['sigEff_qqHg1'] = float(self.sigeff_qqHg1)
+        dict['sigEff_qqHg2'] = float(self.sigeff_qqHg2)
+        dict['sigEff_qqHg3'] = float(self.sigeff_qqHg3)
+
+        dict['sigEff_WHa1'] = float(self.sigeff_WHa1)
+        dict['sigEff_WHa2'] = float(self.sigeff_WHa2)
+        dict['sigEff_WHa3'] = float(self.sigeff_WHa3)
+        dict['sigEff_WHa4'] = float(self.sigeff_WHa4)
+        dict['sigEff_WHb1'] = float(self.sigeff_WHb1)
+        dict['sigEff_WHb2'] = float(self.sigeff_WHb2)
+        dict['sigEff_WHb3'] = float(self.sigeff_WHb3)
+        dict['sigEff_WHg1'] = float(self.sigeff_WHg1)
+        dict['sigEff_WHg2'] = float(self.sigeff_WHg2)
+        dict['sigEff_WHg3'] = float(self.sigeff_WHg3)
+
+        dict['sigEff_ZHa1'] = float(self.sigeff_ZHa1)
+        dict['sigEff_ZHa2'] = float(self.sigeff_ZHa2)
+        dict['sigEff_ZHa3'] = float(self.sigeff_ZHa3)
+        dict['sigEff_ZHa4'] = float(self.sigeff_ZHa4)
+        dict['sigEff_ZHb1'] = float(self.sigeff_ZHb1)
+        dict['sigEff_ZHb2'] = float(self.sigeff_ZHb2)
+        dict['sigEff_ZHb3'] = float(self.sigeff_ZHb3)
+        dict['sigEff_ZHg1'] = float(self.sigeff_ZHg1)
+        dict['sigEff_ZHg2'] = float(self.sigeff_ZHg2)
+        dict['sigEff_ZHg3'] = float(self.sigeff_ZHg3)
+
+        dict['sigEff_ttHa1'] = float(self.sigeff_ttHa1)
+        dict['sigEff_ttHa2'] = float(self.sigeff_ttHa2)
+        dict['sigEff_ttHa3'] = float(self.sigeff_ttHa3)
+        dict['sigEff_ttHa4'] = float(self.sigeff_ttHa4)
+        dict['sigEff_ttHb1'] = float(self.sigeff_ttHb1)
+        dict['sigEff_ttHb2'] = float(self.sigeff_ttHb2)
+        dict['sigEff_ttHb3'] = float(self.sigeff_ttHb3)
+        dict['sigEff_ttHg1'] = float(self.sigeff_ttHg1)
+        dict['sigEff_ttHg2'] = float(self.sigeff_ttHg2)
+        dict['sigEff_ttHg3'] = float(self.sigeff_ttHg3)
+
         dict['tagged_ggH_ratio'] = self.tagged_ggH_ratio
         dict['tagged_qqH_ratio'] = self.tagged_qqH_ratio
         dict['tagged_WH_ratio'] = self.tagged_WH_ratio
@@ -745,6 +946,7 @@ class inputReader:
         dict['tagged_ttH_ratio'] = self.tagged_ttH_ratio
         dict['QCD_scale_ggH_2j_sys'] = float(self.QCD_scale_ggH_2j_sys)
         dict['QCD_scale_qqH_2j_sys'] = float(self.QCD_scale_qqH_2j_sys)
+        #dict['QCD_scale_qqZZ_2j_sys'] = float(self.QCD_scale_qqZZ_2j_sys)
         
         dict['qqZZshape_a0'] = float(self.qqZZshape_a0)
         dict['qqZZshape_a1'] = float(self.qqZZshape_a1)
@@ -772,14 +974,19 @@ class inputReader:
         dict['ggZZshape_a8'] = float(self.ggZZshape_a8)
         dict['ggZZshape_a9'] = float(self.ggZZshape_a9)
 
-        dict['zjetsShape_mean'] = float(self.zjetsShape_mean)
-        dict['zjetsShape_sigma'] = float(self.zjetsShape_sigma)
-
-        dict['zjetsShape_p0'] = float(self.zjetsShape_p0)
-        dict['zjetsShape_p1'] = float(self.zjetsShape_p1)
-        dict['zjetsShape_p2'] = float(self.zjetsShape_p2)
-        dict['zjetsShape_p3'] = float(self.zjetsShape_p3)
-        dict['zjetsShape_p4'] = float(self.zjetsShape_p4)
+        dict['zjetsShape_mean_3P1F'] = float(self.zjetsShape_mean_3P1F)
+        dict['zjetsShape_sigma_3P1F'] = float(self.zjetsShape_sigma_3P1F)
+        dict['zjetsShape_norm_3P1F'] = float(self.zjetsShape_norm_3P1F)
+        
+        dict['zjetsShape_mean_2P2F'] = float(self.zjetsShape_mean_2P2F)
+        dict['zjetsShape_sigma_2P2F'] = float(self.zjetsShape_sigma_2P2F)
+        dict['zjetsShape_norm_2P2F'] = float(self.zjetsShape_norm_2P2F)
+        dict['zjetsShape_pol0_2P2F'] = float(self.zjetsShape_pol0_2P2F)
+        dict['zjetsShape_pol1_2P2F'] = float(self.zjetsShape_pol1_2P2F)
+        
+        dict['zjetsShape_mean_2P2F_2e2mu'] = float(self.zjetsShape_mean_2P2F_2e2mu)
+        dict['zjetsShape_sigma_2P2F_2e2mu'] = float(self.zjetsShape_sigma_2P2F_2e2mu)
+        dict['zjetsShape_norm_2P2F_2e2mu'] = float(self.zjetsShape_norm_2P2F_2e2mu)
 
         dict['zjetsKappaLow'] = float(self.zjetsKappaLow)
         dict['zjetsKappaHigh'] = float(self.zjetsKappaHigh)
@@ -833,7 +1040,7 @@ class inputReader:
 
         dict['useCMS_zz4l_doVBFtest'] = self.useCMS_zz4l_doVBFtest
         dict['useCMS_zz4l_Fisher_sys'] = self.useCMS_zz4l_Fisher_sys
-        dict['useCMS_zz4l_PToverM_sys'] = self.useCMS_zz4l_PToverM_sys
+        dict['useCMS_zz4l_Pt_sys'] = self.useCMS_zz4l_Pt_sys
 
         
 	dict['mekd_sig_a0_shape'] = self.mekd_sig_a0_shape
