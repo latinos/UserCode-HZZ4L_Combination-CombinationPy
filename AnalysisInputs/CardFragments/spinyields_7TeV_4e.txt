@@ -1,0 +1,15 @@
+## spin rates from jhuGen
+spinYield SM 0.681158
+
+## 0- from N_exp
+spinYield n0minus 0.497589
+
+## others from N_norm
+spinYield n0hplus 0.636233
+spinYield n1minus 0.607832
+spinYield n1plus 0.617967
+spinYield ngg2mplus 0.589927
+spinYield nqq2mplus 0.582221
+spinYield n2hplus 0.625306
+spinYield n2hminus 0.615231
+spinYield n2bplus 0.592488
