@@ -52,6 +52,9 @@ double calcInterfRew(TH1 *h,double KD ){
 }
 
 //=======================================================================
+bool test_bit(int mask, unsigned int iBit){return (mask >>iBit) &1; }
+
+//=======================================================================
 void makePlot1D( TH1 *h ,TString label ){
 
   gStyle->SetOptStat(1);
@@ -83,6 +86,13 @@ void makePlot2D( TH2 *h ,TString label ){
   else   if(altSignal==6)sprintf(yAxisTitle,"D_{1^{+}}");
   else   if(altSignal==7)sprintf(yAxisTitle,"D_{1^{-}}");
   else   if(altSignal==8)sprintf(yAxisTitle,"D_{2^{+}_{m}(qq)}");
+  else   if(altSignal==9)sprintf(yAxisTitle,"D_{2^{+}_{h}(gg)}");
+  else   if(altSignal==10)sprintf(yAxisTitle,"D_{2^{-}_{h}(gg)}");
+  else   if(altSignal==11)sprintf(yAxisTitle,"D_{2^{+}_{b}(gg)}");
+  else   if(altSignal==12)sprintf(yAxisTitle,"D_{2^{+}_{m}(gg dec)}");
+  else   if(altSignal==13)sprintf(yAxisTitle,"D_{2^{+}_{m}(q\bar{q} dec)}");
+  else   if(altSignal==14)sprintf(yAxisTitle,"D_{1^{-} (q\bar{q} dec)}");
+  else   if(altSignal==15)sprintf(yAxisTitle,"D_{1^{+} (q\bar{q} dec)}");
   else sprintf(yAxisTitle,"MYDummyKD");
 
   TCanvas *c2D=new TCanvas("c2d",("CANVAS "+label).Data());
@@ -165,25 +175,13 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
      if(useSqrts==1){
       cout<<"Readign in 7 TeV for Z+X data control regions"<<endl;
     //7TeV
-      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
-      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
-      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
-      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
-      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
-      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
-      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
+      bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleOr_CRZLLTree.root");
 
     }
     else{
       cout<<"Readign in 8 TeV for Z+X data control regions"<<endl;
       //8TeV
-      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
-      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
-      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
-      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
-      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
-      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
-      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
+      bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleOr_CRZLLTree.root");
       
       cout<<"Finished to add files to chain: #entries is "<<bkgMC->GetEntries()<<endl;
     }
@@ -208,10 +206,15 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   float mzz,KD,KD_forSel,w=0;
   double sKD;
   float  pbkg=0;
-  float p0plus,p0plusN, p0minus,p2minimal;
+  //float p0plus,p0plusN, p0minus,p2minimal;
   float psigM4l, pbkgM4l;
   float psigM4l_ScaleUp, pbkgM4l_ScaleUp,psigM4l_ScaleDown, pbkgM4l_ScaleDown,psigM4l_ResUp, pbkgM4l_ResUp;
   float p0plusVA,p0hplusVA,p0minusVA,p1plusVA,p1minusVA,p2minimalVA,p2minimalVA_qq,pbkgVA;
+  float p2hplusVA,p2hminusVA,p2bplusVA,p1plusProdIndepVA,p1minusProdIndepVA,p2mProdIndepVA, pbkg_ProdIndep_VA;
+
+  int CRflag;
+  bkgMC->SetBranchAddress("CRflag",&CRflag);
+
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
    
@@ -247,20 +250,29 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   bkgMC->SetBranchAddress("p0plus_m4l_ResUp",&psigM4l_ResUp);
   bkgMC->SetBranchAddress("bkg_m4l_ResUp",&pbkgM4l_ResUp);
 
-  bkgMC->SetBranchAddress("p0plus_melaNorm",&p0plusN);
-  bkgMC->SetBranchAddress("p0plus_mela",&p0plus);
-  bkgMC->SetBranchAddress("p0minus_mela",&p0minus);
-  bkgMC->SetBranchAddress("p2_mela",&p2minimal);
-  bkgMC->SetBranchAddress("bkg_mela",&pbkg);
+  //bkgMC->SetBranchAddress("p0plus_melaNorm",&p0plusN);
+  //bkgMC->SetBranchAddress("p0plus_mela",&p0plus);
+  //bkgMC->SetBranchAddress("p0minus_mela",&p0minus);
+  //bkgMC->SetBranchAddress("p2_mela",&p2minimal);
+  //bkgMC->SetBranchAddress("bkg_mela",&pbkg);
 
   bkgMC->SetBranchAddress("p0plus_VAJHU",&p0plusVA);
   bkgMC->SetBranchAddress("p0minus_VAJHU",&p0minusVA);
   bkgMC->SetBranchAddress("p0hplus_VAJHU",&p0hplusVA);
   bkgMC->SetBranchAddress("p1plus_VAJHU",&p1plusVA);
   bkgMC->SetBranchAddress("p1_VAJHU",&p1minusVA);
- bkgMC->SetBranchAddress("p2_VAJHU",&p2minimalVA);
- bkgMC->SetBranchAddress("p2qqb_VAJHU",&p2minimalVA_qq);
-  bkgMC->SetBranchAddress("bkg_VAMCFMNorm",&pbkgVA);
+  bkgMC->SetBranchAddress("p2_VAJHU",&p2minimalVA);
+  bkgMC->SetBranchAddress("p2qqb_VAJHU",&p2minimalVA_qq);
+
+  bkgMC->SetBranchAddress("p2hplus_VAJHU", &p2hplusVA);
+  bkgMC->SetBranchAddress("p2hminus_VAJHU", &p2hminusVA);
+  bkgMC->SetBranchAddress("p2bplus_VAJHU", &p2bplusVA);
+  bkgMC->SetBranchAddress("p1_prodIndep_VAJHU", &p1minusProdIndepVA);
+  bkgMC->SetBranchAddress("p1plus_prodIndep_VAJHU", &p1plusProdIndepVA);
+  bkgMC->SetBranchAddress("p2_prodIndep_VAJHU", &p2mProdIndepVA);
+
+  bkgMC->SetBranchAddress("bkg_prodIndep_VAMCFM", &pbkg_ProdIndep_VA);
+  bkgMC->SetBranchAddress("bkg_VAMCFM",&pbkgVA);
 
 
   //  bkgMC->SetBranchAddress("",&);
@@ -302,130 +314,134 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
   // fill histogram
 	
-  for(int i=0; i<bkgMC->GetEntries(); i++){
-
-    bkgMC->GetEntry(i);
-
-    //calculate discriminants from individual probabilities (ANALYTICAL APPROACH):
-    KD= p0plusN / (p0plusN+pbkg); // traditional MELA analytical
-    //  sKD = p0plusN*psigM4l / (p0plusN*psigM4l + pbkg*pbkgM4l)  ;
-    // float pseudoKD = p0plus/ (p0plus + p0minus);
-    //float graviKD =  p0plus   / (p0plus + 1.2*p2minimal);
-
-
-    // // using VA
-
-    sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
-    float sKD_ScaleUp= double(p0plusVA)*psigM4l_ScaleUp    / (double(p0plusVA)*psigM4l_ScaleUp + double(pbkgVA)*pbkgM4l_ScaleUp)  ;
-    float sKD_ScaleDown= double(p0plusVA)*psigM4l_ScaleDown    / (double(p0plusVA)*psigM4l_ScaleDown + double(pbkgVA)*pbkgM4l_ScaleDown)  ;
-    float sKD_ResUp= double(p0plusVA)*psigM4l_ResUp    / (double(p0plusVA)*psigM4l_ResUp + double(pbkgVA)*pbkgM4l_ResUp)  ;
-    if(superMelaName=="superLD_syst1Up")sKD = sKD_ScaleUp;
-    if(superMelaName=="superLD_syst1Down")sKD = sKD_ScaleDown;
-    if(superMelaName=="superLD_syst2Up")sKD = sKD_ResUp;
-    
-
-    float pseudoKD = p0plusVA / (p0plusVA   + p0minusVA);
-    float p0hKD = p0plusVA / (p0plusVA   + p0hplusVA);
-    float p1plusKD = p0plusVA / (p0plusVA   + p1plusVA);
-    float p1minusKD = p0plusVA / (p0plusVA   + p1minusVA);
-    float graviKD =  p0plusVA   / (p0plusVA + p2minimalVA);
-    float qqgraviKD =  p0plusVA   / (p0plusVA + p2minimalVA_qq);
-    if(altSignal==3) KD=pseudoKD;
-    else if(altSignal==4)KD=graviKD;
-    else if(altSignal==5)KD=p0hKD;
-    else if(altSignal==6)KD=p1plusKD;
-    else if(altSignal==7)KD=p1minusKD;
-    else if(altSignal==8)KD=qqgraviKD;
-    
-
-    //    if(cutSameVar)
-    KD_forSel=KD;
-
-    bool cutPassed= (kdCut>0.0) ? (KD_forSel>kdCut) : true;
-    if (w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.)
-      {
-	cout << "ERROR!!!!" << endl;
-	cout << w << " " << sKD << " " << KD << endl;
-      }
-    if(mzz>mzzCutLow&&mzz<mzzCutHigh){
-
-      bkgHist->Fill(sKD,KD,w);
-      //   bkgHist->Fill(mzz,KD,w);
-
-  //    if(channel=="4mu"&&sampleIndex==0&&useSqrts==2&&superMelaName=="superLD"){
-      // cout<<"MZZ="<<mzz<<" pseudoKD="<<KD<<"  SuperMELA="<<sKD <<"  PSigm4l="<<psigM4l<<"  PBkgm4l="<<pbkgM4l<<"   PSigVA="<< p0plusVA<<"  PBkgVA="<<pbkgVA <<endl;
-      //}
-
-    }//end if cuts passed
-
-    // if(i%5000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-  
-
-  }//end loop on entries
-
-
-// smooth 
-
-  cout << "Pre-Smooth: " << bkgHist->Integral() << endl;
-
-  if(smooth)   bkgHist->Smooth(1,"k5b"); //options:  "k3a", "k5a" , "k5b" 
-
-  // normalize TH2
-  double totArea=bkgHist->Integral();
-  cout << "Post-Smooth: " << totArea << endl;
-  bkgHist->Scale(1.0/totArea);
-  cout << "Norm? " << bkgHist->Integral() << endl;
-  
-  //Old Floor
-  /*
-  // bkgHist->Smooth();
-  for(int i=1; i<=bkgHist->GetNbinsX(); i++){
-    for(int j=1; j<=bkgHist->GetNbinsY(); j++){
-      if(bkgHist->GetBinContent(i,j)<0.00000001)
-	bkgHist->SetBinContent(i,j,0.00000001);
-    }// for(int j=1; j<=nYbins; j++){
-  }// for(int i=1; i<=nXbins; i++){
-  */
-
-  //New Floor
-  double floor = ((bkgHist->Integral())/(bkgHist->GetNbinsX()*bkgHist->GetNbinsY()))*(0.1/100);
-  for(int i = 1; i <= bkgHist->GetNbinsX(); i++)
+  for(int i=0; i<bkgMC->GetEntries(); i++)
     {
-      for(int j = 1; j <= bkgHist->GetNbinsY(); j++)
-	{
-	  double orig = bkgHist->GetBinContent(i,j);
-	  bkgHist->SetBinContent(i,j,(orig+floor));
-	}
-    }
 
-  // normalize TH2
-  cout << "Post-Floor: " << bkgHist->Integral() << endl;
-  totArea=bkgHist->Integral();
-  bkgHist->Scale(1.0/totArea);
-  cout << "Final: " << bkgHist->Integral() << endl;
-  
-  /*
-  //normalize in slices
-  double norm;
-  TH1F* tempProj;
-  
-  for(int i=1; i<=nXbins; i++){
+      bkgMC->GetEntry(i);
+      if(test_bit(CRflag,5) || test_bit(CRflag,7) || test_bit(CRflag,9) || test_bit(CRflag,11)) 
+	 {
+	   
+	   
+	   //calculate discriminants from individual probabilities (ANALYTICAL APPROACH):
+	   //KD= p0plusN / (p0plusN+pbkg); // traditional MELA analytical
+	   
+	   
+	   
+	   // // using VA
+	   
+	   sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
+	   float sKD_ScaleUp= double(p0plusVA)*psigM4l_ScaleUp    / (double(p0plusVA)*psigM4l_ScaleUp + double(pbkgVA)*pbkgM4l_ScaleUp)  ;
+	   float sKD_ScaleDown= double(p0plusVA)*psigM4l_ScaleDown    / (double(p0plusVA)*psigM4l_ScaleDown + double(pbkgVA)*pbkgM4l_ScaleDown)  ;
+	   float sKD_ResUp= double(p0plusVA)*psigM4l_ResUp    / (double(p0plusVA)*psigM4l_ResUp + double(pbkgVA)*pbkgM4l_ResUp)  ;
+	   if( altSignal >= 12)
+	     {
+	       //create sKD for production independent
+	       sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkg_ProdIndep_VA)*double(pbkgM4l))  ;
+	       sKD_ScaleUp= double(p0plusVA)*psigM4l_ScaleUp    / (double(p0plusVA)*psigM4l_ScaleUp + double(pbkg_ProdIndep_VA)*pbkgM4l_ScaleUp)  ;
+	       sKD_ScaleDown= double(p0plusVA)*psigM4l_ScaleDown    / (double(p0plusVA)*psigM4l_ScaleDown + double(pbkg_ProdIndep_VA)*pbkgM4l_ScaleDown)  ;
+	       sKD_ResUp= double(p0plusVA)*psigM4l_ResUp    / (double(p0plusVA)*psigM4l_ResUp + double(pbkg_ProdIndep_VA)*pbkgM4l_ResUp)  ;
+	     }
+	   
+	   if(superMelaName=="superLD_syst1Up")sKD = sKD_ScaleUp;
+	   if(superMelaName=="superLD_syst1Down")sKD = sKD_ScaleDown;
+	   if(superMelaName=="superLD_syst2Up")sKD = sKD_ResUp;
+	   
+	   
+	   float pseudoKD = p0plusVA / (p0plusVA   + p0minusVA);
+	   float p0hKD = p0plusVA / (p0plusVA   + p0hplusVA);
+	   float p1plusKD = p0plusVA / (p0plusVA   + p1plusVA);
+	   float p1minusKD = p0plusVA / (p0plusVA   + p1minusVA);
+	   float graviKD =  p0plusVA   / (p0plusVA + p2minimalVA);
+	   float qqgraviKD =  p0plusVA   / (p0plusVA + p2minimalVA_qq);
+	   float p2hplusKD = p0plusVA / (p0plusVA + p2hplusVA);
+	   float p2hminusKD = p0plusVA / (p0plusVA + p2hminusVA);
+	   float p2bplusKD = p0plusVA / (p0plusVA + p2bplusVA);
+	   
+	   float p1plusProdIndepKD  = p0plusVA / (p0plusVA + p1plusProdIndepVA);
+	   float p1minusProdIndepKD = p0plusVA / (p0plusVA + p1minusProdIndepVA);
+	   float p2mProdIndepKD     = p0plusVA / (p0plusVA + p2mProdIndepVA);
+	   
+	   if(altSignal==3) KD=pseudoKD;
+	   else if(altSignal==4)KD=graviKD;
+	   else if(altSignal==5)KD=p0hKD;
+	   else if(altSignal==6)KD=p1plusKD;
+	   else if(altSignal==7)KD=p1minusKD;
+	   else if(altSignal==8)KD=qqgraviKD;
+	   else if ( altSignal == 9 ) KD = p2hplusKD;
+	   else if ( altSignal == 10) KD = p2hminusKD;
+	   else if ( altSignal == 11) KD = p2bplusKD;
+	   else if ( altSignal == 12) KD = p2mProdIndepKD;
+	   else if ( altSignal == 13) KD = p2mProdIndepKD;
+	   else if ( altSignal == 14) KD = p1minusProdIndepKD;
+	   else if ( altSignal == 15) KD = p1plusProdIndepKD;
+	   
+	   
+	   //    if(cutSameVar)
+	   KD_forSel=KD;
+	   
+	   if(mzz>mzzCutLow&&mzz<mzzCutHigh){
+
+	     /*if( psigM4l_ScaleUp == -1 || psigM4l_ScaleDown == -1 || psigM4l_ResUp == -1 || pbkgM4l_ScaleUp == -1 || pbkgM4l_ScaleDown == -1 || pbkgM4l_ResUp == -1 )
+	       {
+		 cout << "Fake error... dont fill" << endl;
+		 cout  << "A "+superMelaName+" event was skipped." << endl;
+		 continue;
+		 }*/
+	     
+	     if ((w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.) && superMelaName == "superLD")
+	       {
+		 cout << "TRUE Error" << endl;
+		 continue;
+	       }
+	     
+	     bkgHist->Fill(sKD,KD,w);
+	     //   bkgHist->Fill(mzz,KD,w);
+	     
+	     //    if(channel=="4mu"&&sampleIndex==0&&useSqrts==2&&superMelaName=="superLD"){
+	     // cout<<"MZZ="<<mzz<<" pseudoKD="<<KD<<"  SuperMELA="<<sKD <<"  PSigm4l="<<psigM4l<<"  PBkgm4l="<<pbkgM4l<<"   PSigVA="<< p0plusVA<<"  PBkgVA="<<pbkgVA <<endl;
+	     //}
+	     
+	   }//end if cuts passed
+	   
+	   // if(i%5000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
+	 }
+      
+    }//end loop on entries
     
-    tempProj = (TH1F*) bkgHist->ProjectionY("tempProj",i,i);
-    norm=tempProj->Integral();
+    
+    // smooth 
+    
+    cout << "Pre-Smooth: " << bkgHist->Integral() << endl;
+    
+    if(smooth)   bkgHist->Smooth(1,"k5b"); //options:  "k3a", "k5a" , "k5b" 
+    
+    // normalize TH2
+    double totArea=bkgHist->Integral();
+    cout << "Post-Smooth: " << totArea << endl;
+    bkgHist->Scale(1.0/totArea);
+    cout << "Norm? " << bkgHist->Integral() << endl;
+ 
 
-    if (norm>0) { // Avoid introducing NaNs in the histogram
-      for(int j=1; j<=nYbins; j++){
-	bkgHist->SetBinContent(i,j, bkgHist->GetBinContent(i,j)/norm   );
+    //New Floor
+    double floor = ((bkgHist->Integral())/(bkgHist->GetNbinsX()*bkgHist->GetNbinsY()))*(0.1/100);
+    for(int i = 1; i <= bkgHist->GetNbinsX(); i++)
+      {
+	for(int j = 1; j <= bkgHist->GetNbinsY(); j++)
+	  {
+	    double orig = bkgHist->GetBinContent(i,j);
+	    bkgHist->SetBinContent(i,j,(orig+floor));
+	  }
       }
-    }
+    
+    // normalize TH2
+    cout << "Post-Floor: " << bkgHist->Integral() << endl;
+    totArea=bkgHist->Integral();
+    bkgHist->Scale(1.0/totArea);
+    cout << "Final: " << bkgHist->Integral() << endl;
 
-  }
-  */
 
-
-  cout<<"Finishing fillTemplate for sample "<<sampleIndex<<"   "<<channel.Data()<<endl;
-  return bkgHist;
+    cout<<"Finishing fillTemplate for sample "<<sampleIndex<<"   "<<channel.Data()<<endl;
+    return bkgHist;
   
 }
 
@@ -441,24 +457,30 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
   //char yVarName[32];
 
   float psig=0, pbkg=0;
-  float p0plus, p0minus,p2minimal, psigM4l, pbkgM4l;
- float p0plusVA,pbkgVA;
+  //float p0plus, p0minus,p2minimal;
+  float psigM4l, pbkgM4l;
+  float p0plusVA,pbkgVA, pbkg_prodIndep_VA;
+
+  int CRflag;
+  bkgMC->SetBranchAddress("CRflag",&CRflag);
+
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
   bkgMC->SetBranchAddress("ZZLD",&mela);
-  bkgMC->SetBranchAddress("superLD",&KD);
+  //bkgMC->SetBranchAddress("superLD",&KD);
 
   bkgMC->SetBranchAddress("p0plus_m4l",&psigM4l);
   bkgMC->SetBranchAddress("bkg_m4l",&pbkgM4l);
 
-  bkgMC->SetBranchAddress("p0plus_mela",&p0plus);
-  bkgMC->SetBranchAddress("p0minus_mela",&p0minus);
+  //bkgMC->SetBranchAddress("p0plus_mela",&p0plus);
+  // bkgMC->SetBranchAddress("p0minus_mela",&p0minus);
   // bkgMC->SetBranchAddress("p2_mela",&p2minimal);
-  bkgMC->SetBranchAddress("bkg_mela",&pbkg);
+  //bkgMC->SetBranchAddress("bkg_mela",&pbkg);
   //  bkgMC->SetBranchAddress("",&);
   bkgMC->SetBranchAddress("p0plus_VAJHU",&p0plusVA);
-  bkgMC->SetBranchAddress("bkg_VAMCFMNorm",&pbkgVA);
-  bkgMC->SetBranchAddress("p2_mela",&p2minimal);
+  bkgMC->SetBranchAddress("bkg_VAMCFM",&pbkgVA);
+  // bkgMC->SetBranchAddress("p2_mela",&p2minimal);
+  bkgMC->SetBranchAddress("bkg_prodIndep_VAMCFM",&pbkg_prodIndep_VA);
   char hTitle[128];
   sprintf(hTitle,"Distribution of superMELA KD with M_{4l} in [%d, %d]",int(mzzLow),int(mzzHigh));
   TH1F* outHist=new TH1F("finHisto",hTitle,200,0.0,1.0);
@@ -469,20 +491,28 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
   for(int i=0; i<bkgMC->GetEntries(); i++){
     bkgMC->GetEntry(i);
 
-    //calculate discriminants from individual probabilities
-    KD= p0plus / (p0plus+pbkg);
-    //    sKD = p0plus*psigM4l / (p0plus*psigM4l + pbkg*pbkgM4l)  ;
-    sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
-    //float pseudoKD = p0plus / (p0plus + 6.0*p0minus);
-    //float graviKD =  p0plus / (p0plus + 1.2*p2minimal);
-    //if(altSignal==3) KD=pseudoKD;
-    //if(altSignal==4)KD=graviKD;
+    if(test_bit(CRflag,5) || test_bit(CRflag,7) || test_bit(CRflag,9) || test_bit(CRflag,11))   
+      {
 
-    //   if(i%200==0)cout<<"Entry "<<i<<"  mzz="<<mzz<<"  weight="<<w<<"  LD="<<LD<<endl;
-    bool cutPassed= (kdCut>0.0) ? (mela>kdCut) : true;
-    if( cutPassed &&mzz>mzzLow&&mzz<mzzHigh){
-      outHist->Fill(sKD,w);
-    }
+	//calculate discriminants from individual probabilities
+	//KD= p0plus / (p0plus+pbkg);
+	//    sKD = p0plus*psigM4l / (p0plus*psigM4l + pbkg*pbkgM4l)  ;
+	sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
+	if (altSignal >= 12)
+	  {
+	    sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkg_prodIndep_VA)*double(pbkgM4l))  ;
+	    //float pseudoKD = p0plus / (p0plus + 6.0*p0minus);
+	    //float graviKD =  p0plus / (p0plus + 1.2*p2minimal);
+	    //if(altSignal==3) KD=pseudoKD;
+	    //if(altSignal==4)KD=graviKD;
+	  }
+	    
+	    //   if(i%200==0)cout<<"Entry "<<i<<"  mzz="<<mzz<<"  weight="<<w<<"  LD="<<LD<<endl;
+	bool cutPassed= (kdCut>0.0) ? (mela>kdCut) : true;
+	if( cutPassed &&mzz>mzzLow&&mzz<mzzHigh){
+	  outHist->Fill(sKD,w);
+	}
+      }
   }
 
 

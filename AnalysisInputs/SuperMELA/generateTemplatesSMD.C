@@ -173,28 +173,42 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
       bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2qqGravH126"+suffix);
     }
   }
+  else if(sampleIndex==9){ //this is for another alternative signal samples
+
+     if(useSqrts==1){   //7TeV
+      cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Grav2PHH126"+suffix);
+    }
+    else{   //8TeV
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Grav2PHH126"+suffix);
+    }
+  }
+  else if(sampleIndex==10){ //this is for another alternative signal samples
+
+     if(useSqrts==1){   //7TeV
+      cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Grav2MHH126"+suffix);
+    }
+    else{   //8TeV
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Grav2MHH126"+suffix);
+    }
+  }
+else if(sampleIndex==11){ //this is for another alternative signal samples
+
+     if(useSqrts==1){   //7TeV
+      cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
+      bkgMC->Add(filePath7TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Grav2PBH126"+suffix);
+    }
+    else{   //8TeV
+      bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Grav2PBH126"+suffix);
+    }
+  }
   else{
     std::cout<<"ERROR from buildChainSingleMass: Unrecognized sample code = "<<sampleIndex<<std::endl;
 
   }
-  /******
-  else if (sampleIndex==5){//not used anymore, refer to generateTemplates_forCR_V3.C
-     if(useSqrts==1){
-      cout<<"Readign in 7 TeV for Z+X data control regions"<<endl;
-    //7TeV
-    bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleEle"+suffix);
-    bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleMu"+suffix);
-    bkgMC->Add(filePath7TeV + "/CR/HZZ4lTree_DoubleOr"+suffix);
-    }
-    else{
-      //8TeV
-    bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleEle"+suffix);
-    bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleMu"+suffix);
-    bkgMC->Add(filePath8TeV + "/CR/HZZ4lTree_DoubleOr"+suffix);
-    }
 
-  }
-  *************/
+
 }
 
 
@@ -211,12 +225,14 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   // // bkgMC->ls();
 
   float mzz,KD,KD_forSel,w=0;
-  double sKD;
+  float sKD;
   float  pbkg=0;
   float p0plus,p0plusN, p0minus,p2minimal;
   float psigM4l, pbkgM4l;
   float psigM4l_ScaleUp, pbkgM4l_ScaleUp,psigM4l_ScaleDown, pbkgM4l_ScaleDown,psigM4l_ResUp, pbkgM4l_ResUp;
   float p0plusVA,p0hplusVA,p0minusVA,p1plusVA,p1minusVA,p2minimalVA,p2minimalVA_qq,pbkgVA;
+  
+  float p2hplusVA,p2hminusVA,p2bplusVA,p1plusProdIndepVA,p1minusProdIndepVA,p2mProdIndepVA, pbkg_ProdIndep_VA;
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
    
@@ -252,11 +268,11 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   bkgMC->SetBranchAddress("p0plus_m4l_ResUp",&psigM4l_ResUp);
   bkgMC->SetBranchAddress("bkg_m4l_ResUp",&pbkgM4l_ResUp);
 
-  bkgMC->SetBranchAddress("p0plus_melaNorm",&p0plusN);
-  bkgMC->SetBranchAddress("p0plus_mela",&p0plus);
-  bkgMC->SetBranchAddress("p0minus_mela",&p0minus);
-  bkgMC->SetBranchAddress("p2_mela",&p2minimal);
-  bkgMC->SetBranchAddress("bkg_mela",&pbkg);
+  //bkgMC->SetBranchAddress("p0plus_melaNorm",&p0plusN);
+  //bkgMC->SetBranchAddress("p0plus_mela",&p0plus);
+  //bkgMC->SetBranchAddress("p0minus_mela",&p0minus);
+  //bkgMC->SetBranchAddress("p2_mela",&p2minimal);
+  //bkgMC->SetBranchAddress("bkg_mela",&pbkg);
 
   bkgMC->SetBranchAddress("p0plus_VAJHU",&p0plusVA);
   bkgMC->SetBranchAddress("p0minus_VAJHU",&p0minusVA);
@@ -265,26 +281,16 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   bkgMC->SetBranchAddress("p1_VAJHU",&p1minusVA);
   bkgMC->SetBranchAddress("p2_VAJHU",&p2minimalVA);
   bkgMC->SetBranchAddress("p2qqb_VAJHU",&p2minimalVA_qq);
-  bkgMC->SetBranchAddress("bkg_VAMCFMNorm",&pbkgVA);
 
+  bkgMC->SetBranchAddress("p2hplus_VAJHU", &p2hplusVA);
+  bkgMC->SetBranchAddress("p2hminus_VAJHU", &p2hminusVA);
+  bkgMC->SetBranchAddress("p2bplus_VAJHU", &p2bplusVA);
+  bkgMC->SetBranchAddress("p1_prodIndep_VAJHU", &p1minusProdIndepVA);
+  bkgMC->SetBranchAddress("p1plus_prodIndep_VAJHU", &p1plusProdIndepVA);
+  bkgMC->SetBranchAddress("p2_prodIndep_VAJHU", &p2mProdIndepVA);
 
-  //  bkgMC->SetBranchAddress("",&);
-
-
-  //  bool cutSameVar=false;
-  // bkgMC->SetBranchAddress(melaName.Data(),&KD);
-  //  if (melaName!=melaCutName) {
-  //  bkgMC->SetBranchAddress(melaCutName.Data(),&KD_forSel);
-  // }
-  // else {
-  ///////    KD_forSel=KD;
-  //  cutSameVar=true;
-  ////// // bkgMC->SetBranchAddress(melaName.Data(),&KD_forSel);
-  // }
-
-
- //  bkgMC->SetBranchAddress("superLD",&sKD);
-  //bkgMC->SetBranchAddress(superMelaName,&sKD);
+  bkgMC->SetBranchAddress("bkg_prodIndep_VAMCFM", &pbkg_ProdIndep_VA);
+  bkgMC->SetBranchAddress("bkg_VAMCFM",&pbkgVA);
 
 
   //  bool usePseudoLDbin=melaName.Contains("pseudo");
@@ -306,6 +312,9 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
 
   // fill histogram
+  //bkgMC->Print("all");
+  //cout << bkgMC->GetEntries() << endl;
+  //cout << "Number of entries" << endl;
 	
   for(int i=0; i<bkgMC->GetEntries(); i++){
 
@@ -319,15 +328,24 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
 
     // // using VA
+    //create sKD for production dependent
+    sKD = (p0plusVA*psigM4l)/(p0plusVA*psigM4l + pbkgVA*pbkgM4l)  ;
+    float sKD_ScaleUp= (p0plusVA*psigM4l_ScaleUp)/(p0plusVA*psigM4l_ScaleUp + pbkgVA*pbkgM4l_ScaleUp)  ;
+    float sKD_ScaleDown= (p0plusVA*psigM4l_ScaleDown)/(p0plusVA*psigM4l_ScaleDown + pbkgVA*pbkgM4l_ScaleDown)  ;
+    float sKD_ResUp= (p0plusVA*psigM4l_ResUp)/(p0plusVA*psigM4l_ResUp + pbkgVA*pbkgM4l_ResUp)  ;
+    if( altSignal >= 12)
+      {
+	//create sKD for production independent
+	cout << "Production Independent" << endl;
+	sKD = (p0plusVA*psigM4l)/(p0plusVA*psigM4l + pbkg_ProdIndep_VA*pbkgM4l)  ;
+	sKD_ScaleUp= (p0plusVA*psigM4l_ScaleUp)/(p0plusVA*psigM4l_ScaleUp + pbkg_ProdIndep_VA*pbkgM4l_ScaleUp)  ;
+	sKD_ScaleDown= (p0plusVA*psigM4l_ScaleDown)/(p0plusVA*psigM4l_ScaleDown + pbkg_ProdIndep_VA*pbkgM4l_ScaleDown)  ;
+	sKD_ResUp= (p0plusVA*psigM4l_ResUp)/(p0plusVA*psigM4l_ResUp + pbkg_ProdIndep_VA*pbkgM4l_ResUp)  ;
+      }
 
-    sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
-    float sKD_ScaleUp= double(p0plusVA)*psigM4l_ScaleUp    / (double(p0plusVA)*psigM4l_ScaleUp + double(pbkgVA)*pbkgM4l_ScaleUp)  ;
-    float sKD_ScaleDown= double(p0plusVA)*psigM4l_ScaleDown    / (double(p0plusVA)*psigM4l_ScaleDown + double(pbkgVA)*pbkgM4l_ScaleDown)  ;
-    float sKD_ResUp= double(p0plusVA)*psigM4l_ResUp    / (double(p0plusVA)*psigM4l_ResUp + double(pbkgVA)*pbkgM4l_ResUp)  ;
     if(superMelaName=="superLD_syst1Up")sKD = sKD_ScaleUp;
     if(superMelaName=="superLD_syst1Down")sKD = sKD_ScaleDown;
     if(superMelaName=="superLD_syst2Up")sKD = sKD_ResUp;
-    
 
     float pseudoKD = p0plusVA / (p0plusVA   + p0minusVA);
     float p0hKD = p0plusVA / (p0plusVA   + p0hplusVA);
@@ -335,27 +353,51 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     float p1minusKD = p0plusVA / (p0plusVA   + p1minusVA);
     float graviKD =  p0plusVA   / (p0plusVA + p2minimalVA);
     float qqgraviKD =  p0plusVA   / (p0plusVA + p2minimalVA_qq);
+    float p2hplusKD = p0plusVA / (p0plusVA + p2hplusVA);
+    float p2hminusKD = p0plusVA / (p0plusVA + p2hminusVA);
+    float p2bplusKD = p0plusVA / (p0plusVA + p2bplusVA);
+
+    float p1plusProdIndepKD  = p0plusVA / (p0plusVA + p1plusProdIndepVA);
+    float p1minusProdIndepKD = p0plusVA / (p0plusVA + p1minusProdIndepVA);
+    float p2mProdIndepKD     = p0plusVA / (p0plusVA + p2mProdIndepVA);
+    
     if(altSignal==3) KD=pseudoKD;
     else if(altSignal==4)KD=graviKD;
     else if(altSignal==5)KD=p0hKD;
     else if(altSignal==6)KD=p1plusKD;
     else if(altSignal==7)KD=p1minusKD;
     else if(altSignal==8)KD=qqgraviKD;
+    else if ( altSignal == 9 ) KD = p2hplusKD;
+    else if ( altSignal == 10) KD = p2hminusKD;
+    else if ( altSignal == 11) KD = p2bplusKD;
+    else if ( altSignal == 12) KD = p2mProdIndepKD;
+    else if ( altSignal == 13) KD = p2mProdIndepKD;
+    else if ( altSignal == 14) KD = p1minusProdIndepKD;
+    else if ( altSignal == 15) KD = p1plusProdIndepKD;
     
 
     //    if(cutSameVar)
     KD_forSel=KD;
 
     bool cutPassed= (kdCut>0.0) ? (KD_forSel>kdCut) : true;
-    if (w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.)
-      {
-	cout << "ERROR!!!!" << endl;
-	cout << w << " " << sKD << " " << KD << endl;
-      }
-    if(mzz>mzzCutLow&&mzz<mzzCutHigh){
+    
+    if(mzz>mzzCutLow && mzz<mzzCutHigh){
+
+      if( psigM4l_ScaleUp == -1 || psigM4l_ScaleDown == -1 || psigM4l_ResUp == -1 || pbkgM4l_ScaleUp == -1 || pbkgM4l_ScaleDown == -1 || pbkgM4l_ResUp == -1 )
+	{
+	  cout << "Fake error... dont fill" << endl;
+	  cout  << "A "+superMelaName+" event was skipped." << endl;
+	  continue;
+	}
+      
+      if ((w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.) && superMelaName == "superLD")
+	{
+	  cout << "TRUE Error" << endl;
+	  continue;
+	}
+
 
       bkgHist->Fill(sKD,KD,w);
-      //   bkgHist->Fill(mzz,KD,w);
 
     }//end if cuts passed
 
@@ -381,17 +423,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   cout << "Post-Smooth: " << totArea << endl;
   bkgHist->Scale(1.0/totArea);
   cout << "Norm? " << bkgHist->Integral() << endl;
-  
-  //Old Floor
-  /*
-  // bkgHist->Smooth();
-  for(int i=1; i<=bkgHist->GetNbinsX(); i++){
-    for(int j=1; j<=bkgHist->GetNbinsY(); j++){
-      if(bkgHist->GetBinContent(i,j)<0.00000001)
-	bkgHist->SetBinContent(i,j,0.00000001);
-    }// for(int j=1; j<=nYbins; j++){
-  }// for(int i=1; i<=nXbins; i++){
-  */
+ 
 
   //New Floor
   double floor = ((bkgHist->Integral())/(bkgHist->GetNbinsX()*bkgHist->GetNbinsY()))*(0.1/100);
@@ -448,17 +480,18 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
 
   float psig=0, pbkg=0;
   float p0plus, p0minus,p2minimal, psigM4l, pbkgM4l;
- float p0plusVA,pbkgVA;
+  float p0plusVA,pbkgVA,pbkg_ProdIndep_VA;
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
-  bkgMC->SetBranchAddress("ZZLD",&mela);
+  //bkgMC->SetBranchAddress("ZZLD",&mela);
   //bkgMC->SetBranchAddress("superLD",&KD);
 
   bkgMC->SetBranchAddress("p0plus_m4l",&psigM4l);
   bkgMC->SetBranchAddress("bkg_m4l",&pbkgM4l);
 
   bkgMC->SetBranchAddress("p0plus_VAJHU",&p0plusVA);
-  bkgMC->SetBranchAddress("bkg_VAMCFMNorm",&pbkgVA);
+  bkgMC->SetBranchAddress("bkg_VAMCFM",&pbkgVA);
+  bkgMC->SetBranchAddress("bkg_prodIndep_VAMCFM",&pbkg_ProdIndep_VA);
 
   char hTitle[128];
   sprintf(hTitle,"Distribution of superMELA KD with M_{4l} in [%d, %d]",int(mzzLow),int(mzzHigh));
@@ -471,7 +504,12 @@ TH1F *fillKDhisto(TString channel, int sampleIndex,float mzzLow,float mzzHigh,bo
     bkgMC->GetEntry(i);
 
     //calculate discriminants from individual probabilities
-    sKD = double(p0plusVA)*double(psigM4l)    / (double(p0plusVA)*double(psigM4l) + double(pbkgVA)*double(pbkgM4l))  ;
+    sKD = (p0plusVA*psigM4l)/(p0plusVA*psigM4l + pbkgVA*pbkgM4l)  ;
+
+    if(altSignal >= 12)
+      {
+	sKD = (p0plusVA*psigM4l)/(p0plusVA*psigM4l + pbkg_ProdIndep_VA*pbkgM4l) ;
+      }
 
     //   if(i%200==0)cout<<"Entry "<<i<<"  mzz="<<mzz<<"  weight="<<w<<"  LD="<<LD<<endl;
     bool cutPassed= (kdCut>0.0) ? (mela>kdCut) : true;
@@ -562,6 +600,7 @@ void makeTemplate(TString channel){
   h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
   h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
   h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+  
 
   TH1D *h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());
   h_DprojX->Scale(1.0/h_DprojX->Integral());
@@ -601,6 +640,7 @@ void makeTemplate(TString channel){
     h_D->Write("h_superD");
     
     //---- systematics for alternative signal
+    
     h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst1Up","sigHistoALT_syst1Up",true);
     h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst1Down","sigHistoALT_syst1Down",true);
     h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst2Up","sigHistoALT_syst2Up",true);
@@ -609,6 +649,7 @@ void makeTemplate(TString channel){
     h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
     h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
     h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+    
 
     h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());
     h_DprojX->Scale(1.0/h_DprojX->Integral());
@@ -731,12 +772,19 @@ void makePlot2D( TH2 *h ,TString label ){
   
   char yAxisTitle[64];
   if(altSignal<3)sprintf(yAxisTitle,"KD");
-  else   if(altSignal==3)sprintf(yAxisTitle,"D_{0-}");
+  else   if(altSignal==3)sprintf(yAxisTitle,"D_{0^{-} (gg)}");
   else   if(altSignal==4)sprintf(yAxisTitle,"D_{2^{+}_{m}(gg)}");
   else   if(altSignal==5)sprintf(yAxisTitle,"D_{0^{+}_{h}}");
-  else   if(altSignal==6)sprintf(yAxisTitle,"D_{1^{+}}");
-  else   if(altSignal==7)sprintf(yAxisTitle,"D_{1^{-}}");
-  else   if(altSignal==8)sprintf(yAxisTitle,"D_{2^{+}_{m}(qq)}");
+  else   if(altSignal==6)sprintf(yAxisTitle,"D_{1^{+} (q\bar{q})}");
+  else   if(altSignal==7)sprintf(yAxisTitle,"D_{1^{-} (q\bar{q})}");
+  else   if(altSignal==8)sprintf(yAxisTitle,"D_{2^{+}_{m}(q\bar{q})}");
+  else   if(altSignal==9)sprintf(yAxisTitle,"D_{2^{+}_{h}(gg)}");
+  else   if(altSignal==10)sprintf(yAxisTitle,"D_{2^{-}_{h}(gg)}");
+  else   if(altSignal==11)sprintf(yAxisTitle,"D_{2^{+}_{b}(gg)}");
+  else   if(altSignal==12)sprintf(yAxisTitle,"D_{2^{+}_{m}(gg dec)}");
+  else   if(altSignal==13)sprintf(yAxisTitle,"D_{2^{+}_{m}(q\bar{q} dec)}");
+  else   if(altSignal==14)sprintf(yAxisTitle,"D_{1^{-} (q\bar{q} dec)}");
+  else   if(altSignal==15)sprintf(yAxisTitle,"D_{1^{+} (q\bar{q} dec)}");
   else sprintf(yAxisTitle,"MYDummyKD");
 
 
