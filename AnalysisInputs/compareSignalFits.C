@@ -38,9 +38,9 @@ bool plotSingleFit = false;
 bool plotMoriondPdf= false;
 bool plotPdfFromFile = true;
 bool plotOverFlowBins = false;
-bool saveRoots = false;
+bool saveRoots = true;
 
-float debugMass = 126;
+float debugMass = 0;
 
 void compareSignalFits()
 {
@@ -135,7 +135,7 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     if(debugMass>100 &&(masses[i]< debugMass-0.5||masses[i]>debugMass+0.5))continue;  //For tests
     if( masses[i]>399 &&( icomp<3||plotParam)) continue;  
     if( masses[i]>200 && icomp==5) continue;  
-
+    //if(masses[i]<125 || masses[i]>126)continue;
     //Open input file with shapes and retrieve the tree
     char tmp_finalInPath[200];
     sprintf(tmp_finalInPath,"/HZZ4lTree_%s%i.root",scomp.c_str(),masses[i]);
@@ -168,7 +168,7 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     double windowVal = max(valueWidth,1.);
 
     double lowside = 100.;
-    double highside = 1000.0
+    double highside = 1000.0;
         
       if (masses[i] >= 275){
 	lowside = 180.0;
@@ -492,6 +492,10 @@ void signalFits(int sqrts, int channel, int icomp, int njets, TCanvas *canv, boo
     if(isLongRange)njetstr+="longRange_";
     string plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + njetstr + schannel + ".png";
     canv->SaveAs(plotFileTitle.c_str());
+    if(saveRoots){
+      plotFileTitle = tmp_plotFileTitle + tmp2_plotFileTitle + njetstr + schannel + ".root";
+      canv->SaveAs(plotFileTitle.c_str());
+    }
     //delete newTree;
     //fo->Close();
     //delete fo;
