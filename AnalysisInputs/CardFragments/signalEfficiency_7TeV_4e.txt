@@ -22,27 +22,27 @@ signalEff qqHg1  0.0999999
 signalEff qqHg2  168.96
 signalEff qqHg3  46.8727
 
-signalEff ZHa1  -4.45672
-signalEff ZHa2  4.58156
-signalEff ZHa3  -68.1223
-signalEff ZHa4  118.761
-signalEff ZHb1  0.00727965
-signalEff ZHb2  -0.000154467
-signalEff ZHb3  6.58346e-07
-signalEff ZHg1  0.0012443
-signalEff ZHg2  160.124
-signalEff ZHg3  45.1102
+signalEff ZHa1  -5.15156
+signalEff ZHa2  5.25788
+signalEff ZHa3  -70.3937
+signalEff ZHa4  109.495
+signalEff ZHb1  0.0272125
+signalEff ZHb2  -0.000367809
+signalEff ZHb3  1.18153e-06
+signalEff ZHg1  0.000663401
+signalEff ZHg2  166.093
+signalEff ZHg3  33.6992
 
-signalEff WHa1  -4.4616
-signalEff WHa2  4.57609
-signalEff WHa3  -88.3558
-signalEff WHa4  116.507
-signalEff WHb1  0.00802999
-signalEff WHb2  -4.09836e-05
-signalEff WHb3  3.40351e-08
-signalEff WHg1  0.000359903
-signalEff WHg2  204.145
-signalEff WHg3  39.2153
+signalEff WHa1  -4.46002
+signalEff WHa2  4.57797
+signalEff WHa3  -77.3161
+signalEff WHa4  115.535
+signalEff WHb1  0.00182152
+signalEff WHb2  -3.4859e-05
+signalEff WHb3  1.74382e-07
+signalEff WHg1  0.00032322
+signalEff WHg2  162.993
+signalEff WHg3  45.4625
 
 signalEff ttHa1  -4.46016
 signalEff ttHa2  4.57793
