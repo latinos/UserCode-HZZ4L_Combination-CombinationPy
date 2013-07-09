@@ -252,7 +252,20 @@ class inputReader:
 	self.relerr_zx_ld_frac = -999.
 	self.relerr_zx_gs_mean = -999.
 	self.relerr_zx_gs_sigma = -999.
-	# --- end relative error 
+	# --- end relative error
+
+        # --- spin yields from jhuGen
+        self.spinYield_SM = -999.
+        self.spinYield_0minus = -999.
+        self.spinYield_0hplus = -999.
+        self.spinYield_1minus = -999.
+        self.spinYield_1plus = -999.
+        self.spinYield_gg2mplus = -999.
+        self.spinYield_qq2mplus = -999.
+        self.spinYield_2hplus = -999.
+        self.spinYield_2hminus = -999.
+        self.spinYield_2bplus = -999.
+        # --- end yields from jhuGen
 
     def goodEntry(self,variable):
         if variable == -999.9:
@@ -539,6 +552,18 @@ class inputReader:
                 if f[1].lower().startswith("mean_2e2mu_2p2f"):  self.zjetsShape_mean_2P2F_2e2mu = f[2]
                 if f[1].lower().startswith("sigma_2e2mu_2p2f"): self.zjetsShape_sigma_2P2F_2e2mu = f[2]
                 if f[1].lower().startswith("norm_2e2mu_2p2f"): self.zjetsShape_norm_2P2F_2e2mu = f[2]
+
+            if f[0].lower().startswith("spinyield"):
+                if f[1].lower().startswith("sm"): self.spinYield_SM = f[2]
+                if f[1].lower().startswith("n0minus"): self.spinYield_0minus = f[2]
+                if f[1].lower().startswith("n0hplus"): self.spinYield_0hplus = f[2]
+                if f[1].lower().startswith("n1minus"): self.spinYield_1minus = f[2]
+                if f[1].lower().startswith("n1plus"): self.spinYield_1plus = f[2]
+                if f[1].lower().startswith("ngg2mplus"): self.spinYield_gg2mplus = f[2]
+                if f[1].lower().startswith("nqq2mplus"): self.spinYield_qq2mplus = f[2]
+                if f[1].lower().startswith("n2hplus"): self.spinYield_2hplus = f[2]
+                if f[1].lower().startswith("n2hminus"): self.spinYield_2hminus = f[2]
+                if f[1].lower().startswith("n2bplus"): self.spinYield_2bplus = f[2]
                 
 
             if f[0].lower().startswith("systematic"):
@@ -1069,5 +1094,16 @@ class inputReader:
 	dict['relerr_zx_ld_sigma'] = self.relerr_zx_ld_sigma
 	dict['relerr_zx_gs_mean'] = self.relerr_zx_gs_mean
 	dict['relerr_zx_gs_sigma'] = self.relerr_zx_gs_sigma
+
+        dict['jhuGen_SM_yield'] = self.spinYield_SM
+        dict['jhuGen_0minus_yield'] = self.spinYield_0minus
+        dict['jhuGen_0hplus_yield'] = self.spinYield_0hplus
+        dict['jhuGen_1minus_yield'] = self.spinYield_1minus
+        dict['jhuGen_1plus_yield'] = self.spinYield_1plus
+        dict['jhuGen_gg2mplus_yield'] = self.spinYield_gg2mplus
+        dict['jhuGen_qq2mplus_yield'] = self.spinYield_qq2mplus
+        dict['jhuGen_2hplus_yield'] = self.spinYield_2hplus
+        dict['jhuGen_2hminus_yield'] = self.spinYield_2hminus
+        dict['jhuGen_2bplus_yield'] = self.spinYield_2bplus
 
         return dict

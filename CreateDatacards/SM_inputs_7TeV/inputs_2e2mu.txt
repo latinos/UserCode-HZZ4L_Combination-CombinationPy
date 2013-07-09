@@ -13,7 +13,7 @@ systematic lumiUnc 1.022
 sqrts 7
 
 ## Channels to include in cards ##
-channels all ggZZ zjets
+channels all qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
@@ -188,6 +188,21 @@ systematic CMS_zz4l_gamma False
 ### for hypothesis testing ###
 doHypTest True
 #altHypLabel _ALT
+## spin rates from jhuGen
+spinYield SM 1.5215
+
+## 0- from N_exp
+spinYield n0minus 1.48305
+
+## others from N_norm
+spinYield n0hplus 1.66292
+spinYield n1minus 1.73988
+spinYield n1plus 1.66854
+spinYield ngg2mplus 1.71705
+spinYield nqq2mplus 1.75353
+spinYield n2hplus 1.67156
+spinYield n2hminus 1.63864
+spinYield n2bplus 1.74717
 
 
 
@@ -218,3 +233,18 @@ RelErrShape relerr_zx_ld_frac 0.546106
  RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
  RelErrShape  relerr_ggH_ld_frac 0.63 
 
+## spin rates from jhuGen
+spinYield SM 1.5215
+
+## 0- from N_exp
+spinYield n0minus 1.48305
+
+## others from N_norm
+spinYield n0hplus 1.66292
+spinYield n1minus 1.73988
+spinYield n1plus 1.66854
+spinYield ngg2mplus 1.71705
+spinYield nqq2mplus 1.75353
+spinYield n2hplus 1.67156
+spinYield n2hminus 1.63864
+spinYield n2bplus 1.74717

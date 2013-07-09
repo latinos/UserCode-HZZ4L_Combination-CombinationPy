@@ -177,6 +177,21 @@ systematic CMS_zz4l_gamma False
 ### for hypothesis testing ###
 doHypTest True
 #altHypLabel _ALT
+## spin rates from jhuGen
+spinYield SM 1.05786
+
+## 0- from N_exp
+spinYield n0minus 0.858759
+
+## others from N_norm
+spinYield n0hplus 0.980189
+spinYield n1minus 0.984971
+spinYield n1plus 1.0293
+spinYield ngg2mplus 0.964494
+spinYield nqq2mplus 0.969142
+spinYield n2hplus 0.980854
+spinYield n2hminus 1.00009
+spinYield n2bplus 0.94288
 
 
 
@@ -206,3 +221,18 @@ qqZZshape mekd_qqZZ_a4 TMath::Max(0.6548+(0.1017)*(@0-100)+(-0.002465)*(@0-100)*
  RelErrShape  relerr_zx_ld_sigma 0.00127166 
  RelErrShape  relerr_zx_gs_mean 0.0102596 
  RelErrShape  relerr_zx_gs_sigma 1.17662 
+## spin rates from jhuGen
+spinYield SM 1.05786
+
+## 0- from N_exp
+spinYield n0minus 0.858759
+
+## others from N_norm
+spinYield n0hplus 0.980189
+spinYield n1minus 0.984971
+spinYield n1plus 1.0293
+spinYield ngg2mplus 0.964494
+spinYield nqq2mplus 0.969142
+spinYield n2hplus 0.980854
+spinYield n2hminus 1.00009
+spinYield n2bplus 0.94288
