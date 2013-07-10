@@ -21,8 +21,8 @@ rate qqZZ  3.41919
 rate ggZZ  0.282239
 rate zjets 0.60
 
-usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
+usehighmassreweightedshapes
 signalShape n_CB TMath::Max((-68.5573)+(1.68878*@0)+(-0.0144006*@0*@0)+(5.76535e-05*@0*@0*@0)+(-1.11285e-07*@0*@0*@0*@0)+(8.38162e-11*@0*@0*@0*@0*@0),1)
 signalShape alpha_CB (-1.97072)+(0.0725852*@0)+(-0.000670387*@0*@0)+(2.75605e-06*@0*@0*@0)+(-4.67709e-09*@0*@0*@0*@0)+(2.41684e-12*@0*@0*@0*@0*@0)
 signalShape n2_CB 20
@@ -34,54 +34,54 @@ HighMasssignalShape alpha_CB (490.924)+(-3.40932*@0)+(0.00934933*@0*@0)+(-1.2636
 HighMasssignalShape n2_CB 20
 HighMasssignalShape alpha2_CB (0.320852)+(0.00116058*@0)
 HighMasssignalShape mean_CB (-99.8383)+(0.485366*@0)+(-0.000667099*@0*@0)+(2.41678e-07*@0*@0*@0)
-HighMasssignalShape sigma_CB TMath::Max((477.628)+(-2.99693*@0)+(0.0067043*@0*@0)+(-6.53915e-06*@0*@0*@0)+(3.02364e-09*@0*@0*@0*@0)+(-5.31362e-13*@0*@0*@0*@0*@0),1.);
+HighMasssignalShape sigma_CB TMath::Max((477.628)+(-2.99693*@0)+(0.0067043*@0*@0)+(-6.53915e-06*@0*@0*@0)+(3.02364e-09*@0*@0*@0*@0)+(-5.31362e-13*@0*@0*@0*@0*@0),1.)
 HighMasssignalShape gamma_BW (TMath::Max((-7.17119)+(0.0763212*@0)+(6.92004e-05*@0*@0)+(0.1*@0-46.0)*(@0<450),20))
 
 
 ## signal efficiency ##
-signalEff a1  -4.29003
-signalEff a2  4.74399
-signalEff a3  -128.617
-signalEff a4  193.531
-signalEff b1  0.823913
-signalEff b2  0.000549281
-signalEff b3  2.2743e-07
-signalEff g1  0.0951964
-signalEff g2  166.993
-signalEff g3  43.7798
+signalEff a1  -4.32463
+signalEff a2  4.71021
+signalEff a3  -117.507
+signalEff a4  176.354
+signalEff b1  0.77269
+signalEff b2  0.00164865
+signalEff b3  -9.70397e-07
+signalEff g1  0.0937291
+signalEff g2  167.188
+signalEff g3  43.9812
 
-signalEff qqHa1  -4.42464
-signalEff qqHa2  4.61423
-signalEff qqHa3  -71.3982
-signalEff qqHa4  116.688
-signalEff qqHb1  1.41311
-signalEff qqHb2  0.0043474
-signalEff qqHb3  -2.85474e-06
-signalEff qqHg1  0.05946
-signalEff qqHg2  195.58
-signalEff qqHg3  46.1023
+signalEff qqHa1  -4.42757
+signalEff qqHa2  4.61149
+signalEff qqHa3  -68.8222
+signalEff qqHa4  114.35
+signalEff qqHb1  1.45337
+signalEff qqHb2  0.00449434
+signalEff qqHb3  -2.9539e-06
+signalEff qqHg1  0.0587579
+signalEff qqHg2  197.227
+signalEff qqHg3  45.1256
 
-signalEff ZHa1  -4.45887
-signalEff ZHa2  4.57939
-signalEff ZHa3  -74.3757
-signalEff ZHa4  115.161
-signalEff ZHb1  0.0457701
-signalEff ZHb2  -0.000697458
-signalEff ZHb3  2.37836e-06
-signalEff ZHg1  0.00155416
-signalEff ZHg2  162.808
-signalEff ZHg3  40.0553
+signalEff ZHa1  -4.4555
+signalEff ZHa2  4.58299
+signalEff ZHa3  -60.7265
+signalEff ZHa4  116.973
+signalEff ZHb1  0.00802108
+signalEff ZHb2  -0.000118096
+signalEff ZHb3  4.63702e-07
+signalEff ZHg1  0.000324309
+signalEff ZHg2  160.292
+signalEff ZHg3  46.1131
 
-signalEff WHa1  -4.45647
-signalEff WHa2  4.58181
-signalEff WHa3  -69.1438
-signalEff WHa4  116.283
-signalEff WHb1  0.00685775
-signalEff WHb2  -0.000102493
-signalEff WHb3  3.77643e-07
-signalEff WHg1  0.000375549
-signalEff WHg2  166.545
-signalEff WHg3  43.4603
+signalEff WHa1  -4.45589
+signalEff WHa2  4.5826
+signalEff WHa3  -60.2118
+signalEff WHa4  117.254
+signalEff WHb1  0.00464908
+signalEff WHb2  -6.45209e-05
+signalEff WHb3  2.14401e-07
+signalEff WHg1  0.000395991
+signalEff WHg2  182.725
+signalEff WHg3  49.6151
 
 signalEff ttHa1  -4.44536
 signalEff ttHa2  4.59387
@@ -186,10 +186,10 @@ systematic param QCD_scale_ggH_2j_sys 0.3
 systematic param QCD_scale_qqH_2j_sys 0.1
 
 ## signal efficiency ratios ##
-signalEff tagged_ggH_ratio 0.0373551+(0.000545985*@0)+(-2.54461e-07*@0*@0)
-signalEff tagged_qqH_ratio 0.569021+(-2.31963e-05*@0)+(-6.64142e-08*@0*@0)
-signalEff tagged_ZH_ratio -0.0809105+(0.00260822*@0)
-signalEff tagged_WH_ratio 0.238401+(0.00122841*@0)
+signalEff tagged_ggH_ratio 0.0373552+(0.000545985*@0)+(-2.54461e-07*@0*@0)
+signalEff tagged_qqH_ratio 0.56902+(-2.31959e-05*@0)+(-6.64146e-08*@0*@0)
+signalEff tagged_ZH_ratio 0.36647+(0.000533858*@0)
+signalEff tagged_WH_ratio 0.365325+(0.000611704*@0)
 signalEff tagged_ttH_ratio 0.854044+(0.000565157*@0)
 
 

@@ -78,21 +78,21 @@ def processCmd(cmd):
 def creationLoop(directory):
     global opt, args
     
-#    startMass=[ 400.0, 600.0 ]
-#    stepSizes=[ 20.0, 50.0 ]
-#    endVal=[ 10, 9 ]
+#    startMass=[ 380.0, 400.0, 600.0 ]
+#    stepSizes=[ 10.0,   20.0, 50.0 ]
+#    endVal=[ 1, 10, 9 ]
 
-#    startMass=[ 180.0, 290.0, 350.0, 400.0, 600.0 ]
+#    startMass=[ 200.0, 290.0, 350.0, 400.0, 600.0 ]
 #    stepSizes=[  2.0,   5.0,   10.0,  20.0,  50.0 ]
-#    endVal   =[   55,    12,    4,     10,    9 ]
+#    endVal   =[   45,    12,    4,     10,    9 ]
 
-    startMass=[ 160.0]
-    stepSizes=[ 2.0]
-    endVal=[     2]
+#    startMass=[ 127.0, 130.0, 160.0]
+#    stepSizes=[ 0.5,    1.0,   2.0]
+#    endVal=[     6,      30,    21]
 
-#    startMass=  [ 110.0, 124.5, 126.5, 130.0, 160.0]
-#    stepSizes=  [  0.5,   0.1,   0.5,   1.0,   2.0]
-#    endVal=     [  29,     20,    7,     30,    21]
+    startMass=  [ 110.0, 124.5, 126.5, 130.0, 160.0]
+    stepSizes=  [  0.5,   0.1,   0.5,   1.0,   2.0]
+    endVal=     [  29,     20,    7,     30,    21]
 
 
     myClass = datacardClass()
