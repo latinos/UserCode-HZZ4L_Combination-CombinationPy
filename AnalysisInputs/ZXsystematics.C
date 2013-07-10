@@ -32,8 +32,8 @@ using namespace std;
 //--------------------
 // global variables
 
-TString discriminantName="ZZLD";
-TString inputDir="root://lxcms02//data/Higgs/rootuplesOut/131012/";
+//TString discriminantName="ZZLD";
+TString inputDir="root://lxcms02//data/Higgs/rootuplesOut/130702b/";
 //TString inputDir="root://lxcms02//data/Higgs/rootuplesKD/310812/";
 
 bool useSlopeError=true;
@@ -44,11 +44,14 @@ void setInputDir(TString name){
 
 }
 
-void setDiscrimName(char* name){
+/*void setDiscrimName(char* name){
 
   discriminantName=name;
 
-}
+  }*/
+
+//=======================================================================
+bool test_bit(int mask, unsigned int iBit){return (mask >>iBit) &1; }
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 // function below plots qqZZ, data CR, MC CR shapes, calculates
@@ -66,42 +69,14 @@ pair<double,double> measureSystematics(double mzzLow=130, double mzzHigh=180){
   // ----------
   
   TChain* CRdata = new TChain("SelectedTree");
-  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CREEEEssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CRMMMMssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CREEMMssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CRMMEEssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CREEEEosTree.root");
-  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CRMMMMosTree.root");
-  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CREEMMosTree.root");
+  CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DoubleOr_CRZLLTree.root");
+  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CRZLLTree.root");
 
-  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CREEEEssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CRMMMMssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CREEMMssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CRMMEEssTree.root");
-  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CREEEEosTree.root");
-  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CRMMMMosTree.root");
-  CRdata->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_Double*_CREEMMosTree.root");
-
-  //CRdata->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_Double*_CRMMEEosTree.root");
 
   TChain* CRmc = new TChain("SelectedTree");
-  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEEEssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRMMMMssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEMMssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRMMEEssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEEEosTree.root");
-  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRMMMMosTree.root");
-  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEMMosTree.root");
+  CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRZLLTree.root");
+  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRZLLTree.root");
 
-  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEEEssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRMMMMssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEMMssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRMMEEssTree.root");
-  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEEEosTree.root");
-  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRMMMMosTree.root");
-  CRmc->Add(inputDir+"/PRODFSR/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CREEMMosTree.root");
-
-  //CRmc->Add(inputDir+"/PRODFSR_8TeV/CR/HZZ4lTree_DYJetsToLLTuneZ2*_CRMMEEosTree.root");
 
   TChain* qqZZ = new TChain("SelectedTree");
   qqZZ->Add(inputDir+"/PRODFSR/4mu/HZZ4lTree_ZZTo4mu.root");
@@ -130,18 +105,28 @@ pair<double,double> measureSystematics(double mzzLow=130, double mzzHigh=180){
   // set branches 
   // = = = = = = =
 
-  float mzz, D, w;
+  float mzz, w;
+  float p0plus_VAJHU,bkg_VAMCFM;
+  int CRflag;
 
   CRmc->SetBranchAddress("ZZMass",&mzz);
-  CRmc->SetBranchAddress(discriminantName,&D);
+  //CRmc->SetBranchAddress(discriminantName,&D);
+  CRmc->SetBranchAddress("p0plus_VAJHU",&p0plus_VAJHU);
+  CRmc->SetBranchAddress("bkg_VAMCFM",&bkg_VAMCFM);
   CRmc->SetBranchAddress("MC_weight_noxsec",&w);
+  CRmc->SetBranchAddress("CRflag",&CRflag);
 
   CRdata->SetBranchAddress("ZZMass",&mzz);
-  CRdata->SetBranchAddress(discriminantName,&D);
+  //CRdata->SetBranchAddress(discriminantName,&D);
+  CRdata->SetBranchAddress("p0plus_VAJHU",&p0plus_VAJHU);
+  CRdata->SetBranchAddress("bkg_VAMCFM",&bkg_VAMCFM);
+  CRdata->SetBranchAddress("CRflag",&CRflag);
 
   
   qqZZ->SetBranchAddress("ZZMass",&mzz);
-  qqZZ->SetBranchAddress(discriminantName,&D);
+  //qqZZ->SetBranchAddress(discriminantName,&D);
+  qqZZ->SetBranchAddress("p0plus_VAJHU",&p0plus_VAJHU);
+  qqZZ->SetBranchAddress("bkg_VAMCFM",&bkg_VAMCFM);
   qqZZ->SetBranchAddress("MC_weight_noxsec",&w);
 
   // = = = = = = = = = = = 
@@ -173,7 +158,7 @@ pair<double,double> measureSystematics(double mzzLow=130, double mzzHigh=180){
     qqZZ->GetEntry(iEvt);
 
     if(mzz>mzzLow&&mzz<mzzHigh){
-      h_qqZZ->Fill(D,w);
+      h_qqZZ->Fill(p0plus_VAJHU/(p0plus_VAJHU + bkg_VAMCFM),w);
     }
     
   }
@@ -183,9 +168,11 @@ pair<double,double> measureSystematics(double mzzLow=130, double mzzHigh=180){
     CRmc->GetEntry(iEvt);
 
     if(mzz>mzzLow&&mzz<mzzHigh){
-      h_CRmc->Fill(D,w);
+      if(test_bit(CRflag,5) || test_bit(CRflag,7) || test_bit(CRflag,9) || test_bit(CRflag,11)) 
+	{
+	  h_CRmc->Fill(p0plus_VAJHU/(p0plus_VAJHU + bkg_VAMCFM),w);
+	}
     }
-    
   }
 
   for(int iEvt=0; iEvt<CRdata->GetEntries(); iEvt++){
@@ -193,7 +180,10 @@ pair<double,double> measureSystematics(double mzzLow=130, double mzzHigh=180){
     CRdata->GetEntry(iEvt);
 
     if(mzz>mzzLow&&mzz<mzzHigh){
-      h_CRdata->Fill(D);
+      if(test_bit(CRflag,5) || test_bit(CRflag,7) || test_bit(CRflag,9) || test_bit(CRflag,11)) 
+	{
+	  h_CRdata->Fill(p0plus_VAJHU/(p0plus_VAJHU + bkg_VAMCFM));
+	}
     }
     
   }
@@ -232,8 +222,8 @@ pair<double,double> measureSystematics(double mzzLow=130, double mzzHigh=180){
   TLegend* leg = new TLegend(.5,.6,.90,.90);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(h_CRdata,"Z+X 2P+2F (data)","lp");
-  leg->AddEntry(h_CRmc,"Z+X 2P+2F (Madgraph MC)","l");
+  leg->AddEntry(h_CRdata,"Z+X (data)","lp");
+  leg->AddEntry(h_CRmc,"Z+X (Madgraph MC)","l");
   leg->AddEntry(h_qqZZ,"qqZZ (Powheg MC)","l");
   
   leg->Draw();
@@ -283,22 +273,22 @@ pair<double,double> measureSystematics(double mzzLow=130, double mzzHigh=180){
   
   TString temp;
 
-  //sprintf(temp,"Z+X_data_vs_MC_vs_qqZZ_%i-%i_%s.eps",(int)mzzLow,(int)mzzHigh,discriminantName);
+  //sprintf(temp,"Z+X_data_vs_MC_vs_qqZZ_%i-%i_%s.eps",(int)mzzLow,(int)mzzHigh,"VAKD");
   temp="Z+X_data_vs_MC_vs_qqZZ_";
   temp+=(int)mzzLow;
   temp+="-";
   temp+=(int)mzzHigh;
   temp+="_";
-  temp+=discriminantName;
+  temp+="VAKD";
   temp+=".eps";
   can->SaveAs(temp);
-  //sprintf(temp,"Z+X_data_vs_MC_vs_qqZZ_%i-%i_%s.png",(int)mzzLow,(int)mzzHigh,discriminantName);
+  //sprintf(temp,"Z+X_data_vs_MC_vs_qqZZ_%i-%i_%s.png",(int)mzzLow,(int)mzzHigh,"VAKD");
   temp="Z+X_data_vs_MC_vs_qqZZ_";
   temp+=(int)mzzLow;
   temp+="-";
   temp+=(int)mzzHigh;
   temp+="_";
-  temp+=discriminantName;
+  temp+="VAKD";
   temp+=".png";
   can->SaveAs(temp);
 

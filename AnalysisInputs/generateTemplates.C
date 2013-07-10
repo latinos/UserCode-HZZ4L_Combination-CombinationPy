@@ -100,8 +100,8 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
   //  ==================================================================
 
   // ================ systematics for MELA ==========================
-  double slope_syst[numPtmp]={0.507154,1.13711,0.771557,-1.87945,-3.35464,-1.54489,-1.17508,0.0};
-  double yIntr_syst[numPtmp]={0.712435,0.654165,0.791353,1.45909,2.83655,1.42336,1.1215,1.0};
+  double slope_syst[numPtmp]={1.55836,1.36721,0.846938,-1.72509,-1.821,-1.21998,-1.20542,0.0};
+  double yIntr_syst[numPtmp]={0.406822,0.512352,0.733718,1.40255,1.10837,0.941797,0.91357,1.0};
   //==================================================================
 
   double slope[numPoints], yIntr[numPoints];
@@ -177,6 +177,7 @@ pair<TH2F*,TH2F*> reweightForCRunc(TH2F* temp){
 }
 
 //=======================================================================
+/*
 TH2F* reweightForInterference(TH2F* temp){
 
   cout << "reweightForInterference" << endl;
@@ -223,10 +224,10 @@ TH2F* reweightForInterference(TH2F* temp){
     // for reweighting MELA
     slope=reweightFunc->Eval((double)((i-1)*2+101));
 
-    /* ==============================================
+     ==============================================
     // for reweighting pseudo-MELA
-    slope = reweightFunc->Eval((double)((i-1)*2+101));
-    ============================================== */
+    //slope = reweightFunc->Eval((double)((i-1)*2+101));
+    ============================================== 
 
     for(int j=1; j<=temp->GetNbinsY(); j++){
       
@@ -253,7 +254,7 @@ TH2F* reweightForInterference(TH2F* temp){
   return newTemp;
 
 }
-
+*/
 
 
 void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
@@ -273,7 +274,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
   if(sampleIndex==0){
     //7TeV
     if(useSqrts<2){
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
+      /*bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H124.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H126.root");
@@ -309,60 +310,61 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H900.root");
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H950.root");
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root");
-      }
+	}*/
     }
     if(useSqrts%2==0){
       //8TeV
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H115.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H116.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H117.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H118.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H119.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H120.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H121.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H122.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H123.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H124.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H125.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H126.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H127.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H128.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H129.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H130.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H135.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H140.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H145.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H150.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H160.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H170.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H180.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H190.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H200.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H220.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H250.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H275.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H300.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H115.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H116.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H117.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H118.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H119.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H120.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H121.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H122.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H123.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H124.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H125.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H126.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H127.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H128.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H129.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H130.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H135.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H140.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H145.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H150.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H160.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H170.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H180.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H185.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H190.root");
+      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H200.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H225.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H250.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H275.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H300.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H325.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H350.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H350.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H375.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H400.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H400.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H425.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H450.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H450.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H475.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H500.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H500.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H525.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H550.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H550.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H575.root");
-      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H600.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H600.root");
       if (extendToHighMass) {
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H650.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H700.root");
+	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H650.root");
+	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H700.root");
 	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H750.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H800.root");
+	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H800.root");
 	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H850.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H900.root");
+	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H900.root");
 	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H950.root");
-	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H1000.root");
+	bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H1000.root");
       }
     }
     
@@ -446,10 +448,12 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   
   bkgMC->SetBranchAddress("ZZMass",&mzz);
   bkgMC->SetBranchAddress("MC_weight_noxsec",&w);
+  /*
   if(sampleIndex == 0 && isLowMass && (channel == "4mu" || channel == "4e"))
     {
       bkgMC->SetBranchAddress("LIWeight",&interfw);
     }
+  */
   if (recompute_) {
     bkgMC->SetBranchAddress("Z1Mass",&m1);
     bkgMC->SetBranchAddress("Z2Mass",&m2);
@@ -514,13 +518,14 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
       }
 
       KD = psig/(psig+pbkg);
-      if(sampleIndex == 0 && isLowMass && (channel == "4mu" || channel == "4e")) weight = w*interfw;
-      else weight = w;
+      //if(sampleIndex == 0 && isLowMass && (channel == "4mu" || channel == "4e")) weight = w*interfw;
+      weight = w;
       bkgHist->Fill(mzz,KD,weight);
 
     }
 
   }
+
 
   int nXbins=bkgHist->GetNbinsX();
   int nYbins=bkgHist->GetNbinsY();
@@ -542,6 +547,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
     }
 
   }
+
   
   // average 
 
@@ -583,7 +589,7 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   } // end of horizontal averaging
   
   // smooth
-  
+
   bkgHist->Smooth();
   if(!isLowMass)
     bkgHist->Smooth();
@@ -657,23 +663,24 @@ void makeTemplate(TString channel="4mu"){
   high = fillTemplate(channel,0,false);
   h_mzzD = mergeTemplates(low,high);
 
+
   // ---------- apply interference reweighting --------
   
-  oldTemp = new TH2F(*h_mzzD);
+  /*oldTemp = new TH2F(*h_mzzD);
   oldTemp->SetName("oldTemp");
 
   cout << "correcting for interference and adding syst" << endl;
   if(channel!="2e2mu")
     h_mzzD = reweightForInterference(h_mzzD);  // correct templates for lepton interference
 
-  cout << "h_mzzD: " << h_mzzD << endl;
+    cout << "h_mzzD: " << h_mzzD << endl;*/
 
   // --------------------------------------------------
 
   fsig->cd();
 
   h_mzzD->Write("h_mzzD");
-  oldTemp->Write("oldTemp");
+  //oldTemp->Write("oldTemp");
   h_mzzD->Write("h_mzzD_up");
   h_mzzD->Write("h_mzzD_dn");
   fsig->Close();
@@ -688,20 +695,20 @@ void makeTemplate(TString channel="4mu"){
 
     // ---------- apply interference reweighting --------
   
-    oldTemp = new TH2F(*h_mzzD);
+    /*oldTemp = new TH2F(*h_mzzD);
     oldTemp->SetName("oldTemp");
 
     cout << "correcting for interference and adding syst" << endl;
     if(channel!="2e2mu")
       h_mzzD = reweightForInterference(h_mzzD);  // correct templates for lepton interference
 
-    cout << "h_mzzD: " << h_mzzD << endl;
+      cout << "h_mzzD: " << h_mzzD << endl;*/
 
   // --------------------------------------------------
     
     fAltsig->cd();
     h_mzzD->Write("h_mzzD");
-    oldTemp->Write("oldTemp");
+    //oldTemp->Write("oldTemp");
     histoPair.first->Write("h_mzzD_up");
     histoPair.second->Write("h_mzzD_dn");
     fAltsig->Close();
