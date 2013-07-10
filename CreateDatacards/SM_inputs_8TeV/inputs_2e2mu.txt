@@ -20,7 +20,7 @@ channels all
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  146.224
 rate ggZZ  10.5675
-rate zjets 7.1 
+rate zjets 9.06
 
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
@@ -123,8 +123,22 @@ ggZZshape a7_bkgd  0.16253
 ggZZshape a8_bkgd  50.601
 ggZZshape a9_bkgd  0.0624475
 
-zjetsShape mean 146.4
-zjetsShape sigma 19.6
+zjetsShape mean_3p1f 108.9
+zjetsShape sigma_3p1f 8.7
+zjetsShape norm_3p1f 1.99
+
+zjetsShape mean_2p2f 168.6
+zjetsShape sigma_2p2f 30.0
+zjetsShape norm_2p2f 1.16
+zjetsShape pol0_2p2f 0
+zjetsShape pol1_2p2f 0
+
+zjetsShape mean_2e2mu_2p2f 127.7
+zjetsShape sigma_2e2mu_2p2f 14.61
+zjetsShape norm_2e2mu_2p2f 1.
+
+#zjetsShape mean 146.4
+#zjetsShape sigma 19.6
 
 
 ### channel dependent systematics ###
