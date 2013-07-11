@@ -62,6 +62,7 @@ void californiaSignalShapes(int channel, int sqrts){
   ofsCard << "signalShape alpha2_CB " << string.Data()  << endl;  
   string = getSignalCBMeanString(125.,channel-1,en,1);
   string.ReplaceAll(" ","");
+  string.ReplaceAll("+@0*@1","");
   ofsCard << "signalShape mean_CB "   << string.Data()  << endl;  
   string = getSignalCBSigmaString(125.,channel-1,en) ;
   string.ReplaceAll(" ","");
