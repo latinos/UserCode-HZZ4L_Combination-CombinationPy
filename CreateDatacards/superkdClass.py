@@ -356,9 +356,9 @@ class superkdClass(datacardClass):
 
         self.rrvJHUgen_ggH_ALT = ROOT.RooRealVar("jhuGen_ALT","jhuGen_ALT",1)
         if self.altHypothesis == 'gg0-':
-            self.rrvJHUgen_ggH_ALT.setVal(float(theInputs['jhuGen_0minus_yield']))
+            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0minus_yield']))
         elif self.altHypothesis == 'gg0h+':
-            self.rrvJHUgen_ggH_ALT.setVal(float(theInputs['jhuGen_0hplus_yield']))
+            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0hplus_yield']))
         else:
             self.rrvJHUgen_ggH_ALT.setVal(self.rates['ggH']*self.calcTotalYieldCorr(self.channel,self.altHypothesis))
         
@@ -368,7 +368,7 @@ class superkdClass(datacardClass):
         print '>>>>>> Compare signal rates: STD=',self.rfvSigRate_ggH.getVal(),"   ALT=",self.rfvSigRate_ggH_ALT.getVal()
         print '>>>>>> Compare signal rates: STD=',self.rates['ggH'],"   ALT=",self.sigRate_ggH_ALT_Shape
         self.rates['ggH{0}'.format(self.appendHypType)] = self.sigRate_ggH_ALT_Shape
-        getattr(w,'import')(self.rfvSigRate_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+        getattr(self.w,'import')(self.rfvSigRate_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
                     
         self.w.writeToFile(self.name_ShapeWS)
         

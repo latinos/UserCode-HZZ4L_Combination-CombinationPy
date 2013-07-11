@@ -1163,13 +1163,13 @@ class datacardClass(object):
         
 
         ##set ggH yield to output of jhuGen and correct for vbf+zh+wh+tth
-        rrvJHUgen_SMggH = ROOT.RooRealVar("jhuGen_SM","jhuGen_SM",float(theInputs['jhuGen_SM_yield']))
-        rrv_SMggH_ratio = ROOT.RooRealVar("ggH_ratio","ggH_ratio",(self.rfvSigRate_ggH_temp.getVal()+self.rfvSigRate_VBF.getVal()+self.rfvSigRate_WH.getVal()+self.rfvSigRate_ZH.getVal()+self.rfvSigRate_ttH.getVal())/self.rfvSigRate_ggH_temp.getVal())
+        self.rrvJHUgen_SMggH = ROOT.RooRealVar("jhuGen_SM","jhuGen_SM",float(theInputs['jhuGen_SM_yield']))
+        self.rrv_SMggH_ratio = ROOT.RooRealVar("ggH_ratio","ggH_ratio",(self.rfvSigRate_ggH_temp.getVal()+self.rfvSigRate_VBF.getVal()+self.rfvSigRate_WH.getVal()+self.rfvSigRate_ZH.getVal()+self.rfvSigRate_ttH.getVal())/self.rfvSigRate_ggH_temp.getVal())
         self.rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0",ROOT.RooArgList(self.one))
                 
         if self.all_chan:
             print " >>>>>> Requested to sum up over the 5 chans: the norm in rfvSigRate_ggH should be the sum of the values of sigRate_XYZ_Shape variables:"
-        print ">>>>>> rfvSigRate_ggH_temp = ",rfvSigRate_ggH_temp.getVal()
+        print ">>>>>> rfvSigRate_ggH_temp = ",self.rfvSigRate_ggH_temp.getVal()
         print ">>>>>> Norm Sig = ",self.rrvNormSig.getVal()
         print ">>>>>> rfvSigRate_ggH = ",self.rfvSigRate_ggH.getVal()
         print ">>>>>> sigRate_ggH_Shape = ",sigRate_ggH_Shape
@@ -1218,8 +1218,8 @@ class datacardClass(object):
         if self.isAltSig:
             #            sigRate_ggH_Shape = self.rfvSigRate_ggH.getVal()
             #            print ">>>>>> Forcing sigRate_ggH_Shape = ",self.rfvSigRate_ggH.getVal()
-            if self.altHypothesis == 'gg0-' or self.altHypothesis == 'gg0h+':
-                sigRate_ggH_Shape = rrvJHUgen_SMggH.getVal()*rrv_SMggH_ratio.getVal()
+            if self.inputs['altHypothesis'] == 'gg0-' or self.inputs['altHypothesis'] == 'gg0h+':
+                sigRate_ggH_Shape = self.rrvJHUgen_SMggH.getVal()*self.rrv_SMggH_ratio.getVal()
             else:
                 sigRate_ggH_Shape = self.rfvSigRate_ggH_temp.getVal()+self.rfvSigRate_VBF.getVal()+self.rfvSigRate_WH.getVal()+self.rfvSigRate_ZH.getVal()+self.rfvSigRate_ttH.getVal()
 
