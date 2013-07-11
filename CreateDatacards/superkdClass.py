@@ -352,10 +352,24 @@ class superkdClass(datacardClass):
         ### save signal rates
         getattr(self.w,'import')(self.rfvSigRate_ggH, ROOT.RooFit.RecycleConflictNodes())
         self.rfvSigRate_ggH_ALT = ROOT.RooFormulaVar(self.rfvSigRate_ggH,"ggH{0}_norm".format(self.appendHypType))
-        print '>>>>>> Compare Signal Rates: SM=',self.rfvSigRate_ggH.getVal()," ALT=",self.rfvSigRate_ggH_ALT.getVal()
-        getattr(self.w,'import')(self.rfvSigRate_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+#        print '>>>>>> Compare Signal Rates: SM=',self.rfvSigRate_ggH.getVal()," ALT=",self.rfvSigRate_ggH_ALT.getVal()
+
+        self.rrvJHUgen_ggH_ALT = ROOT.RooRealVar("jhuGen_ALT","jhuGen_ALT",1)
+        if self.altHypothesis == 'gg0-':
+            self.rrvJHUgen_ggH_ALT.setVal(float(theInputs['jhuGen_0minus_yield']))
+        elif self.altHypothesis == 'gg0h+':
+            self.rrvJHUgen_ggH_ALT.setVal(float(theInputs['jhuGen_0hplus_yield']))
+        else:
+            self.rrvJHUgen_ggH_ALT.setVal(self.rates['ggH']*self.calcTotalYieldCorr(self.channel,self.altHypothesis))
         
-        
+                
+        self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+        self.rfvSigRate_ggH_ALT = ROOT.RooFormulaVar("ggH{0}_norm".format(self.appendHypType),"@0",ROOT.RooArgList(self.one))
+        print '>>>>>> Compare signal rates: STD=',self.rfvSigRate_ggH.getVal(),"   ALT=",self.rfvSigRate_ggH_ALT.getVal()
+        print '>>>>>> Compare signal rates: STD=',self.rates['ggH'],"   ALT=",self.sigRate_ggH_ALT_Shape
+        self.rates['ggH{0}'.format(self.appendHypType)] = self.sigRate_ggH_ALT_Shape
+        getattr(w,'import')(self.rfvSigRate_ggH_ALT, ROOT.RooFit.RecycleConflictNodes())
+                    
         self.w.writeToFile(self.name_ShapeWS)
         
                 
@@ -404,7 +418,7 @@ class superkdClass(datacardClass):
         hist.Write()
 
         #ALT
-        theYield = self.calcTotalYieldCorr(self.channel,self.altHypothesis)*self.rates['ggH']
+        theYield = self.rates['ggH{0}'.format(self.appendHypType)]
         hist = self.unfoldedHist(self.sigTemplate_ALT,'ggH{0}'.format(self.appendHypType),theYield)
         hist.Write()
         hist = self.unfoldedHist(self.sigTemplate_ALT_syst1Up,'ggH{0}_CMS_zz4l_smd_leptScale_sig_{1}Up'.format(self.appendHypType,self.channel),theYield)
@@ -596,7 +610,7 @@ class superkdClass(datacardClass):
         for chan in channelList:
             if self.inputs[chan] or self.inputs["all"]:
                 if channelName2D[j].startswith('ggH{0}'.format(self.appendHypType)):
-                    theYield = self.calcTotalYieldCorr(self.channel,self.altHypothesis)*theRates[chan]
+                    theYield = theRates['ggH{0}'.format(self.appendHypType)]
                     file.write("{0:.4f} ".format(theYield))
                 else:
                     file.write("{0:.4f} ".format(theRates[chan]))
@@ -626,9 +640,9 @@ class superkdClass(datacardClass):
         if spinHypCode == 'SM':
             r = 1.0
         elif spinHypCode == 'gg0-':
-            r = corrFactor_0minus[channel-1]
+            r = 1#corrFactor_0minus[channel-1]
         elif spinHypCode == 'gg0h+':
-            r = corrFactor_0hplus[channel-1]
+            r = 1#corrFactor_0hplus[channel-1]
         elif spinHypCode == 'qq1-':
             r = corrFactor_1minus[channel-1]
         elif spinHypCode == 'qq1+':

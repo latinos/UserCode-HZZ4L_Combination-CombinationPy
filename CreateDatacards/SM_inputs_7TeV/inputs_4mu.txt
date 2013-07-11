@@ -22,6 +22,9 @@ rate qqZZ  21.2809
 rate ggZZ  1.3038
 rate zjets 0.8
 
+spinYield n0minus 0.858759
+spinYield n0hplus 0.980189
+
 usehighmassreweightedshapes
 ## signal functions --- no spaces! ##
 signalShape alpha_CB (-16.9313)+(0.451691*@0)+(-0.00425974*@0*@0)+(1.91392e-05*@0*@0*@0)+(-4.09456e-08*@0*@0*@0*@0)+(3.3503e-11*@0*@0*@0*@0*@0)

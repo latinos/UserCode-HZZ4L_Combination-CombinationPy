@@ -392,10 +392,10 @@ class inputReader:
                     if len(f) > 3 : raise RuntimeError, "{0} has a space in the formula!  Please check!".format(f[1])
                     else: self.gamma_BW_shape_HM = f[2]
                     
-            if f[0].lower().startswith("jhugenyield"):
+            if f[0].lower().startswith("spinyield"):
 
-                if f[1].lower().startswith("0minus"): self.jhuGen_0minus_yield = float(f[2])
-                if f[1].lower().startswith("0hplus"): self.jhuGen_0hplus_yield = float(f[2])
+                if f[1].lower().startswith("n0minus"): self.jhuGen_0minus_yield = float(f[2])
+                if f[1].lower().startswith("n0hplus"): self.jhuGen_0hplus_yield = float(f[2])
                 
             if f[0].lower().startswith("signaleff"):
 
