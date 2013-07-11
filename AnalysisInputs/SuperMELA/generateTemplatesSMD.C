@@ -381,34 +381,47 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 
     bool cutPassed= (kdCut>0.0) ? (KD_forSel>kdCut) : true;
     
-    if(mzz>mzzCutLow && mzz<mzzCutHigh){
+    if(mzz>mzzCutLow && mzz<mzzCutHigh)
+      {
 
-      if( psigM4l_ScaleUp == -1 || psigM4l_ScaleDown == -1 || psigM4l_ResUp == -1 || pbkgM4l_ScaleUp == -1 || pbkgM4l_ScaleDown == -1 || pbkgM4l_ResUp == -1 )
-	{
-	  cout << "Fake error... dont fill" << endl;
-	  cout  << "A "+superMelaName+" event was skipped." << endl;
-	  continue;
-	}
-      
-      if ((w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.) && superMelaName == "superLD")
-	{
-	  cout << "TRUE Error" << endl;
-	  continue;
-	}
-
-
-      bkgHist->Fill(sKD,KD,w);
-
-    }//end if cuts passed
-
-  //    if(channel=="4mu"&&sampleIndex==0&&useSqrts==2&&superMelaName=="superLD"){
+	if((psigM4l_ScaleUp == -1 || pbkgM4l_ScaleUp == -1) && superMelaName == "superLD_syst1Up")
+          {
+	    cout << "Fake error... dont fill" << endl;
+	    cout  << "A "+superMelaName+" event was skipped." << endl;
+	    continue;
+          }
+        else if((psigM4l_ScaleDown == -1 || pbkgM4l_ScaleDown == -1) && superMelaName == "superLD_syst1Down")
+          {
+	    cout << "Fake error... dont fill" << endl;
+	    cout  << "A "+superMelaName+" event was skipped." << endl;
+	    continue;
+          }
+	else if((psigM4l_ResUp == -1 || pbkgM4l_ResUp == -1) && superMelaName == "superLD_syst2Up")
+          {
+	    cout << "Fake error... dont fill" << endl;
+	    cout  << "A "+superMelaName+" event was skipped." << endl;
+	    continue;
+          }
+	
+	if ((w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.) && superMelaName == "superLD")
+	  {
+	    cout << "TRUE Error" << endl;
+	    continue;
+	  }
+	
+	
+	bkgHist->Fill(sKD,KD,w);
+	
+      }//end if cuts passed
+    
+    //    if(channel=="4mu"&&sampleIndex==0&&useSqrts==2&&superMelaName=="superLD"){
     // double       sKD_v2=-1.0;
     // cout<<"MZZ="<<mzz<<" pseudoKD="<<KD<<"  SuperMELA="<<sKD<<"  SuperMELA_V2="<<sKD_v2 <<"  PSigm4l="<<psigM4l<<"  PBkgm4l="<<pbkgM4l<<"   PSigVA="<< p0plusVA<<"  PBkgVA="<<pbkgVA <<endl;
     //}
-
+    
     // if(i%5000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-  
-
+    
+    
   }//end loop on entries
 
 

@@ -381,12 +381,24 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	   
 	   if(mzz>mzzCutLow&&mzz<mzzCutHigh){
 
-	     /*if( psigM4l_ScaleUp == -1 || psigM4l_ScaleDown == -1 || psigM4l_ResUp == -1 || pbkgM4l_ScaleUp == -1 || pbkgM4l_ScaleDown == -1 || pbkgM4l_ResUp == -1 )
+	     if((psigM4l_ScaleUp == -1 || pbkgM4l_ScaleUp == -1) && superMelaName == "superLD_syst1Up")
 	       {
 		 cout << "Fake error... dont fill" << endl;
 		 cout  << "A "+superMelaName+" event was skipped." << endl;
 		 continue;
-		 }*/
+	       }
+	     else if((psigM4l_ScaleDown == -1 || pbkgM4l_ScaleDown == -1) && superMelaName == "superLD_syst1Down")
+	       {
+		 cout << "Fake error... dont fill" << endl;
+		 cout  << "A "+superMelaName+" event was skipped." << endl;
+		 continue;
+	       }
+	     else if((psigM4l_ResUp == -1 || pbkgM4l_ResUp == -1) && superMelaName == "superLD_syst2Up")
+	       {
+		 cout << "Fake error... dont fill" << endl;
+		 cout  << "A "+superMelaName+" event was skipped." << endl;
+		 continue;
+	       }
 	     
 	     if ((w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.) && superMelaName == "superLD")
 	       {
