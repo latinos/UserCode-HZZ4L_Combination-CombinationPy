@@ -5,3 +5,13 @@ signalEff tagged_ZH_ratio 0.372743+(0.000282711*@0)
 signalEff tagged_WH_ratio 0.329065+(0.000697216*@0)
 signalEff tagged_ttH_ratio 0.844571+(0.000605533*@0)
 
+signalEff tagged_ggH_ratio 0.0547127+(0.000494155*@0)signalEff tagged_qqH_ratio 0.532936+(-3.65358e-05*@0)+(-5.3811e-08*@0*@0)
+signalEff tagged_ZH_ratio 0.372743+(0.000282711*@0)
+signalEff tagged_WH_ratio 0.329065+(0.000697216*@0)
+signalEff tagged_ttH_ratio 0.844571+(0.000605533*@0)
+
+signalEff tagged_ggH_ratio 0.0547127+(0.000494155*@0)signalEff tagged_qqH_ratio 0.532936+(-3.65358e-05*@0)+(-5.3811e-08*@0*@0)
+signalEff tagged_ZH_ratio 0.372743+(0.000282711*@0)
+signalEff tagged_WH_ratio 0.329065+(0.000697216*@0)
+signalEff tagged_ttH_ratio 0.844571+(0.000605533*@0)
+
