@@ -395,7 +395,7 @@ class inputReader:
                     
             if f[0].lower().startswith("spinyield"):
 
-                if f[1].lower().startswith("SM"): self.jhuGen_SM_yield = float(f[2])
+                if f[1].lower().startswith("sm"): self.jhuGen_SM_yield = float(f[2])
                 if f[1].lower().startswith("n0minus"): self.jhuGen_0minus_yield = float(f[2])
                 if f[1].lower().startswith("n0hplus"): self.jhuGen_0hplus_yield = float(f[2])
                 
