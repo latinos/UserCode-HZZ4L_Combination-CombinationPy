@@ -595,7 +595,7 @@ class datacardClass(object):
             name = "nlZjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             self.nlZjet_2p2f = ROOT.RooRealVar(name,"norm landau Zjet 2p2f",self.val_normL_2P2F)
             name = "p0Zjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-            self.p0Zjet_2p2f = ROOT.RooRealVar(name,"p0 Zjet 2p2f",val_pol0_2P2F)
+            self.p0Zjet_2p2f = ROOT.RooRealVar(name,"p0 Zjet 2p2f",self.val_pol0_2P2F)
             name = "p1Zjet_2p2f_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
             self.p1Zjet_2p2f = ROOT.RooRealVar(name,"p1 Zjet 2p2f",self.val_pol1_2P2F)
             print "mean 2p2f 4e: ",self.mlZjet_2p2f.getVal()
@@ -1022,19 +1022,19 @@ class datacardClass(object):
         listEff_tth.add(rrvg2_tth)
         listEff_tth.add(rrvg3_tth)
         
-        rfvSigEff_ggH = ROOT.RooFormulaVar(sigEffName_ggH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff) #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
-        rfvSigEff_qqH = ROOT.RooFormulaVar(sigEffName_qqH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_qqh)
-        rfvSigEff_ZH = ROOT.RooFormulaVar(sigEffName_ZH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_zh)
-        rfvSigEff_WH = ROOT.RooFormulaVar(sigEffName_WH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_wh)
-        rfvSigEff_ttH = ROOT.RooFormulaVar(sigEffName_ttH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_tth)
+        self.rfvSigEff_ggH = ROOT.RooFormulaVar(sigEffName_ggH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff) #ROOT.RooArgList(rrva1,rrva2,rrva3,rrva4,rrvb1,rrvb2,rrvb3,self.MH,rrvg1,rrvg2,rrvg3))
+        self.rfvSigEff_qqH = ROOT.RooFormulaVar(sigEffName_qqH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_qqh)
+        self.rfvSigEff_ZH = ROOT.RooFormulaVar(sigEffName_ZH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_zh)
+        self.rfvSigEff_WH = ROOT.RooFormulaVar(sigEffName_WH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_wh)
+        self.rfvSigEff_ttH = ROOT.RooFormulaVar(sigEffName_ttH,"(@0+@1*TMath::Erf((@7-@2)/@3))*(@4+@5*@7+@6*@7*@7)+@8*TMath::Gaus(@7,@9,@10)",listEff_tth)
         #from TF1 *polyFunc= new TF1("polyFunc","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
         
         ## following printout is needed ,  dont remove it
-        print " @@@@@@@@ ggHeff ",rfvSigEff_ggH.getVal()
-        print " @@@@@@@@ qqHeff ",rfvSigEff_qqH.getVal()
-        print " @@@@@@@@ ZHeff ",rfvSigEff_ZH.getVal()
-        print " @@@@@@@@ WHeff ",rfvSigEff_WH.getVal()
-        print " @@@@@@@@ ttHeff ",rfvSigEff_ttH.getVal()
+        print " @@@@@@@@ ggHeff ",self.rfvSigEff_ggH.getVal()
+        print " @@@@@@@@ qqHeff ",self.rfvSigEff_qqH.getVal()
+        print " @@@@@@@@ ZHeff ",self.rfvSigEff_ZH.getVal()
+        print " @@@@@@@@ WHeff ",self.rfvSigEff_WH.getVal()
+        print " @@@@@@@@ ttHeff ",self.rfvSigEff_ttH.getVal()
 
 
 #######################
@@ -1059,11 +1059,11 @@ class datacardClass(object):
 #        sigEfficiency = self.rfvSigEff.getVal()
         BRZZ = self.myCSW.HiggsBR(11,self.mH)
     
-        sigEfficiency_ggH = rfvSigEff_ggH.getVal()
-        sigEfficiency_qqH = rfvSigEff_qqH.getVal()
-        sigEfficiency_ZH = rfvSigEff_ZH.getVal()
-        sigEfficiency_WH = rfvSigEff_WH.getVal()
-        sigEfficiency_ttH = rfvSigEff_ttH.getVal()
+        sigEfficiency_ggH = self.rfvSigEff_ggH.getVal()
+        sigEfficiency_qqH = self.rfvSigEff_qqH.getVal()
+        sigEfficiency_ZH = self.rfvSigEff_ZH.getVal()
+        sigEfficiency_WH = self.rfvSigEff_WH.getVal()
+        sigEfficiency_ttH = self.rfvSigEff_ttH.getVal()
 
         if(self.DEBUG):
             print "CS_ggH: ",CS_ggH,", CS_VBF: ",CS_VBF,", CS_WH: ",CS_WH,", CS_ZH: ",CS_ZH
@@ -1216,10 +1216,14 @@ class datacardClass(object):
         self.systematics_forXSxBR.setSystematics(bkgRate_qqzz_Shape,bkgRate_ggzz_Shape,bkgRate_zjets_Shape)
 
         if self.isAltSig:
-#            sigRate_ggH_Shape = self.rfvSigRate_ggH.getVal()
-#            print ">>>>>> Forcing sigRate_ggH_Shape = ",self.rfvSigRate_ggH.getVal()
-            sigRate_ggH_Shape = rrvJHUgen_SMggH.getVal()*rrv_SMggH_ratio.getVal()
-                   
+            #            sigRate_ggH_Shape = self.rfvSigRate_ggH.getVal()
+            #            print ">>>>>> Forcing sigRate_ggH_Shape = ",self.rfvSigRate_ggH.getVal()
+            if self.altHypothesis == 'gg0-' or self.altHypothesis == 'gg0h+':
+                sigRate_ggH_Shape = rrvJHUgen_SMggH.getVal()*rrv_SMggH_ratio.getVal()
+            else:
+                sigRate_ggH_Shape = self.rfvSigRate_ggH_temp.getVal()+self.rfvSigRate_VBF.getVal()+self.rfvSigRate_WH.getVal()+self.rfvSigRate_ZH.getVal()+self.rfvSigRate_ttH.getVal()
+
+
         ## SET RATES TO 1 
         ## DC RATES WILL BE MULTIPLIED
         ## BY RATES IMPORTED TO WS

@@ -117,6 +117,7 @@ class inputReader:
         self.sigeff_ttHg2 = -999.9
         self.sigeff_ttHg3 = -999.9
 
+        self.jhuGen_SM_yield = -999.9
         self.jhuGen_0minus_yield = -999.9
         self.jhuGen_0hplus_yield = -999.9
         # signal efficiency ratios for jet tagging catagoies
@@ -394,6 +395,7 @@ class inputReader:
                     
             if f[0].lower().startswith("spinyield"):
 
+                if f[1].lower().startswith("SM"): self.jhuGen_SM_yield = float(f[2])
                 if f[1].lower().startswith("n0minus"): self.jhuGen_0minus_yield = float(f[2])
                 if f[1].lower().startswith("n0hplus"): self.jhuGen_0hplus_yield = float(f[2])
                 
@@ -715,6 +717,7 @@ class inputReader:
                         
         if not self.goodEntry(self.gamma_BW_shape_HM): raise RuntimeError, "{0} is not set.  Check inputs!".format("gamma_BW_shape_HM")
 
+        if not self.goodEntry(self.jhuGen_SM_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_SM_yield")
         if not self.goodEntry(self.jhuGen_0minus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_0minus_yield")
         if not self.goodEntry(self.jhuGen_0hplus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_0hplus_yield")
         
@@ -906,6 +909,7 @@ class inputReader:
         dict['sigma_CB_shape_HM'] = self.sigma_CB_shape_HM
         dict['gamma_BW_shape_HM'] = self.gamma_BW_shape_HM
 
+        dict['jhuGen_SM_yield'] = float(self.jhuGen_SM_yield)
         dict['jhuGen_0minus_yield'] = float(self.jhuGen_0minus_yield)
         dict['jhuGen_0hplus_yield'] = float(self.jhuGen_0hplus_yield)
                          

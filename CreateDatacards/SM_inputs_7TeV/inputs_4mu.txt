@@ -22,6 +22,7 @@ rate qqZZ  21.2809
 rate ggZZ  1.3038
 rate zjets 0.8
 
+spinYield SM 1.05786
 spinYield n0minus 0.858759
 spinYield n0hplus 0.980189
 
