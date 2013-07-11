@@ -117,8 +117,8 @@ class inputReader:
         self.sigeff_ttHg2 = -999.9
         self.sigeff_ttHg3 = -999.9
 
-        self.jhuGen_0minus_yield
-        self.jhuGen_0hplus_yield
+        self.jhuGen_0minus_yield = -999.9
+        self.jhuGen_0hplus_yield = -999.9
         # signal efficiency ratios for jet tagging catagoies
         self.tagged_ggH_ratio = -999.9
         self.tagged_qqH_ratio = -999.9
