@@ -44,14 +44,14 @@ signalEff WHg1  0.000395991
 signalEff WHg2  182.725
 signalEff WHg3  49.6151
 
-signalEff ttHa1  -4.44536
-signalEff ttHa2  4.59387
-signalEff ttHa3  -36.0857
-signalEff ttHa4  126.561
-signalEff ttHb1  0.0159982
-signalEff ttHb2  -0.00026525
-signalEff ttHb3  1.01786e-06
-signalEff ttHg1  0.000603745
-signalEff ttHg2  164.853
-signalEff ttHg3  24.6877
+signalEff ttHa1  -4.45919
+signalEff ttHa2  4.57908
+signalEff ttHa3  -66.3108
+signalEff ttHa4  115.492
+signalEff ttHb1  0.0109606
+signalEff ttHb2  -0.000168885
+signalEff ttHb3  5.87568e-07
+signalEff ttHg1  0.000460232
+signalEff ttHg2  173.282
+signalEff ttHg3  38.9478
 
