@@ -49,6 +49,10 @@ root -l californiaSignalShapes.C
 Parameters to be used in the config files are in:
 CardFragments/signalFunctions_[sqrts]TeV_[fs].txt
 
+4.1  signal EBE  pdf 
+Run:
+
+root -l -b -q californiaSignalEBE.C
 
 5. 1D BACKGROUND SHAPES
 Run:
@@ -59,6 +63,12 @@ root -q -b backgroundFits_ggzz_1Dw.C
 Output parameters are written in:
 CardFragments//[xx]zzBackgroundFit_[sqrts]TeV_[fs].txt
 Shape plots are saved in the subdirectories bkgFigs7TeV, bkgFigs8TeV.
+
+
+5.1. BACKGROUND EBE SHAPES
+(come from external code)
+Parameters to be used in the config files are in:
+CardFragments/bkgEBE_[sqrts]TeV_[fs].txt
 
 
 6. MERGE CARD FRAGMENTS

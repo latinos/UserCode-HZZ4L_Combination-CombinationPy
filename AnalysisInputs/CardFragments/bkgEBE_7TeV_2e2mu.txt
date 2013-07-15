@@ -1,0 +1,15 @@
+                RelErrShape relerr_qqzz_ld_mean  0.00823452
+                RelErrShape relerr_qqzz_ld_sigma  0.00138625
+                RelErrShape relerr_qqzz_gs_mean  0.0174048
+                RelErrShape relerr_qqzz_gs_sigma  0.00399965
+                RelErrShape relerr_qqzz_ld_frac    0.684484
+                RelErrShape relerr_zx_ld_mean  0.0146437
+                RelErrShape relerr_zx_ld_sigma  0.00399971
+                RelErrShape relerr_zx_gs_mean  0.0180662
+                RelErrShape relerr_zx_gs_sigma  0.00315141
+                RelErrShape relerr_zx_ld_frac    0.98979
+
+
+
+
+

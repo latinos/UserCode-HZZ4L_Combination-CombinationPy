@@ -1,0 +1,6 @@
+## signal ebe functions --- no spaces! ##
+RelErrShape relerr_ggH_ld_mean (0.0124548)+(-0.000108644*@0)+(4.67426e-07*@0*@0)
+RelErrShape relerr_ggH_ld_sigma (0.000411283)+(7.24903e-06*@0)+(-2.73529e-08*@0*@0)
+RelErrShape relerr_ggH_ld_frac (-0.476853)+(0.0181992*@0)+(-6.80532e-05*@0*@0)
+RelErrShape relerr_ggH_gs_mean (0.00796318)+(1.92456e-05*@0)+(-6.55354e-08*@0*@0)
+RelErrShape relerr_ggH_gs_sigma (0.00116677)+(9.97756e-06*@0)+(-2.44366e-08*@0*@0)

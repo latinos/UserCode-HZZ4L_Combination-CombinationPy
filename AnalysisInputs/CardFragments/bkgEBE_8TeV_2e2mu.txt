@@ -1,0 +1,18 @@
+                RelErrShape relerr_qqzz_ld_mean  0.00757665
+                RelErrShape relerr_qqzz_ld_sigma  0.00110567
+                RelErrShape relerr_qqzz_gs_mean  0.015
+                RelErrShape relerr_qqzz_gs_sigma  0.003944
+                RelErrShape relerr_qqzz_ld_frac    0.557666
+                
+                RelErrShape relerr_ggzz_ld_mean  0.00759551
+                RelErrShape relerr_ggzz_ld_sigma  0.00114722
+                RelErrShape relerr_ggzz_gs_mean  0.0148133
+                RelErrShape relerr_ggzz_gs_sigma  0.00387327
+                RelErrShape relerr_ggzz_ld_frac    0.527167
+                
+                RelErrShape relerr_zx_ld_mean  0.012807
+                RelErrShape relerr_zx_ld_sigma  0.00386115
+                RelErrShape relerr_zx_gs_mean  0.0204048
+                RelErrShape relerr_zx_gs_sigma  0.0038269
+                RelErrShape relerr_zx_ld_frac    0.887871
+
