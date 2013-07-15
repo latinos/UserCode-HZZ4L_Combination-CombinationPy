@@ -134,8 +134,12 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   append("CardFragments/signalEfficiency_"+ssqrts+"_"+schannel+"_ratio.txt", outfile);
   append("CardFragments/mekd_" + bkg_untagged, outfile);
   append("CardFragments/mekd_" + bkg_untagged, outfile2);
-  append("CardFragments/relerr_" + bkg_untagged, outfile);
-  append("CardFragments/relerr_" + bkg_untagged, outfile2);
+//  append("CardFragments/relerr_" + bkg_untagged, outfile);
+//  append("CardFragments/relerr_" + bkg_untagged, outfile2);
+  append("CardFragments/bkgEBE_" + bkg_untagged, outfile2);
+  append("CardFragments/signalEBE_" + sig_untagged, outfile2);
+  append("CardFragments/bkgEBE_" + bkg_untagged, outfile);
+  append("CardFragments/signalEBE_" + sig_untagged, outfile);
   append("CardFragments/spinyields_"+sig_untagged,outfile2);
 
   cout << "Wrote " << outfile << endl;
