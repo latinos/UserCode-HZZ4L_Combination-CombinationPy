@@ -185,13 +185,20 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
   // Print table with yields
   (*txtYields) << endl << endl 
-	       << left << setw(10) << "*** Summary: " << sprocess << ", sqrts = " << fixed << setprecision(0) <<sqrts << " TeV ***" << endl << endl;
-  (*txtYields) << left << setw(10) << "sqrts" << setw(13) << "Channel" << setw(16) << "Process" << setw(13) << "mH" 
-	       << setw(13) << "Eff" << setw(13) << "XS*BR" << setw(13) << "Yield" << setw(13) 
-	       << "unt-raw-TOT" << setw(13) << "unt-raw" << setw(13) << "unt-pwgW" 
-	       << setw(13) << "unt-puW" << setw(13) << "unt-datamcW" << setw(13) 
-	       << "tag-raw-TOT" << setw(13) << "tag-raw" << setw(13) << "tag-pwgW" 
-	       << setw(13) << "tag-puW" << setw(13) << "tag-datamcW"
+	       << left << setw(7) << "*** Summary: " << sprocess << " process, sqrts = " << fixed << setprecision(0) <<sqrts << " TeV, channel = " << schannel << " ***" << endl << endl;
+  (*txtYields) << left << setw(7) << "mH" << setw(13) << "XS*BR" << setw(13) 
+	       << "Eff unt" << setw(13) << "Yield unt" << setw(13) << "Eff tag" 
+	       << setw(13) << "Yield tag" << setw(13) << "Eff TOT" << setw(13) << "Yield TOT" 
+	       << setw(13) << "Eff unt" << setw(13) << "Yield unt" << setw(13) << "Eff tag" 
+	       << setw(13) << "Yield tag" << setw(13) << "Eff TOT" << setw(13) << "Yield TOT" 
+	       << setw(13) << "n. raw" << setw(13) << "n. W pwg" << setw(13) << "n. W PU" 
+	       << setw(13) << "n. W eff" << setw(13) 
+	       << endl << left << setw(7) << " " << setw(13) << " " << setw(13)
+	       << "(in MW)" << setw(13) << "(in MW)" << setw(13) << "(in MW)" 
+	       << setw(13) << "(in MW)" << setw(13) << "(in MW)" << setw(13) << "(in MW)" 
+	       << setw(13) << "(full)" << setw(13) << "(full)" << setw(13) << "(full)" 
+	       << setw(13) << "(full)" << setw(13) << "(full)" << setw(13) << "(full)" 
+	       << setw(13) << "(full U+T)" << setw(13) << "(full U+T)" << setw(13) << "(full U+T)" << setw(13) << "(full U+T)" 
 	       << endl << endl;
 
   cout << "process = " << sprocess << " schannel = " << schannel << "  sqrts = " << sqrts << " JES = " << JES <<endl;
@@ -211,8 +218,8 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     ofrat.open(ratiooutfile,ios_base::out | ios_base::app);
   }
 
-  ftot = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes + ".root","RECREATE");
-  fratio = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes + "_ratio.root","RECREATE");
+  ftot = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes + (useNewGGHPowheg ? ".root" : "_oldPwg.root"),"RECREATE");
+  fratio = new TFile("sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + sjes + (useNewGGHPowheg ? "_ratio.root" : "_ratio_oldPwg.root"),"RECREATE");
 
   gSystem->AddIncludePath("-I$ROOFITSYS/include");
   setTDRStyle(false);
@@ -392,7 +399,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     //     fW_str += (long)masses[i];
     //     fW_str += (TString)".root";
     //     cout << fW_str << endl;
-    //     if (process==1) {
+    //     if (process==ggH) {
     //       fW = TFile::Open(fW_str,"READ");
     //       h_HPtWeight = (TH1D*)fW->Get("h_weight");
     //     }
@@ -417,7 +424,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
       }      
 
 //       double HPtWeight = 1.;
-//       if (process==1) HPtWeight = h_HPtWeight->GetBinContent(h_HPtWeight->FindBin(GenHPt));
+//       if (process==ggH) HPtWeight = h_HPtWeight->GetBinContent(h_HPtWeight->FindBin(GenHPt));
 //       //cout << "Higgs pT weight = " << HPtWeight << endl;
 //       effw*=HPtWeight;
       
@@ -446,7 +453,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     // except for the 124,125,126 new samples. As this factor is accounted for in the x-section, we have to 
     // apply it here
     float m = masses[i];
-    if (process==1 && sqrts==7 && m>=123.9 &&  m<=126.1) {
+    if (process==ggH && sqrts==7 && m>=123.9 &&  m<=126.1) {
       float mllCorr = 0.5 + 0.5*erf((m-80.85)/50.42);
       untagAll->totalCtr = untagAll->totalCtr/mllCorr;
       untagAll->eff_noweight=untagAll->eff_noweight/mllCorr;
@@ -489,14 +496,14 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
     // All events
     totefficiencyVal[i] = untagAll->totalCtr + dijetAll->totalCtr;
-    cout << sprocess << " " << m << " " << totefficiencyVal[i]<<endl;
+    cout << "All events: " << sprocess << " " << m << " " << totefficiencyVal[i]<<endl;
     totefficiencyErr[i] = sqrt(untagAll->sumw2 + dijetAll->sumw2);
     dijetratioVal[i]=dijetAll->totalCtr/totefficiencyVal[i];
     dijetratioErr[i]=sqrt(pow(untagAll->totalCtr,2)*dijetAll->sumw2 + pow(dijetAll->totalCtr,2)*untagAll->sumw2)/pow(totefficiencyVal[i],2); // FIXME: misses 1 term 
 
     // Events inside the mass window
     totefficiencyValInMW[i] = untagInMW->totalCtr + dijetInMW->totalCtr;
-    cout << sprocess << " " << m << " " << totefficiencyValInMW[i]<<endl;
+    cout << "Events in mass window: " << sprocess << " " << m << " " << totefficiencyValInMW[i]<<endl;
     totefficiencyErrInMW[i] = sqrt(untagInMW->sumw2 + dijetInMW->sumw2);
     dijetratioValInMW[i]=dijetInMW->totalCtr/totefficiencyValInMW[i];
     dijetratioErrInMW[i]=sqrt(pow(untagInMW->totalCtr,2)*dijetInMW->sumw2 + pow(dijetInMW->totalCtr,2)*untagInMW->sumw2)/pow(totefficiencyValInMW[i],2);
@@ -505,31 +512,25 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     // Write yields to output file
     double lumi = -1.;
     sqrts == 7 ? lumi = lumi7TeV*1000 : lumi = lumi8TeV*1000;
-    double yield = xsTimesBR*lumi*totefficiencyVal[i];
+    double yieldTot = xsTimesBR*lumi*totefficiencyVal[i];
+    double yieldTag = xsTimesBR*lumi*dijetratioVal[i]*totefficiencyVal[i];
+    double yieldUnt = xsTimesBR*lumi*untagAll->totalCtr;
+    double yieldTotInMW = xsTimesBR*lumi*totefficiencyValInMW[i];
+    double yieldTagInMW = xsTimesBR*lumi*dijetratioValInMW[i]*totefficiencyValInMW[i];
+    double yieldUntInMW = xsTimesBR*lumi*untagInMW->totalCtr;
+
     
-    (*txtYields) << left << setw(10) << "*** ALL EVENTS" << endl;
-    (*txtYields) << left << setw(10) << fixed << setprecision(0) << sqrts << setw(13) << schannel << setw(16) << sprocess << setw(13) << masses[i] 
-		 << setw(13) << fixed << setprecision(4) << totefficiencyVal[i] << setw(13) << fixed << setprecision(5) 
-		 << xsTimesBR << setw(13) << fixed << setprecision(5) << yield << setw(13) 
-		 << fixed << setprecision(0) << setw(13) << untagAll->numEventsRaw << setw(13) 
-		 << fixed << setprecision(2) << untagAll->numEventsPowheg << setw(13) << untagAll->numEventsPU << setw(13) 
-		 << untagAll->numEventsDataMC << setw(13) 
-		 << fixed << setprecision(0) << setw(13) << dijetAll->numEventsRaw << setw(13) 
-		 << fixed << setprecision(2) << dijetAll->numEventsPowheg << setw(13) << dijetAll->numEventsPU << setw(13) 
-		 << dijetAll->numEventsDataMC << setw(13) 
+    (*txtYields) << left << setw(7) << fixed << setprecision(0) << masses[i] << setw(13) << fixed << setprecision(7) << xsTimesBR 
+		 << setw(13) << fixed << setprecision(3) << untagInMW->totalCtr << setw(13) << yieldUntInMW << setw(13) << dijetratioValInMW[i]*totefficiencyValInMW[i] 
+		 << setw(13) << yieldTagInMW << setw(13) << totefficiencyValInMW[i] << setw(13) << yieldTotInMW 
+		 << setw(13) << fixed << setprecision(3) << untagAll->totalCtr << setw(13) << yieldUnt << setw(13) << dijetratioVal[i]*totefficiencyVal[i] 
+		 << setw(13) << yieldTag << setw(13) << totefficiencyVal[i] << setw(13) << yieldTot 
+		 << setw(13) << fixed << setprecision(0) << untagAll->numEventsRaw + dijetAll->numEventsRaw
+		 << setw(13) << fixed << setprecision(2) << untagAll->numEventsRaw + dijetAll->numEventsPowheg
+		 << setw(13) << untagAll->numEventsPU + dijetAll->numEventsPU
+		 << setw(13) << untagAll->numEventsDataMC + dijetAll->numEventsDataMC
 		 << endl;
-    (*txtYields) << left << setw(10) << "*** EVENTS IN MASS WINDOW" << endl;
-    (*txtYields) << left << setw(10) << fixed << setprecision(0) << sqrts << setw(13) << schannel << setw(16) << sprocess << setw(13) << masses[i] 
-		 << setw(13) << fixed << setprecision(4) << totefficiencyValInMW[i] << setw(13) << fixed << setprecision(5) 
-		 << xsTimesBR << setw(13) << fixed << setprecision(5) << yield << setw(13) 
-		 << fixed << setprecision(0) << setw(13) << untagInMW->numEventsRaw << setw(13) 
-		 << fixed << setprecision(2) << untagInMW->numEventsPowheg << setw(13) << untagInMW->numEventsPU << setw(13) 
-		 << untagInMW->numEventsDataMC << setw(13) 
-		 << fixed << setprecision(0) << setw(13) << dijetInMW->numEventsRaw << setw(13) 
-		 << fixed << setprecision(2) << dijetInMW->numEventsPowheg << setw(13) << dijetInMW->numEventsPU << setw(13) 
-		 << dijetInMW->numEventsDataMC << setw(13) 
-		 << endl;
-    
+     
   
     f->Close();
   }  
@@ -573,6 +574,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   ctot->SetGrid();
 
   TString outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes;
+  if (!useNewGGHPowheg) outname+="_oldPwg";
 
   totgrEff->Fit(polyFunctot,"Rt"); 
   TString xaxisText = "m_{" + schannel + "}";
@@ -581,17 +583,17 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   totgrEff->GetYaxis()->SetTitle(yaxisText);
   totgrEff->SetMinimum(0.0);
   totgrEff->SetMaximum(1.0);
-  if (process>=3 && process!=6 && process!=7) totgrEff->SetMaximum(0.0035);
+  if (process>=3) totgrEff->SetMaximum(0.0035);
   totgrEff->Draw("AP");
-  if (process!=6) polyFunctot->Draw("sames");
+  polyFunctot->Draw("sames");
   ctot->Print(outname+".eps");
   //ctot->Print(outname+".png"); // Does not work in batch?
   ctot->Print(outname+".pdf"); 
+  //ctot->Print(outname+".root"); 
   ftot->cd();
   totgrEff->Write("TotalEfficiency");
   ftot->Close();
 
-  if (process!=6){
   cout << endl;
   cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << endl;
   cout << "   a1 = " << polyFunctot->GetParameter(0) << endl;
@@ -609,10 +611,10 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
   // Create card fragments using new powheg samples
   string oftotprocess;
-  if (process==1 || process==7) oftotprocess="";
-  if (process!=1 && process!=7) oftotprocess=sprocess;
+  if (process==ggH) oftotprocess="";
+  else oftotprocess=sprocess;
 
-  if (process==1 || process==7) {
+  if (process==ggH) {
     oftot << endl;
     oftot << "## signal efficiency ##" << endl;
   }
@@ -627,7 +629,6 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   oftot << "signalEff " << oftotprocess << "g2  " << polyFunctot->GetParameter(8) << endl;
   oftot << "signalEff " << oftotprocess << "g3  " << polyFunctot->GetParameter(9) << endl;
   oftot << endl;
-  }
   oftot.close();
 
   
@@ -636,12 +637,13 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   crat->SetGrid();
 
   outname = "sigFigs" + ssqrts +"/eff_" + sprocess + "_" + schannel + "_" + sjes + "_ratio";
+  if (!useNewGGHPowheg) outname+="_oldPwg";
 
   TF1 *ratiofit=0;
-  if (process==1 || process==2 || process==7) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
-  if (process==3 || process==4 || process==5 ) ratiofit = new TF1("ratiofit","([0]+[1]*x)",110.,xMax);
+  if (process==ggH || process==qqH) ratiofit = new TF1("ratiofit","([0]+[1]*x+[2]*x*x)",110.,xMax);
+  if (process==ZH || process==WH || process==ttH ) ratiofit = new TF1("ratiofit","([0]+[1]*x)",110.,xMax);
 
-  if (process!=6) ratgrEff->Fit(ratiofit,"Rt");
+  ratgrEff->Fit(ratiofit,"Rt");
   ratgrEff->GetXaxis()->SetTitle(xaxisText);
   TString yaxisratio = "Dijet ratio, " + sprocess + ", " + schannel;
   ratgrEff->GetYaxis()->SetTitle(yaxisratio);
@@ -649,38 +651,35 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   ratgrEff->SetMaximum(1.0);
   ratgrEff->Draw("AP");
   crat->Print(outname+".eps");
-  crat->Print(outname+".png"); // Does not work in batch?
+  //crat->Print(outname+".png"); // Does not work in batch?
   crat->Print(outname+".pdf");
+  //crat->Print(outname+".root");
   fratio->cd();
   ratgrEff->Write("Ratio");
   fratio->Close();
   
-  if (process!=6){
   cout << endl;
   cout << "------- Parameters for " << sprocess << " " << schannel << " sqrts=" << sqrts << endl;
   cout << "   a1 = " << ratiofit->GetParameter(0) << endl;
   cout << "   a2 = " << ratiofit->GetParameter(1) << endl;
-  if (process==1 || process==7 || process==2) cout << "   a3 = " << ratiofit->GetParameter(2) << endl;
+  if (process==ggH || process==qqH) cout << "   a3 = " << ratiofit->GetParameter(2) << endl;
   cout << "---------------------------" << endl << endl;
 
-  if (process==1 || process==7) ofrat << "## signal efficiency ratios ##" << endl;
-  ofrat << "signalEff tagged_" << (process==7?"ggH":sprocess) << "_ratio " << ratiofit->GetParameter(0) << "+(" << ratiofit->GetParameter(1) << "*@0)";
-  if (process==1 || process==7 || process==2) ofrat << "+(" << ratiofit->GetParameter(2) << "*@0*@0)" << endl;
-  else if (process==3 || process==4 ) ofrat << endl;
-  else if (process==5) ofrat << endl << endl;
-  }
+  if (process==ggH) ofrat << "## signal efficiency ratios ##" << endl;
+  ofrat << "signalEff tagged_" << sprocess << "_ratio " << ratiofit->GetParameter(0) << "+(" << ratiofit->GetParameter(1) << "*@0)";
+  if (process==ggH || process==qqH) ofrat << "+(" << ratiofit->GetParameter(2) << "*@0*@0)" << endl;
+  else if (process==ZH || process==WH ) ofrat << endl;
+  else if (process==ttH) ofrat << endl << endl;
   ofrat.close();
 
   // deviations
   cout << "Deviations..." << endl;
   double maxResidual=0;
-  if (process!=6){
   for (int i = 0; i < nPoints; i++){
     double eval = polyFunctot->Eval(masses[i]);
     double residual = (eval - totefficiencyVal[i]);
     maxResidual = max(maxResidual,fabs(residual));
     if (verbose)    cout << "For mass, " << masses[i] << ": measured value is " << totefficiencyVal[i] << " and difference from function is " << residual <<endl;
-  }
   }
   cout << "Largest residual= " << maxResidual << endl;
 }
