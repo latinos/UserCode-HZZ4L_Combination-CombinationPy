@@ -14,7 +14,7 @@ cvs co -r V03-01-00 HiggsAnalysis/CombinedLimit
 cvs co -r V00-03-01 -d Higgs/Higgs_CS_and_Width UserCode/Snowball/Higgs/Higgs_CS_and_Width 
 
 To run californiaSignalShapes.C you need to download the shapes. In CreateDataCards/CMSSW_6_1_1/src
-cvs co -d WWAnalysis/TreeModifiers/macro UserCode/Mangano/WWAnalysis/TreeModifiers/macro/SignalInterpolationStrings.h
+cvs co -r 1.38 -d WWAnalysis/TreeModifiers/macro UserCode/Mangano/WWAnalysis/TreeModifiers/macro/SignalInterpolationStrings.h
 
 
 1. SIGNAL EFFICIENCIES
