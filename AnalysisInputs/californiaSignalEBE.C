@@ -3,7 +3,7 @@
  * usage: 
  * -set all input variables in Config.h
  * -run with:
- * root -q -b californiaSignalShapes.C
+ * root -q -b californiaSignalEBE.C
  * This runs on the 3 final states for 7 and 8 TeV and writes the output in a file (see stdout).
  * Use other scripts (compareSignalFits.C, signalFits.C) or ask experts to check for the shapes
  */
