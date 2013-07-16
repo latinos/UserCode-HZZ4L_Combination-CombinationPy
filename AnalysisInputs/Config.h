@@ -109,10 +109,9 @@ const int nVHPoints8TeV = 11;
 int VHmasses8TeV[nVHPoints8TeV]   = {110,115,120,125,126,130,140,150,160,180,200};
 double mHVHVal8TeV[nVHPoints8TeV] = {110,115,120,125,126,130,140,150,160,180,200};
 
-//FIXME values to be recomputed
-double filter_eff_WH_8TeV = 0.0105;
-double filter_eff_ZH_8TeV = 0.028;
-double filter_eff_ttH_8TeV = 0.0296;
+//Values from Roberto, for sum of 7+8 TeV
+double filter_eff_WH_8TeV  = 0.010275; // (47888+98897)/(4761904+9523809)
+double filter_eff_ZH_8TeV  = 0.028616; // (51246+58135)/(1785714+2036645)
+double filter_eff_ttH_8TeV = 0.029688;   // (30306+49210)/(1013513+1664865)
 
 //--------------------
-
