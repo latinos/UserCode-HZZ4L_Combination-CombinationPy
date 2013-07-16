@@ -3,7 +3,7 @@
  * usage: 
  * -set all input variables in Config.h
  * -run with:
- * root -q -b californiaSignalShapes.C
+ * root -q -b californiaSignalShapesMassWidth.C
  * This runs on the 3 final states for 7 and 8 TeV and writes the output in a file (see stdout).
  * Use other scripts (compareSignalFits.C, signalFits.C) or ask experts to check for the shapes
  */
@@ -51,13 +51,13 @@ void californiaSignalShapes(int channel, int sqrts){
   string.ReplaceAll(" ","");
   string.ReplaceAll("+@0*@1","");
   ofsCard << "signalShape n_CB "      << string.Data()<< endl;	 
-  string = getSignalACBAlphaLString(channel-1,en);
+  string = getSignalACBAlphaLString(channel-1,en,false);
   string.ReplaceAll(" ","");
   ofsCard << "signalShape alpha_CB "  << string.Data()   << endl; 
   string = TString(getSignalCBNRValueInt(channel-1,en)   ) ;
   string.ReplaceAll(" ","");
   ofsCard << "signalShape n2_CB "     << string.Data()   << endl;	     
-  string = getSignalACBAlphaRString(channel-1,en);
+  string = getSignalACBAlphaRString(channel-1,en, false);
   string.ReplaceAll(" ","");
   ofsCard << "signalShape alpha2_CB " << string.Data()  << endl;  
   string = getSignalACBMeanString(channel-1,en,1);
@@ -73,13 +73,13 @@ void californiaSignalShapes(int channel, int sqrts){
   string.ReplaceAll(" ","");
   string.ReplaceAll("+@0*@1","");
   ofsCard << "HighMasssignalShape n_CB "      << string.Data() << endl;	     
-  string = getSignalCBAlphaLString(500.,channel-1,en);
+  string = getSignalCBAlphaLString(500.,channel-1,en,false);
   string.ReplaceAll(" ","");
   ofsCard << "HighMasssignalShape alpha_CB "  << string.Data()  << endl; 
   string = getSignalCBNRString(500.,channel-1,en)    ;
   string.ReplaceAll(" ","");
   ofsCard << "HighMasssignalShape n2_CB "     << string.Data()  << endl;
-  string = getSignalCBAlphaRString(500.,channel-1,en);
+  string = getSignalCBAlphaRString(500.,channel-1,en,false);
   string.ReplaceAll(" ","");
   ofsCard << "HighMasssignalShape alpha2_CB " << string.Data()  << endl;  
   string = getSignalCBMeanString(500.,channel-1,en,1);
