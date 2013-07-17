@@ -23,6 +23,7 @@ using namespace std;
 void mergeFragments(int channel, int sqrts, double lumi, bool dijettag = false);
 void append(TString file, TString outfile);
 
+bool forMass=false; // Create cards for mass/width measurements; otherwise, standard cards for p-vals, limits, muV/muF
 
 // Run all fs/sqrts in one go
 void mergeFragments() {
@@ -114,8 +115,14 @@ void mergeFragments(int channel, int sqrts, double lumi, bool dijettag) {
   append("CardFragments/ZZRates_" + bkg_untagged, outfile2);
   append("CardFragments/zjetRate_" + bkg_tagged, outfile);
   append("CardFragments/zjetRate_" + bkg_untagged, outfile2);
-  append("CardFragments/signalFunctions_" + sig_untagged, outfile);
-  append("CardFragments/signalFunctions_" + sig_untagged, outfile2);
+  if (forMass) {
+    append("CardFragments/signalFunctionsMW_" + sig_untagged, outfile);
+    append("CardFragments/signalFunctionsMW_" + sig_untagged, outfile2);
+  } else {
+    append("CardFragments/signalFunctions_" + sig_untagged, outfile);
+    append("CardFragments/signalFunctions_" + sig_untagged, outfile2);
+  }
+  
   append("CardFragments/signalEfficiency_" + sig_untagged, outfile);
   append("CardFragments/signalEfficiency_" + sig_untagged, outfile2);
   //append("CardFragments/signalEfficiency_" + sig_untagged_ratio, outfile);
