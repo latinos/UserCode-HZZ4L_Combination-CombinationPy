@@ -3,11 +3,11 @@
 TYPE=$1
 MASS=$2
 TOOL=$3
-OPTION=$4
+OPTIONS=$4
 
 cd ${LS_SUBCWD}
 
-echo "LSF job running in: " `pwd` with options $TYPE $MASS $OPTION
+echo "LSF job running in: " `pwd` with options $TYPE $MASS $OPTIONS
 
 eval `scram runtime -sh`
 
