@@ -496,7 +496,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
     // All events
     totefficiencyVal[i] = untagAll->totalCtr + dijetAll->totalCtr;
-    cout << "All events: " << sprocess << " " << m << " " << totefficiencyVal[i]<<endl;
+    cout << "All events:            " << sprocess << " " << m << " " << totefficiencyVal[i]<<endl;
     totefficiencyErr[i] = sqrt(untagAll->sumw2 + dijetAll->sumw2);
     dijetratioVal[i]=dijetAll->totalCtr/totefficiencyVal[i];
     dijetratioErr[i]=sqrt(pow(untagAll->totalCtr,2)*dijetAll->sumw2 + pow(dijetAll->totalCtr,2)*untagAll->sumw2)/pow(totefficiencyVal[i],2); // FIXME: misses 1 term 
