@@ -50,10 +50,18 @@ CardFragments/zjetShape_[sqrts]TeV_[fs].txt
 4. 1D SIGNAL SHAPES 
 Run:
 
-root -l californiaSignalShapes.C 
+root -q -b californiaSignalShapes.C 
 
 Parameters to be used in the config files are in:
 CardFragments/signalFunctions_[sqrts]TeV_[fs].txt
+
+For mass/width measurement, the shapes are slightly different; use:
+
+root -q -b californiaSignalShapesMassWidth.C
+
+which creates the files
+CardFragments/signalFunctionsMW_[sqrts]TeV_[fs].txt
+
 
 4.1  signal EBE  pdf 
 Run:
@@ -85,6 +93,9 @@ root -q -b mergeFragments.C+
 The full config files are written under 
 ../CreateDatacards/SM_inputs_?TeV_tagged/ 
 
+For mass/width measurement, edit mergeFragments.C and set
+bool forMass=true;
+before running.
 
 
 7. DATA FILES
