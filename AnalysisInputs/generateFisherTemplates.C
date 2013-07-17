@@ -18,6 +18,7 @@
 #include "TF1.h"
 #include "TCanvas.h"
 #include "TString.h"
+#include "TStyle.h"
 
 #include <sstream>
 #include <iostream>
@@ -36,14 +37,10 @@ const TString destDir = "../CreateDatacards/templates2D/";
 int useSqrts=0;                                                   // 0=use 7+8TeV; 1=use 7TeV only, 2 use 8TeV only
 TFile* fggH,*fqqH,*fqqZZ,*fggZZ,*fZX,*fZH,*fWH,*fttH;
 
-const TString filePath7TeVM="SamplesfromMichalis/7TeV/";
-const TString filePath8TeVM="SamplesfromMichalis/8TeV/";
-
 //Global Parameters (not tested if cause issues if altered)
 bool extendToHighMass = true;                                     // Include signal samples above 600 GeV
 float highMzz=(extendToHighMass?1600:800);
 float mBinSize=2.;
-//bool useMichalis = false;                                         // False = use CJLST trees, True = use trees from Michalis (other trees can be assigned in buildChain())
 
 //Function Constructors 
 void templateOptions(bool debug, bool findAlternatives);          // Sets debug mode (only produces unsmoothed plots) and whether alternatives are produced
@@ -58,12 +55,13 @@ void analyticfits(int sampleIndex, int updown);                   // Smoothing p
 TH2F* altshapes(TH2F* originalHist, int channel, int altnum);     // Generates alternative shapes for Fisher, (channel,altnum): (0,1)=ggHAMCNLO, (0,2)=ggHMG, (1,1)=qqHd6t, (2,1)=qqZZMG
 float altscale(float Fisher, int channel, int altnum);            // Find scale for alternative shapes given a Fisher value, channel and altnum same as altshapes()
 TH2F* mirrortemplates(int sampleIndex);                           // Generates mirror alternative shapes for Fisher when no second alternative exists
+bool test_bit(int mask, unsigned int iBit);                       // Used to identify correct CR events
 
 //---------------------------------------------------
 
-void generateFisherTemplates() {
-  //gSystem->Load("/home/ianderso/UserCode/HZZ4L_Combination/CombinationPy/CreateDatacards/CMSSW_5_2_5/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
+bool test_bit( int mask, unsigned int iBit ) { return (mask >> iBit) & 1; }
 
+void generateFisherTemplates() {
   bool debug=false;
   bool findAlternatives=true;
   templateOptions(debug,findAlternatives);
@@ -159,9 +157,32 @@ void buildChain(TChain* bkgMC, int sampleIndex){
       char tmp_finalInPath4mu[200],tmp_finalInPath4e[200],tmp_finalInPath2mu2e[200];
       string finalInPath4mu,finalInPath4e,finalInPath2mu2e;
       if (sampleIndex==0){
-	sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_H%i.root",masses[i]);
-	sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_H%i.root",masses[i]);
-	sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_H%i.root",masses[i]);
+	if(masses[i]<400 || masses[i]==425 || masses[i]==475 || masses[i]==525 || masses[i]==575 || masses[i]==750 || masses[i]==850 || masses[i]==950){
+	  if(i<nPoints7TeV){
+	    sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_H%i.root",masses[i]);
+	    sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_H%i.root",masses[i]);
+	    sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_H%i.root",masses[i]);
+	  } else{
+	    if(masses[i]==115 || masses[i]==122 || masses[i]==124 || masses[i]==125 || masses[i]==130 || masses[i]==135 || masses[i]==140 || masses[i]==145 || masses[i]==160 || masses[i]==170 || masses[i]==180 || masses[i]==185 || masses[i]==190){
+	      sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_powheg15jhuGenV3H%i.root",masses[i]);
+	      sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_powheg15jhuGenV3H%i.root",masses[i]);
+	      sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_powheg15jhuGenV3H%i.root",masses[i]);
+	    }else if(masses[i]==126 || masses[i]==225 || masses[i]==250 || masses[i]==275 || masses[i]==300 || masses[i]==350){
+	      sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_powheg15H%i.root",masses[i]);
+	      sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_powheg15H%i.root",masses[i]);
+	      sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_powheg15H%i.root",masses[i]);
+	    } else{
+	      sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_H%i.root",masses[i]);
+	      sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_H%i.root",masses[i]);
+	      sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_H%i.root",masses[i]);
+	    }
+	  }
+	}
+	if(masses[i]>399 && masses[i]!=425 && masses[i]!=475 && masses[i]!=525 && masses[i]!=575 && masses[i]!=750 && masses[i]!=850 && masses[i]!=950){
+	  sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_powheg15H%i.root",masses[i]);
+	  sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_powheg15H%i.root",masses[i]);
+	  sprintf(tmp_finalInPath2mu2e,"2mu2e/HZZ4lTree_powheg15H%i.root",masses[i]);
+	}
       }else if (sampleIndex==1){
 	sprintf(tmp_finalInPath4mu,"4mu/HZZ4lTree_VBFH%i.root",masses[i]);
 	sprintf(tmp_finalInPath4e,"4e/HZZ4lTree_VBFH%i.root",masses[i]);
@@ -199,7 +220,7 @@ void buildChain(TChain* bkgMC, int sampleIndex){
       bkgMC->Add(finalInPath2mu2e.c_str());
     }
   }
-  else if (sampleIndex==2 || sampleIndex==3){
+  else if (sampleIndex==2){
     if(useSqrts<2){
       bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4mu.root");
       bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ZZTo4e.root");
@@ -241,26 +262,30 @@ void buildChain(TChain* bkgMC, int sampleIndex){
       bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ZZTo2e2tau.root");
     }
   }
-  else if (sampleIndex==4){
+  else if (sampleIndex==3){
     if(useSqrts<2){
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CREEMMosTree.root");
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
-      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ggZZ2l2l.root");
+      bkgMC->Add(filePath7TeV + "4mu/HZZ4lTree_ggZZ4l.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ggZZ2l2l.root");
+      bkgMC->Add(filePath7TeV + "4e/HZZ4lTree_ggZZ4l.root");
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ggZZ2l2l.root");
+      bkgMC->Add(filePath7TeV + "2mu2e/HZZ4lTree_ggZZ4l.root");
     }
     if(useSqrts%2==0){
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleEle_CREEEEosTree.root");
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleEle_CREEEEssTree.root");
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CREEMMosTree.root");
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CREEMMssTree.root");
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEosTree.root");
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CRMMEEssTree.root");
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMosTree.root");
-      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleMu_CRMMMMssTree.root");
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ggZZ2l2l.root");
+      bkgMC->Add(filePath8TeV + "4mu/HZZ4lTree_ggZZ4l.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ggZZ2l2l.root");
+      bkgMC->Add(filePath8TeV + "4e/HZZ4lTree_ggZZ4l.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ggZZ2l2l.root");
+      bkgMC->Add(filePath8TeV + "2mu2e/HZZ4lTree_ggZZ4l.root");
+    }
+  }
+  else if (sampleIndex==4){
+    if(useSqrts<2){
+      bkgMC->Add(filePath7TeV + "CR/HZZ4lTree_DoubleOr_CRZLLTree.root");
+    }
+    if(useSqrts%2==0){
+      bkgMC->Add(filePath8TeV + "CR/HZZ4lTree_DoubleOr_CRZLLTree.root");
     }
   }
   else if (sampleIndex==-2){
@@ -292,17 +317,17 @@ void makeTemplate(int updown, bool debug){
   if (debug) debugname="_unnormalized";
 
   if(updown==0 || updown==1 || updown==-1){
-    fqqH = new TFile(destDir + "qqH_fisher"+jes+debugname+".root","RECREATE");
-    fggH = new TFile(destDir + "ggH_fisher"+jes+debugname+".root","RECREATE");
-    fqqZZ = new TFile(destDir + "qqZZ_fisher"+jes+debugname+".root","RECREATE");
-    fggZZ = new TFile(destDir + "ggZZ_fisher"+jes+debugname+".root","RECREATE");
+    //fqqH = new TFile(destDir + "qqH_fisher"+jes+debugname+".root","RECREATE");
+    //fggH = new TFile(destDir + "ggH_fisher"+jes+debugname+".root","RECREATE");
+    //fqqZZ = new TFile(destDir + "qqZZ_fisher"+jes+debugname+".root","RECREATE");
+    //fggZZ = new TFile(destDir + "ggZZ_fisher"+jes+debugname+".root","RECREATE");
     fZX = new TFile(destDir + "Z+X_fisher"+jes+debugname+".root","RECREATE");
-    fZH = new TFile(destDir + "ZH_fisher"+jes+debugname+".root","RECREATE");
-    fWH = new TFile(destDir + "WH_fisher"+jes+debugname+".root","RECREATE");
+    //fZH = new TFile(destDir + "ZH_fisher"+jes+debugname+".root","RECREATE");
+    //fWH = new TFile(destDir + "WH_fisher"+jes+debugname+".root","RECREATE");
     fttH = new TFile(destDir + "ttH_fisher"+jes+debugname+".root","RECREATE");
   } else{
-    fqqH = new TFile(destDir + "qqH_fisher"+jes+debugname+".root","RECREATE");
-    fggH = new TFile(destDir + "ggH_fisher"+jes+debugname+".root","RECREATE");
+    //fqqH = new TFile(destDir + "qqH_fisher"+jes+debugname+".root","RECREATE");
+    //fggH = new TFile(destDir + "ggH_fisher"+jes+debugname+".root","RECREATE");
     //fqqZZ = new TFile(destDir + "qqZZ_fisher"+jes+debugname+".root","RECREATE");
   }
 
@@ -348,11 +373,11 @@ void makeTemplate(int updown, bool debug){
     low = fillTemplate(2,true,updown);
     high = fillTemplate(2,false,updown);
   }
-  /*if(updown==2){
-    low = fillTemplate(-2,true,0);
-    high = fillTemplate(-2,false,0);
-    }*/
-  //if (updown<3) H_Fisher = mergeTemplates(low,high);
+  //if(updown==2){
+    //low = fillTemplate(-2,true,0);
+    //high = fillTemplate(-2,false,0);
+    //}
+  if (updown<3) H_Fisher = mergeTemplates(low,high);
 
   if (!debug && updown<2) smoothtemplates(H_Fisher,2); //Alter updown to be <3 when 
   //if (!debug && updown==3) H_Fisher = mirrortemplates(2);
@@ -362,7 +387,7 @@ void makeTemplate(int updown, bool debug){
     H_Fisher->Write("H_Fisher");
     fqqZZ->Close();
   }
-
+  
   if (updown!=2 && updown!=3){
     
     // ==========================
@@ -380,8 +405,8 @@ void makeTemplate(int updown, bool debug){
     
     // ==========================
     // Z+X
-    /*
-      if (debug){
+
+    if (debug){
       low = fillTemplate(4,true,updown);
       high = fillTemplate(4,false,updown);
       H_Fisher = mergeTemplates(low,high);
@@ -389,13 +414,14 @@ void makeTemplate(int updown, bool debug){
       fZX->cd();
       H_Fisher = mergeTemplates(low,high);
       fZX->Close();
-      }
-      else{
+    }
+    else{
       analyticfits(4,updown);
-      }
-    */
+    }
+    
     // ==========================
     // ZH
+    
     low = fillTemplate(5,true,updown);
     high = fillTemplate(5,false,updown);
     H_Fisher = mergeTemplates(low,high);
@@ -408,6 +434,7 @@ void makeTemplate(int updown, bool debug){
     
     // ==========================
     // WH
+    
     low = fillTemplate(6,true,updown);
     high = fillTemplate(6,false,updown);
     H_Fisher = mergeTemplates(low,high);
@@ -445,8 +472,6 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
   cout << "Chain for " << sampleIndex << " " << isLowMass << " " << updown << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
-  //bkgMC->Sumw2();
-
   float mass,deta,mJJ,w,Fisher;
   int njets;
   int processID;
@@ -474,7 +499,7 @@ TH2F* fillTemplate(int sampleIndex,bool isLowMass,int updown){
     bkgHist = new TH2F("bkgHisto","bkgHisto",int((180-100)/mBinSize+0.5),100,180,50,0,2);
   }
 
-  bkgHist->Sumw2();
+  //bkgHist->Sumw2();
 
   int percent=0;
 
@@ -509,6 +534,8 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
 
   TH2F* H_Fisher = new TH2F("H_Fisher","H_Fisher",int((highMzz-100.)/mBinSize +0.5),100,highMzz,nYbins,0,2);
 
+  //H_Fisher->Sumw2();
+
   // copy lowmass into H_Fisher
   for(int i=1; i<=lowTemp->GetNbinsX(); ++i){
     for(int j=1; j<=nYbins; ++j){
@@ -529,7 +556,7 @@ TH2F* mergeTemplates(TH2F* lowTemp, TH2F* highTemp){
 //---------------------------------------------------
 
 TH2F* smoothtemplates(TH2F* inputdata, int sampleIndex){
-  if(sampleIndex==0 || sampleIndex==1){
+  if(sampleIndex==0 || sampleIndex==1 || sampleIndex==-1 || sampleIndex==-2 || sampleIndex==-3){
     rebin(inputdata,sampleIndex);
   }
   else if(sampleIndex==2 || sampleIndex==3 || sampleIndex==5 || sampleIndex==6){
@@ -565,7 +592,7 @@ TH2F* rebin(TH2F* rebinnedHist, int usealt){
   TH2F* origHist = new TH2F (*rebinnedHist);
 
   origHist->Sumw2();
-  rebinnedHist->Sumw2();
+  //rebinnedHist->Sumw2();
 
   int effectiveArea=1;
   double average=0,binsUsed=0;
@@ -600,7 +627,7 @@ TH2F* rebin(TH2F* rebinnedHist, int usealt){
   TH2F* Histstg1 = new TH2F (*rebinnedHist);
 
   Histstg1->Sumw2();
-  rebinnedHist->Sumw2();
+  //rebinnedHist->Sumw2();
   
   //Rebin Fisher
   for (int i=1; i<=nXbins; i++){
@@ -624,7 +651,7 @@ TH2F* rebin(TH2F* rebinnedHist, int usealt){
     }
   }
   
-  rebinnedHist->Sumw2();
+  //rebinnedHist->Sumw2();
 
   //Use average of Nearest Neighbors to fill remaining zeroes
   for(int i=1; i<=nXbins;i++){
@@ -647,7 +674,7 @@ TH2F* rebin(TH2F* rebinnedHist, int usealt){
     }
   }
 
-  rebinnedHist->Sumw2();
+  //rebinnedHist->Sumw2();
 
   if (usealt==-1) altshapes(rebinnedHist,0,1);
   if (usealt==-2) altshapes(rebinnedHist,0,2);
@@ -673,56 +700,64 @@ TH2F* rebin_lowstatistics(TH2F* finalhist, int sampleIndex){
   int nXbins=finalhist->GetNbinsX();
   int nYbins=finalhist->GetNbinsY();
 
-  finalhist->Sumw2();
+  //finalhist->Sumw2();
 
   TH2F* origHist = new TH2F (*finalhist);
 
-  origHist->Sumw2();
+  //origHist->Sumw2();
 
   //Project Fisher v m4L to 1D Fisher plots for low, high, and full mass range
-  TH1F* lowProj = (TH1F*) origHist->ProjectionY("low",1,40);
-  TH1F* highProj = (TH1F*) origHist->ProjectionY("high",41,750);
+  TH1F* lowProj = (TH1F*) origHist->ProjectionY("lowProj",1,40);
+  TH1F* highProj = (TH1F*) origHist->ProjectionY("highProj",41,750);
   TH1F* fullProj = (TH1F*) origHist->ProjectionY();
   TH1F* origlowProj = new TH1F (*lowProj);
   TH1F* orighighProj = new TH1F (*highProj);
   TH1F* origfullProj = new TH1F (*fullProj);
   double temp;
 
-  lowProj->Sumw2();
+  /*lowProj->Sumw2();
   highProj->Sumw2();
   fullProj->Sumw2();
   origlowProj->Sumw2();
   orighighProj->Sumw2();
-  origfullProj->Sumw2();
+  origfullProj->Sumw2();*/
 
-  //qqZZ + WH
-  if(sampleIndex==2 || sampleIndex==6){
+  //qqZZ + WH + ZH
+  if(sampleIndex==2 || sampleIndex==5 || sampleIndex==6){
     //Fit tails of low and high projections with exponentials to account for low statistics
     TF1 *tailfunc = new TF1("tailfunc","[0]*exp([1]*(x))",0.2,2.0);
     if (sampleIndex==2){
-      lowProj->Fit(tailfunc,"","",0.2,0.7);
+      lowProj->Fit(tailfunc,"","",0.5,1.1);
+    }
+    else if(sampleIndex==5){
+      lowProj->Fit(tailfunc,"","",0.5,1.3);
     }
     else if(sampleIndex==6){
-      lowProj->Fit(tailfunc,"","",0.2,0.7);
+      lowProj->Fit(tailfunc,"","",0.5,1.3);
     }
     TF1 *tailfunc2 = new TF1("tailfunc2","[0]*exp([1]*(x))",0.2,2.0);
     if (sampleIndex==2){
-      highProj->Fit(tailfunc2,"","",0.3,1.0);
+      highProj->Fit(tailfunc2,"","",0.9,1.6);
+    }
+    else if(sampleIndex==5){
+      highProj->Fit(tailfunc2,"","",0.6,1.3);
     }
     else if(sampleIndex==6){
-      highProj->Fit(tailfunc2,"","",0.3,0.6);
+      highProj->Fit(tailfunc2,"","",0.5,1.1);
     }
+    origlowProj->Draw();
+    tailfunc->Draw("same");
 
     //Adjust projections with fitted exponentials
     for(int i=0;i<=nYbins;i++){
       float binFisher = lowProj->GetBinCenter(i);
-      if ((sampleIndex==2 && binFisher>0.6) || (sampleIndex==6 && binFisher>0.7)){
+      if ((sampleIndex==2 && binFisher>1.0) || (sampleIndex==5 && binFisher>1.1) || (sampleIndex==6 && binFisher>1.3)){
 	lowProj->SetBinContent(i,tailfunc->Eval(binFisher));
       }
     }
     for(int i=0;i<=nYbins;i++){
       float binFisher = highProj->GetBinCenter(i);
-      if ((sampleIndex==2 && binFisher>1.1) || (sampleIndex==6 && binFisher>0.6)){
+      if ((sampleIndex==2 && binFisher>1.4) || (sampleIndex==5 && binFisher>1.3) || (sampleIndex==6 && binFisher>1.1)){
 	highProj->SetBinContent(i,tailfunc2->Eval(binFisher));
       }
     }
@@ -746,6 +781,9 @@ TH2F* rebin_lowstatistics(TH2F* finalhist, int sampleIndex){
     if(sampleIndex==2){
       fqqZZ->cd();
     }
+    else if(sampleIndex==5){
+      fZH->cd();
+    }
     else if(sampleIndex==6){
       fWH->cd();
     }
@@ -755,21 +793,18 @@ TH2F* rebin_lowstatistics(TH2F* finalhist, int sampleIndex){
     highProj->Write("H_highfit");
     
   }
-  //ggZZ + ZH
-  else if(sampleIndex==3 || sampleIndex==5){
+  //ggZZ
+  else if(sampleIndex==3){
     //Fit tail of full projection with exponential to account for low statistics
     TF1 *tailfunc3 = new TF1("tailfunc3","[0]*exp([1]*(x))",0.3,2.0);
     if(sampleIndex==3){
-      fullProj->Fit(tailfunc3,"","",0.5,2.0);
-    }
-    else if(sampleIndex==5){
-      fullProj->Fit(tailfunc3,"","",0.3,2.0);
+      fullProj->Fit(tailfunc3,"","",1.0,2.0);
     }
 
     //Adjust projection with fitted exponential
     for(int i=0;i<=nYbins;i++){
       float binFisher = fullProj->GetBinCenter(i);
-      if ((sampleIndex==3 && binFisher>1.4) || (sampleIndex==5 && binFisher>1.0)){
+      if ((sampleIndex==3 && binFisher>1.7)){
 	fullProj->SetBinContent(i,tailfunc3->Eval(binFisher));
       }
     }
@@ -785,9 +820,6 @@ TH2F* rebin_lowstatistics(TH2F* finalhist, int sampleIndex){
     //Store plots of fits, in case anything goes wrong
     if(sampleIndex==3){
       fggZZ->cd();
-    }
-    else if(sampleIndex==5){
-      fZH->cd();
     }
     origfullProj->Write("H_fullraw");
     fullProj->Write("H_fullfit");
@@ -823,22 +855,27 @@ void analyticfits(int sampleIndex,int updown){
   float deta,mJJ,w,mass,tempFisher;
   int processID;
   int njets;
+  int CRflag;
 
   bkgMC->SetBranchAddress("ZZMass",&mass);
   bkgMC->SetBranchAddress("NJets30",&njets);
   bkgMC->SetBranchAddress("DiJetDEta",&deta);
-  if(updown==0){
+  if(sampleIndex==7 && updown==0){
     bkgMC->SetBranchAddress("DiJetMass",&mJJ);
-  }else if(updown==1){
+  }else if(sampleIndex==7 && updown==1){
     bkgMC->SetBranchAddress("DiJetMassPlus",&mJJ);
-  }else if(updown==-1){
+  }else if(sampleIndex==7 && updown==-1){
     bkgMC->SetBranchAddress("DiJetMassMinus",&mJJ);
   }
   bkgMC->SetBranchAddress("MC_weight",&w);
   bkgMC->SetBranchAddress("genProcessId",&processID);
-  bkgMC->SetBranchAddress("Fisher",&tempFisher);
+  if(sampleIndex==7) bkgMC->SetBranchAddress("Fisher",&tempFisher);
+  if(sampleIndex==4){
+    bkgMC->SetBranchAddress("CRflag",&CRflag);
+    bkgMC->SetBranchAddress("ZZFisher",&tempFisher);
+  }
 
-  RooRealVar Fisher("Fisher","Fisher",0.,2.);
+  RooRealVar Fisher("Fisher","D_{Jet}",0.,2.);
   RooRealVar gm1("gm1","",0.1,0.4);
   RooRealVar gsig1("gsig1","",0.01,2.);
   RooRealVar lm("lm","",0,0.2);
@@ -853,11 +890,13 @@ void analyticfits(int sampleIndex,int updown){
   for(int i=0; i<bkgMC->GetEntries(); i++){
     bkgMC->GetEntry(i);
     if(i%50000==0) cout << "event: " << i << "/" << bkgMC->GetEntries() << endl;
-    if(mass>100 && njets>=2){
-      if(updown!=0) tempFisher = 0.18*fabs(deta) + 0.000192*mJJ;
-      if(tempFisher>=2.) tempFisher=1.98;
-      Fisher=tempFisher;
-      data->add(RooArgSet(Fisher),w);
+    if((sampleIndex==4 && (test_bit(CRflag,5) || test_bit(CRflag,7) || test_bit(CRflag,9) || test_bit(CRflag,11))) || sampleIndex==7){
+      if((sampleIndex==7 && mass>100. && njets>=2) || (sampleIndex==4 && tempFisher!=-99. && mass>100.)){
+	if(updown!=0 && sampleIndex==7) tempFisher = 0.18*fabs(deta) + 0.000192*mJJ;
+	if(tempFisher>=2.) tempFisher=1.98;
+	Fisher=tempFisher;
+	data->add(RooArgSet(Fisher),w);
+      }
     }
   }
 
@@ -885,6 +924,21 @@ void analyticfits(int sampleIndex,int updown){
       finalhist->SetBinContent(j,i,temp);
     }
   }
+
+  //UNCOMMENT TO MAKE PLOTS
+  /*
+  gStyle->SetOptStat(0);
+  gStyle->SetOptTitle(0);
+  gStyle->SetPalette(1);
+  TCanvas* c = new TCanvas("c","c",1300,800);
+  c->cd();
+  finalhist->Draw("COLZ");
+  if(sampleIndex==4 && updown==0) c->SaveAs("Z+X_Fisher_2D.png");
+  if(sampleIndex==7 && updown==0) c->SaveAs("ttH_Fisher_2D.png");
+  Fisherframe->Draw();
+  if(sampleIndex==4 && updown==0) c->SaveAs("Z+X_Fisher_1D.png");
+  if(sampleIndex==7 && updown==0) c->SaveAs("ttH_Fisher_1D.png");
+  */
 
   if (sampleIndex==4){
     fZX->cd();
