@@ -38,7 +38,7 @@ void californiaSignalShapes(int channel, int sqrts){
 
   char tmp_outCardName[200];
   sprintf(tmp_outCardName,"%iTeV_",sqrts);
-  string prependName = "CardFragments/signalFunctions_";
+  string prependName = "CardFragments/signalFunctionsMW_";
   string appendName = ".txt";
   string outCardName =  prependName + tmp_outCardName + schannel + appendName;
   
