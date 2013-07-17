@@ -35,9 +35,15 @@ Output parameters are written in:
 CardFragments/ZZRates_[sqrts]TeV_[fs].txt
 
 3. ZJET RATES AND SHAPES
-(come from external code)
-Parameters to be used in the config files are in:
+Yields number come from the wiki.
+Use the script:
+
+root -q -b zjetRates.cc
+
+that creates the fragments:
 CardFragments/zjetRate_[sqrts]TeV_[fs].txt
+
+Shapes parameters taken from the wiki should be updated by hand here:
 CardFragments/zjetShape_[sqrts]TeV_[fs].txt
 
 
