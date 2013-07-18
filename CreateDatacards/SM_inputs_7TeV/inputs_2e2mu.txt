@@ -27,7 +27,7 @@ signalShape n_CB TMath::Max((33.5773)+(-0.884627*@0)+(0.00992575*@0*@0)+(-5.2472
 signalShape alpha_CB (-38.6983)+(1.05514*@0)+(-0.0107969*@0*@0)+(5.30736e-05*@0*@0*@0)+(-1.25309e-07*@0*@0*@0*@0)+(1.1426e-10*@0*@0*@0*@0*@0)
 signalShape n2_CB 20
 signalShape alpha2_CB (-131.564)+(4.04312*@0)+(-0.0479457*@0*@0)+(0.000275903*@0*@0*@0)+(-7.67618e-07*@0*@0*@0*@0)+(8.25323e-10*@0*@0*@0*@0*@0)
-signalShape mean_CB ((-2.13163)+(0.06424*@0)+(-0.000719368*@0*@0)+(3.6258e-06*@0*@0*@0)+(-8.58607e-09*@0*@0*@0*@0)+(7.73984e-12*@0*@0*@0*@0*@0))+@0*@1
+signalShape mean_CB ((-2.13163)+(0.06424*@0)+(-0.000719368*@0*@0)+(3.6258e-06*@0*@0*@0)+(-8.58607e-09*@0*@0*@0*@0)+(7.73984e-12*@0*@0*@0*@0*@0))
 signalShape sigma_CB ((-37.2709)+(1.04312*@0)+(-0.0109539*@0*@0)+(5.58378e-05*@0*@0*@0)+(-1.36553e-07*@0*@0*@0*@0)+(1.28701e-10*@0*@0*@0*@0*@0))
 HighMasssignalShape n_CB 5.
 HighMasssignalShape alpha_CB (-544.401)+(4.25525*@0)+(-0.0127769*@0*@0)+(1.86394e-05*@0*@0*@0)+(-1.3293e-08*@0*@0*@0*@0)+(3.72304e-12*@0*@0*@0*@0*@0)
@@ -61,38 +61,38 @@ signalEff qqHg1  0.0841953
 signalEff qqHg2  166.156
 signalEff qqHg3  40.2511
 
-signalEff ZHa1  -4.45299
-signalEff ZHa2  4.58547
-signalEff ZHa3  -63.1178
-signalEff ZHa4  120.631
-signalEff ZHb1  0.0654438
-signalEff ZHb2  -0.00106655
-signalEff ZHb3  3.88188e-06
-signalEff ZHg1  0.00336185
-signalEff ZHg2  160.27
-signalEff ZHg3  38.5361
+signalEff ZHa1  -4.45886
+signalEff ZHa2  4.57933
+signalEff ZHa3  -66.5685
+signalEff ZHa4  115.931
+signalEff ZHb1  0.0136003
+signalEff ZHb2  -0.000154164
+signalEff ZHb3  4.73833e-07
+signalEff ZHg1  0.00113939
+signalEff ZHg2  170.51
+signalEff ZHg3  49.6355
 
-signalEff WHa1  -4.45637
-signalEff WHa2  4.58212
-signalEff WHa3  -60.9178
-signalEff WHa4  118.135
-signalEff WHb1  0.0429842
-signalEff WHb2  -0.000620172
-signalEff WHb3  2.02218e-06
-signalEff WHg1  0.00156296
-signalEff WHg2  172.57
-signalEff WHg3  38.6941
+signalEff WHa1  -4.45705
+signalEff WHa2  4.58122
+signalEff WHa3  -71.4275
+signalEff WHa4  113.657
+signalEff WHb1  0.0186694
+signalEff WHb2  -0.000213833
+signalEff WHb3  6.66928e-07
+signalEff WHg1  0.000833988
+signalEff WHg2  178.822
+signalEff WHg3  49.9409
 
-signalEff ttHa1  -4.46076
-signalEff ttHa2  4.57726
-signalEff ttHa3  -86.9457
-signalEff ttHa4  111.73
-signalEff ttHb1  0.0658632
-signalEff ttHb2  -0.000848513
-signalEff ttHb3  2.73414e-06
-signalEff ttHg1  0.00143368
-signalEff ttHg2  165.412
-signalEff ttHg3  39.117
+signalEff ttHa1  -4.45544
+signalEff ttHa2  4.58309
+signalEff ttHa3  -59.2114
+signalEff ttHa4  117.399
+signalEff ttHb1  0.0185723
+signalEff ttHb2  -0.000257952
+signalEff ttHb3  8.46611e-07
+signalEff ttHg1  0.00112913
+signalEff ttHg2  184.704
+signalEff ttHg3  49.1518
 
 ### background functions ###
 qqZZshape a0_bkgd   110.356
@@ -217,22 +217,27 @@ qqZZshape mekd_qqZZ_a3 TMath::Max(5.916+(-0.03402)*(@0-100)+(0.002453)*(@0-100)*
 signalShape mekd_sig_a4 TMath::Max(0.6122+(0.01281)*(@0-100)+(-0.0002555)*(@0-100)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4 TMath::Max(0.3059+(0.1554)*(@0-100)+(-0.003453)*(@0-100)*(@0-100),0)
 
-RelErrShape relerr_zx_ld_mean 0.0291404
-RelErrShape relerr_zx_ld_sigma 0.00440845
-RelErrShape relerr_zx_gs_mean 0.0133473
-RelErrShape relerr_zx_gs_sigma 0.00397736
-RelErrShape relerr_zx_ld_frac 0.546106
- RelErrShape  relerr_qqzz_ld_frac 0.630003 
- RelErrShape  relerr_qqzz_ld_mean 0.0144034+(-2.1102e-05*@0)
- RelErrShape  relerr_qqzz_ld_sigma 0.0198207+(-0.000273488*@0)+(1.01742e-06*@0*@0)
- RelErrShape  relerr_qqzz_gs_mean 0.0315695+(-8.56245e-05*@0)
- RelErrShape  relerr_qqzz_gs_sigma 0.00606524+(-1.64997e-05*@0)
- RelErrShape  relerr_ggH_ld_mean 0.0126009+(-1.22923e-05*@0)
- RelErrShape  relerr_ggH_ld_sigma 0.00496475+(-5.32893e-05*@0)+(1.95969e-07*@0*@0)
- RelErrShape  relerr_ggH_gs_mean 0.02767+(-6.79398e-05*@0)
- RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
- RelErrShape  relerr_ggH_ld_frac 0.63 
+                RelErrShape relerr_qqzz_ld_mean  0.00823452
+                RelErrShape relerr_qqzz_ld_sigma  0.00138625
+                RelErrShape relerr_qqzz_gs_mean  0.0174048
+                RelErrShape relerr_qqzz_gs_sigma  0.00399965
+                RelErrShape relerr_qqzz_ld_frac    0.684484
+                RelErrShape relerr_zx_ld_mean  0.0146437
+                RelErrShape relerr_zx_ld_sigma  0.00399971
+                RelErrShape relerr_zx_gs_mean  0.0180662
+                RelErrShape relerr_zx_gs_sigma  0.00315141
+                RelErrShape relerr_zx_ld_frac    0.98979
 
+
+
+
+
+## signal ebe functions --- no spaces! ##
+RelErrShape relerr_ggH_ld_mean (0.0111438)+(-5.78395e-05*@0)+(2.34842e-07*@0*@0)
+RelErrShape relerr_ggH_ld_sigma (0.00397118)+(-4.64669e-05*@0)+(1.89486e-07*@0*@0)
+RelErrShape relerr_ggH_ld_frac (-0.578563)+(0.0219587*@0)+(-9.1848e-05*@0*@0)
+RelErrShape relerr_ggH_gs_mean (0.0348369)+(-0.000245403*@0)+(7.50982e-07*@0*@0)
+RelErrShape relerr_ggH_gs_sigma (0.0243929)+(-0.000301246*@0)+(1.13415e-06*@0*@0)
 ## spin rates from jhuGen
 spinYield SM 1.5215
 
