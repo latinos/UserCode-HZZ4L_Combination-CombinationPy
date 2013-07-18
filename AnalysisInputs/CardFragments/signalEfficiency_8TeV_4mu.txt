@@ -1,15 +1,15 @@
 
 ## signal efficiency ##
-signalEff a1  -4.41667
-signalEff a2  4.6233
-signalEff a3  -64.0637
-signalEff a4  107.589
-signalEff b1  2.36505
-signalEff b2  0.00283183
-signalEff b3  -1.56585e-06
-signalEff g1  0.033029
-signalEff g2  184.555
-signalEff g3  24.862
+signalEff a1  -4.41766
+signalEff a2  4.62246
+signalEff a3  -61.9739
+signalEff a4  106.16
+signalEff b1  2.3846
+signalEff b2  0.00286153
+signalEff b3  -1.583e-06
+signalEff g1  0.0325151
+signalEff g2  186.988
+signalEff g3  24.1038
 
 signalEff qqHa1  -4.45832
 signalEff qqHa2  4.63056
@@ -22,36 +22,36 @@ signalEff qqHg1  0.0434058
 signalEff qqHg2  195.384
 signalEff qqHg3  22.7562
 
-signalEff ZHa1  -4.45488
-signalEff ZHa2  4.58367
-signalEff ZHa3  -61.0301
-signalEff ZHa4  118.018
-signalEff ZHb1  0.103081
-signalEff ZHb2  -0.00150431
-signalEff ZHb3  4.99997e-06
-signalEff ZHg1  0.00161781
-signalEff ZHg2  164.024
-signalEff ZHg3  26.7179
+signalEff ZHa1  -4.45819
+signalEff ZHa2  4.58007
+signalEff ZHa3  -70.8128
+signalEff ZHa4  115.344
+signalEff ZHb1  0.0557392
+signalEff ZHb2  -0.000768284
+signalEff ZHb3  2.5071e-06
+signalEff ZHg1  0.00101426
+signalEff ZHg2  164.51
+signalEff ZHg3  35.9504
 
-signalEff WHa1  -4.45918
-signalEff WHa2  4.57906
-signalEff WHa3  -66.1648
-signalEff WHa4  120.135
-signalEff WHb1  0.00853862
-signalEff WHb2  -0.000136678
-signalEff WHb3  5.26602e-07
-signalEff WHg1  0.0005236
-signalEff WHg2  160.152
-signalEff WHg3  44.6831
+signalEff WHa1  -4.4205
+signalEff WHa2  4.61259
+signalEff WHa3  -180.396
+signalEff WHa4  208.041
+signalEff WHb1  0.00537538
+signalEff WHb2  -8.89426e-05
+signalEff WHb3  3.52662e-07
+signalEff WHg1  0.000507661
+signalEff WHg2  160.043
+signalEff WHg3  45.4173
 
-signalEff ttHa1  -4.4569
-signalEff ttHa2  4.58125
-signalEff ttHa3  -73.6165
-signalEff ttHa4  117.82
-signalEff ttHb1  0.0143389
-signalEff ttHb2  -0.000201842
-signalEff ttHb3  7.12269e-07
-signalEff ttHg1  0.000472985
-signalEff ttHg2  163.23
-signalEff ttHg3  43.9087
+signalEff ttHa1  -4.45955
+signalEff ttHa2  4.57845
+signalEff ttHa3  -75.9189
+signalEff ttHa4  117.442
+signalEff ttHb1  0.0146928
+signalEff ttHb2  -0.000209491
+signalEff ttHb3  7.54471e-07
+signalEff ttHg1  0.000454032
+signalEff ttHg2  160.011
+signalEff ttHg3  42.1201
 
