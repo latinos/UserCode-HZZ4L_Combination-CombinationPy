@@ -122,7 +122,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
    //bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenPseH126"+suffix);
     }
   }
-  else if(sampleIndex==4){ //this is for another alternative signal samples
+  else if(sampleIndex==4 || sampleIndex==12 ){ //this is for another alternative signal samples
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal (4)"<<endl;
@@ -143,7 +143,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
       bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2ScaHH126"+suffix);
     }
   }
-  else if(sampleIndex==6){ //this is for another alternative signal samples
+  else if(sampleIndex==6 || sampleIndex==15){ //this is for another alternative signal samples
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal (6)"<<endl;
@@ -153,7 +153,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
       bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Vec1PH126"+suffix);
     }
   }
-  else if(sampleIndex==7){ //this is for another alternative signal samples
+  else if(sampleIndex==7 || sampleIndex==14){ //this is for another alternative signal samples
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal (7)"<<endl;
@@ -163,7 +163,7 @@ void buildChainSingleMass(TChain* bkgMC, TString channel, int sampleIndex, int m
       bkgMC->Add(filePath8TeVPS + "/" + chPath +"/HZZ4lTree_jhuGenV2Vec1MH126"+suffix);
     }
   }
-  else if(sampleIndex==8){ //this is for another alternative signal samples
+  else if(sampleIndex==8 || sampleIndex==13){ //this is for another alternative signal samples
 
      if(useSqrts==1){   //7TeV
       cout<<"Readign in 7 TeV for Alt signal (2)"<<endl;
@@ -336,7 +336,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
     if( altSignal >= 12)
       {
 	//create sKD for production independent
-	cout << "Production Independent" << endl;
+	//cout << "Production Independent" << endl;
 	sKD = (p0plusVA*psigM4l)/(p0plusVA*psigM4l + pbkg_ProdIndep_VA*pbkgM4l)  ;
 	sKD_ScaleUp= (p0plusVA*psigM4l_ScaleUp)/(p0plusVA*psigM4l_ScaleUp + pbkg_ProdIndep_VA*pbkgM4l_ScaleUp)  ;
 	sKD_ScaleDown= (p0plusVA*psigM4l_ScaleDown)/(p0plusVA*psigM4l_ScaleDown + pbkg_ProdIndep_VA*pbkgM4l_ScaleDown)  ;
@@ -788,16 +788,16 @@ void makePlot2D( TH2 *h ,TString label ){
   else   if(altSignal==3)sprintf(yAxisTitle,"D_{0^{-} (gg)}");
   else   if(altSignal==4)sprintf(yAxisTitle,"D_{2^{+}_{m}(gg)}");
   else   if(altSignal==5)sprintf(yAxisTitle,"D_{0^{+}_{h}}");
-  else   if(altSignal==6)sprintf(yAxisTitle,"D_{1^{+} (q\bar{q})}");
-  else   if(altSignal==7)sprintf(yAxisTitle,"D_{1^{-} (q\bar{q})}");
-  else   if(altSignal==8)sprintf(yAxisTitle,"D_{2^{+}_{m}(q\bar{q})}");
+  else   if(altSignal==6)sprintf(yAxisTitle,"D_{1^{+} (qq)}");
+  else   if(altSignal==7)sprintf(yAxisTitle,"D_{1^{-} (qq)}");
+  else   if(altSignal==8)sprintf(yAxisTitle,"D_{2^{+}_{m}(qq)}");
   else   if(altSignal==9)sprintf(yAxisTitle,"D_{2^{+}_{h}(gg)}");
   else   if(altSignal==10)sprintf(yAxisTitle,"D_{2^{-}_{h}(gg)}");
   else   if(altSignal==11)sprintf(yAxisTitle,"D_{2^{+}_{b}(gg)}");
   else   if(altSignal==12)sprintf(yAxisTitle,"D_{2^{+}_{m}(gg dec)}");
-  else   if(altSignal==13)sprintf(yAxisTitle,"D_{2^{+}_{m}(q\bar{q} dec)}");
-  else   if(altSignal==14)sprintf(yAxisTitle,"D_{1^{-} (q\bar{q} dec)}");
-  else   if(altSignal==15)sprintf(yAxisTitle,"D_{1^{+} (q\bar{q} dec)}");
+  else   if(altSignal==13)sprintf(yAxisTitle,"D_{2^{+}_{m}(qq dec)}");
+  else   if(altSignal==14)sprintf(yAxisTitle,"D_{1^{-} (qq dec)}");
+  else   if(altSignal==15)sprintf(yAxisTitle,"D_{1^{+} (qq dec)}");
   else sprintf(yAxisTitle,"MYDummyKD");
 
 

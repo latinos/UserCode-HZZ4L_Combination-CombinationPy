@@ -90,9 +90,9 @@ void makePlot2D( TH2 *h ,TString label ){
   else   if(altSignal==10)sprintf(yAxisTitle,"D_{2^{-}_{h}(gg)}");
   else   if(altSignal==11)sprintf(yAxisTitle,"D_{2^{+}_{b}(gg)}");
   else   if(altSignal==12)sprintf(yAxisTitle,"D_{2^{+}_{m}(gg dec)}");
-  else   if(altSignal==13)sprintf(yAxisTitle,"D_{2^{+}_{m}(q\bar{q} dec)}");
-  else   if(altSignal==14)sprintf(yAxisTitle,"D_{1^{-} (q\bar{q} dec)}");
-  else   if(altSignal==15)sprintf(yAxisTitle,"D_{1^{+} (q\bar{q} dec)}");
+  else   if(altSignal==13)sprintf(yAxisTitle,"D_{2^{+}_{m}(qq dec)}");
+  else   if(altSignal==14)sprintf(yAxisTitle,"D_{1^{-} (qq dec)}");
+  else   if(altSignal==15)sprintf(yAxisTitle,"D_{1^{+} (qq dec)}");
   else sprintf(yAxisTitle,"MYDummyKD");
 
   TCanvas *c2D=new TCanvas("c2d",("CANVAS "+label).Data());

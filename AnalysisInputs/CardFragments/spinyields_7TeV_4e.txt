@@ -5,11 +5,11 @@ spinYield SM 0.681158
 spinYield n0minus 0.497589
 
 ## others from N_norm
-spinYield n0hplus 0.636233
-spinYield n1minus 0.607832
-spinYield n1plus 0.617967
-spinYield ngg2mplus 0.589927
-spinYield nqq2mplus 0.582221
-spinYield n2hplus 0.625306
-spinYield n2hminus 0.615231
-spinYield n2bplus 0.592488
+spinYield n0hplus 0.636238
+spinYield n1minus 0.607852
+spinYield n1plus 0.617982
+spinYield ngg2mplus 0.58993
+spinYield nqq2mplus 0.582233
+spinYield n2hplus 0.625311
+spinYield n2hminus 0.615229
+spinYield n2bplus 0.592493
