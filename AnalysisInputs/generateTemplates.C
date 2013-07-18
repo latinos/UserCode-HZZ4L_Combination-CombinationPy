@@ -315,31 +315,24 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
     if(useSqrts%2==0){
       //8TeV
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H115.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H116.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H117.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H118.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H119.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H120.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H121.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H120.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H122.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H123.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H124.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H125.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H126.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H127.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H128.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H129.root");
+//    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H126.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H128.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H130.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H135.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H140.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H145.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H150.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H150.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H160.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H175.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H170.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H180.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H185.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H190.root");
-      //bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_H200.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H200.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H225.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H250.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15H275.root");
@@ -424,7 +417,8 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   cout << "Chain for " << channel << " " << sampleIndex << " " << isLowMass << " " << bkgMC->GetEntries() << endl;
   bkgMC->ls();
 
-  float mzz,KD,KD_cut,w, interfw=0.;
+  float mzz,KD,KD_cut,w;
+  //  float interfw=0.;
   float m1=0, m2=0, costheta1=0, costheta2=0, costhetastar=0, phi=0, phi1=0;
   float pt4l=0, Y4l=0;
   float psig=0, pbkg=0;
@@ -443,7 +437,8 @@ TH2F* fillTemplate(TString channel="4mu", int sampleIndex=0,bool isLowMass=true)
   if (melaName!=melaCutName) {
     bkgMC->SetBranchAddress(melaCutName.Data(),&KD_cut);
   } else {
-    KD_cut=KD;
+    //    KD_cut=KD; //FIXME: This is broken, since KD is not initialized at this point! 
+    KD_cut= 1.;      //       Set it to one, just to fix it to something meaningful (it's unused anyhow)
   }
   
   bkgMC->SetBranchAddress("ZZMass",&mzz);
