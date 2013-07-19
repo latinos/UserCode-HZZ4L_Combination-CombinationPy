@@ -13,7 +13,7 @@ systematic lumiUnc 1.022
 sqrts 7
 
 ## Channels to include in cards ##
-channels all qqZZ ggZZ zjets
+channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
@@ -27,7 +27,7 @@ signalShape n_CB TMath::Max((-69.5367)+(1.68327*@0)+(-0.0140301*@0*@0)+(5.44368e
 signalShape alpha_CB (5.09741)+(-0.0927372*@0)+(0.000775468*@0*@0)+(-3.11759e-06*@0*@0*@0)+(6.42245e-09*@0*@0*@0*@0)+(-5.39568e-12*@0*@0*@0*@0*@0)
 signalShape n2_CB 20
 signalShape alpha2_CB (5.99445)+(-0.0781315*@0)+(0.000261967*@0*@0)+(1.59983e-06*@0*@0*@0)+(-1.08286e-08*@0*@0*@0*@0)+(1.67934e-11*@0*@0*@0*@0*@0)
-signalShape mean_CB ((-6.79743)+(0.205898*@0)+(-0.00234078*@0*@0)+(1.22413e-05*@0*@0*@0)+(-2.98971e-08*@0*@0*@0*@0)+(2.74991e-11*@0*@0*@0*@0*@0))+@0*@1
+signalShape mean_CB ((-6.79743)+(0.205898*@0)+(-0.00234078*@0*@0)+(1.22413e-05*@0*@0*@0)+(-2.98971e-08*@0*@0*@0*@0)+(2.74991e-11*@0*@0*@0*@0*@0))
 signalShape sigma_CB ((7.60884)+(-0.136629*@0)+(0.00109711*@0*@0)+(-3.42615e-06*@0*@0*@0)+(4.2221e-09*@0*@0*@0*@0)+(-1.15089e-12*@0*@0*@0*@0*@0))
 HighMasssignalShape n_CB 5.
 HighMasssignalShape alpha_CB (294.765)+(-2.04895*@0)+(0.0057221*@0*@0)+(-7.9927e-06*@0*@0*@0)+(5.57788e-09*@0*@0*@0*@0)+(-1.55403e-12*@0*@0*@0*@0*@0)
@@ -61,38 +61,38 @@ signalEff qqHg1  0.0999999
 signalEff qqHg2  168.96
 signalEff qqHg3  46.8727
 
-signalEff ZHa1  -4.45672
-signalEff ZHa2  4.58156
-signalEff ZHa3  -68.1223
-signalEff ZHa4  118.761
-signalEff ZHb1  0.00727965
-signalEff ZHb2  -0.000154467
-signalEff ZHb3  6.58346e-07
-signalEff ZHg1  0.0012443
-signalEff ZHg2  160.124
-signalEff ZHg3  45.1102
+signalEff ZHa1  -4.46881
+signalEff ZHa2  4.56556
+signalEff ZHa3  -94.7243
+signalEff ZHa4  132.581
+signalEff ZHb1  0.0236477
+signalEff ZHb2  -0.000328412
+signalEff ZHb3  1.02651e-06
+signalEff ZHg1  0.000750952
+signalEff ZHg2  171.389
+signalEff ZHg3  35.6243
 
-signalEff WHa1  -4.4616
-signalEff WHa2  4.57609
-signalEff WHa3  -88.3558
-signalEff WHa4  116.507
-signalEff WHb1  0.00802999
-signalEff WHb2  -4.09836e-05
-signalEff WHb3  3.40351e-08
-signalEff WHg1  0.000359903
-signalEff WHg2  204.145
-signalEff WHg3  39.2153
+signalEff WHa1  -4.45869
+signalEff WHa2  4.57942
+signalEff WHa3  -74.7242
+signalEff WHa4  115.789
+signalEff WHb1  0.00908997
+signalEff WHb2  -0.000144282
+signalEff WHb3  5.36681e-07
+signalEff WHg1  0.00041455
+signalEff WHg2  160.448
+signalEff WHg3  37.2237
 
-signalEff ttHa1  -4.46016
-signalEff ttHa2  4.57793
-signalEff ttHa3  -83.1426
-signalEff ttHa4  113.59
-signalEff ttHb1  0.0299373
-signalEff ttHb2  -0.000359767
-signalEff ttHb3  1.08336e-06
-signalEff ttHg1  0.00064461
-signalEff ttHg2  178.137
-signalEff ttHg3  43.9464
+signalEff ttHa1  -4.47143
+signalEff ttHa2  4.56607
+signalEff ttHa3  -86.6539
+signalEff ttHa4  110.563
+signalEff ttHb1  0.0163621
+signalEff ttHb2  -0.000207404
+signalEff ttHb3  6.09906e-07
+signalEff ttHg1  0.000596201
+signalEff ttHg2  193.222
+signalEff ttHg3  47.4472
 
 ### background functions ###
 qqZZshape a0_bkgd   109.872
@@ -166,16 +166,16 @@ systematic BRhiggs_hzz4l True
 systematic CMS_eff True
 systematic CMS_hzz4l_Zjets True
 systematic CMS_zz4l_bkgMELA True
-systematic CMS_zz4l_sigMELA True
-systematic CMS_zz4l_mean False
-systematic CMS_zz4l_sigma False
-systematic CMS_zz4l_mean False
-systematic CMS_zz4l_sigma False
-systematic CMS_zz4l_n False
-systematic CMS_zz4l_gamma False
+systematic CMS_zz4l_sigMELA False
+systematic CMS_zz4l_mean True
+systematic CMS_zz4l_sigma True
+systematic CMS_zz4l_mean True
+systematic CMS_zz4l_sigma True
+systematic CMS_zz4l_n True
+systematic CMS_zz4l_gamma True
 
 ### for hypothesis testing ###
-doHypTest True
+doHypTest False
 #altHypLabel _ALT
 ## spin rates from jhuGen
 spinYield SM 0.681158
@@ -205,22 +205,22 @@ qqZZshape mekd_qqZZ_a3 TMath::Max(6.823+(-0.09065)*(@0-100)+(0.002733)*(@0-100)*
 signalShape mekd_sig_a4 TMath::Max(1.271+(-0.02567)*(@0-100)+(0.0006759)*(@0-100)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4 TMath::Max(2.495+(0.1665)*(@0-100)+(-0.004267)*(@0-100)*(@0-100),0)
 
-RelErrShape relerr_zx_ld_mean 0.0294366
-RelErrShape relerr_zx_ld_sigma 0.00493466
-RelErrShape relerr_zx_gs_mean 0.0143977
-RelErrShape relerr_zx_gs_sigma 0.00381718
-RelErrShape relerr_zx_ld_frac 0.615173
-RelErrShape relerr_qqzz_ld_frac 0.48 
-RelErrShape relerr_qqzz_ld_mean 0.0138799+(-2.6221e-07*@0)
-RelErrShape relerr_qqzz_ld_sigma 0.00207282 
-RelErrShape relerr_qqzz_gs_mean 0.0325488+(-7.32963e-05*@0)
-RelErrShape relerr_qqzz_gs_sigma 0.00926753+(-3.71026e-05*@0)
-RelErrShape relerr_ggH_ld_mean 0.014949+(-1.64193e-05*@0)
-RelErrShape relerr_ggH_ld_sigma 0.00175217 
-RelErrShape relerr_ggH_gs_mean 0.0304213+(-6.52523e-05*@0)
-RelErrShape relerr_ggH_gs_sigma 0.00765059+(-2.27997e-05*@0)
-RelErrShape relerr_ggH_ld_frac 0.479963 
-
+                RelErrShape relerr_qqzz_ld_mean  0.0104385
+                RelErrShape relerr_qqzz_ld_sigma  0.00187827
+                RelErrShape relerr_qqzz_gs_mean  0.0209491
+                RelErrShape relerr_qqzz_gs_sigma  0.00399755
+                RelErrShape relerr_qqzz_ld_frac    0.653309
+                RelErrShape relerr_zx_ld_mean  0.0199903
+                RelErrShape relerr_zx_ld_sigma  0.00399912
+                RelErrShape relerr_zx_gs_mean  0.012
+                RelErrShape relerr_zx_gs_sigma  0.00280617
+                RelErrShape relerr_zx_ld_frac    0.910414
+## signal ebe functions --- no spaces! ##
+RelErrShape relerr_ggH_ld_mean (0.0299629)+(-0.000323302*@0)+(1.26213e-06*@0*@0)
+RelErrShape relerr_ggH_ld_sigma (-0.00644534)+(0.000153848*@0)+(-7.33289e-07*@0*@0)
+RelErrShape relerr_ggH_ld_frac (-26.4592)+(0.448187*@0)+(-0.00185095*@0*@0)
+RelErrShape relerr_ggH_gs_mean (-0.159308)+(0.0029853*@0)+(-1.24716e-05*@0*@0)
+RelErrShape relerr_ggH_gs_sigma (0.00096356)+(6.96119e-05*@0)+(-2.67752e-07*@0*@0)
 ## spin rates from jhuGen
 spinYield SM 0.681158
 
