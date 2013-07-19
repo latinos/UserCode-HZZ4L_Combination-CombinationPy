@@ -61,38 +61,38 @@ signalEff qqHg1  0.0841953
 signalEff qqHg2  166.156
 signalEff qqHg3  40.2511
 
-signalEff ZHa1  -4.45798
-signalEff ZHa2  4.57987
-signalEff ZHa3  -67.9842
-signalEff ZHa4  117.249
-signalEff ZHb1  0.0127169
-signalEff ZHb2  -0.000145767
-signalEff ZHb3  4.77881e-07
-signalEff ZHg1  0.00104233
-signalEff ZHg2  167.338
-signalEff ZHg3  49.6515
+signalEff ZHa1  -4.45886
+signalEff ZHa2  4.57933
+signalEff ZHa3  -66.5685
+signalEff ZHa4  115.931
+signalEff ZHb1  0.0136003
+signalEff ZHb2  -0.000154164
+signalEff ZHb3  4.73833e-07
+signalEff ZHg1  0.00113939
+signalEff ZHg2  170.51
+signalEff ZHg3  49.6355
 
-signalEff WHa1  -4.45748
-signalEff WHa2  4.58081
-signalEff WHa3  -68.9773
-signalEff WHa4  114.617
-signalEff WHb1  0.0203673
-signalEff WHb2  -0.000248446
-signalEff WHb3  7.7646e-07
-signalEff WHg1  0.000975307
-signalEff WHg2  178.656
-signalEff WHg3  49.9977
+signalEff WHa1  -4.45705
+signalEff WHa2  4.58122
+signalEff WHa3  -71.4275
+signalEff WHa4  113.657
+signalEff WHb1  0.0186694
+signalEff WHb2  -0.000213833
+signalEff WHb3  6.66928e-07
+signalEff WHg1  0.000833988
+signalEff WHg2  178.822
+signalEff WHg3  49.9409
 
-signalEff ttHa1  -4.46076
-signalEff ttHa2  4.57726
-signalEff ttHa3  -86.9457
-signalEff ttHa4  111.73
-signalEff ttHb1  0.0658632
-signalEff ttHb2  -0.000848513
-signalEff ttHb3  2.73414e-06
-signalEff ttHg1  0.00143368
-signalEff ttHg2  165.412
-signalEff ttHg3  39.117
+signalEff ttHa1  -4.45544
+signalEff ttHa2  4.58309
+signalEff ttHa3  -59.2114
+signalEff ttHa4  117.399
+signalEff ttHb1  0.0185723
+signalEff ttHb2  -0.000257952
+signalEff ttHb3  8.46611e-07
+signalEff ttHg1  0.00112913
+signalEff ttHg2  184.704
+signalEff ttHg3  49.1518
 
 ### background functions ###
 qqZZshape a0_bkgd   110.356
@@ -200,9 +200,9 @@ systematic param QCD_scale_qqH_2j_sys 0.1
 ## signal efficiency ratios ##
 signalEff tagged_ggH_ratio 0.0517623+(0.000506781*@0)+(-2.6493e-07*@0*@0)
 signalEff tagged_qqH_ratio 0.539113+(-7.55879e-05*@0)+(-1.22134e-08*@0*@0)
-signalEff tagged_ZH_ratio 0.338515+(0.000545179*@0)
-signalEff tagged_WH_ratio 0.311583+(0.000804137*@0)
-signalEff tagged_ttH_ratio 0.854827+(0.000531687*@0)
+signalEff tagged_ZH_ratio 0.338515+(0.000545182*@0)
+signalEff tagged_WH_ratio 0.311584+(0.000804135*@0)
+signalEff tagged_ttH_ratio 0.976753+(-1.53911e-05*@0)
 
 
 
@@ -218,19 +218,24 @@ qqZZshape mekd_qqZZ_a3 TMath::Max(5.916+(-0.03402)*(@0-100)+(0.002453)*(@0-100)*
 signalShape mekd_sig_a4 TMath::Max(0.6122+(0.01281)*(@0-100)+(-0.0002555)*(@0-100)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4 TMath::Max(0.3059+(0.1554)*(@0-100)+(-0.003453)*(@0-100)*(@0-100),0)
 
-RelErrShape relerr_zx_ld_mean 0.0291404
-RelErrShape relerr_zx_ld_sigma 0.00440845
-RelErrShape relerr_zx_gs_mean 0.0133473
-RelErrShape relerr_zx_gs_sigma 0.00397736
-RelErrShape relerr_zx_ld_frac 0.546106
- RelErrShape  relerr_qqzz_ld_frac 0.630003 
- RelErrShape  relerr_qqzz_ld_mean 0.0144034+(-2.1102e-05*@0)
- RelErrShape  relerr_qqzz_ld_sigma 0.0198207+(-0.000273488*@0)+(1.01742e-06*@0*@0)
- RelErrShape  relerr_qqzz_gs_mean 0.0315695+(-8.56245e-05*@0)
- RelErrShape  relerr_qqzz_gs_sigma 0.00606524+(-1.64997e-05*@0)
- RelErrShape  relerr_ggH_ld_mean 0.0126009+(-1.22923e-05*@0)
- RelErrShape  relerr_ggH_ld_sigma 0.00496475+(-5.32893e-05*@0)+(1.95969e-07*@0*@0)
- RelErrShape  relerr_ggH_gs_mean 0.02767+(-6.79398e-05*@0)
- RelErrShape  relerr_ggH_gs_sigma 0.00811232+(-2.97539e-05*@0)
- RelErrShape  relerr_ggH_ld_frac 0.63 
+                RelErrShape relerr_qqzz_ld_mean  0.00823452
+                RelErrShape relerr_qqzz_ld_sigma  0.00138625
+                RelErrShape relerr_qqzz_gs_mean  0.0174048
+                RelErrShape relerr_qqzz_gs_sigma  0.00399965
+                RelErrShape relerr_qqzz_ld_frac    0.684484
+                RelErrShape relerr_zx_ld_mean  0.0146437
+                RelErrShape relerr_zx_ld_sigma  0.00399971
+                RelErrShape relerr_zx_gs_mean  0.0180662
+                RelErrShape relerr_zx_gs_sigma  0.00315141
+                RelErrShape relerr_zx_ld_frac    0.98979
 
+
+
+
+
+## signal ebe functions --- no spaces! ##
+RelErrShape relerr_ggH_ld_mean (0.0111438)+(-5.78395e-05*@0)+(2.34842e-07*@0*@0)
+RelErrShape relerr_ggH_ld_sigma (0.00397118)+(-4.64669e-05*@0)+(1.89486e-07*@0*@0)
+RelErrShape relerr_ggH_ld_frac (-0.578563)+(0.0219587*@0)+(-9.1848e-05*@0*@0)
+RelErrShape relerr_ggH_gs_mean (0.0348369)+(-0.000245403*@0)+(7.50982e-07*@0*@0)
+RelErrShape relerr_ggH_gs_sigma (0.0243929)+(-0.000301246*@0)+(1.13415e-06*@0*@0)

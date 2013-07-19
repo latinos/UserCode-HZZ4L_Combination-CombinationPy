@@ -61,38 +61,38 @@ signalEff qqHg1  0.0349999
 signalEff qqHg2  190.744
 signalEff qqHg3  35.962
 
-signalEff ZHa1  -4.45758
-signalEff ZHa2  4.58078
-signalEff ZHa3  -63.2288
-signalEff ZHa4  116.545
-signalEff ZHb1  0.0690979
-signalEff ZHb2  -0.00102287
-signalEff ZHb3  3.502e-06
-signalEff ZHg1  0.00116608
+signalEff ZHa1  -4.45751
+signalEff ZHa2  4.58085
+signalEff ZHa3  -63.2679
+signalEff ZHa4  116.523
+signalEff ZHb1  0.0708698
+signalEff ZHb2  -0.00104867
+signalEff ZHb3  3.58895e-06
+signalEff ZHg1  0.0011949
 signalEff ZHg2  160
-signalEff ZHg3  30.053
+signalEff ZHg3  30.0548
 
-signalEff WHa1  -1.75879
-signalEff WHa2  1.823
-signalEff WHa3  -84.2512
-signalEff WHa4  114.158
-signalEff WHb1  0.0133576
-signalEff WHb2  -0.000105128
-signalEff WHb3  4.14567e-07
-signalEff WHg1  0.000145368
-signalEff WHg2  160.006
-signalEff WHg3  32.9664
+signalEff WHa1  -4.47606
+signalEff WHa2  4.56129
+signalEff WHa3  -85.6115
+signalEff WHa4  111.781
+signalEff WHb1  0.0698798
+signalEff WHb2  -0.000903071
+signalEff WHb3  2.86072e-06
+signalEff WHg1  0.00067907
+signalEff WHg2  163.085
+signalEff WHg3  30.002
 
-signalEff ttHa1  -4.38329
-signalEff ttHa2  4.54906
-signalEff ttHa3  -198.878
-signalEff ttHa4  186.946
-signalEff ttHb1  0.0255038
-signalEff ttHb2  -0.000365759
-signalEff ttHb3  1.22063e-06
-signalEff ttHg1  0.00109726
-signalEff ttHg2  160.063
-signalEff ttHg3  42.7908
+signalEff ttHa1  -6.05743
+signalEff ttHa2  6.07727
+signalEff ttHa3  -77.2848
+signalEff ttHa4  82.71
+signalEff ttHb1  0.062354
+signalEff ttHb2  -0.000966104
+signalEff ttHb3  3.66598e-06
+signalEff ttHg1  0.000509749
+signalEff ttHg2  160.316
+signalEff ttHg3  40.8095
 
 ### background functions ###
 qqZZshape a0_bkgd   103.882
@@ -189,9 +189,9 @@ systematic param QCD_scale_qqH_2j_sys 0.1
 ## signal efficiency ratios ##
 signalEff tagged_ggH_ratio 0.0523597+(0.000492504*@0)+(-2.47944e-07*@0*@0)
 signalEff tagged_qqH_ratio 0.528753+(-2.29041e-05*@0)+(-8.517e-08*@0*@0)
-signalEff tagged_ZH_ratio 0.380435+(0.000184907*@0)
-signalEff tagged_WH_ratio 0.317506+(0.000766128*@0)
-signalEff tagged_ttH_ratio 0.881692+(0.000354118*@0)
+signalEff tagged_ZH_ratio 0.380435+(0.000184906*@0)
+signalEff tagged_WH_ratio 0.317506+(0.000766127*@0)
+signalEff tagged_ttH_ratio 0.991173+(-0.00011337*@0)
 
 
 
@@ -207,18 +207,19 @@ qqZZshape mekd_qqZZ_a3 TMath::Max(5.628+(0.02516)*(@0-100)+(0.001225)*(@0-100)*(
 signalShape mekd_sig_a4 TMath::Max(1.075+(0.0251)*(@0-100)+(-0.0008037)*(@0-100)*(@0-100),0)
 qqZZshape mekd_qqZZ_a4 TMath::Max(0.6548+(0.1017)*(@0-100)+(-0.002465)*(@0-100)*(@0-100),0)
 
- RelErrShape  relerr_qqzz_ld_frac 0.29 
- RelErrShape  relerr_qqzz_ld_mean 0.0140019 
- RelErrShape  relerr_qqzz_ld_sigma 0.00127166 
- RelErrShape  relerr_qqzz_gs_mean 0.0102596 
- RelErrShape  relerr_qqzz_gs_sigma 1.17662 
- RelErrShape  relerr_ggH_ld_mean 0.0118 
- RelErrShape  relerr_ggH_ld_sigma 0.00160008 
- RelErrShape  relerr_ggH_gs_mean 0.00970265 
- RelErrShape  relerr_ggH_gs_sigma 1.2 
- RelErrShape  relerr_ggH_ld_frac 0.290006 
- RelErrShape  relerr_zx_ld_frac 0.29 
- RelErrShape  relerr_zx_ld_mean 0.0140019 
- RelErrShape  relerr_zx_ld_sigma 0.00127166 
- RelErrShape  relerr_zx_gs_mean 0.0102596 
- RelErrShape  relerr_zx_gs_sigma 1.17662 
+                RelErrShape relerr_qqzz_ld_mean  0.00657373
+                RelErrShape relerr_qqzz_ld_sigma  0.00090
+                RelErrShape relerr_qqzz_gs_mean  0.01
+                RelErrShape relerr_qqzz_gs_sigma  0.00264302
+                RelErrShape relerr_qqzz_ld_frac    0.631228
+                RelErrShape relerr_zx_ld_mean  0.00683384
+                RelErrShape relerr_zx_ld_sigma  0.000500057
+                RelErrShape relerr_zx_gs_mean  0.014363
+                RelErrShape relerr_zx_gs_sigma  0.0011667
+                RelErrShape relerr_zx_ld_frac    0.773148
+## signal ebe functions --- no spaces! ##
+RelErrShape relerr_ggH_ld_mean (0.0349471)+(-0.000474396*@0)+(1.99035e-06*@0*@0)
+RelErrShape relerr_ggH_ld_sigma (0.000999974)+(4.37538e-10*@0)+(-1.81046e-12*@0*@0)
+RelErrShape relerr_ggH_ld_frac (0.722211)+(-0.0121459*@0)+(5.12799e-05*@0*@0)
+RelErrShape relerr_ggH_gs_mean (0.0576741)+(-0.000765475*@0)+(3.20303e-06*@0*@0)
+RelErrShape relerr_ggH_gs_sigma (0.722211)+(-0.0121459*@0)+(5.12799e-05*@0*@0)
