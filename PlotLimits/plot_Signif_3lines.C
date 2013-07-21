@@ -42,9 +42,9 @@ const bool logy = true;
 const bool logx = true;
 const bool grid = false;
 const bool gridOnTop = false;
-const bool points = true;
-const bool points_1 = true;
-const bool points_2 = true;
+const bool points = false;
+const bool points_1 = false;
+const bool points_2 = false;
 const bool isTiny = false;
 int canvasX = 700;
 int canvasY = 700;
@@ -267,7 +267,7 @@ void plot_Signif_3lines()
   TCanvas *c = new TCanvas("c","c",canvasX,canvasY);
   if(addObs){
     TGraph *grObs = new TGraph(nMassEff, a_masses, a_obs);
-    grObs->SetLineWidth(2);
+    grObs->SetLineWidth(3);
     grObs->SetLineColor(kRed);
     grObs->SetMarkerStyle(20);
     grObs->SetMarkerSize(0.7);
@@ -275,7 +275,7 @@ void plot_Signif_3lines()
   }
   if(addObs_1){
     TGraph *grObs_1 = new TGraph(nMassEff_1, a_masses_1, a_obs_1);
-    grObs_1->SetLineWidth(2);
+    grObs_1->SetLineWidth(3);
     grObs_1->SetLineColor(kBlue);
     grObs_1->SetMarkerStyle(20);
     grObs_1->SetMarkerSize(0.7);
@@ -283,7 +283,7 @@ void plot_Signif_3lines()
   }
   if(addObs_2){
     TGraph *grObs_2 = new TGraph(nMassEff_2, a_masses_2, a_obs_2);
-    grObs_2->SetLineWidth(2);
+    grObs_2->SetLineWidth(3);
     grObs_2->SetLineColor(kBlack);
     grObs_2->SetMarkerStyle(20);
     grObs_2->SetMarkerSize(0.7);
@@ -323,87 +323,97 @@ void plot_Signif_3lines()
   // --------------- Low Mass Zoom -------------- //
 
   double ptLow= 0.42, ptHigh = 0.69;
-
-  TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
-  pt->SetBorderSize(0);
-  pt->SetTextAlign(12);
-  pt->SetFillStyle(0);
-  pt->SetTextFont(42);
-  pt->SetTextSize(0.03);
-  TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
-  text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 12.2 fb^{-1}");
-  pt->Draw();   
- //  TPaveText *pt = new TPaveText(ptLow,0.46,ptHigh,0.50,"NDC");
-//   pt->SetFillColor(0);
+//   TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
+//   pt->SetBorderSize(0);
+//   pt->SetTextAlign(12);
+//   pt->SetFillStyle(0);
 //   pt->SetTextFont(42);
-//   pt->AddText("CMS Preliminary");
-//   TPaveText *pt4 = new TPaveText(ptLow,0.42,ptHigh,0.46,"NDC");
-//   pt4->SetFillColor(0);
-//   pt4->SetTextFont(42);
-//   pt4->AddText("H #rightarrow ZZ #rightarrow 4L"); 
+//   pt->SetTextSize(0.03);
+//   TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
+//   text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 19.79 fb^{-1}");
+//   pt->Draw();   
 
-//   //TPaveText *pt2 = new TPaveText(0.69,0.94,0.98,0.99,"NDC");
-//   TPaveText *pt2 = new TPaveText(ptLow,0.38,ptHigh,0.42,"NDC");
-//   pt2->SetFillColor(0);
-//   pt2->SetTextFont(42);
-//   char lum[192];
-//   sprintf(lum," #sqrt{s} = 7 TeV, L = %.2f fb^{-1}",5.051);
-//   pt2->AddText(lum); 
-//   //TPaveText *pt3 = new TPaveText(0.69,0.90,0.98,0.95,"NDC");
-//   TPaveText *pt3 = new TPaveText(ptLow,0.34,ptHigh,0.38,"NDC");
-//   pt3->SetFillColor(0);
-//   pt3->SetTextFont(42);
-//   char lum2[192];
-//   sprintf(lum2," #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",12.21);
-//   pt3->AddText(lum2); 
+  TPaveText *pt = new TPaveText(ptLow,0.42,ptHigh,0.46,"NDC");
+  pt->SetFillColor(0);
+  pt->SetTextFont(42);
+  pt->AddText("CMS Preliminary");
+  TPaveText *pt4 = new TPaveText(ptLow,0.38,ptHigh,0.42,"NDC");
+  pt4->SetFillColor(0);
+  pt4->SetTextFont(42);
+  pt4->AddText("H #rightarrow ZZ #rightarrow 4L"); 
+  
+  //TPaveText *pt2 = new TPaveText(0.69,0.94,0.98,0.99,"NDC");
+  TPaveText *pt2 = new TPaveText(ptLow,0.34,ptHigh,0.38,"NDC");
+  pt2->SetFillColor(0);
+  pt2->SetTextFont(42);
+  char lum[192];
+  sprintf(lum," #sqrt{s} = 7 TeV, L = %.1f fb^{-1}",5.1);
+  pt2->AddText(lum); 
+  //TPaveText *pt3 = new TPaveText(0.69,0.90,0.98,0.95,"NDC");
+  TPaveText *pt3 = new TPaveText(ptLow,0.3,ptHigh,0.34,"NDC");
+  pt3->SetFillColor(0);
+  pt3->SetTextFont(42);
+  char lum2[192];
+  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",19.8);
+  pt3->AddText(lum2); 
 
+  //pt->Draw();
+  //pt4->Draw();
+  //pt2->Draw();
+  //pt3->Draw();
 
   //TPaveText *oneSig = new TPaveText(0.94,0.85,0.97,0.89,"NDC");
   TPaveText *oneSig = new TPaveText(0.966954,0.8961424,0.9971264,0.9362018,"brNDC");
   oneSig->SetFillColor(0);
   oneSig->SetTextFont(42);
-  //oneSig->SetTextColor(kRed);
+  oneSig->SetTextColor(17);
   oneSig->AddText("1#sigma"); 
 
   //TPaveText *twoSig = new TPaveText(0.94,0.765,0.97,0.805,"NDC");
   TPaveText *twoSig = new TPaveText(0.966954,0.851632,0.9971264,0.8916914,"brNDC");
   twoSig->SetFillColor(0);
   twoSig->SetTextFont(42);
-  //twoSig->SetTextColor(kRed);
+  twoSig->SetTextColor(17);
   twoSig->AddText("2#sigma"); 
 
   //TPaveText *threeSig = new TPaveText(0.94,0.63,0.97,0.67,"NDC");
   TPaveText *threeSig = new TPaveText(0.9655172,0.7967359,0.9956897,0.8367953,"brNDC");
   threeSig->SetFillColor(0);
   threeSig->SetTextFont(42);
-  //threeSig->SetTextColor(kRed);
+  threeSig->SetTextColor(17);
   threeSig->AddText("3#sigma"); 
 
   //TPaveText *fourSig = new TPaveText(0.94,0.455,0.97,0.495,"NDC");
   TPaveText *fourSig = new TPaveText(0.966954,0.7181009,0.9971264,0.7581602,"brNDC");
   fourSig->SetFillColor(0);
   fourSig->SetTextFont(42);
-  //fourSig->SetTextColor(kRed);
+  fourSig->SetTextColor(17);
   fourSig->AddText("4#sigma"); 
 
   //TPaveText *fiveSig = new TPaveText(0.94,0.24,0.97,0.28,"NDC");
   TPaveText *fiveSig = new TPaveText(0.966954,0.6142433,0.9971264,0.6543027,"brNDC");
   fiveSig->SetFillColor(0);
   fiveSig->SetTextFont(42);
-  //fiveSig->SetTextColor(kRed);
+  fiveSig->SetTextColor(17);
   fiveSig->AddText("5#sigma");
 
   TPaveText *sixSig = new TPaveText(0.966954,0.4985163,0.9971264,0.5385757,"brNDC");
   sixSig->SetFillColor(0);
   sixSig->SetTextFont(42);
-  //fiveSig->SetTextColor(kRed);
+  sixSig->SetTextColor(17);
   sixSig->AddText("6#sigma");
 
   TPaveText *sevenSig = new TPaveText(0.966954,0.3545994,0.9971264,0.3946588,"brNDC");
   sevenSig->SetFillColor(0);
   sevenSig->SetTextFont(42);
-  //fiveSig->SetTextColor(kRed);
+  sevenSig->SetTextColor(17);
   sevenSig->AddText("7#sigma");
+
+  TPaveText *eightSig = new TPaveText(0.966954,0.1945994,0.9971264,0.2346588,"brNDC");
+  eightSig->SetFillColor(0);
+  eightSig->SetTextFont(42);
+  eightSig->SetTextColor(17);
+  eightSig->AddText("7#sigma");
 
   TLegend * box2 = new TLegend(0.46,0.48,0.66,0.6);
   box2->SetFillColor(0);
@@ -422,41 +432,45 @@ void plot_Signif_3lines()
    
   TH1F *hr = c->DrawFrame(105.0,yLow,180.0,yHigh);
   TLine *l1=new TLine();
-  l1->SetLineStyle(1);
+  l1->SetLineStyle(9);
   l1->SetLineWidth(1);
-  l1->SetLineColor(kRed);
+  l1->SetLineColor(17);
   l1->DrawLine(105.0,ROOT::Math::normal_cdf_c(1, 1.0),180.0,ROOT::Math::normal_cdf_c(1, 1.0));
   TLine *l2=new TLine();
-  l2->SetLineStyle(1);
+  l2->SetLineStyle(9);
   l2->SetLineWidth(1);
-  l2->SetLineColor(kRed);
+  l2->SetLineColor(17);
   l2->DrawLine(105.0,ROOT::Math::normal_cdf_c(2, 1.0),180.0,ROOT::Math::normal_cdf_c(2, 1.0));
   TLine *l3=new TLine();
-  l3->SetLineStyle(1);
+  l3->SetLineStyle(9);
   l3->SetLineWidth(1);
-  l3->SetLineColor(kRed);
+  l3->SetLineColor(17);
   l3->DrawLine(105.0,ROOT::Math::normal_cdf_c(3, 1.0),180.0,ROOT::Math::normal_cdf_c(3, 1.0));
   TLine *l4=new TLine();
-  l4->SetLineStyle(1);
+  l4->SetLineStyle(9);
   l4->SetLineWidth(1);
-  l4->SetLineColor(kRed);
+  l4->SetLineColor(17);
   l4->DrawLine(105.0,ROOT::Math::normal_cdf_c(4, 1.0),180.0,ROOT::Math::normal_cdf_c(4, 1.0));
   TLine *l5=new TLine();
-  l5->SetLineStyle(1);
+  l5->SetLineStyle(9);
   l5->SetLineWidth(1);
-  l5->SetLineColor(kRed);
+  l5->SetLineColor(17);
   l5->DrawLine(105.0,ROOT::Math::normal_cdf_c(5, 1.0),180.0,ROOT::Math::normal_cdf_c(5, 1.0));
   TLine *l6=new TLine();
-  l6->SetLineStyle(1);
+  l6->SetLineStyle(9);
   l6->SetLineWidth(1);
-  l6->SetLineColor(kRed);
+  l6->SetLineColor(17);
   l6->DrawLine(105.0,ROOT::Math::normal_cdf_c(6, 1.0),180.0,ROOT::Math::normal_cdf_c(6, 1.0));
   TLine *l7=new TLine();
-  l7->SetLineStyle(1);
+  l7->SetLineStyle(9);
   l7->SetLineWidth(1);
-  l7->SetLineColor(kRed);
+  l7->SetLineColor(17);
   l7->DrawLine(105.0,ROOT::Math::normal_cdf_c(7, 1.0),180.0,ROOT::Math::normal_cdf_c(7, 1.0));
-
+  TLine *l8=new TLine();
+  l8->SetLineStyle(9);
+  l8->SetLineWidth(1);
+  l8->SetLineColor(17);
+  l8->DrawLine(105.0,ROOT::Math::normal_cdf_c(8, 1.0),180.0,ROOT::Math::normal_cdf_c(8, 1.0));
 
   if(addObs)grObs->Sort();
   if(addExpected)grExp->Sort();
@@ -486,9 +500,9 @@ void plot_Signif_3lines()
   //latex.DrawLatex(xHigh+(xHigh-xLow)*0.01, ROOT::Math::normal_cdf_c(1,1.0)*1.1,"1#sigma");
 
   pt->Draw("SAME");
-//   pt2->Draw("SAME");
-//   pt3->Draw("SAME");
-//   pt4->Draw("SAME");
+  pt2->Draw("SAME");
+  pt3->Draw("SAME");
+  pt4->Draw("SAME");
 
 
   hr->GetXaxis()->SetTitle(xTitle);
@@ -501,12 +515,12 @@ void plot_Signif_3lines()
   c->Update();
   if(gridOnTop)gPad->RedrawAxis("g");
 
-  oneSig->Draw("SAME");
-  twoSig->Draw("SAME");
+  //oneSig->Draw("SAME");
+  //twoSig->Draw("SAME");
   threeSig->Draw("SAME");
-  fourSig->Draw("SAME");
+  //fourSig->Draw("SAME");
   fiveSig->Draw("SAME");
-  sixSig->Draw("SAME");
+  //sixSig->Draw("SAME");
   sevenSig->Draw("SAME");
 
   box2->Draw();
@@ -541,6 +555,7 @@ void plot_Signif_3lines()
   l5->DrawLine(xLow,ROOT::Math::normal_cdf_c(5, 1.0),xHigh,ROOT::Math::normal_cdf_c(5, 1.0));
   l6->DrawLine(xLow,ROOT::Math::normal_cdf_c(6, 1.0),xHigh,ROOT::Math::normal_cdf_c(6, 1.0));
   l7->DrawLine(xLow,ROOT::Math::normal_cdf_c(7, 1.0),xHigh,ROOT::Math::normal_cdf_c(7, 1.0));
+  l8->DrawLine(xLow,ROOT::Math::normal_cdf_c(8, 1.0),xHigh,ROOT::Math::normal_cdf_c(8, 1.0));
 
   if(addObs)
     {
@@ -563,9 +578,9 @@ void plot_Signif_3lines()
   if(addExpected_2)grExp_2->Draw("L");
  
   pt->Draw("SAME");
-//   pt2->Draw("SAME");
-//   pt3->Draw("SAME");
-//  pt4->Draw("SAME");
+  pt2->Draw("SAME");
+  pt3->Draw("SAME");
+  pt4->Draw("SAME");
 
   hrl->GetXaxis()->SetTitle(xTitle);
   hrl->GetYaxis()->SetTitle(yTitle);
@@ -598,12 +613,12 @@ void plot_Signif_3lines()
   if(gridOnTop)gPad->RedrawAxis("g");
   box2->Draw("SAME");
   
-  oneSig->Draw("SAME");
-  twoSig->Draw("SAME");
+  //oneSig->Draw("SAME");
+  //twoSig->Draw("SAME");
   threeSig->Draw("SAME");
-  fourSig->Draw("SAME");
+  //fourSig->Draw("SAME");
   fiveSig->Draw("SAME");
-  sixSig->Draw("SAME");
+  //sixSig->Draw("SAME");
   sevenSig->Draw("SAME");
 
   sprintf( outfileName,"%s/Pvals_%s_wholeMass_%s.eps",plotDir.c_str(),method.c_str(),dimension.c_str() );
