@@ -418,6 +418,19 @@ class superkdClass(datacardClass):
         hist.Write()
 
         #ALT
+        self.rrvJHUgen_ggH_ALT = ROOT.RooRealVar("jhuGen_ALT","jhuGen_ALT",1)
+        if self.altHypothesis == 'gg0-':
+            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0minus_yield']))
+        elif self.altHypothesis == 'gg0h+':
+            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0hplus_yield']))
+        else:
+            self.rrvJHUgen_ggH_ALT.setVal(self.rates['ggH']*self.calcTotalYieldCorr(self.channel,self.altHypothesis))
+        self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+        self.rfvSigRate_ggH_ALT = ROOT.RooFormulaVar("ggH{0}_norm".format(self.appendHypType),"@0",ROOT.RooArgList(self.one))
+        print '>>>>>> Compare signal rates: STD=',self.rfvSigRate_ggH.getVal(),"   ALT=",self.rfvSigRate_ggH_ALT.getVal()
+        print '>>>>>> Compare signal rates: STD=',self.rates['ggH'],"   ALT=",self.sigRate_ggH_ALT_Shape
+        self.rates['ggH{0}'.format(self.appendHypType)] = self.sigRate_ggH_ALT_Shape
+
         theYield = self.rates['ggH{0}'.format(self.appendHypType)]
         hist = self.unfoldedHist(self.sigTemplate_ALT,'ggH{0}'.format(self.appendHypType),theYield)
         hist.Write()
@@ -460,6 +473,8 @@ class superkdClass(datacardClass):
         
         for i in range( myTree.GetEntries() ):
             myTree.GetEntry(i);
+
+            if myTree.CMS_zz4l_mass < self.inputs['low_M'] or myTree.CMS_zz4l_mass > self.inputs['high_M']: continue
 
             sd = getattr(myTree,self.superDiscVarName)
             pd = getattr(myTree,self.discVarName)
