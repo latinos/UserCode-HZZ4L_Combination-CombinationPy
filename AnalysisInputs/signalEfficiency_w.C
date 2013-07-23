@@ -234,9 +234,9 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
   if (process==ggH){
     if (useNewGGHPowheg) {
       if (sqrts==7) {
-	nPoints = nPoints7TeV;
-	masses  = masses7TeV;
-	mHVal   = mHVal7TeV;
+	nPoints = nPoints7TeV_p15;
+	masses  = masses7TeV_p15;
+	mHVal   = mHVal7TeV_p15;
 	filepath = filePath7TeV;
       } else if (sqrts==8) {
 	nPoints = nPoints8TeV_p15;
@@ -283,9 +283,6 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     }
   }  
 
-  // FIXME: need to skip ZH @ 7TeV for mH = 200 GeV (not yet available)
-  if (process==ZH && sqrts==7) nPoints = nPoints-1;
-
 
   float xMax = masses[nPoints-1]+10;
 
@@ -328,7 +325,7 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
 
     if (process==ggH) {
-      if (useNewGGHPowheg && sqrts==8){ //FIXME
+      if (useNewGGHPowheg){ 
 	infile = filepath+ "/" + schannelFilename + "/HZZ4lTree_powheg15" + (masses[i]>200?"H":"jhuGenV3H") + (long)masses[i] + ".root";
       } else {
 	infile = filepath+ "/" + schannelFilename + "/HZZ4lTree_H" + (long)masses[i] + ".root";
