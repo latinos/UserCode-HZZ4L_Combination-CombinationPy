@@ -47,14 +47,14 @@ void californiaSignalShapes(int channel, int sqrts){
 
   ofsCard << "## signal functions --- no spaces! ##" << endl;
   ofsCard << "usehighmassreweightedshapes" << endl;
-  TString string = TString(getSignalCBNLValueInt(channel-1,en) );
+  TString string; string.Form("%i",getSignalCBNLValueInt(channel-1,en) );
   string.ReplaceAll(" ","");
   string.ReplaceAll("+@0*@1","");
   ofsCard << "signalShape n_CB "      << string.Data()<< endl;	 
   string = getSignalACBAlphaLString(channel-1,en,false);
   string.ReplaceAll(" ","");
   ofsCard << "signalShape alpha_CB "  << string.Data()   << endl; 
-  string = TString(getSignalCBNRValueInt(channel-1,en)   ) ;
+  string.Form("%i",getSignalCBNRValueInt(channel-1,en)   ) ;
   string.ReplaceAll(" ","");
   ofsCard << "signalShape n2_CB "     << string.Data()   << endl;	     
   string = getSignalACBAlphaRString(channel-1,en, false);
