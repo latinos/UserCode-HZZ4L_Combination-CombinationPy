@@ -274,43 +274,48 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
   if(sampleIndex==0){
     //7TeV
     if(useSqrts<2){
-      /*bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H120.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H124.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H125.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H126.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H130.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H140.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H150.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H160.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H170.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H180.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H190.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H200.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H115.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H120.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H122.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H124.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H125.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H126.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H128.root");
+      //bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H130.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H140.root");
+      //bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H150.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H160.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H170.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H180.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H185.root");
+      //bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H190.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H200.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H210.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H220.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H250.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H275.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H300.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H300.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H325.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H350.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H400.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H350.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H400.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H425.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H450.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H450.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H475.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H500.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H525.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H550.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H550.root");
       bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H575.root");
-      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H600.root");
+      bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H600.root");
       if (extendToHighMass) {
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H650.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H700.root");
+	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H650.root");
+	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H700.root");
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H750.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H800.root");
+	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H800.root");
 	// bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H850.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H900.root");
+	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H900.root");
 	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H950.root");
-	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_H1000.root");
-	}*/
+	bkgMC->Add(filePath7TeV + "/" + chPath +"/HZZ4lTree_powheg15H1000.root");
+	}
     }
     if(useSqrts%2==0){
       //8TeV
@@ -319,7 +324,7 @@ void buildChain(TChain* bkgMC, TString channel, int sampleIndex=0) {
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H122.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H124.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H125.root");
-//    bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H126.root");
+      bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H126.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H128.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H130.root");
       bkgMC->Add(filePath8TeV + "/" + chPath +"/HZZ4lTree_powheg15jhuGenV3H135.root");
@@ -645,6 +650,7 @@ void makeTemplate(TString channel="4mu"){
   TFile* fqqZZ = new TFile(destDir + "Dbackground_qqZZ_" + channel + ".root","RECREATE");
   //  sprintf(temp,"../datafiles/Dbackground_ggZZ_%s.root",channel.Data());
   TFile* fggZZ = new TFile(destDir + "Dbackground_ggZZ_" + channel + ".root","RECREATE");
+  TFile* fZX = new TFile(destDir + "Dbackground_ZX_" + channel + ".root","RECREATE");
   TH2F* oldTemp;
 
   pair<TH2F*,TH2F*> histoPair;
@@ -758,6 +764,61 @@ void makeTemplate(TString channel="4mu"){
   histoPair.first->Write("h_mzzD_up");
   histoPair.second->Write("h_mzzD_dn");
   fggZZ->Close();
+
+  // =======================================
+  // ZX template
+
+  //make as if ZZ
+  low = fillTemplate(channel,1,true);
+  high = fillTemplate(channel,1,false);
+  h_mzzD = mergeTemplates(low,high);
+
+  // ---------- apply interference reweighting --------
+  
+  oldTemp = new TH2F(*h_mzzD);
+  oldTemp->SetName("oldTemp");
+
+  //cout << "apply systematics for zjets control region" << endl;
+  
+  histoPair = reweightForCRunc(h_mzzD);
+
+  // --------------------------------------------------
+
+  fZX->cd();
+  //Write ZZ up template as ZX default
+  histoPair.first->Write("h_mzzD");
+  oldTemp->Write("oldTemp");
+  //Write ZX + (ZX-ZZ) as ZX up
+  TH2F* ZXup = new TH2F(*h_mzzD);
+  for(int ZXbinx = 1; ZXbinx < ZXup->GetNbinsX(); ZXbinx++)
+    {
+      for(int ZXbiny=1; ZXbiny<=ZXup->GetNbinsY(); ZXbiny++){
+
+      float oldTempValue = histoPair.first->GetBinContent(ZXbinx,ZXbiny);
+      float diffTempValue = oldTempValue - (h_mzzD->GetBinContent(ZXbinx,ZXbiny));
+      float newTempValue = oldTempValue + diffTempValue;
+      if(newTempValue <= 0.) newTempValue=0.00000001;
+      ZXup->SetBinContent(ZXbinx,ZXbiny,newTempValue);
+
+    }// end loop over Y bins
+
+      // -------------- normalize mZZ slice ----------------
+
+      double norm_up=(ZXup->ProjectionY("temp",ZXbinx,ZXbinx))->Integral();
+      for(int ZXbiny=1; ZXbiny<=ZXup->GetNbinsY(); ZXbiny++){
+      
+	ZXup->SetBinContent(ZXbinx,ZXbiny,ZXup->GetBinContent(ZXbinx,ZXbiny)/norm_up);
+
+      }
+
+    // ---------------------------------------------------
+
+  }// end loop over X bins
+  ZXup->Write("h_mzzD_up");
+  //Write ZZ default tempalte as ZX down
+  h_mzzD->Write("h_mzzD_dn");
+  fZX->Close();
+
 
 }
 
