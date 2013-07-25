@@ -115,3 +115,12 @@ root -q -b loadMELA.C generateTemplates.C+
 
 The resulting templates are written into the final destination directory, i.e. 
 ../CreateDatacards/templates2D
+
+9. TAGGED 2D TEMPLATES
+Run:
+
+root -q -b generateFisherTemplates.C+
+
+The resulting templates are written into the final destination directory, i.e.
+../CreateDatacards/templates2D
+(for ggH, VBF, qqZZ four systematic templates are created, two for JEC, two for shape systematics. Use shape systematics (_alt, _alt2) for analysis)
