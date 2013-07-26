@@ -16,15 +16,18 @@
 void getLimits(TFile *f, std::vector<double> &v_mh,std::vector<double> &v_mean,std::vector<double> &v_68l,std::vector<double> &v_68h,std::vector<double> &v_95l,std::vector<double> &v_95h,std::vector<double> &v_obs);
 
 // --------- Inputs ------- //
-TString inputFile = "results_1D_Combined_CorScale/higgsCombineHZZ4L_ASCLS.root";
-TString inputFile2D = "results_2D_Combined_CorScale/higgsCombineHZZ4L_ASCLS.root";
-const bool addObsLimit = false;
+TString inputFile = "results/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile2D = "../HCGInclusive/results/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile1D = "../HCG1D/results/higgsCombineHZZ4L_ASCLS.root";
+bool plot2D = true;
+bool plot1D = true;
+const bool addObsLimit = true;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
 string method = "ASCLS";
 Double_t xLow = 99.9;
-Double_t xHigh = 601.0;
-Double_t yLow = 0.1;
+Double_t xHigh = 1001.0;
+Double_t yLow = 0.05;
 Double_t yHigh = 25.0;
 TString xTitle = "m_{H} [GeV]";
 TString yTitle = "95% CL limit on #sigma/#sigma_{SM}";
@@ -32,7 +35,7 @@ const bool logy = true;
 const bool logx = true;
 const bool grid = true;
 const bool gridOnTop = true;
-const bool points = true;
+const bool points = false;
 const bool isTiny = false;
 int canvasX = 900;
 int canvasY = 700;
@@ -40,7 +43,7 @@ int canvasY = 700;
 double sqrts = 8.0;
 Double_t lumi = 3.50;
 //Double_t lumi = 5.051;
-std::string plotDir = "plots_final";
+std::string plotDir = "plots";
 TString TplotDir = plotDir;
 // ----------------------- //
 
@@ -63,6 +66,7 @@ void plot_Exclusion_1d2d()
 
   TFile *inFile = new TFile(inputFile,"READ");
   TFile *inFile2D = new TFile(inputFile2D,"READ");
+  TFile *inFile1D = new TFile(inputFile1D,"READ");
 
   // ------------------- Get Values -------------------- //
 
@@ -93,7 +97,17 @@ void plot_Exclusion_1d2d()
     {
       v_masses2.push_back( mH2[i] );
       v_means2.push_back( Val_mean2[i] );
-      // v_obs2.push_back(Val_obs2[i]);
+      v_obs2.push_back(Val_obs2[i]);
+    }
+
+  vector<double> mH1, Val_obs1, Val_mean1, Val_68h1, Val_68l1, Val_95h1, Val_95l1;
+  getLimits(inFile1D,mH1,Val_mean1,Val_68l1,Val_68h1,Val_95l1,Val_95h1,Val_obs1);
+  vector<double> v_masses1, v_means1, v_lo681, v_hi681, v_lo951, v_hi951, v_obs1;
+   for(unsigned int i = 0; i < mH2.size(); i++)
+    {
+      v_masses1.push_back( mH1[i] );
+      v_means1.push_back( Val_mean1[i] );
+      v_obs1.push_back(Val_obs1[i]);
     }
 
 
@@ -177,12 +191,24 @@ void plot_Exclusion_1d2d()
 
   int nMassEff2=0;
   const int sizeV2 = v_masses2.size();
-  double a_masses2[sizeV2], a_means2[sizeV2];
+  double a_masses2[sizeV2], a_means2[sizeV2], a_obs2[sizeV2];
   for(unsigned int m = 0; m < v_masses2.size(); m++)
     {
       a_masses2[nMassEff2] = v_masses2[m];
       a_means2[nMassEff2] = v_means2[m];
+      a_obs2[nMassEff2] = v_obs2[m];
       nMassEff2++;
+    }
+
+  int nMassEff1=0;
+  const int sizeV1 = v_masses1.size();
+  double a_masses1[sizeV1], a_means1[sizeV1], a_obs1[sizeV1];
+  for(unsigned int m = 0; m < v_masses1.size(); m++)
+    {
+      a_masses1[nMassEff1] = v_masses1[m];
+      a_means1[nMassEff1] = v_means1[m];
+      a_obs1[nMassEff1] = v_obs1[m];
+      nMassEff1++;
     }
 
   int nRatio = 0;
@@ -203,7 +229,7 @@ void plot_Exclusion_1d2d()
     {
       for(int q = 0; q < obsExclusion.size(); q++)
 	{
-	  cout << "Observed Exclusion: " <<  obsExlusion[q] << endl;
+	  cout << "Observed Exclusion: " <<  obsExclusion[q] << endl;
 	}
     }
 
@@ -227,23 +253,34 @@ void plot_Exclusion_1d2d()
   pt2->SetTextFont(42);
   char lum[192];
   //sprintf(lum," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",5.261);
-  sprintf(lum," #sqrt{s} = 7 TeV, L = %.2f fb^{-1}",5.051);
+  sprintf(lum," #sqrt{s} = 7 TeV, L = %.1f fb^{-1}",5.1);
   pt2->AddText(lum); 
   //TPaveText *pt3 = new TPaveText(0.69,0.90,0.98,0.95,"NDC");
   TPaveText *pt3 = new TPaveText(ptLow,0.72,ptHigh,0.76,"NDC");
   pt3->SetFillColor(0);
   pt3->SetTextFont(42);
   char lum2[192];
-  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.2f fb^{-1}",5.261);
+  sprintf(lum2," #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",19.8);
   pt3->AddText(lum2); 
 
 
   TCanvas *c = new TCanvas("c","c",canvasX,canvasY);
   TGraph *gr = new TGraph(nMassEff, a_masses, a_means);
   TGraph *gr2D = new TGraph(nMassEff2, a_masses2, a_means2);
+  TGraph *gr1D = new TGraph(nMassEff1, a_masses1, a_means1);
   TGraph* grshade_68 = new TGraph(2*nMassEff);
   TGraph* grshade_95 = new TGraph(2*nMassEff);
   TGraph *grObs = new TGraph(nMassEff, a_masses, a_obs);
+  TGraph *grObs2D = new TGraph(nMassEff2, a_masses2, a_obs2);
+  TGraph *grObs1D = new TGraph(nMassEff1, a_masses1, a_obs1);
+
+  gr->Sort();
+  gr2D->Sort();
+  gr1D->Sort();
+  grObs->Sort();
+  grObs2D->Sort();
+  grObs1D->Sort();
+
   grObs->SetLineWidth(3);
   grObs->SetLineColor(kBlack);
   grObs->SetMarkerStyle(21);
@@ -259,10 +296,24 @@ void plot_Exclusion_1d2d()
 
   gr->SetLineStyle(2);
   gr->SetLineWidth(3);
-  gr->SetLineColor(kBlue);
-  gr2D->SetLineStyle(1);
+  gr->SetLineColor(kBlack);
+  gr2D->SetLineStyle(2);
   gr2D->SetLineWidth(3);
-  gr2D->SetLineColor(kBlack);
+  gr2D->SetLineColor(kBlue);
+  gr1D->SetLineStyle(2);
+  gr1D->SetLineWidth(3);
+  gr1D->SetLineColor(kRed);
+
+  grObs->SetLineStyle(1);
+  grObs->SetLineWidth(3);
+  grObs->SetLineColor(kBlack);
+  grObs2D->SetLineStyle(1);
+  grObs2D->SetLineWidth(3);
+  grObs2D->SetLineColor(kBlue);
+  grObs1D->SetLineStyle(1);
+  grObs1D->SetLineWidth(3);
+  grObs1D->SetLineColor(kRed);
+
   grshade_68->SetFillColor(kGreen);
   grshade_95->SetFillColor(kYellow);		
   grshade_68->SetLineStyle(2);
@@ -293,9 +344,15 @@ void plot_Exclusion_1d2d()
   TLegend * box2 = new TLegend(0.52,0.7,0.92,0.9);
   box2->SetFillColor(0);
   //box2->SetBorderSize(0);
-  if (addObsLimit){ box2->AddEntry(grObs,"Observed Asym. CLs","l"); }
-  box2->AddEntry(gr,"1D Fit Expected Asym. CLs","l");
+  if (addObsLimit){ 
+    box2->AddEntry(grObs,"3D Observed Asym. CLs","l"); 
+    box2->AddEntry(grObs2D,"2D Observed Asym. CLs","l"); 
+    box2->AddEntry(grObs1D,"1D Observed Asym. CLs","l"); 
+
+  }
+  box2->AddEntry(gr,"3D Fit Expected Asym. CLs","l");
   box2->AddEntry(gr2D,"2D Fit Expected Asym. CLs","l");
+  box2->AddEntry(gr1D,"1D Fit Expected Asym. CLs","l");
   //box2->AddEntry(grshade_68,"68% expectation","f");
   //box2->AddEntry(grshade_95,"95% expectation","f");
   box2->AddEntry(grshade_68,"Expected #pm 1#sigma","lf");
@@ -311,7 +368,11 @@ void plot_Exclusion_1d2d()
   grshade_95->Draw("f");
   grshade_68->Draw("f");
   gr->Draw("C");
+  grObs->Draw("C");
+  grObs2D->Draw("C");
+  grObs1D->Draw("C");
   gr2D->Draw("C");
+  gr1D->Draw("C");
   if(logy)gPad->SetLogy();
   if(isXSxBR)
     {
@@ -343,9 +404,9 @@ void plot_Exclusion_1d2d()
   pt3->Draw("SAME");
   pt4->Draw("SAME");
 
-  sprintf( outfileName,"%s/UpperLimit_%s_lowMass_1D2D_7p8TeV.eps",plotDir.c_str(),method.c_str(),sqrts );
+  sprintf( outfileName,"%s/UpperLimit_%s_lowMass_1D2D3D_7p8TeV.eps",plotDir.c_str(),method.c_str(),sqrts );
   c->SaveAs(outfileName);
-  sprintf( outfileName,"%s/UpperLimit_%s_lowMass_1D2D_7p8TeV.png",plotDir.c_str(),method.c_str(),sqrts );
+  sprintf( outfileName,"%s/UpperLimit_%s_lowMass_1D2D3D_7p8TeV.png",plotDir.c_str(),method.c_str(),sqrts );
   c->SaveAs(outfileName);
   
 
@@ -355,9 +416,14 @@ void plot_Exclusion_1d2d()
   TLegend * box3 = new TLegend(0.52,0.7,0.92,0.9);
   box3->SetFillColor(0);
   //box3->SetBorderSize(0);
-  if (addObsLimit){ box3->AddEntry(grObs,"Observed Asym. CLs","l"); }
-  box3->AddEntry(gr,"1D Fit Expected Asym. CLs","l");
+  if (addObsLimit){ 
+    box3->AddEntry(grObs,"3D Observed Asym. CLs","l"); 
+    box3->AddEntry(grObs2D,"2D Observed Asym. CLs","l"); 
+    box3->AddEntry(grObs1D,"1D Observed Asym. CLs","l"); 
+  }
+  box3->AddEntry(gr,"3D Fit Expected Asym. CLs","l");
   box3->AddEntry(gr2D,"2D Fit Expected Asym. CLs","l");
+  box3->AddEntry(gr1D,"1D Fit Expected Asym. CLs","l");
   box3->AddEntry(grshade_68,"Expected #pm 1#sigma","lf");
   box3->AddEntry(grshade_95,"Expected #pm 2#sigma","lf");
   //box3->AddEntry(oneLine,"#sigma / #sigma_{SM}","l");
@@ -371,7 +437,10 @@ void plot_Exclusion_1d2d()
   grshade_95->Draw("f");
   grshade_68->Draw("f");
   gr->Draw("C");
+  grObs2D->Draw("C");
+  grObs1D->Draw("C");
   gr2D->Draw("C");
+  gr1D->Draw("C");
   if(isXSxBR)
     {
       gr_XSBR68->SetFillColor(kRed);
@@ -424,9 +493,9 @@ void plot_Exclusion_1d2d()
   pt3->Draw("SAME");
   pt4->Draw("SAME");
 
-  sprintf( outfileName,"%s/UpperLimit_%s_wholeMass_1D2D_7p8TeV.eps",plotDir.c_str(),method.c_str(),sqrts );
+  sprintf( outfileName,"%s/UpperLimit_%s_wholeMass_1D2D3D_7p8TeV.eps",plotDir.c_str(),method.c_str(),sqrts );
   cl->SaveAs(outfileName); 
-  sprintf( outfileName,"%s/UpperLimit_%s_wholeMass_1D2D_7p8TeV.png",plotDir.c_str(),method.c_str(),sqrts );
+  sprintf( outfileName,"%s/UpperLimit_%s_wholeMass_1D2D3D_7p8TeV.png",plotDir.c_str(),method.c_str(),sqrts );
   cl->SaveAs(outfileName);
  
   // ---------------- Root File --------------- //
