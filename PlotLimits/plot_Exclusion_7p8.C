@@ -23,14 +23,14 @@ TGraph * removeGlitches2(TGraph *out);
 
 
 // --------- Inputs ------- //
-TString inputFile = "results261012_2Dbranch05/higgsCombineHZZ4L_ASCLS.root";//"results261012_1DoldZshape/higgsCombineHZZ4L_ASCLS.root";
+TString inputFile = "../HCGInclusive/results/higgsCombineHZZ4L_ASCLS.root";//"results261012_1DoldZshape/higgsCombineHZZ4L_ASCLS.root";
 const bool addObsLimit = true;
 const bool isXSxBR = false;
 const bool _DEBUG_ = false;
 string method = "FREQ";
 Double_t xLow = 99.9;
 Double_t xHigh = 1001.0;
-Double_t yLow = 0.1;
+Double_t yLow = 0.05;
 Double_t yHigh = 20.0;
 TString xTitle = "m_{H} [GeV]";
 TString yTitle = "#sigma(H#rightarrow ZZ#rightarrow 4l)_{95% CL}/#sigma(H#rightarrow ZZ#rightarrow 4l)_{SM}";
@@ -45,8 +45,8 @@ int canvasY = 700;
 //double sqrts = 8.0;
 //Double_t lumi = 1.616;
 double sqrts = 7.0;
-Double_t lumi = 5.051;
-std::string plotDir = "p";
+Double_t lumi = 5.1;
+std::string plotDir = "plots";
 std::string append = "2D_no2l2tau";
 // ----------------------- //
 
@@ -321,7 +321,7 @@ void plot_Exclusion_7p8()
   pt->SetTextFont(42);
   pt->SetTextSize(0.03);
   TText *text = pt->AddText(0.01,0.5,"CMS preliminary");
-  text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 12.2 fb^{-1}");
+  text = pt->AddText(0.3,0.6,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 19.8 fb^{-1}");
 		
 //   TPaveText *pt = new TPaveText(ptLow,0.84,ptHigh,0.88,"NDC");
 //   pt->SetFillColor(0);
