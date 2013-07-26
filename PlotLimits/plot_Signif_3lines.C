@@ -16,25 +16,25 @@
 void getPvals(TFile *f, std::vector<double> &v_mh, std::vector<double> &v_obs);
 
 // --------- Inputs ------- //
-TString inputFile = "results/higgsCombineHZZ4L_PLP.root";
-TString inputFile_1 = "results/higgsCombineHZZ4L_PLP.root";
-TString inputFile_2 = "results/higgsCombineHZZ4L_PLP.root";//"results261012_2DnewZshape/higgsCombineHZZ4L_PLP.root";
-TString inputFileExp ="results/higgsCombineHZZ4L_PLPE.root";
-TString inputFileExp_1 = "results/higgsCombineHZZ4L_PLPE.root";
+TString inputFile = "../HCG1D/results/higgsCombineHZZ4L_PLP.root";//red
+TString inputFile_1 = "../HCGInclusive/results/higgsCombineHZZ4L_PLP.root";//blue
+TString inputFile_2 = "results/higgsCombineHZZ4L_PLP.root";//black
+TString inputFileExp ="../HCG1D/results/higgsCombineHZZ4L_PLPE.root";
+TString inputFileExp_1 = "../HCGInclusive/results/higgsCombineHZZ4L_PLPE.root";
 TString inputFileExp_2 = "results/higgsCombineHZZ4L_PLPE.root";//"results261012_2DnewZshape/higgsCombineHZZ4L_PLPE.root";
 TString Graph1 = "Observed (1D)";
 TString Graph2 = "Observed (2D)";
 TString Graph3 = "3D Fit 7+8TeV";
-const bool addObs = false;
-const bool addObs_1 = false;
+const bool addObs = true;
+const bool addObs_1 = true;
 const bool addObs_2 = true;
-const bool addExpected = false;
-const bool addExpected_1 = false;
+const bool addExpected = true;
+const bool addExpected_1 = true;
 const bool addExpected_2 = true;
 string method = "PLP";
 Double_t xLow = 99.9;
 Double_t xHigh = 1001.0;
-Double_t yLow = 1e-17;
+Double_t yLow = 1e-16;
 Double_t yHigh = 1.0;
 TString xTitle = "m_{H} [GeV]";
 TString yTitle = "local p-value";
@@ -50,7 +50,7 @@ int canvasX = 700;
 int canvasY = 700;
 const bool _DEBUG_ = false;
 string plotDir = "plots";
-string dimension = "3D_no2l2tau";
+string dimension = "1D2D3D_no2l2tau";
 // ----------------------- //
 
 
