@@ -55,7 +55,7 @@
 //TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702b/PRODFSR/"; //FIXME: statistical tree not yet ready, take those from previous production
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130715/PRODFSR_8TeV/";
 
-TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720/PRODFSR/";	 
+TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720c/PRODFSR/";	 
 TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720/PRODFSR_8TeV/";
 
 
@@ -86,9 +86,9 @@ int masses8TeV[nPoints8TeV]   = {115,116,117,118,119,120,121,122,123,124,125,126
 double mHVal8TeV[nPoints8TeV] = {115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,135,140,145,150,160,170,180,190,200,220,250,275,300,325,350,375,400,425,450,475,500,525,550,575,600,650,700,750,800,850,900,950,1000};
 
 // Full list of new powheg samples: you must use "powheg15_jhuGenV3" samples for m<=200, "powheg15" ones above. 
-const int nPoints7TeV_p15 = 25;
-int masses7TeV_p15[nPoints7TeV_p15]   = {115,120,122,124,125,126,128,140,160,170,180,185,200,300,350,400,450,500,550,600,650,700,800,900,1000};
-double mHVal7TeV_p15[nPoints7TeV_p15] = {115,120,122,124,125,126,128,140,160,170,180,185,200,300,350,400,450,500,550,600,650,700,800,900,1000};
+const int nPoints7TeV_p15 = 33;
+int masses7TeV_p15[nPoints7TeV_p15]   = {115,120,122,124,125,126,128,130,140,145,150,160,170,175,180,185,190,200,225,250,275,300,350,400,450,500,550,600,650,700,800,900,1000};
+double mHVal7TeV_p15[nPoints7TeV_p15] = {115,120,122,124,125,126,128,130,140,145,150,160,170,175,180,185,190,200,225,250,275,300,350,400,450,500,550,600,650,700,800,900,1000};
 
 const int nPoints8TeV_p15 = 34;
 int masses8TeV_p15[nPoints8TeV_p15]   = {115,120,122,124,125,126,128,130,135,140,145,150,160,170,175,180,185,190,200,225,250,275,300,350,400,450,500,550,600,650,700,800,900,1000};
