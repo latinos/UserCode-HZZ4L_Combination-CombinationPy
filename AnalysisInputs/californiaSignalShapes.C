@@ -50,6 +50,7 @@ void californiaSignalShapes(int channel, int sqrts){
   TString string = getSignalCBNLString(125.,channel-1,en) ;
   string.ReplaceAll(" ","");
   string.ReplaceAll("+@0*@1","");
+  string.ReplaceAll(";","");
   ofsCard << "signalShape n_CB "      << string.Data()<< endl;	 
   string = getSignalCBAlphaLString(125.,channel-1,en, false);
   string.ReplaceAll(" ","");
