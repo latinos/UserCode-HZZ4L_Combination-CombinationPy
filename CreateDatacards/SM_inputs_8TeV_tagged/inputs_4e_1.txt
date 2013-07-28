@@ -19,7 +19,7 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  3.41919
 rate ggZZ  0.282239
-rate zjets 1.23
+rate zjets 1.218
 ## signal functions --- no spaces! ##
 usehighmassreweightedshapes
 signalShape n_CB TMath::Max((-68.5573)+(1.68878*@0)+(-0.0144006*@0*@0)+(5.76535e-05*@0*@0*@0)+(-1.11285e-07*@0*@0*@0*@0)+(8.38162e-11*@0*@0*@0*@0*@0),1)
@@ -33,21 +33,21 @@ HighMasssignalShape alpha_CB (490.924)+(-3.40932*@0)+(0.00934933*@0*@0)+(-1.2636
 HighMasssignalShape n2_CB 20
 HighMasssignalShape alpha2_CB (0.320852)+(0.00116058*@0)
 HighMasssignalShape mean_CB (-99.8383)+(0.485366*@0)+(-0.000667099*@0*@0)+(2.41678e-07*@0*@0*@0)
-HighMasssignalShape sigma_CB TMath::Max((477.628)+(-2.99693*@0)+(0.0067043*@0*@0)+(-6.53915e-06*@0*@0*@0)+(3.02364e-09*@0*@0*@0*@0)+(-5.31362e-13*@0*@0*@0*@0*@0),1.)
+HighMasssignalShape sigma_CB TMath::Max((477.628)+(-2.99693*@0)+(0.0067043*@0*@0)+(-6.53915e-06*@0*@0*@0)+(3.02364e-09*@0*@0*@0*@0)+(-5.31362e-13*@0*@0*@0*@0*@0),1.);
 HighMasssignalShape gamma_BW (TMath::Max((-7.17119)+(0.0763212*@0)+(6.92004e-05*@0*@0)+(0.1*@0-46.0)*(@0<450),20))
 
 
 ## signal efficiency ##
-signalEff a1  -4.30412
-signalEff a2  4.72827
-signalEff a3  -184.877
-signalEff a4  231.149
-signalEff b1  0.888288
-signalEff b2  0.000884328
-signalEff b3  -4.52072e-07
-signalEff g1  0.0999999
-signalEff g2  168.877
-signalEff g3  40.426
+signalEff a1  -4.29669
+signalEff a2  4.73654
+signalEff a3  -182.609
+signalEff a4  231.241
+signalEff b1  0.859505
+signalEff b2  0.000844754
+signalEff b3  -4.30843e-07
+signalEff g1  0.1
+signalEff g2  169.266
+signalEff g3  39.9805
 
 signalEff qqHa1  -4.42757
 signalEff qqHa2  4.61149
@@ -121,23 +121,23 @@ ggZZshape a7_bkgd  0.174564
 ggZZshape a8_bkgd  56.7914
 ggZZshape a9_bkgd  0.0714372
 
-zjetsShape mean_3p1f 110.9
-zjetsShape sigma_3p1f 9.59
-zjetsShape norm_3p1f 2.57
+zjetsShape mean_3p1f 110.862
+zjetsShape sigma_3p1f 9.59455
+zjetsShape norm_3p1f 2.57278
 
-zjetsShape mean_2p2f 195.4
-zjetsShape sigma_2p2f 38.9
-zjetsShape norm_2p2f 0.12
-zjetsShape pol0_2p2f 3.68
-zjetsShape pol1_2p2f -0.006
+zjetsShape mean_2p2f 195.407
+zjetsShape sigma_2p2f 38.9472
+zjetsShape norm_2p2f 0.117024
+zjetsShape pol0_2p2f 3.68476
+zjetsShape pol1_2p2f -0.00580439
 
 zjetsShape mean_2e2mu_2p2f 0
 zjetsShape sigma_2e2mu_2p2f 0
 zjetsShape norm_2e2mu_2p2f 0
 
 ### channel dependent systematics ###
-systematic zjetKappaLow   0.6
-systematic zjetKappaHigh  1.4
+systematic zjetKappaLow   0.8
+systematic zjetKappaHigh  1.2
 systematic param CMS_zz4l_mean_e_sig   0.003
 systematic param CMS_zz4l_sigma_e_sig  0.2
 systematic param CMS_zz4l_n_sig 0.05
@@ -185,7 +185,7 @@ systematic param QCD_scale_ggH_2j_sys 0.3
 systematic param QCD_scale_qqH_2j_sys 0.1
 
 ## signal efficiency ratios ##
-signalEff tagged_ggH_ratio 0.0443268+(0.000466983*@0)+(-2.07728e-07*@0*@0)
+signalEff tagged_ggH_ratio 0.0450331+(0.000464068*@0)+(-2.0527e-07*@0*@0)
 signalEff tagged_qqH_ratio 0.56902+(-2.31959e-05*@0)+(-6.64146e-08*@0*@0)
 signalEff tagged_ZH_ratio 0.366471+(0.000533854*@0)
 signalEff tagged_WH_ratio 0.365325+(0.000611703*@0)
