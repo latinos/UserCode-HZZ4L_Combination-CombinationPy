@@ -17,9 +17,9 @@ channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
-rate qqZZ  20.8111
-rate ggZZ  1.29592
-rate zjets 0.8
+rate qqZZ  21.0699
+rate ggZZ  1.30562
+rate zjets 0.58
 
 ## signal functions --- no spaces! ##
 usehighmassreweightedshapes
@@ -39,60 +39,60 @@ HighMasssignalShape gamma_BW (TMath::Max((-151.23)+(0.566127*@0)+(-0.000313658*@
 
 
 ## signal efficiency ##
-signalEff a1  -4.4159
-signalEff a2  4.62442
-signalEff a3  -54.9163
-signalEff a4  99.2322
-signalEff b1  2.3712
-signalEff b2  0.00332331
-signalEff b3  -1.92664e-06
-signalEff g1  0.035
-signalEff g2  190.505
+signalEff a1  -4.38082
+signalEff a2  4.65319
+signalEff a3  -30.6963
+signalEff a4  90.429
+signalEff b1  1.85442
+signalEff b2  0.00237047
+signalEff b3  -1.39479e-06
+signalEff g1  0.0345242
+signalEff g2  201.464
 signalEff g3  30
 
-signalEff qqHa1  -4.33127
-signalEff qqHa2  4.70168
-signalEff qqHa3  -50.2596
-signalEff qqHa4  105.049
-signalEff qqHb1  1.50411
-signalEff qqHb2  0.00162299
-signalEff qqHb3  -1.01014e-06
-signalEff qqHg1  0.0349999
-signalEff qqHg2  190.744
-signalEff qqHg3  35.962
+signalEff qqHa1  -4.36526
+signalEff qqHa2  4.6696
+signalEff qqHa3  -62.3004
+signalEff qqHa4  108.458
+signalEff qqHb1  1.84376
+signalEff qqHb2  0.00198092
+signalEff qqHb3  -1.23474e-06
+signalEff qqHg1  0.035
+signalEff qqHg2  191.316
+signalEff qqHg3  35.6405
 
-signalEff ZHa1  -4.45751
-signalEff ZHa2  4.58085
-signalEff ZHa3  -63.2679
-signalEff ZHa4  116.523
-signalEff ZHb1  0.0708698
-signalEff ZHb2  -0.00104867
-signalEff ZHb3  3.58895e-06
-signalEff ZHg1  0.0011949
-signalEff ZHg2  160
-signalEff ZHg3  30.0548
+signalEff ZHa1  -4.43701
+signalEff ZHa2  4.52864
+signalEff ZHa3  -153.032
+signalEff ZHa4  151.849
+signalEff ZHb1  0.0544726
+signalEff ZHb2  -0.000619604
+signalEff ZHb3  1.97678e-06
+signalEff ZHg1  0.000269364
+signalEff ZHg2  160.044
+signalEff ZHg3  32.7123
 
-signalEff WHa1  -4.47606
+signalEff WHa1  -4.4761
 signalEff WHa2  4.56129
-signalEff WHa3  -85.6115
-signalEff WHa4  111.781
-signalEff WHb1  0.0698798
-signalEff WHb2  -0.000903071
-signalEff WHb3  2.86072e-06
-signalEff WHg1  0.00067907
-signalEff WHg2  163.085
-signalEff WHg3  30.002
+signalEff WHa3  -85.3351
+signalEff WHa4  112.029
+signalEff WHb1  0.078154
+signalEff WHb2  -0.00102036
+signalEff WHb3  3.23081e-06
+signalEff WHg1  0.000761903
+signalEff WHg2  162.999
+signalEff WHg3  30.0016
 
-signalEff ttHa1  -6.05743
-signalEff ttHa2  6.07727
-signalEff ttHa3  -77.2848
-signalEff ttHa4  82.71
-signalEff ttHb1  0.062354
-signalEff ttHb2  -0.000966104
-signalEff ttHb3  3.66598e-06
-signalEff ttHg1  0.000509749
-signalEff ttHg2  160.316
-signalEff ttHg3  40.8095
+signalEff ttHa1  -4.39313
+signalEff ttHa2  4.48576
+signalEff ttHa3  -81.1377
+signalEff ttHa4  112.359
+signalEff ttHb1  0.062692
+signalEff ttHb2  -0.000872869
+signalEff ttHb3  2.88641e-06
+signalEff ttHg1  0.000804064
+signalEff ttHg2  160.001
+signalEff ttHg3  30.1
 
 ### background functions ###
 qqZZshape a0_bkgd   103.882
@@ -111,23 +111,23 @@ qqZZshape a12_bkgd  20.605
 qqZZshape a13_bkgd  0.0822971
 
 
-ggZZshape a0_bkgd  125.821
-ggZZshape a1_bkgd  42.3954
-ggZZshape a2_bkgd  143.257
-ggZZshape a3_bkgd  0.0286117
-ggZZshape a4_bkgd  184.67
-ggZZshape a5_bkgd  10.0727
-ggZZshape a6_bkgd  37.9386
-ggZZshape a7_bkgd  0.175446
-ggZZshape a8_bkgd  56.4725
-ggZZshape a9_bkgd  0.0746837
+ggZZshape a0_bkgd  125.036
+ggZZshape a1_bkgd  42.7025
+ggZZshape a2_bkgd  143.879
+ggZZshape a3_bkgd  0.0286667
+ggZZshape a4_bkgd  184.612
+ggZZshape a5_bkgd  10.0671
+ggZZshape a6_bkgd  38.0644
+ggZZshape a7_bkgd  0.175474
+ggZZshape a8_bkgd  56.2135
+ggZZshape a9_bkgd  0.0743344
 
 zjetsShape mean_3p1f 0
 zjetsShape sigma_3p1f 0
 zjetsShape norm_3p1f 0
 
-zjetsShape mean_2p2f 129.7
-zjetsShape sigma_2p2f 15.8
+zjetsShape mean_2p2f 129
+zjetsShape sigma_2p2f 15
 zjetsShape norm_2p2f 0
 zjetsShape pol0_2p2f 0
 zjetsShape pol1_2p2f 0
@@ -184,14 +184,14 @@ spinYield SM 1.05786
 spinYield n0minus 0.858759
 
 ## others from N_norm
-spinYield n0hplus 0.980189
-spinYield n1minus 0.984971
-spinYield n1plus 1.0293
-spinYield ngg2mplus 0.964494
-spinYield nqq2mplus 0.969142
-spinYield n2hplus 0.980854
+spinYield n0hplus 0.980197
+spinYield n1minus 0.985002
+spinYield n1plus 1.02933
+spinYield ngg2mplus 0.964499
+spinYield nqq2mplus 0.969161
+spinYield n2hplus 0.980862
 spinYield n2hminus 1.00009
-spinYield n2bplus 0.94288
+spinYield n2bplus 0.942889
 
 
 
@@ -229,11 +229,11 @@ spinYield SM 1.05786
 spinYield n0minus 0.858759
 
 ## others from N_norm
-spinYield n0hplus 0.980189
-spinYield n1minus 0.984971
-spinYield n1plus 1.0293
-spinYield ngg2mplus 0.964494
-spinYield nqq2mplus 0.969142
-spinYield n2hplus 0.980854
+spinYield n0hplus 0.980197
+spinYield n1minus 0.985002
+spinYield n1plus 1.02933
+spinYield ngg2mplus 0.964499
+spinYield nqq2mplus 0.969161
+spinYield n2hplus 0.980862
 spinYield n2hminus 1.00009
-spinYield n2bplus 0.94288
+spinYield n2bplus 0.942889
