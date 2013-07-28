@@ -221,6 +221,15 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   //  buildChain(bkgMC, channel, sampleIndex);
   // bool use8TeV=false;
   buildChainSingleMass(bkgMC, channel, sampleIndex,mH);
+  if(sampleIndex == 12 && superMelaName == "superLD_syst3Up")
+    {
+      buildChainSingleMass(bkgMC, channel, 13,mH);
+    }
+  else if(sampleIndex ==13 && superMelaName == "superLD_syst3Up")
+    {
+      buildChainSingleMass(bkgMC, channel, 12,mH);
+    }
+    
   cout << "Chain for " << channel << " " << sampleIndex << "  "<<(useSqrts==2 ? "8TeV" : "7TeV") << " ===>" << bkgMC->GetEntries() << endl;
   // // bkgMC->ls();
 
@@ -315,7 +324,9 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
   //bkgMC->Print("all");
   //cout << bkgMC->GetEntries() << endl;
   //cout << "Number of entries" << endl;
-	
+
+
+
   for(int i=0; i<bkgMC->GetEntries(); i++){
 
     bkgMC->GetEntry(i);
@@ -403,7 +414,7 @@ TH2F* fillTemplate(TString channel, int sampleIndex,TString superMelaName,TStrin
 	    continue;
           }
 	
-	if ((w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.) && superMelaName == "superLD")
+	if ((w < 0. || sKD < 0. || sKD > 1. || KD < 0. || KD > 1.) && (superMelaName == "superLD" || superMelaName == "superLD_syst3Up"))
 	  {
 	    cout << "TRUE Error" << endl;
 	    continue;
@@ -568,6 +579,7 @@ void makeTemplate(TString channel){
 
   TH2F* low,*high,*h_mzzD;
   TH2F *h_mzzD_syst1Up,*h_mzzD_syst1Down,*h_mzzD_syst2Up,*h_mzzD_syst2Down;
+  TH2F *h_mzzD_syst3Up,*h_mzzD_syst3Down;
   TH1F *h_D;
   
   // ========================================
@@ -608,11 +620,21 @@ void makeTemplate(TString channel){
   h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,0,"superLD_syst1Up","sigHisto_syst1Up",true);
   h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,0,"superLD_syst1Down","sigHisto_syst1Down",true);
   h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,0,"superLD_syst2Up","sigHisto_syst2Up",true);
-  h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+  h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up);
+  if(altSignal == 12 || altSignal == 13)
+    {
+      h_mzzD_syst3Up=(TH2F*)fillTemplate(channel,0,"superLD_syst3Up","sigHisto_syst3Up",true);
+      h_mzzD_syst3Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst3Up);  
+    }
   h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
   h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
   h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
   h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+  if(altSignal == 12 || altSignal == 13)
+    {
+      h_mzzD_syst3Up->Write("h_superDpsD_AltProdUp");
+      h_mzzD_syst3Down->Write("h_superDpsD_AltProdDown");
+    }
   
 
   TH1D *h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());
@@ -657,11 +679,21 @@ void makeTemplate(TString channel){
     h_mzzD_syst1Up=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst1Up","sigHistoALT_syst1Up",true);
     h_mzzD_syst1Down=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst1Down","sigHistoALT_syst1Down",true);
     h_mzzD_syst2Up=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst2Up","sigHistoALT_syst2Up",true);
-    h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); //(TH2F*)h_mzzD->Clone("bkgHisto_syst2Down");
+    h_mzzD_syst2Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst2Up); 
+    if(altSignal == 12 || altSignal == 13)
+      {
+	h_mzzD_syst3Up=(TH2F*)fillTemplate(channel,altSignal,"superLD_syst3Up","sigHistoALT_syst3Up",true);
+	h_mzzD_syst3Down=(TH2F*)mirrorTemplate(h_mzzD,h_mzzD_syst3Up); 
+      }
     h_mzzD_syst1Up->Write("h_superDpsD_LeptScaleUp");
     h_mzzD_syst1Down->Write("h_superDpsD_LeptScaleDown");
     h_mzzD_syst2Up->Write("h_superDpsD_LeptSmearUp");
     h_mzzD_syst2Down->Write("h_superDpsD_LeptSmearDown");
+    if(altSignal == 12 || altSignal == 13)
+      {
+	h_mzzD_syst3Up->Write("h_superDpsD_AltProdUp");
+	h_mzzD_syst3Down->Write("h_superDpsD_AltProdDown");
+      }
     
 
     h_DprojX=(TH1D*)h_mzzD->ProjectionX("h_superDfromProjX",1,h_mzzD->GetNbinsX());

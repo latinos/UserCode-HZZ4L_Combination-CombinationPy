@@ -5,10 +5,10 @@
 
 // With high mass reweights + new MELA (analytical background) + superMELA
 //TString filePath7TeV = "/afs/cern.ch/user/b/bonato/work/PhysAnalysis/HZZ4L/Trees_191012_M126/PRODFSR_7TeV/";
-TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702b/PRODFSR/";
-TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130702b/PRODFSR_8TeV/";
-TString filePath7TeVPS = "root://lxcms02//data/Higgs/rootuplesOut/130702b/JHU/";
-TString filePath8TeVPS = "root://lxcms02//data/Higgs/rootuplesOut/130702b/JHU_8TeV/";
+TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720/PRODFSR/";
+TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720/PRODFSR_8TeV/";
+TString filePath7TeVPS = "root://lxcms02//data/Higgs/rootuplesOut/130720/JHU/";
+TString filePath8TeVPS = "root://lxcms02//data/Higgs/rootuplesOut/130720/JHU_8TeV/";
 
 
 //--- Flags to control re-computation of KD
