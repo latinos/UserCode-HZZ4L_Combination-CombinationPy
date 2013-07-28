@@ -1,6 +1,6 @@
 ### channel dependent systematics ###
-systematic zjetKappaLow   0.6
-systematic zjetKappaHigh  1.4
+systematic zjetKappaLow   0.8
+systematic zjetKappaHigh  1.2
 systematic param CMS_zz4l_mean_e_sig   0.002
 systematic param CMS_zz4l_sigma_e_sig  0.2
 systematic param CMS_zz4l_n_sig	       0.05

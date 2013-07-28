@@ -2,8 +2,8 @@ zjetsShape mean_3p1f 0
 zjetsShape sigma_3p1f 0
 zjetsShape norm_3p1f 0
 
-zjetsShape mean_2p2f 129.7
-zjetsShape sigma_2p2f 15.8
+zjetsShape mean_2p2f 129
+zjetsShape sigma_2p2f 15
 zjetsShape norm_2p2f 0
 zjetsShape pol0_2p2f 0
 zjetsShape pol1_2p2f 0
