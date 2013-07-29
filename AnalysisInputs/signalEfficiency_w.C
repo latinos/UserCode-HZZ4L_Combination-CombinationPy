@@ -516,11 +516,12 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     double yieldTagInMW = xsTimesBR*lumi*dijetratioValInMW[i]*totefficiencyValInMW[i];
     double yieldUntInMW = xsTimesBR*lumi*untagInMW->totalCtr;
 
-    
+    int prec = 3;
+    if (process>=3) prec=5;
     (*txtYields) << left << setw(7) << fixed << setprecision(0) << masses[i] << setw(13) << fixed << setprecision(7) << xsTimesBR 
-		 << setw(13) << fixed << setprecision(3) << untagInMW->totalCtr << setw(13) << yieldUntInMW << setw(13) << dijetratioValInMW[i]*totefficiencyValInMW[i] 
-		 << setw(13) << yieldTagInMW << setw(13) << totefficiencyValInMW[i] << setw(13) << yieldTotInMW 
-		 << setw(13) << fixed << setprecision(3) << untagAll->totalCtr << setw(13) << yieldUnt << setw(13) << dijetratioVal[i]*totefficiencyVal[i] 
+		 << setw(13) << fixed << setprecision(prec) << untagInMW->totalCtr << setw(13) << yieldUntInMW << setw(13) << dijetratioValInMW[i]*totefficiencyValInMW[i] 
+		 << setw(13) << yieldTagInMW << setw(13) << fixed << setprecision(prec) << totefficiencyValInMW[i] << setw(13) << yieldTotInMW 
+		 << setw(13) << fixed << setprecision(prec) << untagAll->totalCtr << setw(13) << yieldUnt << setw(13) << dijetratioVal[i]*totefficiencyVal[i] 
 		 << setw(13) << yieldTag << setw(13) << totefficiencyVal[i] << setw(13) << yieldTot 
 		 << setw(13) << fixed << setprecision(0) << untagAll->numEventsRaw + dijetAll->numEventsRaw
 		 << setw(13) << fixed << setprecision(2) << untagAll->numEventsRaw + dijetAll->numEventsPowheg
