@@ -56,7 +56,7 @@
 //TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130715/PRODFSR_8TeV/";
 
 TString filePath7TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720c/PRODFSR/";	 
-TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720/PRODFSR_8TeV/";
+TString filePath8TeV = "root://lxcms02//data/Higgs/rootuplesOut/130720c/PRODFSR_8TeV/";
 
 
 
