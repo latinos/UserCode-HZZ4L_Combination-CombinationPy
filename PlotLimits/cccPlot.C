@@ -125,7 +125,7 @@ void cccPlot() {
     int nChann = 2;
     if(plotInclusive)nChann++;
 
-    TH2F frame("frame",";best fit #mu (GeV);",1,0.5,2.5,nChann,0,nChann);
+    TH2F frame("frame",";best fit #mu;",1,0.5,2.5,nChann,0,nChann);
 
     TGraphAsymmErrors points(nChann);
     for (int cha=0; cha<nChann; ++cha) {
