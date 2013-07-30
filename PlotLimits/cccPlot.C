@@ -19,12 +19,14 @@
 #include "TLegend.h"
 #include "TPaveText.h"
 //#include "RooHZZStyle.C"
-#include "contours.cxx"
+//#include "contours.cxx"
 
 #include <sstream>
 #include <iostream>
 
 using namespace std;
+
+bool plotInclusive=false;
 
 TLatex *CMSPreliminary(float lumi7TeV=5.1, float lumi8TeV=19.6) {
 
@@ -64,10 +66,10 @@ void cccPlot() {
   //TStyle *mystyle = RooHZZStyle("ZZ");
   //mystyle->cd();
 
-  TFile *fituntagged = TFile::Open("125.7_untagged/higgsCombineTest.MultiDimFit.mH125.7.root");
+  TFile *fituntagged = TFile::Open("125.7/higgsCombineMultiDim0.MultiDimFit.mH125.7.root");
   TTree *treeuntagged = (TTree*)fituntagged->Get("limit");
 
-  TFile *fitdijet = TFile::Open("125.7_dijet/higgsCombineTest.MultiDimFit.mH125.7.root");
+  TFile *fitdijet = TFile::Open("125.7/higgsCombineMultiDim1.MultiDimFit.mH125.7.root");
   TTree *treedijet = (TTree*)fitdijet->Get("limit");
 
   TFile *fitcomb = TFile::Open("125.7/higgsCombineTest.MultiDimFit.mH125.7.root");
@@ -120,14 +122,16 @@ void cccPlot() {
     c1->SetLeftMargin(0.2);
     c1->SetGridx(1);
 
-    int nChann = 3;
+    int nChann = 2;
+    if(plotInclusive)nChann++;
+
     TH2F frame("frame",";best fit #mu (GeV);",1,0.5,2.5,nChann,0,nChann);
 
     TGraphAsymmErrors points(nChann);
-    for (int cha=0; cha<3; ++cha) {
+    for (int cha=0; cha<nChann; ++cha) {
       TString channame("");
-      if (cha==0) channame+="Untagged";
-      if (cha==1) channame+="DiJet";
+      if (cha==0) channame+="0/1-jet";
+      if (cha==1) channame+="di-Jet";
       if (cha==2) channame+="Inclusive";
       points.SetPoint(cha,       fitval[cha],  cha+0.5);
       points.SetPointError(cha,  fiterrl[cha], fiterrh[cha], 0, 0);
@@ -136,14 +140,14 @@ void cccPlot() {
     points.SetLineColor(kRed);
     points.SetLineWidth(3);
     points.SetMarkerStyle(21);
-    frame.GetXaxis()->SetNdivisions(5,kFALSE);
+    frame.GetXaxis()->SetNdivisions(8,kFALSE);
     frame.GetXaxis()->SetTitleSize(0.05);
     frame.GetXaxis()->SetLabelSize(0.04);
     frame.GetYaxis()->SetLabelSize(0.06);
     frame.Draw(); gStyle->SetOptStat(0);
     TBox globalFitBand(fitval[2]-fiterrl[2], 0, fitval[2]+fiterrh[2], nChann);
     globalFitBand.SetFillStyle(3013);
-    globalFitBand.SetFillColor(65);
+    globalFitBand.SetFillColor(kGreen);
     globalFitBand.SetLineStyle(0);
     globalFitBand.DrawClone();
     TLine globalFitLine(fitval[2], 0, fitval[2], nChann);
@@ -152,15 +156,18 @@ void cccPlot() {
     globalFitLine.DrawClone();
     points.Draw("P SAME");
     l.DrawLatex(0.45, 0.92, Form("CMS H #rightarrow ZZ #rightarrow 4l"));
-    //stringstream outnamepdf;
-    //outnamepdf << "bestfit_bycategory.pdf";
-    //c1->SaveAs(outnamepdf.str().c_str());
-    stringstream outnamepng;
-    outnamepng << "plots/bestfit_bycategory.png";
-    c1->SaveAs(outnamepng.str().c_str());
-    stringstream outnameeps;
-    outnameeps << "plots/bestfit_bycategory.eps";
-    c1->SaveAs(outnameeps.str().c_str());
+    TLine one(1,0,1,nChann);
+    one.Draw("SAME");
+    TString outname="plots/bestfit_bycategory";
+    if(plotInclusive)outname+="_withIncl";
+    TString outnamepdf = outname+".pdf";
+    c1->SaveAs(outnamepdf.Data());
+    TString  outnamepng=outname+".png";
+    c1->SaveAs(outnamepng.Data());
+    TString  outnameeps=outname+".eps";
+    c1->SaveAs(outnameeps.Data());
+    TString  outnameroot=outname+".root";
+    c1->SaveAs(outnameroot.Data());
 
 }
 
