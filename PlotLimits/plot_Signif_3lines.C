@@ -17,13 +17,13 @@ void getPvals(TFile *f, std::vector<double> &v_mh, std::vector<double> &v_obs);
 
 // --------- Inputs ------- //
 TString inputFile = "../HCG1D/results/higgsCombineHZZ4L_PLP.root";//red
-TString inputFile_1 = "../HCGInclusive/results/higgsCombineHZZ4L_PLP.root";//blue
+TString inputFile_1 = "../HCG2D/results/higgsCombineHZZ4L_PLP.root";//blue
 TString inputFile_2 = "results/higgsCombineHZZ4L_PLP.root";//black
 TString inputFileExp ="../HCG1D/results/higgsCombineHZZ4L_PLPE.root";
-TString inputFileExp_1 = "../HCGInclusive/results/higgsCombineHZZ4L_PLPE.root";
+TString inputFileExp_1 = "../HCG2D/results/higgsCombineHZZ4L_PLPE.root";
 TString inputFileExp_2 = "results/higgsCombineHZZ4L_PLPE.root";//"results261012_2DnewZshape/higgsCombineHZZ4L_PLPE.root";
 TString Graph1 = "Observed (1D)";
-TString Graph2 = "Observed (2D)";
+TString Graph2 = "130715 3D";
 TString Graph3 = "3D Fit 7+8TeV";
 const bool addObs = true;
 const bool addObs_1 = true;
@@ -34,7 +34,7 @@ const bool addExpected_2 = true;
 string method = "PLP";
 Double_t xLow = 99.9;
 Double_t xHigh = 1001.0;
-Double_t yLow = 1e-16;
+Double_t yLow = 1e-17;
 Double_t yHigh = 1.0;
 TString xTitle = "m_{H} [GeV]";
 TString yTitle = "local p-value";
@@ -50,7 +50,7 @@ int canvasX = 700;
 int canvasY = 700;
 const bool _DEBUG_ = false;
 string plotDir = "plots";
-string dimension = "1D2D3D_no2l2tau";
+string dimension = "130715vs130720_no2l2tau";
 // ----------------------- //
 
 
@@ -478,6 +478,9 @@ void plot_Signif_3lines()
   if(addExpected_1)grExp_1->Sort();
   if(addObs_2)grObs_2->Sort();
   if(addExpected_2)grExp_2->Sort();
+  if(addExpected)grExp->Draw("L");
+  if(addExpected_1)grExp_1->Draw("L");
+  if(addExpected_2)grExp_2->Draw("L");
   if(addObs)
     {
       if(points)grObs->Draw("LP");
@@ -494,9 +497,6 @@ void plot_Signif_3lines()
       else grObs_2->Draw("L");
     }
 
-  if(addExpected)grExp->Draw("L");
-  if(addExpected_1)grExp_1->Draw("L");
-  if(addExpected_2)grExp_2->Draw("L");
   //latex.DrawLatex(xHigh+(xHigh-xLow)*0.01, ROOT::Math::normal_cdf_c(1,1.0)*1.1,"1#sigma");
 
   pt->Draw("SAME");
@@ -557,6 +557,10 @@ void plot_Signif_3lines()
   l7->DrawLine(xLow,ROOT::Math::normal_cdf_c(7, 1.0),xHigh,ROOT::Math::normal_cdf_c(7, 1.0));
   l8->DrawLine(xLow,ROOT::Math::normal_cdf_c(8, 1.0),xHigh,ROOT::Math::normal_cdf_c(8, 1.0));
 
+  if(addExpected)grExp->Draw("L");
+  if(addExpected_1)grExp_1->Draw("L");
+  if(addExpected_2)grExp_2->Draw("L");
+
   if(addObs)
     {
       if(points)grObs->Draw("LP");
@@ -572,10 +576,6 @@ void plot_Signif_3lines()
       if(points_2)grObs_2->Draw("LP");
       else grObs_2->Draw("L");
     }
-
-  if(addExpected)grExp->Draw("L");
-  if(addExpected_1)grExp_1->Draw("L");
-  if(addExpected_2)grExp_2->Draw("L");
  
   pt->Draw("SAME");
   pt2->Draw("SAME");
