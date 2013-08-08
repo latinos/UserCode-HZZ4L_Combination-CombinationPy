@@ -4,7 +4,7 @@
  * usage: 
  * -set all input variables in Config.h
  * -run with:
- * root -q -b signalEfficiency_w.C+
+ * root -q -b signalEfficiency_w.C++
  * This runs on the 3 final states for each of the 5 production methods at 7 and 8 TeV and writes the output in a file (see stdout)
  *
  */
@@ -446,11 +446,11 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
       
     }
 
-    // FIXME: the 7TeV samples are assumed to have the ad-hoc correction factor for the mll>12 gen cut,
+    // FIXME: the 7TeV old samples are assumed to have the ad-hoc correction factor for the mll>12 gen cut,
     // except for the 124,125,126 new samples. As this factor is accounted for in the x-section, we have to 
-    // apply it here
+    // apply it here.
     float m = masses[i];
-    if (process==ggH && sqrts==7 && m>=123.9 &&  m<=126.1) {
+    if (!useNewGGHPowheg && process==ggH && sqrts==7 && m>=123.9 &&  m<=126.1) {
       float mllCorr = 0.5 + 0.5*erf((m-80.85)/50.42);
       untagAll->totalCtr = untagAll->totalCtr/mllCorr;
       untagAll->eff_noweight=untagAll->eff_noweight/mllCorr;
@@ -556,15 +556,21 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
 
   TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., xMax);
   polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.03, 200, 30);
-  polyFunctot->SetParLimits(7,0,0.1);
+  polyFunctot->SetParLimits(7,0,0.2);
   polyFunctot->SetParLimits(8,160,210);
-  polyFunctot->SetParLimits(9,20,50);
+  polyFunctot->SetParLimits(9,10,70);
 
-  if (channel==fs4mu && sqrts==7) {    
-    polyFunctot->SetParLimits(7,0,0.035);
-    polyFunctot->SetParLimits(8,160,210);
-    polyFunctot->SetParLimits(9,30,50);
+  if (process!=ggH && process!=qqH) {
+    polyFunctot->FixParameter(7,0);
+    polyFunctot->FixParameter(8,0);
+    polyFunctot->FixParameter(9,1);
   }
+
+//   if (channel==fs4mu && sqrts==7) {    
+//     polyFunctot->SetParLimits(7,0,0.035);
+//     polyFunctot->SetParLimits(8,160,210);
+//     polyFunctot->SetParLimits(9,30,50);
+//   }
 
   polyFunctot->SetLineColor(4);      
   TString cname = "eff" + sprocess + ssqrts + "_" + schannel;
@@ -680,5 +686,9 @@ void signalEfficiency_w(int channel, double sqrts, int process, double JES, ofst
     if (verbose)    cout << "For mass, " << masses[i] << ": measured value is " << totefficiencyVal[i] << " and difference from function is " << residual <<endl;
   }
   cout << "Largest residual= " << maxResidual << endl;
+
+  delete myCSW;
+  delete polyFunctot;
+  delete ratiofit;
 }
 
