@@ -13,13 +13,13 @@ systematic lumiUnc 1.044
 sqrts 8
 
 ## Channels to include in cards ##
-channels all qqZZ ggZZ zjets
+channels ggH qqH WH ZH ttH qqZZ ggZZ zjets
 
 ## rates --- format = chan N lumi ##
 ## if lumi is blank, lumi for cards used ##
 rate qqZZ  92.4363
 rate ggZZ  5.04709
-rate zjets 3.02
+rate zjets 3.09
 ## signal functions --- no spaces! ##
 usehighmassreweightedshapes
 signalShape n_CB TMath::Max((21.8412)+(-0.457725*@0)+(0.00405228*@0*@0)+(-1.69485e-05*@0*@0*@0)+(3.3184e-08*@0*@0*@0*@0)+(-2.44899e-11*@0*@0*@0*@0*@0),1)
@@ -38,60 +38,60 @@ HighMasssignalShape gamma_BW (TMath::Max((17.9981)+(-0.0235633*@0)+(0.000160994*
 
 
 ## signal efficiency ##
-signalEff a1  -4.41766
-signalEff a2  4.62246
-signalEff a3  -61.9739
-signalEff a4  106.16
-signalEff b1  2.3846
-signalEff b2  0.00286153
-signalEff b3  -1.583e-06
-signalEff g1  0.0325151
-signalEff g2  186.988
-signalEff g3  24.1038
+signalEff a1  -4.41675
+signalEff a2  4.62348
+signalEff a3  -60.7222
+signalEff a4  105.557
+signalEff b1  2.36245
+signalEff b2  0.00283458
+signalEff b3  -1.56806e-06
+signalEff g1  0.0323557
+signalEff g2  187.219
+signalEff g3  23.8657
 
-signalEff qqHa1  -4.45832
-signalEff qqHa2  4.63056
-signalEff qqHa3  -25.8233
-signalEff qqHa4  81.8449
-signalEff qqHb1  2.91446
-signalEff qqHb2  0.00391324
-signalEff qqHb3  -2.4039e-06
-signalEff qqHg1  0.0434058
-signalEff qqHg2  195.384
-signalEff qqHg3  22.7562
+signalEff qqHa1  -4.45399
+signalEff qqHa2  4.59029
+signalEff qqHa3  -34.0646
+signalEff qqHa4  83.8618
+signalEff qqHb1  3.68214
+signalEff qqHb2  0.00494688
+signalEff qqHb3  -3.03905e-06
+signalEff qqHg1  0.0434468
+signalEff qqHg2  195.351
+signalEff qqHg3  22.9256
 
-signalEff ZHa1  -4.45819
-signalEff ZHa2  4.58007
-signalEff ZHa3  -70.8128
-signalEff ZHa4  115.344
-signalEff ZHb1  0.0557392
-signalEff ZHb2  -0.000768284
-signalEff ZHb3  2.5071e-06
-signalEff ZHg1  0.00101426
-signalEff ZHg2  164.51
-signalEff ZHg3  35.9504
+signalEff ZHa1  -4.28361
+signalEff ZHa2  4.98452
+signalEff ZHa3  -595.681
+signalEff ZHa4  661.816
+signalEff ZHb1  0.0240441
+signalEff ZHb2  -0.000215169
+signalEff ZHb3  5.63169e-07
+signalEff ZHg1  0
+signalEff ZHg2  0
+signalEff ZHg3  1
 
-signalEff WHa1  -4.4205
-signalEff WHa2  4.61259
-signalEff WHa3  -180.396
-signalEff WHa4  208.041
-signalEff WHb1  0.00537538
-signalEff WHb2  -8.89426e-05
-signalEff WHb3  3.52662e-07
-signalEff WHg1  0.000507661
-signalEff WHg2  160.043
-signalEff WHg3  45.4173
+signalEff WHa1  -4.47385
+signalEff WHa2  4.5634
+signalEff WHa3  -103.963
+signalEff WHa4  106.122
+signalEff WHb1  -0.00469872
+signalEff WHb2  0.000106708
+signalEff WHb3  -2.50458e-07
+signalEff WHg1  0
+signalEff WHg2  0
+signalEff WHg3  1
 
-signalEff ttHa1  -4.45955
-signalEff ttHa2  4.57845
-signalEff ttHa3  -75.9189
-signalEff ttHa4  117.442
-signalEff ttHb1  0.0146928
-signalEff ttHb2  -0.000209491
-signalEff ttHb3  7.54471e-07
-signalEff ttHg1  0.000454032
-signalEff ttHg2  160.011
-signalEff ttHg3  42.1201
+signalEff ttHa1  -4.4313
+signalEff ttHa2  4.57947
+signalEff ttHa3  -58.7134
+signalEff ttHa4  97.2674
+signalEff ttHb1  0.00144056
+signalEff ttHb2  8.81804e-06
+signalEff ttHb3  2.65759e-08
+signalEff ttHg1  0
+signalEff ttHg2  0
+signalEff ttHg3  1
 
 ### background functions ###
 qqZZshape a0_bkgd   103.544
@@ -125,8 +125,8 @@ zjetsShape mean_3p1f 0
 zjetsShape sigma_3p1f 0
 zjetsShape norm_3p1f 0
 
-zjetsShape mean_2p2f 129.7
-zjetsShape sigma_2p2f 15.8
+zjetsShape mean_2p2f 129
+zjetsShape sigma_2p2f 15
 zjetsShape norm_2p2f 0
 zjetsShape pol0_2p2f 0
 zjetsShape pol1_2p2f 0
@@ -166,17 +166,15 @@ systematic BRhiggs_hzz4l True
 systematic CMS_eff True
 systematic CMS_hzz4l_Zjets True
 systematic CMS_zz4l_bkgMELA True
-systematic CMS_zz4l_sigMELA True
-systematic CMS_zz4l_mean False
-systematic CMS_zz4l_sigma False
-systematic CMS_zz4l_mean False
-systematic CMS_zz4l_sigma False
-systematic CMS_zz4l_n False
-systematic CMS_zz4l_gamma False
-
-  
+systematic CMS_zz4l_sigMELA False
+systematic CMS_zz4l_mean True
+systematic CMS_zz4l_sigma True
+systematic CMS_zz4l_mean True
+systematic CMS_zz4l_sigma True
+systematic CMS_zz4l_n True
+systematic CMS_zz4l_gamma True
 ### for hypothesis testing ###
-doHypTest True
+doHypTest False
 #altHypLabel _ALT
 ## spin rates from jhuGen
 spinYield SM 5.20253
