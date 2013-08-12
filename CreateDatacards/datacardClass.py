@@ -33,15 +33,6 @@ class datacardClass:
         ROOT.gSystem.Load("include/HiggsCSandWidth_cc.so")
         ROOT.gSystem.Load("include/HiggsCSandWidthSM4_cc.so")
 
-    # cross section filter for 7 TeV efficiency
-    def csFilter(self,hmass):
-
-        a = 80.85
-        b = 50.42
-        
-        f = 0.5 + 0.5*erf( (hmass - a)/b )
-        
-        return f
 
     # cs x br function 
     def makeXsBrFunction(self,signalProc,rrvMH):
@@ -2055,19 +2046,7 @@ class datacardClass:
         CMS_zz4l_mass.setRange("fullrangesignal",fr_low_M,fr_high_M)
         CMS_zz4l_mass.setRange("fullrange",100,1400)
         
-        rfvCsFilter = RooFormulaVar()
-        if not self.bVBF:
-            filterName = "cmshzz4l_csFilter_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        else:
-            filterName = "cmshzz4l_csFilter_{0:.0f}_{1:.0f}_{2}".format(self.channel,self.sqrts,self.VBFcat)
-        if(self.sqrts == 7): 
-            rfvCsFilter = ROOT.RooFormulaVar(filterName,"0.5+0.5*TMath::Erf((@0 - 80.85)/50.42)", ROOT.RooArgList(self.MH) )
-        else:
-            rfvCsFilter = ROOT.RooFormulaVar(filterName,"@0",ROOT.RooArgList(one))
-
-        if(DEBUG):
-            print "@@@@@@@ rfvCsFilter = ",rfvCsFilter.getVal()
-
+       
         if not self.bVBF:
             sigEffName = "hzz4lggHeff_{0:.0f}_{1:.0f}_a1".format(self.channel,self.sqrts)
             rrva1 = ROOT.RooRealVar(sigEffName,sigEffName, theInputs['sigEff_a1'])
@@ -2417,15 +2396,13 @@ class datacardClass:
             print "CS_ggH: ",CS_ggH,", CS_VBF: ",CS_VBF,", CS_WH: ",CS_WH,", CS_ZH: ",CS_ZH
             print ", CS_ttH: ",CS_ttH,", BRH2e2mu: ",BRH2e2mu,", BRH4mu: ",BRH4mu,", BRH4e: ",BRH4e,", BRZZ: ",BRZZ
 
-        csCorrection = 1.0
-        if(self.sqrts == 7): csCorrection = self.csFilter(self.mH)
-
+        
         ## SIG YIELDS
-        sigRate_ggH = csCorrection*CS_ggH*BR*sigEfficiency_ggH*1000.*self.lumi
-        sigRate_VBF = csCorrection*CS_VBF*BR*sigEfficiency_qqH*1000.*self.lumi
-        sigRate_WH = csCorrection*CS_WH*BRZZ*sigEfficiency_WH*1000.*self.lumi
-        sigRate_ZH = csCorrection*CS_ZH*BRZZ*sigEfficiency_ZH*1000.*self.lumi
-        sigRate_ttH = csCorrection*CS_ttH*BRZZ*sigEfficiency_ttH*1000.*self.lumi
+        sigRate_ggH = CS_ggH*BR*sigEfficiency_ggH*1000.*self.lumi
+        sigRate_VBF = CS_VBF*BR*sigEfficiency_qqH*1000.*self.lumi
+        sigRate_WH = CS_WH*BRZZ*sigEfficiency_WH*1000.*self.lumi
+        sigRate_ZH = CS_ZH*BRZZ*sigEfficiency_ZH*1000.*self.lumi
+        sigRate_ttH = CS_ttH*BRZZ*sigEfficiency_ttH*1000.*self.lumi
 
         rfvTag_Ratio_ggH = ROOT.RooFormulaVar()
         rfvTag_Ratio_qqH = ROOT.RooFormulaVar()
@@ -2533,22 +2510,22 @@ class datacardClass:
         print "!!!%%%*** ",integral_ggH
         
 
-        #rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ggH, rhfXsBrFuncV_1))
+        #rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*1000*{0}*{2}/{1}".format(self.lumi,rrvNormSig.getVal(),self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)),ROOT.RooArgList(rfvSigEff_ggH, rhfXsBrFuncV_1))
 
-        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ggH, rhfXsBrFuncV_1))
+        rfvSigRate_ggH = ROOT.RooFormulaVar("ggH_norm","@0*@1*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ggH,self.getVariable(rfvTag_Ratio_ggH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvSigEff_ggH, rhfXsBrFuncV_1))
         
         print "Compare integrals: integral_ggH=",integral_ggH,"  ; calculated=",self.getVariable(signalCB_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),sig_ggH.createIntegral(RooArgSet(CMS_zz4l_mass),ROOT.RooFit.Range("shape")).getVal(),self.bUseCBnoConvolution)
         
-        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_VBF,self.getVariable(rfvTag_Ratio_qqH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_qqH, rhfXsBrFuncV_2))
+        rfvSigRate_VBF = ROOT.RooFormulaVar("qqH_norm","@0*@1*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_VBF,self.getVariable(rfvTag_Ratio_qqH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvSigEff_qqH, rhfXsBrFuncV_2))
         
         
-        rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_WH,self.getVariable(rfvTag_Ratio_WH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_WH, rhfXsBrFuncV_3))
+        rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_WH,self.getVariable(rfvTag_Ratio_WH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvSigEff_WH, rhfXsBrFuncV_3))
         
         
-        rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ZH,self.getVariable(rfvTag_Ratio_ZH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ZH, rhfXsBrFuncV_4))
+        rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ZH,self.getVariable(rfvTag_Ratio_ZH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvSigEff_ZH, rhfXsBrFuncV_4))
         
         
-        rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*@2*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ttH,self.getVariable(rfvTag_Ratio_ttH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvCsFilter,rfvSigEff_ttH, rhfXsBrFuncV_5))
+        rfvSigRate_ttH = ROOT.RooFormulaVar("ttH_norm","@0*@1*1000*{0}*{2}/{1}*{3}".format(self.lumi,rrvNormSig.getVal(),integral_ttH,self.getVariable(rfvTag_Ratio_ttH.getVal(),one.getVal(),self.bVBF)),ROOT.RooArgList(rfvSigEff_ttH, rhfXsBrFuncV_5))
         
 
         print signalCB_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal(),"   ",sig_ggH.createIntegral(ROOT.RooArgSet(CMS_zz4l_mass)).getVal()
