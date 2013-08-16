@@ -49,6 +49,10 @@ class systematicsClass:
         self.zjetKappaLow = theInputs['zjetsKappaLow']
         self.zjetKappaHigh = theInputs['zjetsKappaHigh']
 
+        self.QCD_scale_ggH_2j_sys = theInputs['QCD_scale_ggH_2j_sys']
+        self.QCD_scale_qqH_2j_sys = theInputs['QCD_scale_qqH_2j_sys']
+        #self.QCD_scale_qqZZ_2j_sys = theInputs['QCD_scale_qqZZ_2j_sys']
+
         self.theoryHighMass = 1
         
         if theInputs['muonTrigCutoff'] > 100 and theInputs['muonTrigUnc_HM'] > 0:
@@ -550,8 +554,82 @@ class systematicsClass:
     def Write_CMS_zz4l_sigMELA(self,theFile,theInputs):
         theFile.write("CMS_zz4l_sigMELA param 0  1  [-3,3]\n")
 
+    def Write_CMS_zz4l_Jet_Split(self,theFile,theInputs,theVBFcat=False):
+        theFile.write("QCDscale_ggH_2j lnN ")
+
+        if theVBFcat:
+            systLine={'ggH':"{0:.3f} ".format(1+self.QCD_scale_ggH_2j_sys)}
+        else:
+            systLine={'ggH':"- "}
+        systLine['qqH']  = "- "
+        systLine['WH']   = "- " 
+        systLine['ZH']   = "- "
+        systLine['ttH']  = "- "
+        systLine['qqZZ'] = "- "
+        systLine['ggZZ'] = "- "
+        systLine['zjets']= "- " 
+        systLine['ttbar']= "- "
+        systLine['zbb']  = "- "
+        
+        self.Write_Systematics_Line(systLine,theFile,theInputs)
+
+        theFile.write("QCDscale_qqH_2j lnN ")
+
+        systLine={'ggH':"- "}
+        if theVBFcat:
+            systLine['qqH']  = "{0:.3f} ".format(1+self.QCD_scale_qqH_2j_sys)
+        else:
+            systLine['qqH']  = "- "
+        systLine['WH']   = "- " 
+        systLine['ZH']   = "- "
+        systLine['ttH']  = "- "
+        systLine['qqZZ'] = "- "
+        systLine['ggZZ'] = "- "
+        systLine['zjets']= "- " 
+        systLine['ttbar']= "- "
+        systLine['zbb']  = "- "
+        
+        self.Write_Systematics_Line(systLine,theFile,theInputs)
+
+        #theFile.write("QCDscale_qqZZ_2j lnN ")
+
+        #systLine={'ggH':"- "}
+        #systLine['qqH']  = "- "
+        #systLine['WH']   = "- " 
+        #systLine['ZH']   = "- "
+        #systLine['ttH']  = "- "
+        #if theVBFcat:
+        #    systLine['qqZZ'] = "{0.3f} ".format(1+self.QCD_scale_qqZZ_2j_sys)
+        #else:
+        #    systLine['qqZZ'] = "- "
+        #systLine['ggZZ'] = "- "
+        #systLine['zjets']= "- " 
+        #systLine['ttbar']= "- "
+        #systLine['zbb']  = "- "
+        #
+        #self.Write_Systematics_Line(systLine,theFile,theInputs)
+
+    def Write_CMS_zz4l_Fisher_sys(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqH_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ttH_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_WH_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ZH_Fisher_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqZZ_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ggZZ_Fisher_sys param 0  1  [-3,3]\n")
+        #theFile.write("CMS_zz4l_ZX_Fisher_sys param 0  1  [-3,3]\n")
+
+    def Write_CMS_zz4l_Pt_sys(self,theFile,theInputs):
+        theFile.write("CMS_zz4l_ggH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ttH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_WH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZH_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_qqZZ_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ggZZ_Pt_sys param 0  1  [-3,3]\n")
+        theFile.write("CMS_zz4l_ZX_Pt_sys param 0  1  [-3,3]\n")
     
-    def WriteSystematics(self,theFile,theInputs):
+    def WriteSystematics(self,theFile,theInputs, theVBFcat=False, theUse3D=False):
 
         if theInputs['useLumiUnc']:
             self.Build_lumi(theFile,theInputs)
@@ -618,7 +696,15 @@ class systematicsClass:
         if theInputs['useCMS_zz4l_sigMELA']:
             self.Write_CMS_zz4l_sigMELA(theFile,theInputs)
 
+        if theInputs['useCMS_zz4l_doVBFtest']:
+            self.Write_CMS_zz4l_Jet_Split(theFile,theInputs, theVBFcat)
 
+        if (theVBFcat and theUse3D and theInputs['useCMS_zz4l_Fisher_sys']):
+            self.Write_CMS_zz4l_Fisher_sys(theFile,theInputs)
+            
+        if (not theVBFcat and theUse3D and theInputs['useCMS_zz4l_Pt_sys']):
+            self.Write_CMS_zz4l_Pt_sys(theFile,theInputs)
+            
 
     def WriteShapeSystematics(self,theFile,theInputs):
   
@@ -632,7 +718,8 @@ class systematicsClass:
         if( self.channel == self.ID_4mu):
 
             if theInputs['useCMS_zz4l_mean']:
-                theFile.write("CMS_zz4l_mean_m_sig param 0.0 {0} \n".format(meanCB_m_errPerCent))
+                theFile.write("CMS_zz4l_mean_m_sig param 0.0 1.0 \n")
+                theFile.write("## CMS_zz4l_mean_m_sig = {0} \n".format(meanCB_m_errPerCent))
             if theInputs['useCMS_zz4l_sigma']:
                 theFile.write("CMS_zz4l_sigma_m_sig param 0.0 {0} \n".format(sigmaCB_m_errPerCent))
             if theInputs['useCMS_zz4l_n']:
@@ -644,7 +731,8 @@ class systematicsClass:
         if( self.channel == self.ID_4e):
 
             if theInputs['useCMS_zz4l_mean']:
-                theFile.write("CMS_zz4l_mean_e_sig param 0.0 {0} \n".format(meanCB_e_errPerCent))
+                theFile.write("CMS_zz4l_mean_e_sig param 0.0 1.0 \n")
+                theFile.write("## CMS_zz4l_mean_e_sig = {0} \n".format(meanCB_e_errPerCent))
             if theInputs['useCMS_zz4l_sigma']:
                 theFile.write("CMS_zz4l_sigma_e_sig param 0.0 {0} \n".format(sigmaCB_e_errPerCent))
             if theInputs['useCMS_zz4l_n']:
@@ -656,8 +744,10 @@ class systematicsClass:
         if( self.channel == self.ID_2e2mu):
 
             if theInputs['useCMS_zz4l_mean']:
-                theFile.write("CMS_zz4l_mean_m_sig param 0.0 {0} \n".format(meanCB_m_errPerCent))
-                theFile.write("CMS_zz4l_mean_e_sig param 0.0 {0} \n".format(meanCB_e_errPerCent))
+                theFile.write("CMS_zz4l_mean_m_sig param 0.0 1.0 \n")
+                theFile.write("## CMS_zz4l_mean_m_sig = {0} \n".format(meanCB_m_errPerCent))
+                theFile.write("CMS_zz4l_mean_e_sig param 0.0 1.0 \n".format(meanCB_e_errPerCent))
+                theFile.write("## CMS_zz4l_mean_e_sig = {0} \n".format(meanCB_e_errPerCent))
             if theInputs['useCMS_zz4l_sigma']:
                 theFile.write("CMS_zz4l_sigma_m_sig param 0.0 {0} \n".format(sigmaCB_m_errPerCent))
                 theFile.write("CMS_zz4l_sigma_e_sig param 0.0 {0} \n".format(sigmaCB_e_errPerCent))
