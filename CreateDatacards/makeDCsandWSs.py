@@ -65,7 +65,8 @@ def processCmd(cmd):
 #    print cmd
     status, output = commands.getstatusoutput(cmd)
     if status !=0:
-        print 'Error in processing command:\n   ['+cmd+'] \nExiting...'
+        #print 'Error in processing command:\n   ['+cmd+'] \nExiting...'
+        print output
         sys.exit()
 
 

@@ -38,9 +38,9 @@ elif [[ "$MUTYPE" == "float" ]]
 
     if [[ "$FITNUIS" == "TRUE" ]]
 	then
-	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "floatMu.fitNuis" --fitNuis=1
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "floatMu.fitNuis" --fitNuis=1 --seed ${SEED}
     else
-	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "floatMu" --fitNuis=0
+	combine -m $MH -M HybridNew --testStat=TEV --generateExt=1 --generateNuis=0 ${CARD} --singlePoint 1 --saveHybridResult -T ${NTOYS} --fork 1 -i ${NITER} --clsAcc 0 --fullBToys -n "floatMu" --fitNuis=0 --seed ${SEED}
     fi
     
 fi

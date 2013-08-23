@@ -120,6 +120,10 @@ class inputReader:
         self.jhuGen_SM_yield = -999.9
         self.jhuGen_0minus_yield = -999.9
         self.jhuGen_0hplus_yield = -999.9
+        self.jhuGen_2hplus_yield = -999.9
+        self.jhuGen_2hminus_yield = -999.9
+        self.jhuGen_2bplus_yield = -999.9
+        self.jhuGen_gg2mplus_yield = -999.9
         # signal efficiency ratios for jet tagging catagoies
         self.tagged_ggH_ratio = -999.9
         self.tagged_qqH_ratio = -999.9
@@ -398,6 +402,10 @@ class inputReader:
                 if f[1].lower().startswith("sm"): self.jhuGen_SM_yield = float(f[2])
                 if f[1].lower().startswith("n0minus"): self.jhuGen_0minus_yield = float(f[2])
                 if f[1].lower().startswith("n0hplus"): self.jhuGen_0hplus_yield = float(f[2])
+                if f[1].lower().startswith("ngg2mplus"): self.jhuGen_gg2mplus_yield = float(f[2])
+                if f[1].lower().startswith("n2hplus"): self.jhuGen_2hplus_yield = float(f[2])
+                if f[1].lower().startswith("n2hminus"): self.jhuGen_2hminus_yield = float(f[2])
+                if f[1].lower().startswith("n2bplus"): self.jhuGen_2bplus_yield = float(f[2])
                 
             if f[0].lower().startswith("signaleff"):
 
@@ -720,7 +728,10 @@ class inputReader:
         if not self.goodEntry(self.jhuGen_SM_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_SM_yield")
         if not self.goodEntry(self.jhuGen_0minus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_0minus_yield")
         if not self.goodEntry(self.jhuGen_0hplus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_0hplus_yield")
-        
+        if not self.goodEntry(self.jhuGen_gg2mplus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_gg2mplus_yield")
+        if not self.goodEntry(self.jhuGen_2hplus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_2hplus_yield")
+        if not self.goodEntry(self.jhuGen_2hminus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_2hminus_yield")
+        if not self.goodEntry(self.jhuGen_2bplus_yield): raise RuntimeError, "{0} is not set.  Check inputs!".format("jhuGen_2bplus_yield")
 
         if not self.goodEntry(self.sigeff_a1): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_a1")
         if not self.goodEntry(self.sigeff_a2): raise RuntimeError, "{0} is not set.  Check inputs!".format("sigEff_a2")
@@ -912,6 +923,10 @@ class inputReader:
         dict['jhuGen_SM_yield'] = float(self.jhuGen_SM_yield)
         dict['jhuGen_0minus_yield'] = float(self.jhuGen_0minus_yield)
         dict['jhuGen_0hplus_yield'] = float(self.jhuGen_0hplus_yield)
+        dict['jhuGen_2hplus_yield'] = float(self.jhuGen_2hplus_yield)
+        dict['jhuGen_2hminus_yield'] = float(self.jhuGen_2hminus_yield)
+        dict['jhuGen_gg2mplus_yield'] = float(self.jhuGen_gg2mplus_yield)
+        dict['jhuGen_2bplus_yield'] = float(self.jhuGen_2bplus_yield)
                          
         dict['sigEff_a1'] = float(self.sigeff_a1)
         dict['sigEff_a2'] = float(self.sigeff_a2)

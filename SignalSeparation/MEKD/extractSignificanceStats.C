@@ -20,15 +20,23 @@
 
 
 double Lumi_7TeV = 5.1;
-double Lumi_8TeV = 19.6;
+double Lumi_8TeV = 19.8;
 
 
-int extractSignificanceStats(TString jobname=""){
+int extractSignificanceStats(TString jobname="",TString model){
 
-  double Hist_Range_min=-35;
-  double Hist_Range_max=35;
+  double Hist_Range_min=-30;
+  double Hist_Range_max=30;
+
+  if (model.Contains("2h"))
+    {
+      Hist_Range_min = -60;
+      Hist_Range_max = 60;
+    }
+  
 
   setTDRStyle( true );
+
 
   char fileName[128];
   sprintf(fileName,"qmu.root");
@@ -120,11 +128,13 @@ int extractSignificanceStats(TString jobname=""){
   cout<<tailPS<<endl;
   if(tailSM>0)cout<<"Prob( q < median(P) | S ) = "<<tailSM<<"  ("<<ROOT::Math::normal_quantile_c(tailSM,1.0) <<" sigma)"<<endl;
   if(tailPS>0)cout<<"Prob( q > median(S) | P ) = "<<tailPS<<"  ("<<ROOT::Math::normal_quantile_c(tailPS,1.0) <<" sigma)"<<endl;
+ 
   
   // Data point probability
   double Probability_Data_SM=hSM->Integral(0,hSM->FindBin(hObs->GetBinCenter( hObs->FindFirstBinAbove(0.99) ))-1)/integralSM;
   double Probability_Data_PS=hPS->Integral(0,hPS->FindBin(hObs->GetBinCenter( hObs->FindFirstBinAbove(0.99) ))-1)/integralPS;
   cout << "Data point at " << hObs->GetBinCenter( hObs->FindFirstBinAbove(0.99) ) << endl;
+  cout << "keyword data " << hObs->GetBinCenter( hObs->FindFirstBinAbove(0.99) ) << endl;
 
   if( Probability_Data_SM >= 1 || Probability_Data_SM <0 )
   {
@@ -142,13 +152,15 @@ int extractSignificanceStats(TString jobname=""){
   cout << "Prob( q >= qObs | q~SM Higgs+Bkg ) = " << static_cast<double>(1-Probability_Data_SM) << "  (";
   if( Probability_Data_SM<1 ) cout << ROOT::Math::normal_quantile_c( 1.0 - Probability_Data_SM, 1.0 ) << " sigma)\n";
   else cout << "--- sigma)\n";
+  cout << "keyword obsSM " << ROOT::Math::normal_quantile_c( 1.0 - Probability_Data_SM, 1.0 ) << endl;
   cout << "Prob( q >= qObs | q~Alt. sig. + Bkg ) = " << static_cast<double>(1-Probability_Data_PS) << "  (";
   if( Probability_Data_PS<1 ) cout << ROOT::Math::normal_quantile_c( 1.0 - Probability_Data_PS, 1.0 ) << " sigma)\n";
   else cout << "--- sigma)\n";
+  cout << "keyword obsJP " << ROOT::Math::normal_quantile_c( 1.0 - Probability_Data_PS, 1.0 ) << endl;
   cout << "CLs = " << static_cast<double>((1-Probability_Data_PS)/(1-Probability_Data_SM)) << "  (";
   if( (1-Probability_Data_PS)/(1-Probability_Data_SM)>0 ) cout << ROOT::Math::normal_quantile_c( (1-Probability_Data_PS)/(1-Probability_Data_SM), 1.0 ) << " sigma)\n";
   else cout << "--- sigma)\n";
-  
+  cout << "keyword cls " <<  static_cast<double>((1-Probability_Data_PS)/(1-Probability_Data_SM)) << endl;
   
   diff=10.0;
   coverage=0.0;
@@ -165,7 +177,7 @@ int extractSignificanceStats(TString jobname=""){
 
   float sepH= 2*ROOT::Math::normal_quantile_c(1.0 - coverage, 1.0);
   cout<<"Separation from histograms = "<<sepH<<" with coverage "<<coverage<<endl;
-
+  cout << "keyword expsep " << fabs(sepH) << endl;
   // Possible scale location 2
   hSM->Scale( 1/hSM->Integral() );
   hPS->Scale( 1/hPS->Integral() );
@@ -193,10 +205,10 @@ int extractSignificanceStats(TString jobname=""){
   hSM->Rebin(50);
   hPS->Rebin(50);
 
-  if( (hSM->GetMaximum()) > (hPS->GetMaximum()) ) hSM->SetMaximum( (hSM->GetMaximum())*1.2  );
-  else hSM->SetMaximum( (hPS->GetMaximum())*1.15 );
+  if( (hSM->GetMaximum()) > (hPS->GetMaximum()) ) hSM->SetMaximum( (hSM->GetMaximum())*1.25  );
+  else hSM->SetMaximum( (hPS->GetMaximum())*1.25 );
 
-  hSM->SetXTitle("-2 #times ln(L_{JP}/L_{0+})");
+  hSM->SetXTitle("-2 #times ln(L_{"+model+"}/L_{0+})");
   hSM->SetYTitle("Pseudoexperiments");
   //hPS->SetXTitle("Q = -2 #times ln(L_{SM+bkg}/L_{0^{-}+bkg})");
 //   hSM->SetLineColor(kRed+1);
@@ -247,8 +259,8 @@ int extractSignificanceStats(TString jobname=""){
   leg->SetFillStyle(0);
   leg->SetFillColor(0);
   leg->SetBorderSize(0);
-  leg->AddEntry(hSM," 0^{+}_{m}","f");
-  leg->AddEntry(hPS," 0^{+}_{h}","f");
+  leg->AddEntry(hSM," 0^{+}","f");
+  leg->AddEntry(hPS," "+model,"f");
   leg->AddEntry(hObs, " CMS data","l");
   leg->Draw();
 
@@ -265,12 +277,12 @@ int extractSignificanceStats(TString jobname=""){
 
   TLatex *CP = new TLatex();
   CP->SetNDC(kTRUE);
-  CP->SetTextSize(0.03);
+  CP->SetTextSize(0.028);
   CP->SetTextAlign(31);
   CP->SetTextFont(42);
   CP->SetTextAlign(11);
 
-  CP->DrawLatex( 0.145, 0.965, Form("CMS Preliminary #sqrt{s} = 7 TeV, L = %.1f fb^{-1}  #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",
+  CP->DrawLatex( 0.148, 0.965, Form("CMS Preliminary #sqrt{s} = 7 TeV, L = %.1f fb^{-1}  #sqrt{s} = 8 TeV, L = %.1f fb^{-1}",
     Lumi_7TeV, Lumi_8TeV) );
 //  CP->DrawLatex( 0.483, 0.925, Form("Cross-check results with alternative KD") );
 //  CP->DrawLatex( 0.58, 0.925, Form("Alternative analysis with MEKD") );

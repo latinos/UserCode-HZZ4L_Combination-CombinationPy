@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #-----------------------------------------------
-# Latest update: 05.22.2013
+# Latest update: 06.05.2013
 # by Predrag Milenovic, Matt Snowball
 #-----------------------------------------------
 import sys, os, pwd, commands
@@ -11,7 +11,7 @@ import ROOT
 ####################################
 cmssw_base=commands.getoutput("echo $CMSSW_BASE")
 curdir=commands.getoutput("pwd")
-TOYSPERDIR=20000
+TOYSPERDIR=100000
 ####################################
 
 
@@ -24,17 +24,17 @@ def parseOptions():
     parser.add_option('-b', action='store_true', dest='noX', default=True, help='no X11 windows')
     parser.add_option('', '--fitNuis', action='store_true', dest='FITNUIS',  default=False, help='fit nuissances (default=False)')
     parser.add_option('', '--generateToys',action='store_true', dest='generateToys',default=False,help='generate toys')
-    parser.add_option('', '--haddToys',action='store_true', dest='haddToys',default=False,help='hadd toys only')
+    parser.add_option('', '--haddToys',action='store_true', dest='haddToys',default=False,help='hadd toys')
     parser.add_option('', '--plot',action='store_true', dest='plot',default=False,help='hadd toys and make plot')
     parser.add_option('', '--replot',action='store_true', dest='replot',default=False,help='dont hadd toys, make plot')
     parser.add_option('', '--tool',  dest='TOOL', type='string', default='combine',    help='Tool: combine or lands')
-    parser.add_option('-t', '--toys',  dest='NTOYS', type='int', default=1000000,    help='Number of total toys, will be paralelised to have 20K per job')
+    parser.add_option('-t', '--toys',  dest='NTOYS', type='int', default=200000,    help='Number of total toys, will be paralelised to have 50K per job')
     parser.add_option('-d', '--dir',   dest='SOURCEDIR', type='string', default='', help='SOURCEDIR, skip if SOURCEDIR is empty')
     parser.add_option('-n', '--name',  dest='DIRNAME', type='string', default='submission_', help='submission dir names - submission_$i')
     parser.add_option('-M', '--model', dest='MODEL', type='string', default='', help='model name')
     parser.add_option('-m', '--mh',    dest='MASS', type='float', default=126.0, help='mass of Higgs hypothesis')
     parser.add_option('-e', '--sqrts', dest='ENERGY', type='string', default='7p8', help='sqrts: 7, 8, 7p8')
-    parser.add_option('-u', '--mu',    dest='MUTYPE', type='string', default='float', help='type of mu: fixed or float[default]')
+    parser.add_option('-u', '--mu',    dest='MUTYPE', type='string', default='fixed', help='type of mu: fixed[default] or float')
 
     # store options and arguments as global variables
     global opt, args
@@ -227,7 +227,7 @@ def submitToysLSF(totalDirs):
     
     for i in xrange(1,totalDirs+1):
         theDir = curdir+'/'+opt.MODEL+'/'+opt.DIRNAME+str(i)
-        cmd = "bsub -q 8nh -o "+str(theDir)+"/lsfLog.txt -J "+str(opt.MODEL)+"_"+str(i)+" run_source.sh "+str(theDir)+" "+str(opt.MUTYPE)+" "+str(MYFITNUIS)+" "+str(TOYSPERDIR)+" "+str(opt.MASS)+" "+str(SEED)+" "+CARD
+        cmd = "bsub -q 1nd -o "+str(theDir)+"/lsfLog.txt -J "+str(opt.MODEL)+"_"+str(i)+" run_source.sh "+str(theDir)+" "+str(opt.MUTYPE)+" "+str(MYFITNUIS)+" "+str(TOYSPERDIR)+" "+str(opt.MASS)+" "+str(SEED)+" "+CARD
         #print cmd
         processCmd(cmd)
         SEED=SEED+SEEDINCR
@@ -256,7 +256,7 @@ def haddToysCombine():
         cmd = 'hadd combineToys.'+myFile+'.'+str(opt.MASS)+'.root submission_*/higgsCombine'+myFile+'.HybridNew.mH*root' 
         processCmd(cmd)
     else:
-        cmd = 'hadd combineToys.'+myFile+'.'+str(opt.MASS)+'.root submission_*/higgsCombine'+myFile+'.'+myNuis+'.HybridNew.mH*root' 
+        cmd = 'hadd combineToys.'+myFile+myNuis+'.'+str(opt.MASS)+'.root submission_*/higgsCombine'+myFile+'.'+myNuis+'.HybridNew.mH*root' 
         processCmd(cmd)
     
     os.chdir(curdir)
@@ -293,7 +293,7 @@ def plotToysCombine(file):
 
     print '>>>>> plotting '+opt.MODEL
     ROOT.gROOT.ProcessLine(".L extractSignificanceStats.C")
-    cmd = 'extractSignificanceStats("'+opt.MODEL+'_'+opt.MUTYPE+myNuis+'"); > '+opt.MODEL+'_'+opt.MUTYPE+myNuis+'.log'
+    cmd = 'extractSignificanceStats("'+opt.MODEL+'_'+opt.MUTYPE+myNuis+'","'+opt.MODEL+'"); > '+opt.MODEL+'_'+opt.MUTYPE+myNuis+'.log'
     #cmd = 'extractSignificanceStats()'
     ROOT.gROOT.ProcessLine(cmd)
 
@@ -316,11 +316,11 @@ if __name__ == "__main__":
     
     if opt.generateToys:
         cmd = 'mkdir -p '+str(opt.MODEL)
-        if os.path.exists(opt.MODEL):
-            print opt.MODEL+' exists! Exiting...'
-            sys.exit()
-        else:
-            processCmd(cmd)
+        #if os.path.exists(opt.MODEL):
+        #    print opt.MODEL+' exists! Exiting...'
+        #    sys.exit()
+        #else:
+        #    processCmd(cmd)
                     
         totalDirs = makeParallelToys()
         submitToysLSF(totalDirs)

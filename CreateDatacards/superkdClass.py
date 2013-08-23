@@ -19,7 +19,7 @@ class superkdClass(datacardClass):
         self.discVarName = "CMS_zz4l_pseudoKD"
         if self.altHypothesis == 'gg0-':
             self.discVarName = "CMS_zz4l_pseudoKD"
-        elif self.altHypothesis == 'gg2+m':
+        elif self.altHypothesis == 'gg2m+':
             self.discVarName = "CMS_zz4l_graviKD"
         elif self.altHypothesis == 'gg0h+':
             self.discVarName = "CMS_zz4l_p0hplusKD"
@@ -27,8 +27,20 @@ class superkdClass(datacardClass):
             self.discVarName = "CMS_zz4l_p1plusKD"
         elif self.altHypothesis == 'qq1-':
             self.discVarName = "CMS_zz4l_p1minusKD"
-        elif self.altHypothesis == 'qq2+m':
+        elif self.altHypothesis == 'qq2m+':
             self.discVarName = "CMS_zz4l_qqgraviKD"
+        elif self.altHypothesis == '2h+':
+            self.discVarName = "CMS_zz4l_p2hplusKD"
+        elif self.altHypothesis == '2h-':
+            self.discVarName = "CMS_zz4l_p2hminusKD"
+        elif self.altHypothesis == '2b+':
+            self.discVarName = "CMS_zz4l_p2bplusKD"
+        elif self.altHypothesis == 'PI2+':
+            self.discVarName = "CMS_zz4l_gravi_ProdIndepKD"
+        elif self.altHypothesis == 'PI1-':
+            self.discVarName = "CMS_zz4l_p1minus_ProdIndepKD"
+        elif self.altHypothesis == 'PI1+':
+            self.discVarName = "CMS_zz4l_p1plus_ProdIndepKD"
         else :
             self.discVarName = "CMS_zz4l_pseudoKD"
         print '>>>>>> SuperKD 2D PDFS using discriminat named :',self.discVarName
@@ -209,6 +221,7 @@ class superkdClass(datacardClass):
         templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
         self.bkgTempFile = ROOT.TFile(templateBkgName)
         self.bkgTemplate = self.bkgTempFile.Get("h_superDpsD")
+        self.bkgTemplateqqZZ = self.bkgTempFile.Get("h_superDpsD")
         
 
         TemplateName = "bkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
@@ -217,27 +230,56 @@ class superkdClass(datacardClass):
         self.bkgTemplatePdf_qqzz = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist)
 
 
-        TemplateName = "zjetsbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTempDataHist_zjets = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
-        TemplateName = "bkgTemplatePdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjets)
-
-        TemplateName = "zjetsbkgTempDataHist_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTempDataHist_zjetsUp = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
-        TemplateName = "bkgTemplatePdf_zjets_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_zjets_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsUp)
+        if self.reflectZX:
+            
+            TemplateName = "zjetsbkgTempDataHist_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTempDataHist_zjetsUp = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
+            TemplateName = "bkgTemplatePdf_zjets_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTemplatePdf_zjets_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsUp)
         
 
+            templateBkgName = "{0}/Dbackground_ZJetsCR_AllChans.root".format(self.templateDir)
+            self.zjetsTempFile = ROOT.TFile(templateBkgName)
+            self.zjetsTemplate = self.zjetsTempFile.Get("h_superDpsD")
+            TemplateName = "zjetsbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTempDataHist_zjets = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplate,kFALSE))
+            TemplateName = "bkgTemplatePdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjets)
 
-        templateBkgName = "{0}/Dbackground_ZJetsCR_AllChans.root".format(self.templateDir)
-        self.zjetsTempFile = ROOT.TFile(templateBkgName)
-        self.zjetsTemplateDown = self.zjetsTempFile.Get("h_superDpsD")
-        TemplateName = "zjetsbkgTempDataHist_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTempDataHist_zjetsDown = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplateDown,kFALSE))
-        #self.zjetsTemplateDown = self.reflectSystematics(self.bkgTemplate,self.zjetsTemplate)
-        TemplateName = "bkgTemplatePdf_zjets_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        self.bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsDown)
+            self.bkgTempDataHist_zjetsDown1 = self.reflectSystematics(self.zjetsTemplate,self.bkgTemplateqqZZ)
+            TemplateName = "zjetsbkgTempDataHist_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTempDataHist_zjetsDown = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTempDataHist_zjetsDown1,kFALSE))
+            TemplateName = "bkgTemplatePdf_zjets_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsDown)
         
+
+        else:
+
+            #Nominal Z+X
+            TemplateName = "zjetsbkgTempDataHist_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTempDataHist_zjets = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
+            TemplateName = "bkgTemplatePdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTemplatePdf_zjets = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjets)
+            
+
+            #Up Z+X
+            TemplateName = "zjetsbkgTempDataHist_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTempDataHist_zjetsUp = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.bkgTemplate,kFALSE))
+            TemplateName = "bkgTemplatePdf_zjets_Up_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTemplatePdf_zjets_Up = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsUp)
+        
+
+            #Down Z+X
+            templateBkgName = "{0}/Dbackground_ZJetsCR_AllChans.root".format(self.templateDir)
+            self.zjetsTempFile = ROOT.TFile(templateBkgName)
+            self.zjetsTemplateDown = self.zjetsTempFile.Get("h_superDpsD")
+            TemplateName = "zjetsbkgTempDataHist_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTempDataHist_zjetsDown = ROOT.RooDataHist(TemplateName,TemplateName,ROOT.RooArgList(self.SD,self.D),ROOT.RooFit.Import(self.zjetsTemplateDown,kFALSE))
+            TemplateName = "bkgTemplatePdf_zjets_Down_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+            self.bkgTemplatePdf_zjets_Down = ROOT.RooHistPdf(TemplateName,TemplateName,ROOT.RooArgSet(self.SD,self.D),self.bkgTempDataHist_zjetsDown)
+
+
+
 
         templateggBkgName = "{0}/Dbackground_ggZZ_{1}.root".format(self.templateDir ,self.appendName)
         self.ggbkgTempFile = ROOT.TFile(templateggBkgName)
@@ -357,13 +399,27 @@ class superkdClass(datacardClass):
         self.rrvJHUgen_ggH_ALT = ROOT.RooRealVar("jhuGen_ALT","jhuGen_ALT",1)
         if self.altHypothesis == 'gg0-':
             self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0minus_yield']))
+            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
         elif self.altHypothesis == 'gg0h+':
             self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0hplus_yield']))
+            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == 'gg2m+': ### 0+ vs gg2m+ with or without production
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_gg2mplus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == '2h+':
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_2hplus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == '2h-': ### 0+ vs 2h-
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_2hminus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == '2b+':
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_2bplus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
         else:
-            self.rrvJHUgen_ggH_ALT.setVal(self.rates['ggH']*self.calcTotalYieldCorr(self.channel,self.altHypothesis))
-        
-                
-        self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+            self.rrvJHUgen_ggH_ALT.setVal(self.rates['ggH']*self.calcTotalYieldCorr(self.channel,self.sqrts,self.altHypothesis))
+            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()
+                    
+
         self.rfvSigRate_ggH_ALT = ROOT.RooFormulaVar("ggH{0}_norm".format(self.appendHypType),"@0",ROOT.RooArgList(self.one))
         print '>>>>>> Compare signal rates: STD=',self.rfvSigRate_ggH.getVal(),"   ALT=",self.rfvSigRate_ggH_ALT.getVal()
         print '>>>>>> Compare signal rates: STD=',self.rates['ggH'],"   ALT=",self.sigRate_ggH_ALT_Shape
@@ -421,11 +477,26 @@ class superkdClass(datacardClass):
         self.rrvJHUgen_ggH_ALT = ROOT.RooRealVar("jhuGen_ALT","jhuGen_ALT",1)
         if self.altHypothesis == 'gg0-':
             self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0minus_yield']))
+            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
         elif self.altHypothesis == 'gg0h+':
             self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_0hplus_yield']))
+            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == 'gg2m+': ### 0+ vs gg2m+ with or without production
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_gg2mplus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == '2h+':
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_2hplus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == '2h-': ### 0+ vs 2h-
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_2hminus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+#        elif self.altHypothesis == '2b+':
+#            self.rrvJHUgen_ggH_ALT.setVal(float(self.inputs['jhuGen_2bplus_yield']))
+#            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
         else:
-            self.rrvJHUgen_ggH_ALT.setVal(self.rates['ggH']*self.calcTotalYieldCorr(self.channel,self.altHypothesis))
-        self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()*self.rrv_SMggH_ratio.getVal()
+            self.rrvJHUgen_ggH_ALT.setVal(self.rates['ggH']*self.calcTotalYieldCorr(self.channel,self.sqrts,self.altHypothesis))
+            self.sigRate_ggH_ALT_Shape = self.rrvJHUgen_ggH_ALT.getVal()
+
         self.rfvSigRate_ggH_ALT = ROOT.RooFormulaVar("ggH{0}_norm".format(self.appendHypType),"@0",ROOT.RooArgList(self.one))
         print '>>>>>> Compare signal rates: STD=',self.rfvSigRate_ggH.getVal(),"   ALT=",self.rfvSigRate_ggH_ALT.getVal()
         print '>>>>>> Compare signal rates: STD=',self.rates['ggH'],"   ALT=",self.sigRate_ggH_ALT_Shape
@@ -455,12 +526,20 @@ class superkdClass(datacardClass):
         
         #zjets
         theYield = self.rates['zjets']
-        hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets',theYield)
-        hist.Write()
-        hist = self.unfoldedHist(self.zjetsTemplateDown,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Down'.format(self.channel),theYield)
-        hist.Write()
-        hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Up'.format(self.channel),theYield)#for now
-        hist.Write()
+        if self.reflectZX:
+            hist = self.unfoldedHist(self.zjetsTemplate,'bkg2d_zjets',theYield)
+            hist.Write()
+            hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Down'.format(self.channel),theYield)
+            hist.Write()
+            hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Up'.format(self.channel),theYield)#for now
+            hist.Write()
+        else:
+            hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets',theYield)
+            hist.Write()
+            hist = self.unfoldedHist(self.zjetsTemplateDown,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Down'.format(self.channel),theYield)
+            hist.Write()
+            hist = self.unfoldedHist(self.bkgTemplate,'bkg2d_zjets_CMS_zz4l_smd_zjets_bkg_{0:.0f}Up'.format(self.channel),theYield)#for now
+            hist.Write()
 
         #data
         histData2D = self.sigTemplate.Clone()
@@ -636,7 +715,7 @@ class superkdClass(datacardClass):
 
 
 
-    def calcTotalYieldCorr(self, channel, spinHypCode):
+    def calcTotalYieldCorr(self, channel, sqrts, spinHypCode):
         
         ### the parameters are the fraction of 2e2mu with respect to the total
         ### we modify the total assuming that the 2e2mu yield is constant
@@ -645,30 +724,86 @@ class superkdClass(datacardClass):
         r = 1.0 
 
         #[4mu, 4e, 2e2mu]
-        corrFactor_0minus = [0.912885,0.858691,1.12188]
-        corrFactor_gg2plusm = [0.900717,0.865112,1.12826]
-        corrFactor_0hplus = [1.12826,0.947087,1.06477]
-        corrFactor_1plus  = [0.968514,0.882397,1.07114]
-        corrFactor_1minus = [0.939779,0.854791,1.1036]
-        corrFactor_qq2plusm = [0.884544,0.861437,1.1417]
+        #corrFactor_0minus = [0.912885,0.858691,1.12188]
+        #corrFactor_gg2plusm = [0.900717,0.865112,1.12826]
+        #corrFactor_0hplus = [1.12826,0.947087,1.06477]
+        #corrFactor_1plus  = [0.968514,0.882397,1.07114]
+        #corrFactor_1minus = [0.939779,0.854791,1.1036]
+        #corrFactor_qq2plusm = [0.884544,0.861437,1.1417]
 
-        if spinHypCode == 'SM':
-            r = 1.0
-        elif spinHypCode == 'gg0-':
-            r = 1#corrFactor_0minus[channel-1]
-        elif spinHypCode == 'gg0h+':
-            r = 1#corrFactor_0hplus[channel-1]
-        elif spinHypCode == 'qq1-':
-            r = corrFactor_1minus[channel-1]
-        elif spinHypCode == 'qq1+':
-            r = corrFactor_1plus[channel-1]
-        elif spinHypCode == 'gg2+m':
-            r = corrFactor_gg2plusm[channel-1]
-        elif spinHypCode == 'qq2+m':
-            r = corrFactor_qq2plusm[channel-1]
+        corrFactor_0minus_7 = [0.94178,0.847481,1.13082]
+        corrFactor_0hplus_7 = [0.926585,0.934054,1.09296]
+        corrFactor_1plus_7  = [0.973026,0.907252,1.09667]
+        corrFactor_1minus_7 = [0.931127,0.89238,1.14357]
+        corrFactor_qq2plusm_7 = [0.916151,0.854769,1.15253]
+        corrFactor_gg2plusm_7 = [0.911745,0.866069,1.12853]
+        corrFactor_2hplus_7 = [0.927213,0.918012,1.09863]
+        corrFactor_2hminus_7 = [0.945386,0.903211,1.07699]
+        corrFactor_2bplus_7 = [0.891317,0.869832,1.14833]
+        
+        corrFactor_0minus_8 = [0.914991,0.854913,1.1167]
+        corrFactor_0hplus_8 = [0.938505,0.945478,1.06486]
+        corrFactor_1plus_8  = [0.964351,0.874151,1.06928]
+        corrFactor_1minus_8 = [0.937464,0.846397,1.09798]
+        corrFactor_qq2plusm_8 = [0.889664,0.867378,1.12889]
+        corrFactor_gg2plusm_8 = [0.911387,0.864769,1.11862]
+        corrFactor_2hplus_8 = [0.920798,0.928968,1.08486]
+        corrFactor_2hminus_8 = [0.946448,0.927209,1.06996]
+        corrFactor_2bplus_8 = [0.876706,0.886499,1.13396]
+
+
+        if sqrts == 7:
+
+            if spinHypCode == 'SM':
+                r = 1.0
+            elif spinHypCode == 'gg0-':
+                r = 1#corrFactor_0minus[channel-1]
+            elif spinHypCode == 'gg0h+':
+                r = 1#corrFactor_0hplus[channel-1]
+            elif spinHypCode == 'qq1-' or spinHypCode == 'PI1-':
+                r = corrFactor_1minus_7[channel-1]
+            elif spinHypCode == 'qq1+' or spinHypCode == 'PI1+':
+                r = corrFactor_1plus_7[channel-1]
+            elif spinHypCode == 'gg2m+' or spinHypCode == 'PI2+':
+                r = corrFactor_gg2plusm_7[channel-1]
+            elif spinHypCode == 'qq2m+':
+                r = corrFactor_qq2plusm_7[channel-1]
+            elif spinHypCode == '2h+':
+                r = corrFactor_2hplus_7[channel-1]
+            elif spinHypCode == '2h-':
+                r = corrFactor_2hminus_7[channel-1]
+            elif spinHypCode == '2b+':
+                r = corrFactor_2bplus_7[channel-1]
+            else:
+                raise RuntimeError,'spinHypCode '+str(spinHypCode)+' is unknown! Please choose: SM, gg0-, gg0h+, qq1-, qq1+, gg2m+, qq2m+, 2h+, 2h-, 2b+'
+
+        elif sqrts == 8:            
+
+            if spinHypCode == 'SM':
+                r = 1.0
+            elif spinHypCode == 'gg0-':
+                r = 1#corrFactor_0minus[channel-1]
+            elif spinHypCode == 'gg0h+':
+                r = 1#corrFactor_0hplus[channel-1]
+            elif spinHypCode == 'qq1-' or spinHypCode == 'PI1-':
+                r = corrFactor_1minus_8[channel-1]
+            elif spinHypCode == 'qq1+' or spinHypCode == 'PI1+':
+                r = corrFactor_1plus_8[channel-1]
+            elif spinHypCode == 'gg2m+' or spinHypCode == 'PI2+':
+                r = corrFactor_gg2plusm_8[channel-1]
+            elif spinHypCode == 'qq2m+':
+                r = corrFactor_qq2plusm_8[channel-1]
+            elif spinHypCode == '2h+':
+                r = corrFactor_2hplus_8[channel-1]
+            elif spinHypCode == '2h-':
+                r = corrFactor_2hminus_8[channel-1]
+            elif spinHypCode == '2b+':
+                r = corrFactor_2bplus_8[channel-1]
+            else:
+                raise RuntimeError,'spinHypCode '+str(spinHypCode)+' is unknown! Please choose: SM, gg0-, gg0h+, qq1-, qq1+, gg2m+, qq2m+, 2h+, 2h-, 2b+'
         else:
-            raise RuntimeError,'spinHypCode '+str(spinHypCode)+' is unknown! Please choose: SM, gg0-, gg0+, qq1-, qq1+, gg2+m, qq2+m'
-            
+            raise RuntimeError,'spinHypCorrFactor: Unknown sqrts! '+str(sqrts)
+
         
         print '>>>>>> Acceptance*BR correction for ALT hypothesis: ',r
         return r
@@ -679,10 +814,11 @@ class superkdClass(datacardClass):
     def reflectSystematics(self,nomShape,altShape):
 
         if(nomShape.GetNbinsX()!=altShape.GetNbinsX() or nomShape.GetNbinsY()!=altShape.GetNbinsY()):
+            print nomShape.GetNbinsX(),altShape.GetNbinsX(),nomShape.GetNbinsY(),altShape.GetNbinsY()
             print "AHHHHHHHHHHH, templates don't have the same binning!!!!"
             return 0
         
-        newAltShape = ROOT.TH2F(altShape)
+        newAltShape = ROOT.TH2D(altShape)
         
         for x in range(1,nomShape.GetNbinsX()):
             for y in range(1,nomShape.GetNbinsY()):

@@ -54,7 +54,8 @@ class datacardClass(object):
         self.isAltSig = theInputs['doHypTest']
         self.appendHypType = theInputs['altHypLabel']
         self.inputs = theInputs
-        
+
+        self.reflectZX = False
         
         if (self.channel == self.ID_4mu): self.appendName = '4mu'
         elif (self.channel == self.ID_4e): self.appendName = '4e'
@@ -117,6 +118,11 @@ class datacardClass(object):
             else:
                 BR = self.myCSWrhf.HiggsBR(12,mHVal)
 
+            if (signalProc == 3 or signalProc == 4 or signalProc == 5):
+                #overwrite BR if VH,ttH sample
+                #these samples have inclusive Z decay
+                BR = self.myCSWrhf.HiggsBR(11,mHVal)
+                
             if (signalProc==0):
                 totXs=0
                 for ch in range(1,6):
@@ -185,10 +191,10 @@ class datacardClass(object):
         mean_BW_d = self.mH
         gamma_BW_d = 0.0
         
-        if(self.all_chan):
-            self.rdhXsBrFuncV_1 = self.makeXsBrFunction(0,self.MH)
-        else:
-            self.rdhXsBrFuncV_1 = self.makeXsBrFunction(1,self.MH)
+#        if(self.all_chan):
+#            self.rdhXsBrFuncV_1 = self.makeXsBrFunction(0,self.MH)
+#        else:
+        self.rdhXsBrFuncV_1 = self.makeXsBrFunction(1,self.MH)
         rhfname = "rhfXsBr_{0}_{1:.0f}_{2:.0f}".format("ggH",self.channel,self.sqrts)
         self.rhfXsBrFuncV_1 = ROOT.RooHistFunc(rhfname,rhfname, ROOT.RooArgSet(self.MH), self.rdhXsBrFuncV_1, 1)
         
@@ -774,10 +780,10 @@ class datacardClass(object):
         
         self.rfvCsFilter = RooFormulaVar()
         filterName = "cmshzz4l_csFilter_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-        if(self.sqrts == 7): 
-            self.rfvCsFilter = ROOT.RooFormulaVar(filterName,"0.5+0.5*TMath::Erf((@0 - 80.85)/50.42)", ROOT.RooArgList(self.MH) )
-        else:
-            self.rfvCsFilter = ROOT.RooFormulaVar(filterName,"@0",ROOT.RooArgList(self.one))
+        #if(self.sqrts == 7): 
+        #    self.rfvCsFilter = ROOT.RooFormulaVar(filterName,"0.5+0.5*TMath::Erf((@0 - 80.85)/50.42)", ROOT.RooArgList(self.MH) )
+        #else:
+        self.rfvCsFilter = ROOT.RooFormulaVar(filterName,"@0",ROOT.RooArgList(self.one))
 
         if(self.DEBUG):
             print ">>>>>>  rfvCsFilter = ",self.rfvCsFilter.getVal()
@@ -1039,10 +1045,10 @@ class datacardClass(object):
 
 #######################
 
-        if self.isAltSig:
-            CS_ggH = self.myCSW.HiggsCS(0,self.mH,self.sqrts)
-        else:
-            CS_ggH = self.myCSW.HiggsCS(1,self.mH,self.sqrts)
+        #if self.isAltSig:
+        #    CS_ggH = self.myCSW.HiggsCS(0,self.mH,self.sqrts)
+        #else:
+        CS_ggH = self.myCSW.HiggsCS(1,self.mH,self.sqrts)
         CS_VBF = self.myCSW.HiggsCS(2,self.mH,self.sqrts)
         CS_WH = self.myCSW.HiggsCS(3,self.mH,self.sqrts)
         CS_ZH = self.myCSW.HiggsCS(4,self.mH,self.sqrts)
@@ -1070,7 +1076,7 @@ class datacardClass(object):
             print ", CS_ttH: ",CS_ttH,", BRH2e2mu: ",BRH2e2mu,", BRH4mu: ",BRH4mu,", BRH4e: ",BRH4e, ", BRZZ: ",BRZZ
 
         csCorrection = 1.0
-        if(self.sqrts == 7): csCorrection = self.csFilter(self.mH)
+        #if(self.sqrts == 7): csCorrection = self.csFilter(self.mH)
 
         ## SIG YIELDS
         sigRate_ggH = csCorrection*CS_ggH*BR*sigEfficiency_ggH*1000.*self.lumi
@@ -1147,8 +1153,9 @@ class datacardClass(object):
                          
 
         self.rfvSigRate_WH = ROOT.RooFormulaVar("WH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,self.rrvNormSig.getVal(),integral_WH),ROOT.RooArgList(self.rfvCsFilter,self.rfvSigEff_WH, self.rhfXsBrFuncV_3))
-                         
-
+        
+        
+        
         self.rfvSigRate_ZH = ROOT.RooFormulaVar("ZH_norm","@0*@1*@2*1000*{0}*{2}/{1}".format(self.lumi,self.rrvNormSig.getVal(),integral_ZH),ROOT.RooArgList(self.rfvCsFilter,self.rfvSigEff_ZH, self.rhfXsBrFuncV_4))
                          
 
@@ -1182,6 +1189,8 @@ class datacardClass(object):
         print ">>>>>> rfvSigRate_ttH = ",self.rfvSigRate_ttH.getVal()
         print ">>>>>> sigRate_ttH_Shape = ",sigRate_ttH_Shape
         print ">>>>>> Sum of sigRate_XYZ_Shape =" ,sigRate_ggH_Shape+sigRate_VBF_Shape+sigRate_WH_Shape+sigRate_ZH_Shape+sigRate_ttH_Shape
+        print ">>>>>> rrv_SMggH_ratio = ",self.rrv_SMggH_ratio.getVal()
+        print ">>>>>> rrvJHUgen_SMggH = ",self.rrvJHUgen_SMggH.getVal()
              
         ## ----------------------- BACKGROUND RATES ----------------------- ##
         ## rates per lumi for scaling
